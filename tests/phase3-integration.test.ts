@@ -10,16 +10,18 @@ vi.mock('@/lib/prisma', () => ({
     default: {
         $transaction: vi.fn((cb) => cb(prisma)),
         order: { create: vi.fn() },
-        recipeItem: { 
+        recipeItem: {
             deleteMany: vi.fn(),
-            createMany: vi.fn() 
+            createMany: vi.fn()
         },
-        stock: { 
+        stock: {
             upsert: vi.fn(),
-            updateMany: vi.fn()
+            updateMany: vi.fn(),
+            findMany: vi.fn()
         },
         product: {
-            findUnique: vi.fn()
+            findUnique: vi.fn(),
+            findFirst: vi.fn()
         }
     },
 }))
@@ -30,7 +32,7 @@ vi.mock('@/services/feature-service')
 describe('Phase 3 Integration: Vertical Slice (End-to-End Inventory)', () => {
     const tenantId = 'tenant-1'
     const branchId = 'branch-1'
-    
+
     beforeEach(() => {
         vi.clearAllMocks()
         // Enable features by default for integration test
@@ -54,15 +56,15 @@ describe('Phase 3 Integration: Vertical Slice (End-to-End Inventory)', () => {
             data: [{ productId: 'espresso', ingredientId: 'coffee-beans', amount: 18 }]
         }))
 
-        // 3. Perform Sale
-        // Mock the product lookup that happens inside PosService -> InventoryService
-        ;(prisma.product.findUnique as any).mockResolvedValue({
-            id: 'espresso',
-            ingredients: [
-                { ingredientId: 'coffee-beans', amount: 18 }
-            ]
-        })
-        ;(prisma.order.create as any).mockResolvedValue({ id: 'order-1', totalAmount: 5.0 })
+            // 3. Perform Sale
+            // Mock the product lookup that happens inside PosService -> InventoryService
+            ; (prisma.product.findFirst as any).mockResolvedValue({
+                id: 'espresso',
+                ingredients: [
+                    { ingredientId: 'coffee-beans', amount: 18 }
+                ]
+            })
+            ; (prisma.order.create as any).mockResolvedValue({ id: 'order-1', totalAmount: 5.0 })
 
         await pos.createOrder([{ productId: 'espresso', quantity: 2, price: 2.5 }])
 

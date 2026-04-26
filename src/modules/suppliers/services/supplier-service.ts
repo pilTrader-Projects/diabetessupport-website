@@ -1,30 +1,30 @@
 import { BaseService } from '@/services/base-service'
-import prisma from '@/lib/prisma'
+import { SupplierRepository } from '@/repositories/supplier-repository'
 
 /**
  * SupplierService handles ingredient deliveries and stock replenishment.
  */
 export class SupplierService extends BaseService {
+    private repository: SupplierRepository
+
+    constructor(
+        tenantId: string,
+        branchId: string,
+        repository: SupplierRepository = new SupplierRepository()
+    ) {
+        super(tenantId, branchId)
+        this.repository = repository
+    }
+
     /**
      * Records a raw material delivery and updates the branch's stock level.
      */
     async recordDelivery(ingredientId: string, quantity: number) {
-        return prisma.stock.upsert({
-            where: {
-                branchId_ingredientId: {
-                    branchId: this.branchId!,
-                    ingredientId,
-                }
-            },
-            update: {
-                quantity: { increment: quantity }
-            },
-            create: {
-                tenantId: this.tenantId,
-                branchId: this.branchId!,
-                ingredientId,
-                quantity,
-            }
-        })
+        return this.repository.upsertStock(
+            this.tenantId,
+            this.branchId!,
+            ingredientId,
+            quantity
+        )
     }
 }

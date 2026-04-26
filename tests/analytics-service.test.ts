@@ -1,46 +1,33 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AnalyticsService } from '@/services/analytics-service'
-import prisma from '@/lib/prisma'
 import { FeatureService } from '@/services/feature-service'
-
-// Mock Prisma
-vi.mock('@/lib/prisma', () => ({
-    default: {
-        order: {
-            aggregate: vi.fn(),
-            groupBy: vi.fn(),
-        },
-        stock: {
-            findMany: vi.fn(),
-        }
-    },
-}))
-
-// Mock FeatureService
-vi.mock('@/services/feature-service')
 
 describe('AnalyticsService (Consolidation - Phase 4 TDD)', () => {
     const tenantId = 'tenant-1'
     let service: AnalyticsService
+    let mockOrderRepo: any
+    let mockStockRepo: any
 
     beforeEach(() => {
         vi.clearAllMocks()
-        service = new AnalyticsService(tenantId)
+        mockOrderRepo = {
+            getGlobalSales: vi.fn(),
+            getBranchPerformance: vi.fn(),
+        }
+        mockStockRepo = {
+            findCriticalStock: vi.fn(),
+        }
+        service = new AnalyticsService(tenantId, mockOrderRepo, mockStockRepo)
         vi.spyOn(FeatureService.prototype, 'hasFeature').mockResolvedValue(true)
     })
 
     it('should aggregate total sales across all branches of a tenant', async () => {
-        ;(prisma.order.aggregate as any).mockResolvedValue({
-            _sum: { totalAmount: 5000.50 }
-        })
+        mockOrderRepo.getGlobalSales.mockResolvedValue(5000.50)
 
         const total = await service.getGlobalSales()
 
         expect(total).toBe(5000.50)
-        expect(prisma.order.aggregate).toHaveBeenCalledWith(expect.objectContaining({
-            where: { tenantId },
-            _sum: { totalAmount: true }
-        }))
+        expect(mockOrderRepo.getGlobalSales).toHaveBeenCalledWith(tenantId)
     })
 
     it('should fail if dashboard feature is not enabled', async () => {
@@ -50,30 +37,22 @@ describe('AnalyticsService (Consolidation - Phase 4 TDD)', () => {
 
     it('should return branch performance ranked by sales', async () => {
         const mockPerformance = [
-            { branchId: 'branch-A', _sum: { totalAmount: 1000 } },
-            { branchId: 'branch-B', _sum: { totalAmount: 500 } },
+            { branchId: 'branch-A', totalAmount: 1000 },
+            { branchId: 'branch-B', totalAmount: 500 },
         ]
-        ;(prisma.order.groupBy as any).mockResolvedValue(mockPerformance)
+        mockOrderRepo.getBranchPerformance.mockResolvedValue(mockPerformance)
 
         const performance = await service.getBranchPerformance()
 
         expect(performance).toHaveLength(2)
-        expect(prisma.order.groupBy).toHaveBeenCalledWith(expect.objectContaining({
-            by: ['branchId'],
-            where: { tenantId }
-        }))
+        expect(mockOrderRepo.getBranchPerformance).toHaveBeenCalledWith(tenantId)
     })
 
     it('should fetch critical stock across all branches', async () => {
-        ;(prisma.stock.findMany as any).mockResolvedValue([])
+        mockStockRepo.findCriticalStock.mockResolvedValue([])
 
         await service.getGlobalCriticalStock(5)
 
-        expect(prisma.stock.findMany).toHaveBeenCalledWith(expect.objectContaining({
-            where: {
-                tenantId,
-                quantity: { lte: 5 }
-            }
-        }))
+        expect(mockStockRepo.findCriticalStock).toHaveBeenCalledWith(tenantId, 5)
     })
 })

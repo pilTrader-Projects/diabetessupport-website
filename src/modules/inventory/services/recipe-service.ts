@@ -1,10 +1,18 @@
 import { BaseService } from '@/services/base-service'
 import prisma from '@/lib/prisma'
+import { RecipeRepository } from '@/repositories/recipe-repository'
 
 /**
  * RecipeService manages the relationship between Products and Ingredients.
  */
 export class RecipeService extends BaseService {
+    private repository: RecipeRepository
+
+    constructor(tenantId: string, repository: RecipeRepository = new RecipeRepository()) {
+        super(tenantId)
+        this.repository = repository
+    }
+
     /**
      * Defines the recipe for a product.
      * Clears existing recipe items and replaces them with the new set.
@@ -13,19 +21,7 @@ export class RecipeService extends BaseService {
         await this.ensureFeature('inventory')
 
         return await prisma.$transaction(async (tx) => {
-            // 1. Remove old recipe items
-            await tx.recipeItem.deleteMany({
-                where: { productId }
-            })
-
-            // 2. Add new recipe items
-            return await tx.recipeItem.createMany({
-                data: ingredients.map(item => ({
-                    productId,
-                    ingredientId: item.ingredientId,
-                    amount: item.amount
-                }))
-            })
+            return this.repository.replaceRecipe(tx, productId, ingredients)
         })
     }
 }

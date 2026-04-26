@@ -7,6 +7,7 @@ vi.mock('@/lib/prisma', () => ({
     default: {
         product: {
             findUnique: vi.fn(),
+            findFirst: vi.fn(),
         },
         stock: {
             updateMany: vi.fn(),
@@ -39,7 +40,7 @@ describe('Inventory Integration (Phase 3 TDD)', () => {
                 { ingredientId: 'bun', amount: 1 },   // 1 unit
             ],
         }
-            ; (prisma.product.findUnique as any).mockResolvedValue(mockProduct)
+            ; (prisma.product.findFirst as any).mockResolvedValue(mockProduct)
 
         await service.consumeIngredients(productId, 5)
 

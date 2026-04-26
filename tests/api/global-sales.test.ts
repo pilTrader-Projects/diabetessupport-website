@@ -14,7 +14,7 @@ describe('API: Global Sales Route (Task 5.1 TDD)', () => {
     it('should return 400 if x-tenant-id is missing', async () => {
         const req = new NextRequest('http://localhost/api/analytics/global-sales')
         const response = await GET(req)
-        
+
         expect(response.status).toBe(400)
         const body = await response.json()
         expect(body.error).toContain('Tenant ID is required')
@@ -32,6 +32,7 @@ describe('API: Global Sales Route (Task 5.1 TDD)', () => {
         const body = await response.json()
 
         expect(response.status).toBe(200)
-        expect(body.totalSales).toBe(1234.56)
+        expect(body.success).toBe(true)
+        expect(body.data.totalSales).toBe(1234.56)
     })
 })

@@ -1,45 +1,35 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ProductService } from '@/services/product-service'
-import prisma from '@/lib/prisma'
-
-// Mock Prisma
-vi.mock('@/lib/prisma', () => ({
-    default: {
-        product: {
-            findMany: vi.fn().mockResolvedValue([]),
-            create: vi.fn().mockResolvedValue({}),
-        },
-        tenant: {
-            findUnique: vi.fn().mockResolvedValue({ plan: 'basic', features: [] }),
-        },
-    },
-}))
+import { ProductRepository } from '@/repositories/product-repository'
+import { FeatureService } from '@/services/feature-service'
 
 describe('Multi-tenancy Isolation (ProductService)', () => {
-    it('should scope findMany queries to the tenant and branch', async () => {
-        const service = new ProductService('tenant-1', 'branch-1')
-        await service.getProducts()
+    let mockRepo: ProductRepository
 
-        expect(prisma.product.findMany).toHaveBeenCalledWith({
-            where: {
-                tenantId: 'tenant-1',
-                branchId: 'branch-1',
-            },
-        })
+    beforeEach(() => {
+        vi.clearAllMocks()
+        mockRepo = {
+            create: vi.fn(),
+            findAll: vi.fn(),
+            findById: vi.fn(),
+        } as any
+        // Mock FeatureService to always return true for tests
+        vi.spyOn(FeatureService.prototype, 'hasFeature').mockResolvedValue(true)
     })
 
-    it('should scope create operations to the tenant and branch', async () => {
-        const service = new ProductService('tenant-2', 'branch-2')
+    it('should scope findAll queries to the tenant', async () => {
+        const service = new ProductService('tenant-1', mockRepo)
+        await service.getProducts()
+
+        expect(mockRepo.findAll).toHaveBeenCalledWith('tenant-1')
+    })
+
+    it('should scope create operations to the tenant', async () => {
+        const service = new ProductService('tenant-2', mockRepo)
         const productData = { name: 'Fried Chicken', price: 15.0 }
 
         await service.createProduct(productData)
 
-        expect(prisma.product.create).toHaveBeenCalledWith({
-            data: {
-                ...productData,
-                tenantId: 'tenant-2',
-                branchId: 'branch-2',
-            },
-        })
+        expect(mockRepo.create).toHaveBeenCalledWith('tenant-2', productData)
     })
 })

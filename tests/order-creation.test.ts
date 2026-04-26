@@ -14,6 +14,7 @@ vi.mock('@/lib/prisma', () => ({
         },
         product: {
             findUnique: vi.fn().mockResolvedValue({ ingredients: [] }),
+            findFirst: vi.fn().mockResolvedValue({ ingredients: [] }),
         },
         stock: {
             updateMany: vi.fn(),
