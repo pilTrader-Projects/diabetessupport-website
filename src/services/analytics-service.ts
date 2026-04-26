@@ -1,27 +1,31 @@
 import { BaseService } from './base-service'
-import prisma from '@/lib/prisma'
+import { OrderRepository } from '@/repositories/order-repository'
+import { StockRepository } from '@/repositories/stock-repository'
 
 /**
  * AnalyticsService provides consolidated views of data across multiple branches.
  * This is primarily used by Tenant Owners and Accountants.
  */
 export class AnalyticsService extends BaseService {
+    private orderRepository: OrderRepository
+    private stockRepository: StockRepository
+
+    constructor(
+        tenantId: string,
+        orderRepo: OrderRepository = new OrderRepository(),
+        stockRepo: StockRepository = new StockRepository()
+    ) {
+        super(tenantId)
+        this.orderRepository = orderRepo
+        this.stockRepository = stockRepo
+    }
+
     /**
      * Aggregates total revenue across all branches for the tenant.
      */
     async getGlobalSales() {
         await this.ensureFeature('dashboard')
-
-        const aggregation = await prisma.order.aggregate({
-            where: {
-                tenantId: this.tenantId,
-            },
-            _sum: {
-                totalAmount: true,
-            },
-        })
-
-        return aggregation._sum.totalAmount || 0
+        return this.orderRepository.getGlobalSales(this.tenantId)
     }
 
     /**
@@ -29,40 +33,14 @@ export class AnalyticsService extends BaseService {
      */
     async getBranchPerformance() {
         await this.ensureFeature('dashboard')
-
-        return prisma.order.groupBy({
-            by: ['branchId'],
-            where: {
-                tenantId: this.tenantId,
-            },
-            _sum: {
-                totalAmount: true,
-            },
-            orderBy: {
-                _sum: {
-                    totalAmount: 'desc',
-                },
-            },
-        })
+        return this.orderRepository.getBranchPerformance(this.tenantId)
     }
 
     /**
      * Identifies stock items that are below a certain threshold across all branches.
      */
     async getGlobalCriticalStock(threshold: number = 10) {
-        await this.ensureFeature('inventory') // Cross-branch inventory also requires inventory feature
-
-        return prisma.stock.findMany({
-            where: {
-                tenantId: this.tenantId,
-                quantity: {
-                    lte: threshold,
-                },
-            },
-            include: {
-                branch: { select: { name: true } },
-                ingredient: { select: { name: true, unit: true } },
-            },
-        })
+        await this.ensureFeature('inventory')
+        return this.stockRepository.findCriticalStock(this.tenantId, threshold)
     }
 }

@@ -20,6 +20,7 @@ describe('API: Orders Route', () => {
 
         expect(response.status).toBe(400)
         const body = await response.json()
+        expect(body.success).toBe(false)
         expect(body.error).toBe('Missing tenant or branch ID')
     })
 
@@ -42,6 +43,7 @@ describe('API: Orders Route', () => {
         const body = await response.json()
 
         expect(response.status).toBe(200)
-        expect(body.id).toBe('order-1')
+        expect(body.success).toBe(true)
+        expect(body.data.id).toBe('order-1')
     })
 })

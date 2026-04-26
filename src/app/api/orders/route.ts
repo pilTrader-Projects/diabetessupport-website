@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
 import { PosService } from '@/modules/pos/services/pos-service';
+import { OrderRepository } from '@/repositories/order-repository';
+import { createResponse } from '@/lib/api-response';
 
 /**
  * POST handler to create a new POS order and deduct inventory.
@@ -13,22 +14,22 @@ export async function POST(request: Request) {
         const branchId = request.headers.get('x-branch-id');
 
         if (!tenantId || !branchId) {
-            return NextResponse.json({ error: 'Missing tenant or branch ID' }, { status: 400 });
+            return createResponse(null, 'Missing tenant or branch ID', 400);
         }
 
         const body = await request.json();
         const { items } = body;
 
         if (!items || !Array.isArray(items)) {
-            return NextResponse.json({ error: 'Invalid items format' }, { status: 400 });
+            return createResponse(null, 'Invalid items format', 400);
         }
 
-        const posService = new PosService(tenantId, branchId);
+        const posService = new PosService(tenantId, branchId, new OrderRepository());
         const order = await posService.createOrder(items);
 
-        return NextResponse.json(order);
+        return createResponse(order);
     } catch (error: any) {
         console.error('Failed to create order:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return createResponse(null, error.message, 500);
     }
 }

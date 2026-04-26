@@ -1,11 +1,26 @@
 import { BaseService } from '@/services/base-service'
-import prisma from '@/lib/prisma'
+import { ProductRepository } from '@/repositories/product-repository'
+import { StockRepository } from '@/repositories/stock-repository'
 
 /**
  * InventoryService handles the logical deduction of ingredients
  * based on products sold at a specific branch.
  */
 export class InventoryService extends BaseService {
+    private productRepository: ProductRepository
+    private stockRepository: StockRepository
+
+    constructor(
+        tenantId: string,
+        branchId: string,
+        productRepo: ProductRepository = new ProductRepository(),
+        stockRepo: StockRepository = new StockRepository()
+    ) {
+        super(tenantId, branchId)
+        this.productRepository = productRepo
+        this.stockRepository = stockRepo
+    }
+
     /**
      * Consumes ingredients based on the quantity of a product sold.
      * This is a "destructive" operation that updates stock levels.
@@ -14,37 +29,22 @@ export class InventoryService extends BaseService {
         // 1. Feature Gate
         await this.ensureFeature('inventory')
 
-        // 2. Fetch the product recipe (ingredients and their required amounts)
-        const product = await prisma.product.findUnique({
-            where: { id: productId },
-            include: {
-                ingredients: {
-                    include: { ingredient: true }
-                }
-            },
-        })
+        // 2. Fetch the product recipe
+        const product = await this.productRepository.findById(this.tenantId, productId)
 
         if (!product) {
             throw new Error('Product not found')
         }
 
-        // 2. Iterate through ingredients and deduct stock
+        // 3. Iterate through ingredients and deduct stock
         for (const recipeItem of product.ingredients) {
             const amountToDeduct = recipeItem.amount * quantity
-
-            // Using updateMany scoped to tenant and branch for extra safety
-            await prisma.stock.updateMany({
-                where: {
-                    tenantId: this.tenantId,
-                    branchId: this.branchId,
-                    ingredientId: recipeItem.ingredientId,
-                },
-                data: {
-                    quantity: {
-                        decrement: amountToDeduct,
-                    },
-                } as any,
-            })
+            await this.stockRepository.decrementStock(
+                this.tenantId,
+                this.branchId!,
+                recipeItem.ingredientId,
+                amountToDeduct
+            )
         }
     }
 }

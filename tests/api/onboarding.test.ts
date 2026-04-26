@@ -25,8 +25,8 @@ describe('API: Onboarding Route', () => {
         const body = await response.json()
 
         expect(response.status).toBe(200)
-        expect(body.tenantId).toBe('tenant-123')
-        expect(body.message).toContain('successfully')
+        expect(body.success).toBe(true)
+        expect(body.data.tenantId).toBe('tenant-123')
     })
 
     it('should return 500 if tenant creation fails', async () => {
@@ -41,6 +41,7 @@ describe('API: Onboarding Route', () => {
         const body = await response.json()
 
         expect(response.status).toBe(500)
+        expect(body.success).toBe(false)
         expect(body.error).toBe('DB Error')
     })
 })

@@ -121,9 +121,9 @@ export async function POST() {
             }
         }
 
-        return NextResponse.json({ message: 'Seeding successful', tenantId: tenant.id });
+        return createResponse({ message: 'Seeding successful', tenantId: tenant.id });
     } catch (error: any) {
         console.error('Seeding failed:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return createResponse(null, error.message, 500);
     }
 }

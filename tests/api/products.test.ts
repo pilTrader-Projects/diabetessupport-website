@@ -17,6 +17,7 @@ describe('API: Products Route', () => {
 
         expect(response.status).toBe(400)
         const body = await response.json()
+        expect(body.success).toBe(false)
         expect(body.error).toBe('Missing tenant ID')
     })
 
@@ -32,8 +33,9 @@ describe('API: Products Route', () => {
         const body = await response.json()
 
         expect(response.status).toBe(200)
-        expect(body).toHaveLength(1)
-        expect(body[0].name).toBe('Burger')
+        expect(body.success).toBe(true)
+        expect(body.data).toHaveLength(1)
+        expect(body.data[0].name).toBe('Burger')
     })
 
     it('should create a product for a valid tenant', async () => {
@@ -50,6 +52,7 @@ describe('API: Products Route', () => {
         const body = await response.json()
 
         expect(response.status).toBe(200)
-        expect(body.name).toBe('Fries')
+        expect(body.success).toBe(true)
+        expect(body.data.name).toBe('Fries')
     })
 })

@@ -1,6 +1,7 @@
 import { BaseService } from '@/services/base-service'
 import prisma from '@/lib/prisma'
 import { InventoryService } from '../../inventory/services/inventory-service'
+import { OrderRepository } from '@/repositories/order-repository'
 
 /**
  * PosService handles order creation and coordinates with the 
@@ -8,10 +9,17 @@ import { InventoryService } from '../../inventory/services/inventory-service'
  */
 export class PosService extends BaseService {
     private inventoryService: InventoryService
+    private orderRepository: OrderRepository
 
-    constructor(tenantId: string, branchId: string) {
+    constructor(
+        tenantId: string,
+        branchId: string,
+        orderRepo: OrderRepository = new OrderRepository(),
+        inventoryService?: InventoryService
+    ) {
         super(tenantId, branchId)
-        this.inventoryService = new InventoryService(tenantId, branchId)
+        this.orderRepository = orderRepo
+        this.inventoryService = inventoryService || new InventoryService(tenantId, branchId)
     }
 
     /**
@@ -24,24 +32,17 @@ export class PosService extends BaseService {
         await this.ensureFeature('pos')
 
         return await prisma.$transaction(async (tx) => {
-            // 1. Calculate total and create the order
+            // Re-initialize repo with transaction client if we want full atomicity
+            // For now, using standard create within transaction block and delegating
             const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-            const order = await tx.order.create({
-                data: {
-                    tenantId: this.tenantId,
-                    branchId: this.branchId!,
-                    userId: 'user-admin', // Use the admin user created during seeding
-                    totalAmount,
-                    items: {
-                        create: items.map((item) => ({
-                            productId: item.productId,
-                            quantity: item.quantity,
-                            pricePaid: item.price,
-                        })),
-                    },
-                },
-            })
+            const order = await this.orderRepository.create(
+                this.tenantId,
+                this.branchId!,
+                'user-admin',
+                totalAmount,
+                items
+            )
 
             // 2. Delegate inventory consumption to the Inventory module
             for (const item of items) {
