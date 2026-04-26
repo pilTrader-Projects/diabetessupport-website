@@ -15,9 +15,12 @@ export default function MenuManagementPage() {
                 const res = await fetch('/api/products', {
                     headers: { 'x-tenant-id': tenantId }
                 });
-                const data = await res.json();
-                if (res.ok) setMenu(data);
-                else setMenu(DEMO_PRODUCTS);
+                const envelope = await res.json();
+                if (envelope.success && Array.isArray(envelope.data)) {
+                    setMenu(envelope.data);
+                } else {
+                    setMenu(DEMO_PRODUCTS);
+                }
             } catch (e) {
                 setMenu(DEMO_PRODUCTS);
             }
@@ -40,8 +43,8 @@ export default function MenuManagementPage() {
             });
 
             if (res.ok) {
-                const newItem = await res.json();
-                setMenu([...menu, newItem]);
+                const envelope = await res.json();
+                setMenu([...menu, envelope.data]);
                 setName('');
                 setPrice('');
             } else {
@@ -75,7 +78,7 @@ export default function MenuManagementPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {menu.map(item => (
+                            {Array.isArray(menu) && menu.map(item => (
                                 <tr key={item.id} style={{ borderBottom: '1px solid var(--border)' }}>
                                     <td style={{ padding: '0.75rem' }}>{item.name}</td>
                                     <td style={{ padding: '0.75rem' }}>₱{item.price.toFixed(2)}</td>

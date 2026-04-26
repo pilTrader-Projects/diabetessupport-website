@@ -20,8 +20,10 @@ export default function DashboardPage() {
                 const res = await fetch('/api/analytics/global-sales', {
                     headers: { 'x-tenant-id': tenantId }
                 });
-                const data = await res.json();
-                setSales(data.totalSales || 0);
+                const envelope = await res.json();
+                if (envelope.success && envelope.data) {
+                    setSales(envelope.data.totalSales || 0);
+                }
             } catch (e) {
                 console.error("Failed to fetch sales", e);
             } finally {

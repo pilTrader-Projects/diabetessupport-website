@@ -28,9 +28,12 @@ export default function PosTerminalPage() {
                 const res = await fetch('/api/products', {
                     headers: { 'x-tenant-id': tenantId }
                 });
-                const data = await res.json();
-                if (res.ok) setProducts(data);
-                else setProducts(DEMO_PRODUCTS);
+                const envelope = await res.json();
+                if (envelope.success && Array.isArray(envelope.data)) {
+                    setProducts(envelope.data);
+                } else {
+                    setProducts(DEMO_PRODUCTS);
+                }
             } catch (e) {
                 setProducts(DEMO_PRODUCTS);
             }
@@ -201,7 +204,7 @@ export default function PosTerminalPage() {
                 <div className="card">
                     <h2 style={{ marginBottom: '1.5rem' }}>Menu: {DEMO_BRANCH.name}</h2>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-                        {products.map(product => (
+                        {Array.isArray(products) && products.map(product => (
                             <div key={product.id} className="card" style={{ cursor: 'pointer', textAlign: 'center', transition: 'transform 0.1s' }} onClick={() => openQuantityModal(product)}>
                                 <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🍔</div>
                                 <strong>{product.name}</strong>
