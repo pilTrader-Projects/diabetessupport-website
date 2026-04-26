@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { DEMO_BRANCH, DEMO_INGREDIENTS, DEMO_PRODUCTS, INITIAL_STOCK } from '@/lib/demo-data';
 
+/**
+ * POST handler to seed the database with demo products and ingredients.
+ * Clear existing demo records to ensure idempotency.
+ * 
+ * @returns {Promise<NextResponse>} JSON response with seeding status.
+ */
 export async function POST() {
     try {
         // 1. Create Demo Tenant

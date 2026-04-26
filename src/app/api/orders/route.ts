@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { PosService } from '@/modules/pos/services/pos-service';
 
+/**
+ * POST handler to create a new POS order and deduct inventory.
+ * 
+ * @param {Request} request - Incoming request with x-tenant-id, x-branch-id, and order items.
+ * @returns {Promise<NextResponse>} JSON response with the created order or error.
+ */
 export async function POST(request: Request) {
     try {
         const tenantId = request.headers.get('x-tenant-id');
