@@ -1,25 +1,36 @@
 {
-  "name": "agentic-dev-boilerplate",
-  "version": "1.0.0",
-  "description": "Boilerplate for an agentic development environment with strict TDD and governance.",
-  "main": "index.js",
+  "name": "foodhouse-saas",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "sanity": "ts-node tests/sanity_check.ts",
-    "lint": "eslint . --ext .ts",
-    "audit": "npm audit"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "tests": "vitest",
+    "coverage": "vitest run --coverage",
+    "sanity": "NODE_OPTIONS='--loader ts-node/esm' ts-node tests/sanity_check.ts"
   },
-  "keywords": [
-    "agentic",
-    "development",
-    "tdd",
-    "boilerplate"
-  ],
-  "author": "Antigravity",
-  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.13.0",
+    "@rolldown/binding-darwin-x64": "^1.0.0-rc.17",
+    "next": "^16.2.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
   "devDependencies": {
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.0",
-    "eslint": "^8.0.0"
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitest/coverage-v8": "^4.1.5",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^16.2.4",
+    "prisma": "^5.21.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vitest": "^4.1.5"
   }
 }
