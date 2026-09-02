@@ -1,16 +1,33 @@
-'use client';
-
 import { AWARENESS_PILLARS } from '@/config/constants';
+import { dbConnect } from '@/lib/dbConnect';
+import { PostModel } from '@/models/Post';
+import { IPost } from '@/types/blog';
+import Link from 'next/link';
+
+export const revalidate = 60; // Refresh static page every 60 seconds
 
 /**
  * Clean & Minimalist Diabetes Awareness & Educational Campaign Home Page Component.
  *
- * @usecase Focuses purely on awareness and number-tracking education to prevent devastating diabetes complications.
+ * @usecase Focuses purely on awareness, number-tracking education, and displaying imported MongoDB post articles.
  * @param None Page component receives no props.
- * @dependencies AWARENESS_PILLARS constants.
- * @returns {JSX.Element} Rendered clean, elegant awareness landing page.
+ * @dependencies AWARENESS_PILLARS constants, dbConnect, PostModel.
+ * @returns {Promise<JSX.Element>} Rendered clean, elegant awareness landing page with dynamic post articles.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  await dbConnect();
+  const rawPosts = await PostModel.find({ status: 'published' })
+    .sort({ publishedAt: -1 })
+    .limit(6)
+    .lean();
+
+  const articles: IPost[] = rawPosts.map((doc: any) => ({
+    ...doc,
+    _id: doc._id.toString(),
+    category: doc.category?.toString(),
+    publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
+  }));
+
   return (
     <div className="space-y-20 py-8">
       {/* Clean Hero Awareness Banner */}
@@ -35,10 +52,10 @@ export default function HomePage() {
             Know Your Target Numbers
           </a>
           <a
-            href="#awareness"
+            href="#articles"
             className="bg-teal-50 hover:bg-teal-100 text-teal-900 px-8 py-3.5 rounded-xl font-bold border border-teal-200 transition-all text-base"
           >
-            Why Status Quo Kills &rarr;
+            Explore Articles &rarr;
           </a>
         </div>
       </section>
@@ -55,7 +72,6 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Metric 1: HbA1c */}
           <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4 hover:border-teal-400 transition-all">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-teal-700 uppercase tracking-wider">3-Month Average</span>
@@ -66,11 +82,10 @@ export default function HomePage() {
               <h3 className="font-bold text-slate-800 text-lg">HbA1c Blood Level</h3>
             </div>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Measures your average blood glucose over the past 90 days. A level above 6.5% indicates diabetes, while 5.7%–6.4% flags reversible prediabetes.
+              Measures your average blood glucose over the past 90 days. A level above 6.5% indicates diabetes.
             </p>
           </div>
 
-          {/* Metric 2: Fasting Blood Sugar */}
           <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4 hover:border-teal-400 transition-all">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-teal-700 uppercase tracking-wider">Fasting Baseline</span>
@@ -85,7 +100,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Metric 3: Post-Meal Peak */}
           <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4 hover:border-teal-400 transition-all">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-teal-700 uppercase tracking-wider">2 Hours Post-Meal</span>
@@ -96,10 +110,78 @@ export default function HomePage() {
               <h3 className="font-bold text-slate-800 text-lg">Postprandial Glucose</h3>
             </div>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Measures blood sugar 2 hours after meals. Preventing post-meal glucose surges protects small blood vessels from oxidative stress.
+              Measures blood sugar 2 hours after meals to protect small blood vessels from oxidative stress.
             </p>
           </div>
         </div>
+      </section>
+
+      {/* Imported Post Articles Grid Section */}
+      <section id="articles" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Educational Articles</span>
+            <h2 className="text-3xl font-extrabold text-slate-900">
+              Latest Health Guides & Research
+            </h2>
+          </div>
+          <Link
+            href="/blog"
+            className="text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors"
+          >
+            View All Articles ({articles.length}) &rarr;
+          </Link>
+        </div>
+
+        {articles.length === 0 ? (
+          <div className="bg-white p-8 rounded-2xl text-center border border-slate-200">
+            <p className="text-slate-500">No articles imported yet. Run `npm run migrate:wp` to import your WordPress posts.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {articles.map((article) => (
+              <article
+                key={article._id}
+                className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-teal-300 transition-all"
+              >
+                <div className="p-6 space-y-4">
+                  {article.featuredImage && (
+                    <div className="aspect-video w-full overflow-hidden rounded-xl bg-slate-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={article.featuredImage}
+                        alt={article.title}
+                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <span className="text-xs font-bold text-teal-700 uppercase tracking-wider">
+                      {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Article'}
+                    </span>
+                    <h3 className="text-lg font-bold text-slate-900 line-clamp-2">
+                      <Link href={`/blog/${article.slug}`} className="hover:text-teal-600">
+                        {article.title.replace(/&nbsp;/g, ' ')}
+                      </Link>
+                    </h3>
+                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                      {article.excerpt}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-6 pt-0">
+                  <Link
+                    href={`/blog/${article.slug}`}
+                    className="text-xs font-bold text-teal-700 hover:text-teal-900"
+                  >
+                    Read Full Article &rarr;
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Awareness Pillars Grid */}
@@ -135,52 +217,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Subtle Symptoms & Warning Signs */}
-      <section id="education" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <h2 className="text-3xl font-extrabold text-slate-900">
-            Subtle Red Flags You Should Never Ignore
-          </h2>
-          <p className="text-slate-600 text-base">
-            Early high blood sugar leaves quiet signals. Pay close attention if you notice any of these signs.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
-            <div className="text-3xl">🚰</div>
-            <h3 className="font-bold text-slate-900 text-base">Unquenchable Thirst</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Excess sugar pulls fluids from tissues, causing persistent thirst despite drinking water.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
-            <div className="text-3xl">💤</div>
-            <h3 className="font-bold text-slate-900 text-base">Unexplained Fatigue</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              When cells resist insulin, glucose cannot enter cells, leaving you drained of energy.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
-            <div className="text-3xl">👁️</div>
-            <h3 className="font-bold text-slate-900 text-base">Intermittent Blurry Vision</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Glucose fluctuations swell the eye lens, causing temporary focus and vision shifts.
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-3">
-            <div className="text-3xl">🩹</div>
-            <h3 className="font-bold text-slate-900 text-base">Slow Healing Cuts</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              High blood sugar impairs micro-circulation and weakens white blood cell immunity.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Campaign Call-to-Action Lead Capture */}
       <section id="campaign" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-xl border border-slate-800">
@@ -193,22 +229,6 @@ export default function HomePage() {
           <p className="text-slate-300 max-w-2xl mx-auto text-base leading-relaxed">
             Join our Diabetes Awareness initiative to receive free educational cheat sheets, HbA1c log templates, and dietary insights.
           </p>
-
-          <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-3 pt-2" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="email"
-              placeholder="Enter your email address"
-              required
-              className="px-4 py-3 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 flex-grow"
-            />
-            <button
-              type="submit"
-              className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all shadow-md"
-            >
-              Get Free Guides
-            </button>
-          </form>
-          <p className="text-xs text-slate-400">100% free educational resources. Unsubscribe anytime.</p>
         </div>
       </section>
     </div>

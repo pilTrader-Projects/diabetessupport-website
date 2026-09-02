@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { dbConnect } from '../src/lib/dbConnect';
 import { PostModel } from '../src/models/Post';
 import { CategoryModel } from '../src/models/Category';
@@ -17,18 +19,58 @@ export interface MigrationSummary {
 }
 
 /**
+ * Downloads a remote image asset from WordPress and saves it to local public/uploads/wp-media/ directory.
+ *
+ * @usecase Decouples image assets from WordPress CDN so images persist after WordPress site shutdown.
+ * @param {string} imageUrl Remote WordPress image URL.
+ * @dependencies fs, path modules, fetch API.
+ * @returns {Promise<string>} Local public relative path (/uploads/wp-media/filename.jpg).
+ */
+async function downloadMediaFile(imageUrl: string): Promise<string> {
+  if (!imageUrl || !imageUrl.startsWith('http')) return imageUrl;
+
+  try {
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'wp-media');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const urlPath = new URL(imageUrl).pathname;
+    const baseName = path.basename(urlPath) || `img_${Date.now()}.jpg`;
+    const cleanName = baseName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const localFilePath = path.join(uploadDir, cleanName);
+
+    if (fs.existsSync(localFilePath)) {
+      return `/uploads/wp-media/${cleanName}`;
+    }
+
+    const res = await fetch(imageUrl);
+    if (!res.ok) return imageUrl;
+
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    fs.writeFileSync(localFilePath, buffer);
+
+    console.log(`🖼️ Downloaded media asset: ${cleanName}`);
+    return `/uploads/wp-media/${cleanName}`;
+  } catch (err) {
+    console.warn(`⚠️ Failed to download media ${imageUrl}, keeping remote URL as fallback.`);
+    return imageUrl;
+  }
+}
+
+/**
  * Fetches legacy posts from WordPress REST API and imports them into MongoDB.
  *
- * @usecase Migrates blog content from diabetescareph.wordpress.com to the local/production MongoDB database.
+ * @usecase Migrates blog content & media from diabetescareph.wordpress.com to local MongoDB database.
  * @param {string} apiUrl WordPress REST API v2 base posts endpoint URL.
- * @dependencies dbConnect, PostModel, CategoryModel, transformWordPressPost.
+ * @dependencies dbConnect, PostModel, CategoryModel, transformWordPressPost, downloadMediaFile.
  * @returns {Promise<MigrationSummary>} Resolved execution summary containing import counters and errors.
- * @throws {Error} Throws connection or fetch error if WordPress REST API is unreachable.
  */
 export async function executeWordPressMigration(
   apiUrl: string = SITE_CONFIG.wordpressApiUrl
 ): Promise<MigrationSummary> {
-  console.log(`🚀 Starting WordPress Migration from: ${apiUrl}`);
+  console.log(`🚀 Starting Self-Hosted WordPress Migration from: ${apiUrl}`);
   await dbConnect();
 
   const summary: MigrationSummary = {
@@ -66,19 +108,40 @@ export async function executeWordPressMigration(
 
     for (const rawPost of rawPosts) {
       try {
-        const transformedData = transformWordPressPost(rawPost, ['General Health'], categoryIdMap);
+        const mediaMap = new Map<string, string>();
+        
+        // Download featured image locally
+        const rawFeatured = rawPost.jetpack_featured_media_url || rawPost.featured_media_url;
+        if (rawFeatured) {
+          const localFeaturedPath = await downloadMediaFile(rawFeatured);
+          mediaMap.set(rawFeatured, localFeaturedPath);
+        }
 
-        // Idempotent upsert by slug
+        // Scan and download inline <img> tags in post HTML content
+        const imgRegex = /<img[^>]+src=["']([^"']+)["']/g;
+        let match;
+        while ((match = imgRegex.exec(rawPost.content?.rendered || '')) !== null) {
+          const remoteImgUrl = match[1];
+          if (remoteImgUrl && !mediaMap.has(remoteImgUrl)) {
+            const localImgPath = await downloadMediaFile(remoteImgUrl);
+            mediaMap.set(remoteImgUrl, localImgPath);
+          }
+        }
+
+        const transformedData = transformWordPressPost(rawPost, ['General Health'], categoryIdMap, mediaMap);
+
+        // Update existing or create post
         const existingPost = await PostModel.findOne({ slug: transformedData.slug });
         if (existingPost) {
+          await PostModel.updateOne({ _id: existingPost._id }, { $set: transformedData });
           summary.skippedPosts++;
-          console.log(`⏩ Skipped existing post: "${transformedData.title}" (${transformedData.slug})`);
+          console.log(`🔄 Updated existing post with local media assets: "${transformedData.title}"`);
           continue;
         }
 
         await PostModel.create(transformedData);
         summary.importedPosts++;
-        console.log(`✅ Successfully imported post: "${transformedData.title}"`);
+        console.log(`✅ Successfully imported post with local media assets: "${transformedData.title}"`);
       } catch (postErr: any) {
         const errMsg = `Failed to import post ID ${rawPost.id}: ${postErr.message}`;
         summary.errors.push(errMsg);
@@ -86,8 +149,8 @@ export async function executeWordPressMigration(
       }
     }
 
-    console.log('\n✨ WordPress Migration Completed!');
-    console.log(`📊 Summary: ${summary.importedPosts} imported, ${summary.skippedPosts} skipped, ${summary.errors.length} errors.`);
+    console.log('\n✨ Self-Hosted WordPress Migration Completed!');
+    console.log(`📊 Summary: ${summary.importedPosts} created, ${summary.skippedPosts} updated with local media, ${summary.errors.length} errors.`);
     return summary;
   } catch (err: any) {
     console.error(`❌ Migration process error: ${err.message}`);

@@ -38,32 +38,57 @@ export function extractPlainTextExcerpt(html: string): string {
 }
 
 /**
+ * Replaces remote WordPress image URLs inside HTML content with local relative asset paths.
+ *
+ * @usecase Decouples post content from WordPress CDN so images persist after WordPress shutdown.
+ * @param {string} content Raw HTML content from WordPress REST API.
+ * @param {Map<string, string>} mediaMap Lookup mapping remote WordPress image URL -> local relative path (/uploads/wp-media/...).
+ * @dependencies Map object lookup.
+ * @returns {string} Rewritten HTML content with local relative image URLs.
+ */
+export function rewriteInlineImageUrls(content: string, mediaMap: Map<string, string>): string {
+  if (!content || mediaMap.size === 0) return content;
+  let rewritten = content;
+  mediaMap.forEach((localUrl, remoteUrl) => {
+    rewritten = rewritten.split(remoteUrl).join(localUrl);
+  });
+  return rewritten;
+}
+
+/**
  * Transforms a raw WordPress API post object into our domain IPost schema format.
  *
  * @usecase Prepares legacy WordPress content for MongoDB database insertion.
  * @param {WordPressApiPostPayload} wpPost Raw post object fetched from WordPress REST API.
  * @param {string[]} categoryNames Array of human-readable category names associated with the post.
  * @param {Map<string, string>} categoryIdMap Mapping lookup table from category name to MongoDB ObjectId.
- * @dependencies extractPlainTextExcerpt helper function, IPost interface.
+ * @param {Map<string, string>} mediaMap Optional media URL rewrite mapping.
+ * @dependencies extractPlainTextExcerpt, rewriteInlineImageUrls helper functions, IPost interface.
  * @returns {Partial<IPost>} Standardized domain post payload ready for Mongoose model creation.
  */
 export function transformWordPressPost(
   wpPost: WordPressApiPostPayload,
   categoryNames: string[] = [],
-  categoryIdMap: Map<string, string> = new Map()
+  categoryIdMap: Map<string, string> = new Map(),
+  mediaMap: Map<string, string> = new Map()
 ): Partial<IPost> {
   const title = wpPost.title?.rendered ? wpPost.title.rendered.trim() : 'Untitled Post';
   const slug = wpPost.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  const content = wpPost.content?.rendered || '';
+  let content = wpPost.content?.rendered || '';
   
+  if (mediaMap.size > 0) {
+    content = rewriteInlineImageUrls(content, mediaMap);
+  }
+
   let excerpt = extractPlainTextExcerpt(wpPost.excerpt?.rendered || '');
   if (!excerpt && content) {
     excerpt = extractPlainTextExcerpt(content).slice(0, 160).trim();
   }
 
+  const rawFeatured = wpPost.jetpack_featured_media_url || wpPost.featured_media_url;
   const featuredImage =
-    wpPost.jetpack_featured_media_url ||
-    wpPost.featured_media_url ||
+    (rawFeatured && mediaMap.get(rawFeatured)) ||
+    rawFeatured ||
     'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80';
 
   const tags = (wpPost.tags || []).map((t) => String(t).trim().toLowerCase());
