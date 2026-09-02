@@ -10,6 +10,11 @@ async function runSanityCheck() {
         '.agent/personas.md',
         'ROADMAP.md',
         'src/config/constants.ts',
+        'src/lib/dbConnect.ts',
+        'src/types/blog.ts',
+        'src/models/Post.ts',
+        'src/models/Category.ts',
+        'src/models/ApiKey.ts',
         'src/app/layout.tsx',
         'src/app/page.tsx',
         'src/app/globals.css'
