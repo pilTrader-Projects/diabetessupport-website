@@ -1,3 +1,7 @@
+/**
+ * Configuration interface for promotional PWA web applications.
+ * @usecase Strongly types PWA card and banner components.
+ */
 export interface PwaAppConfig {
   id: string;
   name: string;
@@ -7,6 +11,12 @@ export interface PwaAppConfig {
   icon: string;
 }
 
+/**
+ * Site-wide configuration constants.
+ *
+ * @usecase Supplies meta titles, descriptions, WordPress source API, and social links to Next.js layout and head metadata.
+ * @dependencies None. Centralized single source of truth for site configuration.
+ */
 export const SITE_CONFIG = {
   title: 'DiabetesCare PH - Health, Monitoring & Companion Platform',
   description:
@@ -21,6 +31,12 @@ export const SITE_CONFIG = {
   },
 };
 
+/**
+ * Registry of target PWA apps promoted across the site.
+ *
+ * @usecase Drives home page tool showcase, floating banners, and landing page CTAs.
+ * @dependencies PwaAppConfig interface.
+ */
 export const PWA_APPS: PwaAppConfig[] = [
   {
     id: 'glucose-logger',
@@ -51,11 +67,23 @@ export const PWA_APPS: PwaAppConfig[] = [
   },
 ];
 
+/**
+ * Google AdSense publisher and activation settings.
+ *
+ * @usecase Controls ad unit rendering and fallback UI behavior across layout routes.
+ * @dependencies process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID, process.env.NEXT_PUBLIC_ENABLE_ADS.
+ */
 export const ADSENSE_CONFIG = {
   publisherId: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || 'ca-pub-0000000000000000',
   enabled: process.env.NEXT_PUBLIC_ENABLE_ADS !== 'false',
 };
 
+/**
+ * Kit (ConvertKit) marketing integration configuration.
+ *
+ * @usecase Configures lead capture forms and newsletter subscription embeds.
+ * @dependencies process.env.NEXT_PUBLIC_KIT_FORM_ID, process.env.NEXT_PUBLIC_KIT_SCRIPT_URL.
+ */
 export const KIT_MARKETING_CONFIG = {
   formId: process.env.NEXT_PUBLIC_KIT_FORM_ID || '',
   scriptUrl: process.env.NEXT_PUBLIC_KIT_SCRIPT_URL || '',

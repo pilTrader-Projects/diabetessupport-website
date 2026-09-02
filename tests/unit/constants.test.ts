@@ -1,3 +1,9 @@
+/**
+ * Unit Test Suite for Site Constants & PWA App Registry.
+ *
+ * @usecase Verifies that SITE_CONFIG and PWA_APPS comply with SOLID clean architecture rules (no empty or invalid values).
+ * @dependencies SITE_CONFIG, PWA_APPS from src/config/constants.ts.
+ */
 import { SITE_CONFIG, PWA_APPS } from '../../src/config/constants';
 
 describe('SITE_CONFIG Constant Validation (SOLID / Clean Code)', () => {

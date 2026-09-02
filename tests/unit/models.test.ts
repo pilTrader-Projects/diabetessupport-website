@@ -1,3 +1,9 @@
+/**
+ * TDD Unit Test Suite for MongoDB Mongoose Models & Validation.
+ *
+ * @usecase Validates schema structure, required fields, and default field initializations for Post, Category, and ApiKey Mongoose models.
+ * @dependencies PostModel, CategoryModel, ApiKeyModel from src/models/.
+ */
 import { PostModel } from '../../src/models/Post';
 import { CategoryModel } from '../../src/models/Category';
 import { ApiKeyModel } from '../../src/models/ApiKey';

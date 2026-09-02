@@ -1,5 +1,13 @@
 import { SITE_CONFIG, PWA_APPS } from '@/config/constants';
 
+/**
+ * Main Home Page Component.
+ *
+ * @usecase Displays Hero section, value proposition, and PWA companion application showcase grid.
+ * @param None Page component receives no props.
+ * @dependencies SITE_CONFIG, PWA_APPS constants.
+ * @returns {JSX.Element} Rendered homepage layout.
+ */
 export default function HomePage() {
   return (
     <div className="space-y-12">

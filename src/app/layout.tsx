@@ -2,11 +2,24 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 
+/**
+ * Next.js Metadata configuration object.
+ * @usecase Configures site title and meta description for SEO indexers.
+ * @dependencies SITE_CONFIG constant object.
+ */
 export const metadata: Metadata = {
   title: SITE_CONFIG.title,
   description: SITE_CONFIG.description,
 };
 
+/**
+ * Root Layout Component for Next.js App Router.
+ *
+ * @usecase Wraps all page components with consistent HTML head metadata, header navigation, and footer.
+ * @param {Readonly<{ children: React.ReactNode }>} props Component props containing child pages.
+ * @dependencies SITE_CONFIG, globals.css.
+ * @returns {JSX.Element} Rendered root HTML document structure.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
