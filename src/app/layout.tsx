@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
+import { ExtensionGuard } from '@/components/ExtensionGuard';
 
 /**
  * Next.js Metadata configuration object.
@@ -15,9 +16,9 @@ export const metadata: Metadata = {
 /**
  * Root Layout Component for Next.js App Router.
  *
- * @usecase Wraps all page components with consistent HTML head metadata, header navigation, and footer.
+ * @usecase Wraps all page components with consistent HTML head metadata, header navigation, ExtensionGuard, and footer.
  * @param {Readonly<{ children: React.ReactNode }>} props Component props containing child pages.
- * @dependencies SITE_CONFIG, globals.css.
+ * @dependencies SITE_CONFIG, ExtensionGuard, globals.css.
  * @returns {JSX.Element} Rendered root HTML document structure.
  */
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+        <ExtensionGuard />
         <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-md border-b border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="/" className="flex items-center space-x-2 font-bold text-xl text-teal-400">

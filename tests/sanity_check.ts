@@ -29,6 +29,7 @@ async function runSanityCheck() {
         'src/services/wordpressMigration.ts',
         'scripts/migrate-wordpress.ts',
         'src/app/api/v1/migration/route.ts',
+        'src/components/ExtensionGuard.tsx',
         'src/app/layout.tsx',
         'src/app/page.tsx',
         'src/app/globals.css'
