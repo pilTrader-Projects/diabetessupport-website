@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';
+import Link from 'next/link';
 
 /**
  * Next.js Metadata configuration object.
@@ -27,20 +28,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col">
         <ExtensionGuard />
         <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-md border-b border-slate-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <a href="/" className="flex items-center space-x-2 font-bold text-xl text-teal-400">
+            <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-teal-400">
               <span className="text-2xl">🩸</span>
               <span className="tracking-tight">DiabetesCare PH</span>
-            </a>
+            </Link>
             <nav className="flex items-center space-x-6 text-sm font-medium">
-              <a href="#awareness" className="hover:text-teal-300 transition-colors">The Silent Killer</a>
-              <a href="#progression" className="hover:text-teal-300 transition-colors">Progression</a>
-              <a href="#education" className="hover:text-teal-300 transition-colors">Educational Articles</a>
-              <a href="#campaign" className="hover:text-teal-300 transition-colors">Take Action</a>
+              <Link href="/#awareness" className="hover:text-teal-300 transition-colors">The Silent Killer</Link>
+              <Link href="/#progression" className="hover:text-teal-300 transition-colors">Progression & Metrics</Link>
+              <Link href="/blog" className="hover:text-teal-300 transition-colors">Educational Articles</Link>
+              <Link href="/#campaign" className="hover:text-teal-300 transition-colors">Take Action</Link>
             </nav>
           </div>
         </header>
