@@ -18,6 +18,15 @@ if (!cached) {
   cached = global.mongooseCache = { conn: null, promise: null };
 }
 
+/**
+ * Establishes or retrieves a cached Mongoose database connection for serverless runtime efficiency.
+ *
+ * @usecase Prevents multiple database connection instantiation during Next.js App Router API route executions.
+ * @param None Uses process.env.MONGODB_URI or defaults to local MongoDB instance.
+ * @dependencies Mongoose ODM library, process.env.MONGODB_URI.
+ * @returns {Promise<typeof mongoose>} Resolved active Mongoose connection object.
+ * @throws {Error} Throws connection failure error if the database connection fails or times out.
+ */
 export async function dbConnect(): Promise<typeof mongoose> {
   if (cached.conn) {
     return cached.conn;

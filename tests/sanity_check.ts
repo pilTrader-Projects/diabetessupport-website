@@ -1,6 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Executes system environment and critical asset sanity checks before code delivery.
+ *
+ * @usecase Verifies all mandatory documentation, standards, configuration files, and core application files exist.
+ * @param None Reads process.cwd() file system tree.
+ * @dependencies fs, path modules.
+ * @returns {Promise<void>} Resolves when all required file paths exist.
+ * @throws {Error} Throws error with file path details if any required file is missing.
+ */
 async function runSanityCheck() {
     console.log("🚀 Starting Environment Sanity Check...");
 
