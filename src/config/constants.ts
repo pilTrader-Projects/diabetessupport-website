@@ -1,61 +1,89 @@
-export interface PwaAppConfig {
+/**
+ * Interface definition for Diabetes Awareness & Educational Pillars.
+ * @usecase Strongly types awareness campaign cards and educational sections.
+ */
+export interface AwarenessPillar {
   id: string;
-  name: string;
-  url: string;
-  tagline: string;
+  title: string;
+  subtitle: string;
   description: string;
   icon: string;
+  stat: string;
 }
 
+/**
+ * Site-wide configuration constants.
+ *
+ * @usecase Supplies meta titles, descriptions, WordPress source API, and social links to Next.js layout and head metadata.
+ * @dependencies None. Centralized single source of truth for site configuration.
+ */
 export const SITE_CONFIG = {
-  title: 'DiabetesCare PH - Health, Monitoring & Companion Platform',
+  title: 'DiabetesCare PH - Educational & Awareness Campaign for Diabetes Care',
   description:
-    'Comprehensive diabetes support, glucose reading tracker, meal logging, AI companion, and health insights for the Philippines community.',
+    'Unmasking diabetes as the silent killer. Learn the warning signs, understand insulin resistance, and take proactive control before complications arise.',
   domain: 'diabetescareph.com',
   wordpressApiUrl:
     'https://public-api.wordpress.com/wp/v2/sites/diabetescareph.wordpress.com',
-  author: 'DiabetesCare PH Team',
+  author: 'DiabetesCare PH Awareness Team',
   social: {
     facebook: 'https://facebook.com/diabetescareph',
     twitter: 'https://twitter.com/diabetescareph',
   },
 };
 
-export const PWA_APPS: PwaAppConfig[] = [
+/**
+ * Educational awareness pillars exposing the sneaky nature of diabetes and the risk of status-quo neglect.
+ *
+ * @usecase Drives the educational awareness grid on the homepage.
+ * @dependencies AwarenessPillar interface.
+ */
+export const AWARENESS_PILLARS: AwarenessPillar[] = [
   {
-    id: 'glucose-logger',
-    name: 'Blood Glucose Reading Tracker',
-    url: 'https://base44.app/glucose-tracker',
-    tagline: 'Track your daily fasting and post-meal blood sugar levels effortlessly.',
+    id: 'silent-killer',
+    title: 'The Silent Killer Threat',
+    subtitle: 'Thrives Without Symptoms',
     description:
-      'Log glucose readings, generate trends, and share report summaries directly with your physician.',
-    icon: '🩸',
+      'High blood sugar quietly damages blood vessels and organs for years before symptoms become noticeable. Up to 1 in 2 adults living with diabetes remain undiagnosed.',
+    icon: '🥷',
+    stat: '46% Undiagnosed',
   },
   {
-    id: 'meal-logger',
-    name: 'Diabetic Meal & Carb Logger',
-    url: 'https://base44.app/meal-logger',
-    tagline: 'Log meals and estimate glycemic load in seconds.',
+    id: 'status-quo-trap',
+    title: 'The Danger of Status Quo',
+    subtitle: 'Complacency Feeds Progression',
     description:
-      'Calculate carbohydrate counts, track dietary fiber, and discover diabetes-friendly recipes.',
-    icon: '🥗',
+      'Relying on "feeling healthy" is dangerous. Normal feelings often mask progressive insulin resistance until vascular, kidney, or nerve damage has already begun.',
+    icon: '⚠️',
+    stat: '5-10 Years Hidden',
   },
   {
-    id: 'ai-health-companion',
-    name: 'AI Health Companion',
-    url: 'https://base44.app/ai-companion',
-    tagline: '24/7 AI-powered assistance for your diabetes management questions.',
+    id: 'early-detection',
+    title: 'Early Detection Saves Lives',
+    subtitle: 'HbA1c & Fasting Glucose',
     description:
-      'Get personalized guidance on meal plans, lifestyle habits, and glucose trend analysis.',
-    icon: '🤖',
+      'Simple, routine blood tests reveal prediabetes early when it is completely reversible. Catching elevated glucose early prevents lifelong organ damage.',
+    icon: '🔬',
+    stat: '100% Reversible Early',
   },
 ];
 
+/**
+ * Google AdSense publisher and activation settings.
+ *
+ * @usecase Controls ad unit rendering and fallback UI behavior across layout routes.
+ * @dependencies process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID, process.env.NEXT_PUBLIC_ENABLE_ADS.
+ */
 export const ADSENSE_CONFIG = {
   publisherId: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || 'ca-pub-0000000000000000',
   enabled: process.env.NEXT_PUBLIC_ENABLE_ADS !== 'false',
 };
 
+/**
+ * Kit (ConvertKit) marketing integration configuration.
+ *
+ * @usecase Configures lead capture forms and newsletter subscription embeds.
+ * @dependencies process.env.NEXT_PUBLIC_KIT_FORM_ID, process.env.NEXT_PUBLIC_KIT_SCRIPT_URL.
+ */
 export const KIT_MARKETING_CONFIG = {
   formId: process.env.NEXT_PUBLIC_KIT_FORM_ID || '',
   scriptUrl: process.env.NEXT_PUBLIC_KIT_SCRIPT_URL || '',

@@ -1,6 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Executes system environment and critical asset sanity checks before code delivery.
+ *
+ * @usecase Verifies all mandatory documentation, standards, configuration files, environment templates, docker compose file, and core application files exist.
+ * @param None Reads process.cwd() file system tree.
+ * @dependencies fs, path modules.
+ * @returns {Promise<void>} Resolves when all required file paths exist.
+ * @throws {Error} Throws error with file path details if any required file is missing.
+ */
 async function runSanityCheck() {
     console.log("🚀 Starting Environment Sanity Check...");
 
@@ -9,7 +18,14 @@ async function runSanityCheck() {
         'docs/guardrails.md',
         '.agent/personas.md',
         'ROADMAP.md',
+        '.env.example',
+        'docker-compose.yml',
         'src/config/constants.ts',
+        'src/lib/dbConnect.ts',
+        'src/types/blog.ts',
+        'src/models/Post.ts',
+        'src/models/Category.ts',
+        'src/models/ApiKey.ts',
         'src/app/layout.tsx',
         'src/app/page.tsx',
         'src/app/globals.css'

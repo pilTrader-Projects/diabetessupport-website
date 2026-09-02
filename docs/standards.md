@@ -21,12 +21,35 @@ Unit tests must cover:
 - **I**nterface Segregation: Focused, thin interfaces.
 - **D**ependency Inversion: Depend on abstractions, not concretions.
 
+### 📏 Refactoring Thresholds
+- **200-Line Limit Rule**: If any single code file exceeds **200 lines**, it serves as an immediate trigger/signal to refactor. Functions, helpers, components, or sub-modules MUST be extracted into separate, dedicated files following the Single Responsibility Principle.
+
+
 ## Naming Conventions
 - Variables/Functions: `camelCase`
 - Classes/Interfaces: `PascalCase`
 - Constants: `SCREAMING_SNAKE_CASE`
 - Files: `kebab-case.ts`
 
+## Mandatory Function Inline Documentation
+Every function, method, or helper MUST include JSDoc inline documentation covering:
+1. **Use Case**: Detailed description of what the function does and why it exists.
+2. **Arguments**: `@param` specifications including type, description, and requirements.
+3. **Dependencies**: External services, databases, models, or utility modules relied upon.
+4. **Returns & Exceptions**: `@returns` type/description and `@throws` list of errors.
+
+```typescript
+/**
+ * Establishes or reuses a cached MongoDB connection for serverless execution.
+ * 
+ * @usecase Maintains connection pool efficiency in Next.js App Router API routes.
+ * @dependencies mongoose, process.env.MONGODB_URI
+ * @returns {Promise<typeof mongoose>} Active Mongoose connection instance.
+ * @throws {Error} Throws connection error if MONGODB_URI is invalid or unreachable.
+ */
+```
+
 ## Documentation
-- Use JSDoc for all public methods and complex logic.
-- Maintain an up-to-date `README.md` and `docs/`.
+- Use JSDoc for all functions, methods, public interfaces, and complex logic.
+- Maintain an up-to-date `README.md`, `ROADMAP.md`, and `docs/`.
+
