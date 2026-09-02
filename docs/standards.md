@@ -21,6 +21,10 @@ Unit tests must cover:
 - **I**nterface Segregation: Focused, thin interfaces.
 - **D**ependency Inversion: Depend on abstractions, not concretions.
 
+### 📏 Refactoring Thresholds
+- **200-Line Limit Rule**: If any single code file exceeds **200 lines**, it serves as an immediate trigger/signal to refactor. Functions, helpers, components, or sub-modules MUST be extracted into separate, dedicated files following the Single Responsibility Principle.
+
+
 ## Naming Conventions
 - Variables/Functions: `camelCase`
 - Classes/Interfaces: `PascalCase`
