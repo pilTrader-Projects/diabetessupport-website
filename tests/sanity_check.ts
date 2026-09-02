@@ -4,7 +4,7 @@ const path = require('path');
 /**
  * Executes system environment and critical asset sanity checks before code delivery.
  *
- * @usecase Verifies all mandatory documentation, standards, configuration files, environment templates, and core application files exist.
+ * @usecase Verifies all mandatory documentation, standards, configuration files, environment templates, docker compose file, and core application files exist.
  * @param None Reads process.cwd() file system tree.
  * @dependencies fs, path modules.
  * @returns {Promise<void>} Resolves when all required file paths exist.
@@ -19,6 +19,7 @@ async function runSanityCheck() {
         '.agent/personas.md',
         'ROADMAP.md',
         '.env.example',
+        'docker-compose.yml',
         'src/config/constants.ts',
         'src/lib/dbConnect.ts',
         'src/types/blog.ts',
