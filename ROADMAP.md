@@ -9,7 +9,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ### Milestone 1: Project Setup & Architecture
 - [x] **[Issue #1](https://github.com/pilTrader-Projects/diabetessupport-website/issues/1)** `[COMPLETED]`: Initialize Next.js (App Router), TypeScript, and Design System foundation.
-- [ ] **[Issue #2](https://github.com/pilTrader-Projects/diabetessupport-website/issues/2)** `[IN PROGRESS]`: Implement MongoDB database client & post schema models.
+- [x] **[Issue #2](https://github.com/pilTrader-Projects/diabetessupport-website/issues/2)** `[COMPLETED]`: Implement MongoDB database client & post schema models.
 
 ### Milestone 2: WordPress Legacy Data Migration
 - [ ] **[Issue #3](https://github.com/pilTrader-Projects/diabetessupport-website/issues/3)**: Build migration tool to import posts from `diabetescareph.wordpress.com`.
