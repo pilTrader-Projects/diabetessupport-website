@@ -21,17 +21,17 @@ export default function LeadMagnetCard({
   subtitle = 'Take proactive control over elevated glucose levels with our comprehensive, easy-to-use health tracking dashboard.',
 }: LeadMagnetCardProps) {
   return (
-    <div className="my-10 bg-slate-900 text-white rounded-3xl overflow-hidden shadow-2xl border border-teal-800 grid grid-cols-1 lg:grid-cols-12">
+    <div className="my-10 bg-slate-900 text-white rounded-3xl overflow-hidden shadow-2xl border border-slate-800 grid grid-cols-1 lg:grid-cols-12">
       {/* Left Feature Bullet Area */}
-      <div className="lg:col-span-6 p-8 sm:p-10 bg-gradient-to-br from-teal-950 to-slate-950 flex flex-col justify-between space-y-6 border-b lg:border-b-0 lg:border-r border-teal-900/60">
+      <div className="lg:col-span-6 p-8 sm:p-10 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 flex flex-col justify-between space-y-6 border-b lg:border-b-0 lg:border-r border-slate-800">
         <div className="space-y-4">
-          <span className="inline-block bg-teal-500/20 text-teal-300 text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border border-teal-500/30">
+          <span className="inline-block bg-teal-500/20 text-teal-300 text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-teal-500/30 shadow-sm">
             🚀 INSTANT FREE APP ACCESS
           </span>
           <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
             {title}
           </h3>
-          <p className="text-sm text-teal-100/80 leading-relaxed">
+          <p className="text-sm text-slate-300 leading-relaxed">
             {subtitle}
           </p>
 
@@ -51,22 +51,22 @@ export default function LeadMagnetCard({
           </ul>
         </div>
 
-        <div className="pt-4 border-t border-teal-900/60 text-xs text-teal-300/70 flex items-center gap-2">
+        <div className="pt-4 border-t border-slate-800 text-xs text-slate-400 flex items-center gap-2">
           <span>⭐️⭐️⭐️⭐️⭐️</span>
           <span>Trusted by 15,000+ proactive users & carers</span>
         </div>
       </div>
 
       {/* Right Form / CTA Area */}
-      <div className="lg:col-span-6 p-6 sm:p-8 flex items-center">
-        <div className="w-full bg-teal-950/60 border border-teal-800/80 rounded-2xl p-6 sm:p-8 space-y-6 text-center">
+      <div className="lg:col-span-6 p-6 sm:p-8 flex items-center bg-slate-900/90">
+        <div className="w-full bg-slate-950/80 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 text-center shadow-inner">
           <div className="space-y-2">
-            <span className="inline-block bg-amber-500/20 text-amber-300 text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/30">
+            <span className="inline-block bg-amber-500/20 text-amber-300 text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-amber-500/30">
               🎁 FREE ACCESS FOR A LIMITED TIME
             </span>
             <h4 className="text-2xl font-extrabold text-white">Get Instant Access to Your Free Account</h4>
-            <p className="text-xs text-teal-100/80 max-w-md mx-auto leading-relaxed">
-              Click the button below to instantly launch the GlycoSense App and start rewriting your health story today.
+            <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+              Click the button below to get ACCESS to the GlycoSense App and start rewriting your health story.
             </p>
           </div>
 
@@ -78,7 +78,7 @@ export default function LeadMagnetCard({
             <span className="text-lg">➔</span>
           </Link>
 
-          <p className="text-[11px] text-teal-300/70 flex items-center justify-center gap-1">
+          <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
             <span>🔒</span>
             <span>100% Privacy Guaranteed. Safe, secure, and encrypted.</span>
           </p>
