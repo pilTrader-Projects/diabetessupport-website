@@ -339,11 +339,22 @@ export default function AdminPostsPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Prevention, Diet, General"
+                    list="category-suggestions"
+                    placeholder="e.g. Educational Guides, Prevention, General"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
                   />
+                  <datalist id="category-suggestions">
+                    <option value="General" />
+                    <option value="Educational Guides" />
+                    <option value="Insulin Resistance" />
+                    <option value="Prevention" />
+                    <option value="Diet & Nutrition" />
+                    {Array.from(new Set(posts.map((p) => p.category).filter(Boolean))).map((cat) => (
+                      <option key={cat} value={cat} />
+                    ))}
+                  </datalist>
                 </div>
 
                 <div>

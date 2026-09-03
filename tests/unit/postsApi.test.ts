@@ -26,6 +26,9 @@ jest.mock('../../src/models/ApiKey', () => ({
 jest.mock('../../src/models/Category', () => ({
   CategoryModel: {
     updateOne: jest.fn().mockResolvedValue({ acknowledged: true }),
+    find: jest.fn().mockReturnValue({
+      lean: jest.fn().mockResolvedValue([]),
+    }),
   },
 }));
 
@@ -247,5 +250,17 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
     expect(body.data.title).toBe('Updated Title');
+  });
+
+  it('should resolve Category ObjectId hex string to human-readable Category Name', async () => {
+    const { CategoryModel } = require('../../src/models/Category');
+    const { resolveCategoryName } = require('../../src/lib/categoryUtils');
+
+    const mockMap = new Map();
+    mockMap.set('6a982af85ccfcd99b26c3bb0', 'Educational Guides');
+
+    expect(resolveCategoryName('6a982af85ccfcd99b26c3bb0', mockMap)).toBe('Educational Guides');
+    expect(resolveCategoryName('6a982af85ccfcd99b26c3bb9', mockMap)).toBe('General');
+    expect(resolveCategoryName('Insulin Sensitivity', mockMap)).toBe('Insulin Sensitivity');
   });
 });

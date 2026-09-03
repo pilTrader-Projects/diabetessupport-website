@@ -5,6 +5,8 @@ import { CategoryModel } from '@/models/Category';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { slugify } from '@/lib/auth';
 
+import { getCategoryLookupMap, resolveCategoryName } from '@/lib/categoryUtils';
+
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
@@ -18,10 +20,12 @@ export async function GET(req: Request, { params }: RouteParams): Promise<NextRe
   const { id } = await params;
   await dbConnect();
   try {
-    const post = await PostModel.findById(id).lean();
+    const post: any = await PostModel.findById(id).lean();
     if (!post) {
       return NextResponse.json({ success: false, error: 'Post not found.' }, { status: 404 });
     }
+    const categoryMap = await getCategoryLookupMap();
+    post.category = resolveCategoryName(post.category, categoryMap);
     return NextResponse.json({ success: true, data: post });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });

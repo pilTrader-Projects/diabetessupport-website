@@ -4,6 +4,7 @@ import { PostModel } from '../../../../models/Post';
 import { CategoryModel } from '../../../../models/Category';
 import { validateApiKey, slugify } from '../../../../lib/auth';
 import { isAdminAuthenticated } from '../../../../lib/adminAuth';
+import { getCategoryLookupMap, resolveCategoryName } from '../../../../lib/categoryUtils';
 
 /**
  * HTTP POST API route handler for automated blog post publishing.
@@ -154,11 +155,17 @@ export async function GET(req: Request): Promise<NextResponse> {
 
     const category = searchParams.get('category');
     const search = searchParams.get('search');
+    const statusParam = searchParams.get('status');
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '10', 10)));
     const skip = (page - 1) * limit;
 
-    const query: any = { status: 'published' };
+    const query: any = {};
+    if (statusParam) {
+      query.status = statusParam;
+    } else {
+      query.status = { $in: ['published', 'draft'] };
+    }
 
     if (category && category !== 'All') {
       query.category = { $regex: new RegExp(`^${category}$`, 'i') };
@@ -169,14 +176,21 @@ export async function GET(req: Request): Promise<NextResponse> {
       query.$or = [{ title: searchRegex }, { content: searchRegex }, { tags: searchRegex }];
     }
 
+    const categoryMap = await getCategoryLookupMap();
+
     const [posts, total] = await Promise.all([
       PostModel.find(query).sort({ publishedAt: -1 }).skip(skip).limit(limit).lean(),
       PostModel.countDocuments(query),
     ]);
 
+    const formattedPosts = posts.map((post: any) => ({
+      ...post,
+      category: resolveCategoryName(post.category, categoryMap),
+    }));
+
     return NextResponse.json({
       success: true,
-      data: posts,
+      data: formattedPosts,
       pagination: {
         total,
         page,
