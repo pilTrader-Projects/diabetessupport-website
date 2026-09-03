@@ -221,8 +221,7 @@ export default async function HomePage() {
       {/* Campaign Call-to-Action Lead Capture */}
       <section id="campaign" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 scroll-mt-24">
         <LeadMagnetCard
-          title="Track Your Numbers. Prevent Complications. Download Free PDF Cheatsheet."
-          source="homepage_campaign"
+          title="GlycoSense — Free Preventive Glucose & Lifestyle Intelligence App"
         />
       </section>
     </div>
