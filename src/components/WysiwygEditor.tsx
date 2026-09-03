@@ -138,9 +138,9 @@ export default function WysiwygEditor({
   };
 
   return (
-    <div className="border border-slate-700 bg-slate-900 rounded-2xl overflow-hidden shadow-xl">
-      {/* Formatting Toolbar */}
-      <div className="bg-slate-950 p-2 sm:p-3 border-b border-slate-800 flex flex-wrap items-center gap-1.5 text-xs">
+    <div className="relative border border-slate-700 bg-slate-900 rounded-2xl overflow-hidden shadow-xl flex flex-col">
+      {/* Sticky Formatting Toolbar */}
+      <div className="sticky top-0 z-30 bg-slate-950 p-2 sm:p-3 border-b border-slate-800 flex flex-wrap items-center gap-1.5 text-xs shadow-md">
         {/* Bold */}
         <button
           type="button"
@@ -342,8 +342,10 @@ export default function WysiwygEditor({
         </button>
       </div>
 
-      {/* Editor Content Box */}
-      <EditorContent editor={editor} />
+      {/* Scrollable Editor Content Area */}
+      <div className="overflow-y-auto max-h-[480px] min-h-[300px] bg-slate-900 custom-scrollbar">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }

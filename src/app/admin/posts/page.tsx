@@ -295,9 +295,10 @@ export default function AdminPostsPage() {
 
       {/* Unified Article Creator & Editor Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-4xl w-full my-8 space-y-6 shadow-2xl">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-hidden">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center px-6 sm:px-8 py-5 border-b border-slate-800 shrink-0 bg-slate-900">
               <div>
                 <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">
                   {editingPostId ? `Editing MongoDB Document (${editingPostId})` : 'Article Creator'}
@@ -314,146 +315,149 @@ export default function AdminPostsPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-6">
-              {/* Title & Slug */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    Article Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Understanding HbA1c Target Levels"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                  />
+            <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden">
+              {/* Scrollable Form Body */}
+              <div className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1 custom-scrollbar">
+                {/* Title & Slug */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      Article Title *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Understanding HbA1c Target Levels"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      URL Slug (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. understanding-hba1c-target-levels"
+                      value={slug}
+                      onChange={(e) => setSlug(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
 
+                {/* Category, Status, Featured Image */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      Category
+                    </label>
+                    <input
+                      type="text"
+                      list="category-suggestions"
+                      placeholder="e.g. Educational Guides, Prevention, General"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    />
+                    <datalist id="category-suggestions">
+                      <option value="General" />
+                      <option value="Educational Guides" />
+                      <option value="Insulin Resistance" />
+                      <option value="Prevention" />
+                      <option value="Diet & Nutrition" />
+                      {Array.from(new Set(posts.map((p) => p.category).filter(Boolean))).map((cat) => (
+                        <option key={cat} value={cat} />
+                      ))}
+                    </datalist>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      Publishing Status
+                    </label>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value as any)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    >
+                      <option value="published">Published</option>
+                      <option value="draft">Draft</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      Featured Image URL
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="https://..."
+                      value={featuredImage}
+                      onChange={(e) => setFeaturedImage(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Excerpt & Tags */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      Short Excerpt / Summary
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Brief 1-2 sentence overview for search previews..."
+                      value={excerpt}
+                      onChange={(e) => setExcerpt(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                      Tags (Comma-Separated)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. insulin, glucose, diet, health"
+                      value={tagsInput}
+                      onChange={(e) => setTagsInput(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                {/* WYSIWYG Content Editor */}
                 <div>
                   <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    URL Slug (Optional)
+                    Article Body Content (WYSIWYG Editor)
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. understanding-hba1c-target-levels"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                  <WysiwygEditor
+                    key={editingPostId || 'new_post_editor'}
+                    content={content}
+                    onChange={(html) => setContent(html)}
+                    placeholder="Write or paste your article content here with formatting, headings, and images..."
                   />
                 </div>
               </div>
 
-              {/* Category, Status & Featured Image */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    list="category-suggestions"
-                    placeholder="e.g. Educational Guides, Prevention, General"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                  />
-                  <datalist id="category-suggestions">
-                    <option value="General" />
-                    <option value="Educational Guides" />
-                    <option value="Insulin Resistance" />
-                    <option value="Prevention" />
-                    <option value="Diet & Nutrition" />
-                    {Array.from(new Set(posts.map((p) => p.category).filter(Boolean))).map((cat) => (
-                      <option key={cat} value={cat} />
-                    ))}
-                  </datalist>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    Publishing Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                  >
-                    <option value="published">Published</option>
-                    <option value="draft">Draft</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    Featured Image URL
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="https://..."
-                    value={featuredImage}
-                    onChange={(e) => setFeaturedImage(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Excerpt & Tags */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    Short Excerpt / Summary
-                  </label>
-                  <textarea
-                    rows={2}
-                    placeholder="Brief 1-2 sentence overview for search previews..."
-                    value={excerpt}
-                    onChange={(e) => setExcerpt(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                    Tags (Comma-Separated)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. insulin, glucose, diet, health"
-                    value={tagsInput}
-                    onChange={(e) => setTagsInput(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* WYSIWYG Content Editor */}
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                  Article Body Content (WYSIWYG Editor)
-                </label>
-                <WysiwygEditor
-                  key={editingPostId || 'new_post_editor'}
-                  content={content}
-                  onChange={(html) => setContent(html)}
-                  placeholder="Write or paste your article content here with formatting, headings, and images..."
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+              {/* Sticky Action Footer */}
+              <div className="flex justify-end gap-3 px-6 sm:px-8 py-4 border-t border-slate-800 shrink-0 bg-slate-950">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white font-bold text-xs"
+                  className="px-5 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white font-bold text-xs cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold text-xs shadow-lg transition-all disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold text-xs shadow-lg transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {saving ? 'Saving...' : editingPostId ? 'Update Article' : 'Publish Article'}
                 </button>
