@@ -64,6 +64,32 @@ export default async function DynamicSlugPage({ params }: PageProps) {
   }
 
   const hasKitEmbed = Boolean(landingPage.kitScriptUrl || landingPage.kitFormId);
+  const targetUrl = landingPage.kitScriptUrl || '';
+  const isHostedLandingPage =
+    landingPage.embedType === 'iframe' ||
+    landingPage.embedType === 'hosted' ||
+    targetUrl.includes('.ck.page') ||
+    (targetUrl.includes('.kit.com') && !targetUrl.endsWith('.js'));
+
+  if (isHostedLandingPage) {
+    return (
+      <div className="min-h-screen bg-slate-950 py-6 px-2 sm:px-6 flex flex-col justify-between">
+        <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col justify-center">
+          <KitScriptEmbed
+            scriptUrl={landingPage.kitScriptUrl}
+            formId={landingPage.kitFormId}
+            title={landingPage.title}
+            embedType="hosted"
+          />
+        </div>
+        <div className="text-center py-4">
+          <Link href="/" className="text-xs font-bold text-slate-400 hover:text-teal-400 transition-colors">
+            &larr; Back to DiabetesCare PH Homepage
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
