@@ -66,10 +66,9 @@ export default async function DynamicSlugPage({ params }: PageProps) {
   const hasKitEmbed = Boolean(landingPage.kitScriptUrl || landingPage.kitFormId);
 
   return (
-    <div className="min-h-screen bg-slate-50/60 text-slate-900 py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
       {/* Page Title & Subtitle Header Banner */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-   
         <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
           {landingPage.title}
         </h1>
