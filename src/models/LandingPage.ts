@@ -6,6 +6,7 @@ export interface ILandingPageDocument extends Document {
   description?: string;
   kitFormId?: string;
   kitScriptUrl?: string;
+  rawScriptTag?: string;
   embedType: 'script' | 'iframe' | 'hosted';
   metaTitle?: string;
   metaDescription?: string;
@@ -38,6 +39,10 @@ const LandingPageSchema: Schema = new Schema<ILandingPageDocument>(
       trim: true,
     },
     kitScriptUrl: {
+      type: String,
+      trim: true,
+    },
+    rawScriptTag: {
       type: String,
       trim: true,
     },

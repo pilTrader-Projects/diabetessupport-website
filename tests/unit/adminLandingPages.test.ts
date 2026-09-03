@@ -5,6 +5,7 @@
  */
 import { POST as loginAdmin } from '../../src/app/api/v1/admin/login/route';
 import { GET as getLandingPages, POST as createLandingPage } from '../../src/app/api/v1/landing-pages/route';
+import { PUT as updateLandingPage } from '../../src/app/api/v1/landing-pages/[id]/route';
 import { LandingPageModel } from '../../src/models/LandingPage';
 
 jest.mock('../../src/lib/dbConnect', () => ({
@@ -179,6 +180,49 @@ describe('Owner Admin Auth & Dynamic Landing Page CMS API', () => {
       expect(res.status).toBe(200);
       expect(body.success).toBe(true);
       expect(body.data.length).toBe(2);
+    });
+  });
+
+  describe('PUT /api/v1/landing-pages/[id]', () => {
+    it('should update an existing landing page mapping with raw script tag support', async () => {
+      const validSecret = process.env.API_SECRET_KEY || 'dev_secret_key_123';
+      const updatedDoc = {
+        _id: 'lp_123',
+        slug: 'updated-slug',
+        title: 'Updated Title',
+        kitScriptUrl: 'https://glycosense.kit.com/new_uid/index.js',
+        kitFormId: 'new_uid',
+      };
+
+      (LandingPageModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(updatedDoc);
+
+      const req = new Request('http://localhost:3000/api/v1/landing-pages/lp_123', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${validSecret}`,
+        },
+        body: JSON.stringify({
+          title: 'Updated Title',
+          slug: 'updated-slug',
+          kitScriptUrl: `<script async data-uid="new_uid" src="https://glycosense.kit.com/new_uid/index.js"></script>`,
+        }),
+      });
+
+      const res = await updateLandingPage(req, { params: Promise.resolve({ id: 'lp_123' }) });
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(body.success).toBe(true);
+      expect(body.data.title).toBe('Updated Title');
+      expect(LandingPageModel.findByIdAndUpdate).toHaveBeenCalledWith(
+        'lp_123',
+        expect.objectContaining({
+          kitScriptUrl: 'https://glycosense.kit.com/new_uid/index.js',
+          kitFormId: 'new_uid',
+        }),
+        expect.anything()
+      );
     });
   });
 });

@@ -77,12 +77,13 @@ export async function POST(req: Request): Promise<NextResponse> {
       );
     }
 
-    let parsedUrl = kitScriptUrl ? kitScriptUrl.trim() : undefined;
+    const rawInput = kitScriptUrl ? kitScriptUrl.trim() : undefined;
+    let parsedUrl = rawInput;
     let parsedFormId = kitFormId ? kitFormId.trim() : undefined;
 
-    if (parsedUrl && parsedUrl.includes('<script')) {
-      const srcMatch = parsedUrl.match(/src=["']([^"']+)["']/i);
-      const uidMatch = parsedUrl.match(/data-uid=["']([^"']+)["']/i);
+    if (rawInput && rawInput.includes('<script')) {
+      const srcMatch = rawInput.match(/src=["']([^"']+)["']/i);
+      const uidMatch = rawInput.match(/data-uid=["']([^"']+)["']/i);
       if (srcMatch) parsedUrl = srcMatch[1];
       if (uidMatch && !parsedFormId) parsedFormId = uidMatch[1];
     }
@@ -91,6 +92,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       slug: cleanSlug,
       title: title.trim(),
       description: description ? description.trim() : undefined,
+      rawScriptTag: rawInput,
       kitScriptUrl: parsedUrl,
       kitFormId: parsedFormId,
       embedType: embedType || 'script',

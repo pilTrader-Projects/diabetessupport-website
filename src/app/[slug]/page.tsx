@@ -66,48 +66,47 @@ export default async function DynamicSlugPage({ params }: PageProps) {
   const hasKitEmbed = Boolean(landingPage.kitScriptUrl || landingPage.kitFormId);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
-      {/* Header */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
-        <span className="bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200 inline-block">
-          ✨ Special Resource & Lead Capture
-        </span>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+      {/* Page Title & Subtitle Header Banner */}
+      <div className="text-center space-y-4 max-w-3xl mx-auto">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
           {landingPage.title}
         </h1>
         {landingPage.description && (
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
             {landingPage.description}
           </p>
         )}
       </div>
 
-      {/* Embedded Kit Form / Script */}
-      {hasKitEmbed ? (
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl">
-          <KitScriptEmbed
-            scriptUrl={landingPage.kitScriptUrl}
-            formId={landingPage.kitFormId}
-            title={landingPage.title}
-            embedType={landingPage.embedType}
-          />
-        </div>
-      ) : (
-        <div className="max-w-xl mx-auto">
-          <KitOptInForm
-            title={landingPage.title}
-            subtitle={landingPage.description || 'Subscribe now for instant access to our guides.'}
-            buttonText="Get Instant Access"
-            layout="card"
-            source={`slug_${slug}`}
-          />
-        </div>
-      )}
+      {/* Container Element Wrapping Embedded Kit Landing Page / Form */}
+      <div className="max-w-5xl mx-auto">
+        {hasKitEmbed ? (
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-3 sm:p-6 overflow-hidden">
+            <KitScriptEmbed
+              scriptUrl={landingPage.kitScriptUrl}
+              formId={landingPage.kitFormId}
+              title={landingPage.title}
+              embedType={landingPage.embedType}
+            />
+          </div>
+        ) : (
+          <div className="max-w-xl mx-auto">
+            <KitOptInForm
+              title={landingPage.title}
+              subtitle={landingPage.description || 'Subscribe now for instant access to our guides.'}
+              buttonText="Get Instant Access"
+              layout="card"
+              source={`slug_${slug}`}
+            />
+          </div>
+        )}
+      </div>
 
-      {/* Back Link */}
-      <div className="text-center pt-8 border-t border-slate-200">
-        <Link href="/" className="text-sm font-bold text-teal-700 hover:text-teal-900">
-          &larr; Back to Homepage
+      {/* Navigation Footer */}
+      <div className="text-center pt-6 border-t border-slate-200 max-w-3xl mx-auto">
+        <Link href="/" className="text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors">
+          &larr; Back to DiabetesCare PH Homepage
         </Link>
       </div>
     </div>
