@@ -9,19 +9,23 @@ import { CategoryModel } from '@/models/Category';
  * @returns {Promise<Map<string, string>>} Lookup map matching Category ObjectIds and names to readable string names.
  */
 export async function getCategoryLookupMap(): Promise<Map<string, string>> {
-  await dbConnect();
-  const categories = await CategoryModel.find().lean();
   const map = new Map<string, string>();
+  try {
+    await dbConnect();
+    const categories = await CategoryModel.find().lean();
 
-  categories.forEach((cat: any) => {
-    const idStr = cat._id ? cat._id.toString() : '';
-    if (idStr) {
-      map.set(idStr, cat.name);
-    }
-    if (cat.name) {
-      map.set(cat.name, cat.name);
-    }
-  });
+    categories.forEach((cat: any) => {
+      const idStr = cat._id ? cat._id.toString() : '';
+      if (idStr) {
+        map.set(idStr, cat.name);
+      }
+      if (cat.name) {
+        map.set(cat.name, cat.name);
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching categories in getCategoryLookupMap:', err);
+  }
 
   return map;
 }

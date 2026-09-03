@@ -49,18 +49,23 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const activeCategory = resolvedParams.category || 'All';
   const searchQuery = (resolvedParams.search || '').trim();
 
-  await dbConnect();
+  let rawPosts: any[] = [];
+  let categoryMap: Map<string, string> = new Map();
+  try {
+    await dbConnect();
+    categoryMap = await getCategoryLookupMap();
 
-  const categoryMap = await getCategoryLookupMap();
-
-  // Fetch all published posts
-  const rawPosts = await PostModel.find({ status: 'published' })
-    .sort({ publishedAt: -1 })
-    .lean();
+    // Fetch all published posts
+    rawPosts = await PostModel.find({ status: 'published' })
+      .sort({ publishedAt: -1 })
+      .lean();
+  } catch (err) {
+    console.error('Error fetching posts for BlogFeedPage:', err);
+  }
 
   const allPosts: IPost[] = rawPosts.map((doc: any) => ({
     ...doc,
-    _id: doc._id.toString(),
+    _id: doc._id ? doc._id.toString() : '',
     category: resolveCategoryName(doc.category, categoryMap),
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
     createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,

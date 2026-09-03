@@ -16,15 +16,20 @@ export const revalidate = 60; // Refresh static page every 60 seconds
  * @returns {Promise<JSX.Element>} Rendered clean, elegant awareness landing page with dynamic post articles.
  */
 export default async function HomePage() {
-  await dbConnect();
-  const rawPosts = await PostModel.find({ status: 'published' })
-    .sort({ publishedAt: -1 })
-    .limit(6)
-    .lean();
+  let rawPosts: any[] = [];
+  try {
+    await dbConnect();
+    rawPosts = await PostModel.find({ status: 'published' })
+      .sort({ publishedAt: -1 })
+      .limit(6)
+      .lean();
+  } catch (err) {
+    console.error('Error fetching posts for HomePage:', err);
+  }
 
   const articles: IPost[] = rawPosts.map((doc: any) => ({
     ...doc,
-    _id: doc._id.toString(),
+    _id: doc._id ? doc._id.toString() : '',
     category: doc.category?.toString(),
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
   }));

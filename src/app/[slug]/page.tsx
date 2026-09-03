@@ -16,9 +16,14 @@ interface PageProps {
  */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  await dbConnect();
+  let landingPage: any = null;
+  try {
+    await dbConnect();
+    landingPage = await LandingPageModel.findOne({ slug, isActive: true }).lean();
+  } catch (err) {
+    console.error('Error fetching metadata for landing page:', err);
+  }
 
-  const landingPage: any = await LandingPageModel.findOne({ slug, isActive: true }).lean();
   if (!landingPage) {
     return { title: 'Page Not Found | DiabetesCare PH' };
   }
@@ -55,9 +60,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  */
 export default async function DynamicSlugPage({ params }: PageProps) {
   const { slug } = await params;
-  await dbConnect();
-
-  const landingPage: any = await LandingPageModel.findOne({ slug, isActive: true }).lean();
+  let landingPage: any = null;
+  try {
+    await dbConnect();
+    landingPage = await LandingPageModel.findOne({ slug, isActive: true }).lean();
+  } catch (err) {
+    console.error('Error fetching dynamic landing page:', err);
+  }
 
   if (!landingPage) {
     notFound();

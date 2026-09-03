@@ -13,8 +13,13 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  await dbConnect();
-  const post: any = await PostModel.findOne({ slug, status: 'published' }).lean();
+  let post: any = null;
+  try {
+    await dbConnect();
+    post = await PostModel.findOne({ slug, status: 'published' }).lean();
+  } catch (err) {
+    console.error('Error fetching metadata for blog post:', err);
+  }
 
   if (!post) {
     return { title: 'Article Not Found | DiabetesCare PH' };
@@ -57,9 +62,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  */
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  await dbConnect();
-
-  const post: any = await PostModel.findOne({ slug, status: 'published' }).lean();
+  let post: any = null;
+  try {
+    await dbConnect();
+    post = await PostModel.findOne({ slug, status: 'published' }).lean();
+  } catch (err) {
+    console.error('Error fetching blog post page:', err);
+  }
   if (!post) {
     notFound();
   }
