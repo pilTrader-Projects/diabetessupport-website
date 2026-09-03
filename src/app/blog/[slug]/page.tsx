@@ -3,6 +3,7 @@ import { PostModel } from '@/models/Post';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { SITE_CONFIG } from '@/config/constants';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -11,16 +12,36 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   await dbConnect();
-  const post = await PostModel.findOne({ slug, status: 'published' }).lean();
+  const post: any = await PostModel.findOne({ slug, status: 'published' }).lean();
 
   if (!post) {
     return { title: 'Article Not Found | DiabetesCare PH' };
   }
 
   const title = (post.title || '').replace(/&nbsp;/g, ' ');
+  const description = post.excerpt || post.metaDescription || 'Educational guide on diabetes care.';
+  const pageUrl = `https://${SITE_CONFIG.domain}/blog/${slug}`;
+
   return {
     title: `${title} | DiabetesCare PH`,
-    description: post.excerpt || post.metaDescription || 'Educational guide on diabetes care.',
+    description,
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      siteName: SITE_CONFIG.title,
+      type: 'article',
+      publishedTime: post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+      modifiedTime: post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+      authors: [SITE_CONFIG.author],
+      images: post.featuredImage ? [{ url: post.featuredImage }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: post.featuredImage ? [post.featuredImage] : [],
+    },
   };
 }
 
