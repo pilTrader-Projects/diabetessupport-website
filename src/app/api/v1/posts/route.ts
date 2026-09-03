@@ -3,6 +3,8 @@ import { dbConnect } from '../../../../lib/dbConnect';
 import { PostModel } from '../../../../models/Post';
 import { CategoryModel } from '../../../../models/Category';
 import { validateApiKey, slugify } from '../../../../lib/auth';
+import { isAdminAuthenticated } from '../../../../lib/adminAuth';
+import { getCategoryLookupMap, resolveCategoryName } from '../../../../lib/categoryUtils';
 
 /**
  * HTTP POST API route handler for automated blog post publishing.
@@ -14,13 +16,16 @@ import { validateApiKey, slugify } from '../../../../lib/auth';
  * @throws {Error} Returns 401 Unauthorized for invalid keys, 400 Bad Request for invalid payload, 500 for server errors.
  */
 export async function POST(req: Request): Promise<NextResponse> {
-  // 1. Authenticate request via API key
-  const authResult = await validateApiKey(req);
-  if (!authResult.valid) {
-    return NextResponse.json(
-      { success: false, error: authResult.error || 'Unauthorized request.' },
-      { status: 401 }
-    );
+  // 1. Authenticate request via Admin Cookie OR API key
+  const isAdmin = await isAdminAuthenticated(req);
+  if (!isAdmin) {
+    const authResult = await validateApiKey(req);
+    if (!authResult.valid) {
+      return NextResponse.json(
+        { success: false, error: authResult.error || 'Unauthorized request.' },
+        { status: 401 }
+      );
+    }
   }
 
   // 2. Parse request JSON body
@@ -150,11 +155,17 @@ export async function GET(req: Request): Promise<NextResponse> {
 
     const category = searchParams.get('category');
     const search = searchParams.get('search');
+    const statusParam = searchParams.get('status');
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '10', 10)));
     const skip = (page - 1) * limit;
 
-    const query: any = { status: 'published' };
+    const query: any = {};
+    if (statusParam) {
+      query.status = statusParam;
+    } else {
+      query.status = { $in: ['published', 'draft'] };
+    }
 
     if (category && category !== 'All') {
       query.category = { $regex: new RegExp(`^${category}$`, 'i') };
@@ -165,14 +176,21 @@ export async function GET(req: Request): Promise<NextResponse> {
       query.$or = [{ title: searchRegex }, { content: searchRegex }, { tags: searchRegex }];
     }
 
+    const categoryMap = await getCategoryLookupMap();
+
     const [posts, total] = await Promise.all([
       PostModel.find(query).sort({ publishedAt: -1 }).skip(skip).limit(limit).lean(),
       PostModel.countDocuments(query),
     ]);
 
+    const formattedPosts = posts.map((post: any) => ({
+      ...post,
+      category: resolveCategoryName(post.category, categoryMap),
+    }));
+
     return NextResponse.json({
       success: true,
-      data: posts,
+      data: formattedPosts,
       pagination: {
         total,
         page,

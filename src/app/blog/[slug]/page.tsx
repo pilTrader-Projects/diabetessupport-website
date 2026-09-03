@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
 import KitOptInForm from '@/components/KitOptInForm';
+import BlogPostContent from '@/components/BlogPostContent';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -111,10 +112,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       )}
 
       {/* Article Body Content */}
-      <div
-        className="prose prose-slate prose-teal max-w-none text-slate-800 text-base leading-relaxed space-y-6 [&>p]:mb-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-slate-900 [&>h2]:mt-8 [&>h3]:text-xl [&>h3]:font-semibold [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:list-decimal [&>ol]:pl-6"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
+      <BlogPostContent content={post.content} slug={slug} />
 
       {/* Lead Capture Opt-In Form */}
       <div className="pt-8">

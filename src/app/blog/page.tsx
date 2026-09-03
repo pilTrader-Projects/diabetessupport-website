@@ -1,6 +1,7 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { PostModel } from '@/models/Post';
 import { CategoryModel } from '@/models/Category';
+import { getCategoryLookupMap, resolveCategoryName } from '@/lib/categoryUtils';
 import { IPost } from '@/types/blog';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -50,6 +51,8 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
 
   await dbConnect();
 
+  const categoryMap = await getCategoryLookupMap();
+
   // Fetch all published posts
   const rawPosts = await PostModel.find({ status: 'published' })
     .sort({ publishedAt: -1 })
@@ -58,7 +61,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const allPosts: IPost[] = rawPosts.map((doc: any) => ({
     ...doc,
     _id: doc._id.toString(),
-    category: doc.category?.toString() || 'General',
+    category: resolveCategoryName(doc.category, categoryMap),
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
     createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
