@@ -3,6 +3,7 @@ import { dbConnect } from '../../../../lib/dbConnect';
 import { PostModel } from '../../../../models/Post';
 import { CategoryModel } from '../../../../models/Category';
 import { validateApiKey, slugify } from '../../../../lib/auth';
+import { isAdminAuthenticated } from '../../../../lib/adminAuth';
 
 /**
  * HTTP POST API route handler for automated blog post publishing.
@@ -14,13 +15,16 @@ import { validateApiKey, slugify } from '../../../../lib/auth';
  * @throws {Error} Returns 401 Unauthorized for invalid keys, 400 Bad Request for invalid payload, 500 for server errors.
  */
 export async function POST(req: Request): Promise<NextResponse> {
-  // 1. Authenticate request via API key
-  const authResult = await validateApiKey(req);
-  if (!authResult.valid) {
-    return NextResponse.json(
-      { success: false, error: authResult.error || 'Unauthorized request.' },
-      { status: 401 }
-    );
+  // 1. Authenticate request via Admin Cookie OR API key
+  const isAdmin = await isAdminAuthenticated(req);
+  if (!isAdmin) {
+    const authResult = await validateApiKey(req);
+    if (!authResult.valid) {
+      return NextResponse.json(
+        { success: false, error: authResult.error || 'Unauthorized request.' },
+        { status: 401 }
+      );
+    }
   }
 
   // 2. Parse request JSON body

@@ -11,6 +11,9 @@ jest.mock('../../src/models/Post', () => ({
   PostModel: {
     findOne: jest.fn(),
     create: jest.fn(),
+    findById: jest.fn(),
+    findByIdAndUpdate: jest.fn(),
+    findByIdAndDelete: jest.fn(),
   },
 }));
 
@@ -194,5 +197,55 @@ describe('GET /api/v1/posts API Query Endpoint', () => {
     expect(body.success).toBe(true);
     expect(body.data.length).toBe(2);
     expect(body.pagination.total).toBe(2);
+  });
+});
+
+describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
+  const { GET: GET_POST, PUT: PUT_POST } = require('../../src/app/api/v1/posts/[id]/route');
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should fetch post by ID successfully via GET', async () => {
+    (PostModel.findById as jest.Mock).mockReturnValue({
+      lean: jest.fn().mockResolvedValue({ _id: 'post_123', title: 'Test Article', content: '<p>Content</p>' }),
+    });
+
+    const req = new Request('http://localhost:3000/api/v1/posts/post_123');
+    const res = await GET_POST(req, { params: Promise.resolve({ id: 'post_123' }) });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.data.title).toBe('Test Article');
+  });
+
+  it('should update post content successfully via PUT when authenticated', async () => {
+    const validSecret = process.env.API_SECRET_KEY || 'dev_secret_key_123';
+    (PostModel.findByIdAndUpdate as jest.Mock).mockResolvedValue({
+      _id: 'post_123',
+      title: 'Updated Title',
+      content: '<h2>Updated HTML Content</h2>',
+    });
+
+    const req = new Request('http://localhost:3000/api/v1/posts/post_123', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${validSecret}`,
+      },
+      body: JSON.stringify({
+        title: 'Updated Title',
+        content: '<h2>Updated HTML Content</h2>',
+      }),
+    });
+
+    const res = await PUT_POST(req, { params: Promise.resolve({ id: 'post_123' }) });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.data.title).toBe('Updated Title');
   });
 });
