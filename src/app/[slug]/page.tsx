@@ -64,76 +64,52 @@ export default async function DynamicSlugPage({ params }: PageProps) {
   }
 
   const hasKitEmbed = Boolean(landingPage.kitScriptUrl || landingPage.kitFormId);
-  const targetUrl = landingPage.kitScriptUrl || '';
-  const isHostedLandingPage =
-    landingPage.embedType === 'iframe' ||
-    landingPage.embedType === 'hosted' ||
-    targetUrl.includes('.ck.page') ||
-    (targetUrl.includes('.kit.com') && !targetUrl.endsWith('.js'));
-
-  if (isHostedLandingPage) {
-    return (
-      <div className="min-h-screen bg-slate-950 py-6 px-2 sm:px-6 flex flex-col justify-between">
-        <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col justify-center">
-          <KitScriptEmbed
-            scriptUrl={landingPage.kitScriptUrl}
-            formId={landingPage.kitFormId}
-            title={landingPage.title}
-            embedType="hosted"
-          />
-        </div>
-        <div className="text-center py-4">
-          <Link href="/" className="text-xs font-bold text-slate-400 hover:text-teal-400 transition-colors">
-            &larr; Back to DiabetesCare PH Homepage
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
-      {/* Header */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
-        <span className="bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200 inline-block">
+    <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+      {/* Page Title & Subtitle Header Banner */}
+      <div className="text-center space-y-4 max-w-3xl mx-auto">
+        <span className="bg-teal-950 text-teal-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-teal-800/80 inline-block shadow-inner">
           ✨ Special Resource & Lead Capture
         </span>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
           {landingPage.title}
         </h1>
         {landingPage.description && (
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-medium">
             {landingPage.description}
           </p>
         )}
       </div>
 
-      {/* Embedded Kit Form / Script */}
-      {hasKitEmbed ? (
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xl">
-          <KitScriptEmbed
-            scriptUrl={landingPage.kitScriptUrl}
-            formId={landingPage.kitFormId}
-            title={landingPage.title}
-            embedType={landingPage.embedType}
-          />
-        </div>
-      ) : (
-        <div className="max-w-xl mx-auto">
-          <KitOptInForm
-            title={landingPage.title}
-            subtitle={landingPage.description || 'Subscribe now for instant access to our guides.'}
-            buttonText="Get Instant Access"
-            layout="card"
-            source={`slug_${slug}`}
-          />
-        </div>
-      )}
+      {/* Container Element Wrapping Embedded Kit Landing Page / Form */}
+      <div className="max-w-5xl mx-auto">
+        {hasKitEmbed ? (
+          <div className="bg-slate-900/90 rounded-3xl border border-slate-800 shadow-2xl p-2 sm:p-6 backdrop-blur-md overflow-hidden">
+            <KitScriptEmbed
+              scriptUrl={landingPage.kitScriptUrl}
+              formId={landingPage.kitFormId}
+              title={landingPage.title}
+              embedType={landingPage.embedType}
+            />
+          </div>
+        ) : (
+          <div className="max-w-xl mx-auto">
+            <KitOptInForm
+              title={landingPage.title}
+              subtitle={landingPage.description || 'Subscribe now for instant access to our guides.'}
+              buttonText="Get Instant Access"
+              layout="card"
+              source={`slug_${slug}`}
+            />
+          </div>
+        )}
+      </div>
 
-      {/* Back Link */}
-      <div className="text-center pt-8 border-t border-slate-200">
-        <Link href="/" className="text-sm font-bold text-teal-700 hover:text-teal-900">
-          &larr; Back to Homepage
+      {/* Navigation Footer */}
+      <div className="text-center pt-6 border-t border-slate-800/60 max-w-3xl mx-auto">
+        <Link href="/" className="text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors">
+          &larr; Back to DiabetesCare PH Homepage
         </Link>
       </div>
     </div>
