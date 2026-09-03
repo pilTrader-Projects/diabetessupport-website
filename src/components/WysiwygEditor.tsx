@@ -59,6 +59,12 @@ export default function WysiwygEditor({
     },
   });
 
+  React.useEffect(() => {
+    if (editor && content !== undefined && editor.getHTML() !== content) {
+      editor.commands.setContent(content || '');
+    }
+  }, [content, editor]);
+
   if (!editor) {
     return <div className="p-4 text-slate-500 text-sm">Loading editor...</div>;
   }
