@@ -40,7 +40,9 @@ export default function AdminPostsPage() {
   const [status, setStatus] = useState<'published' | 'draft'>('published');
   const [excerpt, setExcerpt] = useState('');
   const [featuredImage, setFeaturedImage] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
   const [content, setContent] = useState('');
+  const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
 
   const fetchPosts = async () => {
     try {
@@ -68,11 +70,13 @@ export default function AdminPostsPage() {
     setStatus('published');
     setExcerpt('');
     setFeaturedImage('');
+    setTagsInput('');
     setContent('');
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = async (id: string) => {
+    setLoadingEditId(id);
     try {
       const res = await fetch(`/api/v1/posts/${id}`);
       const data = await res.json();
@@ -85,13 +89,16 @@ export default function AdminPostsPage() {
         setStatus(p.status || 'published');
         setExcerpt(p.excerpt || '');
         setFeaturedImage(p.featuredImage || '');
+        setTagsInput(Array.isArray(p.tags) ? p.tags.join(', ') : '');
         setContent(p.content || '');
         setIsModalOpen(true);
       } else {
         alert(data.error || 'Failed to load post details.');
       }
     } catch {
-      alert('Error fetching post details.');
+      alert('Error fetching post details from MongoDB.');
+    } finally {
+      setLoadingEditId(null);
     }
   };
 
@@ -103,6 +110,11 @@ export default function AdminPostsPage() {
     }
 
     setSaving(true);
+    const parsedTags = tagsInput
+      .split(',')
+      .map((t) => t.trim().toLowerCase())
+      .filter(Boolean);
+
     const payload = {
       title: title.trim(),
       slug: slug.trim() || undefined,
@@ -110,6 +122,7 @@ export default function AdminPostsPage() {
       status,
       excerpt: excerpt.trim(),
       featuredImage: featuredImage.trim() || undefined,
+      tags: parsedTags,
       content,
     };
 
@@ -261,9 +274,10 @@ export default function AdminPostsPage() {
                   <td className="px-6 py-4 text-right space-x-2">
                     <button
                       onClick={() => handleOpenEdit(post._id)}
-                      className="text-xs font-bold text-teal-400 hover:text-teal-300 bg-teal-950/60 px-3 py-1.5 rounded-lg border border-teal-800/80 transition-colors cursor-pointer"
+                      disabled={loadingEditId === post._id}
+                      className="text-xs font-bold text-teal-400 hover:text-teal-300 bg-teal-950/60 px-3 py-1.5 rounded-lg border border-teal-800/80 transition-colors cursor-pointer disabled:opacity-50"
                     >
-                      Edit (WYSIWYG)
+                      {loadingEditId === post._id ? 'Loading...' : '✏️ Edit Article'}
                     </button>
                     <button
                       onClick={() => handleDelete(post._id, post.title)}
@@ -279,22 +293,22 @@ export default function AdminPostsPage() {
         </div>
       )}
 
-      {/* WYSIWYG Article Editor Modal */}
+      {/* Unified Article Creator & Editor Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-4xl w-full my-8 space-y-6 shadow-2xl">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
               <div>
                 <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">
-                  {editingPostId ? 'Edit Article' : 'New Article'}
+                  {editingPostId ? `Editing MongoDB Document (${editingPostId})` : 'Article Creator'}
                 </span>
                 <h2 className="text-2xl font-black text-white">
-                  {editingPostId ? 'WYSIWYG Article Editor' : 'Create New Article'}
+                  {editingPostId ? '✏️ Edit Article' : '✨ Create New Article'}
                 </h2>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white font-bold text-lg p-2"
+                className="text-slate-400 hover:text-white font-bold text-lg p-2 cursor-pointer"
               >
                 ✕
               </button>
@@ -385,18 +399,33 @@ export default function AdminPostsPage() {
                 </div>
               </div>
 
-              {/* Excerpt */}
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
-                  Short Excerpt / Summary
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Brief 1-2 sentence overview for search previews..."
-                  value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
-                />
+              {/* Excerpt & Tags */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                    Short Excerpt / Summary
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Brief 1-2 sentence overview for search previews..."
+                    value={excerpt}
+                    onChange={(e) => setExcerpt(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-2">
+                    Tags (Comma-Separated)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. insulin, glucose, diet, health"
+                    value={tagsInput}
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
+                  />
+                </div>
               </div>
 
               {/* WYSIWYG Content Editor */}
