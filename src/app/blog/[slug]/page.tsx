@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
+import KitOptInForm from '@/components/KitOptInForm';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -114,6 +115,17 @@ export default async function BlogPostPage({ params }: PageProps) {
         className="prose prose-slate prose-teal max-w-none text-slate-800 text-base leading-relaxed space-y-6 [&>p]:mb-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-slate-900 [&>h2]:mt-8 [&>h3]:text-xl [&>h3]:font-semibold [&>ul]:list-disc [&>ul]:pl-6 [&>ol]:list-decimal [&>ol]:pl-6"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+
+      {/* Lead Capture Opt-In Form */}
+      <div className="pt-8">
+        <KitOptInForm
+          title="Enjoyed this article? Get our free weekly health guides"
+          subtitle="Join over 15,000+ readers receiving low-GI recipes, blood sugar management tips, and free downloadable cheat sheets."
+          buttonText="Subscribe Free"
+          layout="inline"
+          source={`article_${slug}`}
+        />
+      </div>
 
       {/* Footer Navigation */}
       <div className="pt-8 border-t border-slate-200 flex justify-between items-center">
