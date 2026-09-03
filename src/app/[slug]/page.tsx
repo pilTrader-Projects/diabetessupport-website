@@ -66,17 +66,15 @@ export default async function DynamicSlugPage({ params }: PageProps) {
   const hasKitEmbed = Boolean(landingPage.kitScriptUrl || landingPage.kitFormId);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="min-h-screen bg-slate-50/60 text-slate-900 py-12 px-4 sm:px-6 lg:px-8 space-y-10">
       {/* Page Title & Subtitle Header Banner */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <span className="bg-teal-950 text-teal-300 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full border border-teal-800/80 inline-block shadow-inner">
-          ✨ Special Resource & Lead Capture
-        </span>
-        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+   
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
           {landingPage.title}
         </h1>
         {landingPage.description && (
-          <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-medium">
+          <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
             {landingPage.description}
           </p>
         )}
@@ -85,7 +83,7 @@ export default async function DynamicSlugPage({ params }: PageProps) {
       {/* Container Element Wrapping Embedded Kit Landing Page / Form */}
       <div className="max-w-5xl mx-auto">
         {hasKitEmbed ? (
-          <div className="bg-slate-900/90 rounded-3xl border border-slate-800 shadow-2xl p-2 sm:p-6 backdrop-blur-md overflow-hidden">
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl p-3 sm:p-6 overflow-hidden">
             <KitScriptEmbed
               scriptUrl={landingPage.kitScriptUrl}
               formId={landingPage.kitFormId}
@@ -107,8 +105,8 @@ export default async function DynamicSlugPage({ params }: PageProps) {
       </div>
 
       {/* Navigation Footer */}
-      <div className="text-center pt-6 border-t border-slate-800/60 max-w-3xl mx-auto">
-        <Link href="/" className="text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors">
+      <div className="text-center pt-6 border-t border-slate-200 max-w-3xl mx-auto">
+        <Link href="/" className="text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors">
           &larr; Back to DiabetesCare PH Homepage
         </Link>
       </div>
