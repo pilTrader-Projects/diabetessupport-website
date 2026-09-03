@@ -31,7 +31,16 @@ export async function PUT(req: Request, { params }: RouteParams): Promise<NextRe
 
   await dbConnect();
   try {
-    const updated = await LandingPageModel.findByIdAndUpdate(id, body, { new: true, runValidators: true });
+    const updateData = { ...body };
+
+    if (updateData.kitScriptUrl && typeof updateData.kitScriptUrl === 'string' && updateData.kitScriptUrl.includes('<script')) {
+      const srcMatch = updateData.kitScriptUrl.match(/src=["']([^"']+)["']/i);
+      const uidMatch = updateData.kitScriptUrl.match(/data-uid=["']([^"']+)["']/i);
+      if (srcMatch) updateData.kitScriptUrl = srcMatch[1];
+      if (uidMatch && !updateData.kitFormId) updateData.kitFormId = uidMatch[1];
+    }
+
+    const updated = await LandingPageModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
     if (!updated) {
       return NextResponse.json({ success: false, error: 'Landing page not found.' }, { status: 404 });
     }

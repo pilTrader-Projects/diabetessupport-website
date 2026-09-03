@@ -30,6 +30,8 @@ export default function AdminLandingPagesPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  const [editingPage, setEditingPage] = useState<LandingPage | null>(null);
+
   // Form State
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -58,15 +60,49 @@ export default function AdminLandingPagesPage() {
     fetchLandingPages();
   }, []);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setEditingPage(null);
+    setTitle('');
+    setSlug('');
+    setDescription('');
+    setKitScriptUrl('');
+    setKitFormId('');
+    setEmbedType('script');
+    setMetaTitle('');
+    setErrorMsg(null);
+  };
+
+  const handleOpenCreate = () => {
+    resetForm();
+    setShowModal(true);
+  };
+
+  const handleOpenEdit = (page: LandingPage) => {
+    setEditingPage(page);
+    setTitle(page.title || '');
+    setSlug(page.slug || '');
+    setDescription(page.description || '');
+    setKitScriptUrl(page.kitScriptUrl || '');
+    setKitFormId(page.kitFormId || '');
+    setEmbedType(page.embedType || 'script');
+    setMetaTitle(page.metaTitle || '');
+    setErrorMsg(null);
+    setShowModal(true);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/v1/landing-pages', {
-        method: 'POST',
+      const isEdit = Boolean(editingPage);
+      const url = isEdit ? `/api/v1/landing-pages/${editingPage!._id}` : '/api/v1/landing-pages';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
@@ -76,23 +112,18 @@ export default function AdminLandingPagesPage() {
           kitFormId,
           embedType,
           metaTitle,
-          isActive: true,
+          isActive: editingPage ? editingPage.isActive : true,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setErrorMsg(data.error || 'Failed to create landing page.');
+        setErrorMsg(data.error || `Failed to ${isEdit ? 'update' : 'create'} landing page.`);
       } else {
-        setSuccessMsg(`Successfully created landing page at /${data.data.slug}!`);
+        setSuccessMsg(`Successfully ${isEdit ? 'updated' : 'created'} landing page at /${data.data.slug}!`);
         setShowModal(false);
-        // Reset Form
-        setTitle('');
-        setSlug('');
-        setDescription('');
-        setKitScriptUrl('');
-        setKitFormId('');
+        resetForm();
         fetchLandingPages();
       }
     } catch {
@@ -149,7 +180,7 @@ export default function AdminLandingPagesPage() {
 
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={handleOpenCreate}
             className="bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs px-5 py-3 rounded-xl shadow-lg transition-colors cursor-pointer flex items-center gap-2"
           >
             <span>+ Add New Kit Slug Mapping</span>
@@ -174,7 +205,7 @@ export default function AdminLandingPagesPage() {
             Click the button below to map your first Kit (ConvertKit) form or script to a custom slug like <code className="text-teal-300">/subscribe</code>.
           </p>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={handleOpenCreate}
             className="bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs px-6 py-3 rounded-xl shadow-lg transition-colors cursor-pointer"
           >
             + Create Your First Kit Slug Mapping
@@ -226,6 +257,12 @@ export default function AdminLandingPagesPage() {
                   </td>
                   <td className="px-6 py-4 text-right space-x-2">
                     <button
+                      onClick={() => handleOpenEdit(page)}
+                      className="text-xs font-bold text-teal-400 hover:text-teal-300 bg-teal-950/40 px-3 py-1.5 rounded-lg border border-teal-900/60 transition-colors cursor-pointer"
+                    >
+                      Edit
+                    </button>
+                    <button
                       onClick={() => handleDelete(page._id, page.slug)}
                       className="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-950/40 px-3 py-1.5 rounded-lg border border-rose-900/60 transition-colors cursor-pointer"
                     >
@@ -239,14 +276,19 @@ export default function AdminLandingPagesPage() {
         </div>
       )}
 
-      {/* Create Landing Page Modal */}
+      {/* Create / Edit Landing Page Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
-              <h2 className="text-xl font-bold text-white">Add Kit Landing Page Slug</h2>
+              <h2 className="text-xl font-bold text-white">
+                {editingPage ? `Edit /${editingPage.slug}` : 'Add Kit Landing Page Slug'}
+              </h2>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  setShowModal(false);
+                  resetForm();
+                }}
                 className="text-slate-400 hover:text-white text-lg font-bold"
               >
                 ✕
@@ -259,7 +301,7 @@ export default function AdminLandingPagesPage() {
               </div>
             )}
 
-            <form onSubmit={handleCreate} className="space-y-4 text-xs">
+            <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div>
                 <label className="block font-bold text-slate-300 uppercase tracking-wider mb-1">
                   Target URL Slug <span className="text-rose-400">*</span>
