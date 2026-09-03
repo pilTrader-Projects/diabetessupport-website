@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --primary-50: #f0fdfa;
-  --primary-100: #ccfbf1;
-  --primary-500: #14b8a6;
-  --primary-600: #0d9488;
-  --primary-700: #0f766e;
-  --primary-900: #134e4a;
+  --primary-50: #f5f3ff;
+  --primary-100: #ede9fe;
+  --primary-500: #6366f1;
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-900: #1e1b4b;
   
-  --accent-500: #3b82f6;
-  --accent-600: #2563eb;
+  --brand-indigo: #1e40af;
+  --brand-purple: #701a75;
+  --brand-pink: #db2777;
+  --accent-500: #8b5cf6;
+  --accent-600: #7c3aed;
   
   --slate-900: #0f172a;
   --slate-800: #1e293b;
@@ -27,12 +30,47 @@ body {
   line-height: 1.6;
 }
 
-.gradient-hero {
-  background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%);
+/* GlycoSense Signature Gradient Palette */
+.gradient-hero, .gradient-glycosense {
+  background: linear-gradient(135deg, #1e40af 0%, #701a75 50%, #db2777 100%);
+}
+
+.gradient-glycosense-dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #581c87 100%);
+}
+
+.gradient-brand-badge {
+  background: linear-gradient(90deg, #1e40af 0%, #db2777 100%);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(241, 245, 249, 0.9);
+  box-shadow: 0 20px 25px -5px rgba(30, 64, 175, 0.08), 0 8px 10px -6px rgba(30, 64, 175, 0.03);
+}
+
+/* ==========================================
+   TARGETED RIGHT PANEL THEME REFACTOR
+   ========================================== */
+
+/* 1. Reset text elements from green back to dark slate/indigo for clean contrast */
+.formkit-header, .formkit-subheader {
+  color: #0f172a !important; 
+}
+
+/* 2. Target the specific layout wrappers Kit uses for the content card columns */
+div[data-element="column"]:last-child,
+div[data-element="content-column"],
+.formkit-column:last-child,
+.gradient-kit-panel {
+  background: linear-gradient(135deg, #1e40af 0%, #701a75 50%, #db2777 100%) !important;
+}
+
+/* 3. If the right column turns into the gradient, flip text to white for readability */
+div[data-element="column"]:last-child h1,
+div[data-element="column"]:last-child h2,
+div[data-element="column"]:last-child p,
+div[data-element="column"]:last-child span {
+  color: #ffffff !important;
 }

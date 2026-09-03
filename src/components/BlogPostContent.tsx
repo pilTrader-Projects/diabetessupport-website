@@ -72,7 +72,7 @@ export default function BlogPostContent({ content, slug }: BlogPostContentProps)
       parts.push(
         <div key={`widget-${matchIndex}`} className="my-8 not-prose">
           <LeadMagnetCard
-            title={title || 'Download The Free 7-Day Diabetes Action Plan & Cheatsheet'}
+            title={title || 'GlycoSense — Preventive Glucose & Lifestyle Intelligence App'}
             source={`article_${slug}_lead_magnet`}
           />
         </div>

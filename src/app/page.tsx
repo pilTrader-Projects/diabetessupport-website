@@ -200,29 +200,42 @@ export default async function HomePage() {
           {AWARENESS_PILLARS.map((pillar) => (
             <div
               key={pillar.id}
-              className="bg-slate-900 text-white rounded-2xl p-8 shadow-md flex flex-col justify-between space-y-4"
+              className="bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 gradient-kit-panel text-white rounded-3xl p-8 shadow-xl border border-white/20 flex flex-col justify-between space-y-4 hover:scale-[1.02] transition-transform duration-300"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-3xl">{pillar.icon}</span>
-                  <span className="bg-teal-900/80 text-teal-300 text-xs font-bold px-3 py-1 rounded-full border border-teal-700">
+                  <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/30 backdrop-blur-md">
                     {pillar.stat}
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-white">{pillar.title}</h3>
-                <p className="text-xs font-semibold text-teal-400 uppercase tracking-wider">{pillar.subtitle}</p>
-                <p className="text-sm text-slate-300 leading-relaxed">{pillar.description}</p>
+                <p className="text-xs font-extrabold text-amber-300 uppercase tracking-wider">{pillar.subtitle}</p>
+                <p className="text-sm text-purple-100/90 leading-relaxed">{pillar.description}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* Connecting Statement Divider & Campaign Anchor Target */}
+      <section id="campaign" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-2 pb-0 scroll-mt-24">
+        <div className="relative flex py-2 items-center">
+          <div className="flex-grow border-t border-slate-200"></div>
+          <span className="flex-shrink mx-4 text-xs font-extrabold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-3.5 py-1 rounded-full border border-indigo-200/80 shadow-sm">
+            Take Action Now
+          </span>
+          <div className="flex-grow border-t border-slate-200"></div>
+        </div>
+        <p className="text-lg sm:text-2xl font-bold text-slate-800 leading-relaxed max-w-3xl mx-auto pt-1 pb-1">
+          You cannot manage what you do not measure. <span className="text-indigo-700">High blood sugar operates in the dark</span>, but you don't have to. Stop guessing how your body feels and start knowing exactly where your health stands.
+        </p>
+      </section>
+
       {/* Campaign Call-to-Action Lead Capture */}
-      <section id="campaign" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 scroll-mt-24">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-2">
         <LeadMagnetCard
-          title="Track Your Numbers. Prevent Complications. Download Free PDF Cheatsheet."
-          source="homepage_campaign"
+          title="Track Your Numbers. Prevent Complications."
         />
       </section>
     </div>

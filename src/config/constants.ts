@@ -24,7 +24,7 @@ export const SITE_CONFIG = {
   domain: 'diabetescareph.com',
   wordpressApiUrl:
     'https://public-api.wordpress.com/wp/v2/sites/diabetescareph.wordpress.com',
-  author: 'DiabetesCare PH Awareness Team',
+  author: 'DiabetesCare PH',
   social: {
     facebook: 'https://facebook.com/diabetescareph',
     twitter: 'https://twitter.com/diabetescareph',
