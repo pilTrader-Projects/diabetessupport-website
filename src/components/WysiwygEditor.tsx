@@ -14,11 +14,11 @@ export interface WysiwygEditorProps {
 }
 
 /**
- * Rich Text WYSIWYG Editor Component using TipTap.
+ * Rich Text WYSIWYG Editor Component using TipTap with Marketing Embed Controls.
  *
- * @usecase Visual HTML content creation and editing for blog articles in the admin dashboard.
+ * @usecase Visual HTML content creation and editing for blog articles in the admin dashboard with direct insertion of marketing lead capture forms.
  * @param {WysiwygEditorProps} props Component props containing initial content, onChange handler, and placeholder.
- * @returns {JSX.Element} Rendered editor with formatting toolbar.
+ * @returns {JSX.Element} Rendered editor with formatting and marketing widget toolbar.
  */
 export default function WysiwygEditor({
   content,
@@ -54,7 +54,7 @@ export default function WysiwygEditor({
     editorProps: {
       attributes: {
         class:
-          'prose prose-invert max-w-none min-h-[300px] p-4 sm:p-6 focus:outline-none text-slate-100 text-base leading-relaxed',
+          'prose prose-invert max-w-none min-h-[320px] p-4 sm:p-6 focus:outline-none text-slate-100 text-base leading-relaxed',
       },
     },
   });
@@ -81,6 +81,54 @@ export default function WysiwygEditor({
     }
 
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  };
+
+  // Marketing Widget Embed Tools
+  const insertKitOptIn = () => {
+    const title =
+      window.prompt('Enter Lead Form Title:', 'Get Our Free Diabetes Care & Health Guide') ||
+      'Get Our Free Diabetes Care & Health Guide';
+    const buttonText = window.prompt('Enter Button Text:', 'Subscribe Free') || 'Subscribe Free';
+
+    editor
+      .chain()
+      .focus()
+      .insertContent(
+        `<div data-widget="kit-optin" data-title="${title}" data-button="${buttonText}" data-layout="card" class="my-6 p-6 bg-teal-950/80 border border-teal-600 rounded-2xl text-teal-200 font-bold text-center">📩 [MARKETING WIDGET: Lead Capture Form - "${title}"]</div><p></p>`
+      )
+      .run();
+  };
+
+  const insertLeadMagnetCard = () => {
+    const title =
+      window.prompt(
+        'Enter Lead Magnet Title:',
+        'Download The Free 7-Day Diabetes Action Plan & Cheatsheet'
+      ) || 'Download The Free 7-Day Diabetes Action Plan & Cheatsheet';
+
+    editor
+      .chain()
+      .focus()
+      .insertContent(
+        `<div data-widget="lead-magnet" data-title="${title}" class="my-6 p-6 bg-slate-950/90 border border-amber-500 rounded-2xl text-amber-300 font-bold text-center">📑 [MARKETING WIDGET: Lead Magnet PDF Card - "${title}"]</div><p></p>`
+      )
+      .run();
+  };
+
+  const insertKitEmbed = () => {
+    const url = window.prompt(
+      'Enter Kit Form/Landing Page URL (or Script URL):',
+      'https://glycosense.kit.com/1d0f3e3530'
+    );
+    if (!url) return;
+
+    editor
+      .chain()
+      .focus()
+      .insertContent(
+        `<div data-widget="kit-embed" data-url="${url}" class="my-6 p-6 bg-slate-950/90 border border-teal-500 rounded-2xl text-teal-300 font-bold text-center">🌐 [MARKETING WIDGET: Kit Script/Page Embed - "${url}"]</div><p></p>`
+      )
+      .run();
   };
 
   return (
@@ -231,6 +279,39 @@ export default function WysiwygEditor({
         >
           📷 Image
         </button>
+
+        <div className="w-px h-5 bg-slate-800 mx-1" />
+
+        {/* Marketing Embed Tools */}
+        <div className="flex items-center gap-1 bg-teal-950/60 p-1 rounded-xl border border-teal-800/80">
+          <span className="text-[10px] font-black text-teal-400 uppercase tracking-widest px-1">
+            Marketing:
+          </span>
+          <button
+            type="button"
+            onClick={insertKitOptIn}
+            className="px-2.5 py-1 rounded-lg bg-teal-900 hover:bg-teal-800 text-teal-200 font-bold transition-colors cursor-pointer"
+            title="Insert Lead Capture Opt-In Form"
+          >
+            📩 Lead Form
+          </button>
+          <button
+            type="button"
+            onClick={insertLeadMagnetCard}
+            className="px-2.5 py-1 rounded-lg bg-amber-950 hover:bg-amber-900 text-amber-300 font-bold transition-colors cursor-pointer border border-amber-800/50"
+            title="Insert PDF Lead Magnet Card"
+          >
+            📑 PDF Magnet
+          </button>
+          <button
+            type="button"
+            onClick={insertKitEmbed}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold transition-colors cursor-pointer"
+            title="Insert External Kit Landing Page / Script Embed"
+          >
+            🌐 Kit Embed
+          </button>
+        </div>
 
         <div className="w-px h-5 bg-slate-800 mx-1" />
 
