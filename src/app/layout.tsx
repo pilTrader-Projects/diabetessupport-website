@@ -31,24 +31,24 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col">
         <ExtensionGuard />
-        <header className="bg-slate-900 text-white sticky top-0 z-50 shadow-md border-b border-slate-800">
+        <header className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white sticky top-0 z-50 shadow-xl border-b border-white/10 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 font-bold text-xl text-teal-400">
+            <Link href="/" className="flex items-center space-x-2 font-black text-xl text-white tracking-tight hover:opacity-90 transition-opacity">
               <span className="text-2xl">🩸</span>
-              <span className="tracking-tight">DiabetesCare PH</span>
+              <span className="bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent">DiabetesCare PH</span>
             </Link>
-            <nav className="flex items-center space-x-6 text-sm font-medium">
-              <Link href="/#awareness" className="hover:text-teal-300 transition-colors">The Silent Killer</Link>
-              <Link href="/#progression" className="hover:text-teal-300 transition-colors">Progression & Metrics</Link>
-              <Link href="/blog" className="hover:text-teal-300 transition-colors">Educational Articles</Link>
-              <Link href="/#campaign" className="hover:text-teal-300 transition-colors">Take Action</Link>
+            <nav className="flex items-center space-x-6 text-sm font-semibold">
+              <Link href="/#awareness" className="text-purple-100 hover:text-white transition-colors">The Silent Killer</Link>
+              <Link href="/#progression" className="text-purple-100 hover:text-white transition-colors">Progression & Metrics</Link>
+              <Link href="/blog" className="text-purple-100 hover:text-white transition-colors">Educational Articles</Link>
+              <Link href="/#campaign" className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm">Take Action</Link>
             </nav>
           </div>
         </header>
 
         <main className="flex-grow">{children}</main>
 
-        <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 mt-16">
+        <footer className="bg-slate-950 text-slate-400 py-12 border-t border-purple-900/40 mt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <p className="font-semibold text-slate-300">© {new Date().getFullYear()} {SITE_CONFIG.author}. All rights reserved.</p>
             <p className="max-w-3xl mx-auto text-xs text-slate-500 leading-relaxed">
