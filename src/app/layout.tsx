@@ -38,9 +38,9 @@ export default function RootLayout({
               <span className="bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent">DiabetesCare PH</span>
             </Link>
             <nav className="flex items-center space-x-6 text-sm font-semibold">
-              <Link href="/#awareness" className="text-purple-100 hover:text-white transition-colors">The Silent Killer</Link>
               <Link href="/#progression" className="text-purple-100 hover:text-white transition-colors">Progression & Metrics</Link>
-              <Link href="/blog" className="text-purple-100 hover:text-white transition-colors">Educational Articles</Link>
+              <Link href="/#education" className="text-purple-100 hover:text-white transition-colors">Educational Articles</Link>
+              <Link href="/#awareness" className="text-purple-100 hover:text-white transition-colors">The Silent Killer</Link>
               <Link href="/#campaign" className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm">Take Action</Link>
             </nav>
           </div>
