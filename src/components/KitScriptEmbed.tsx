@@ -30,7 +30,18 @@ export default function KitScriptEmbed({
     // Clear previous elements
     containerRef.current.innerHTML = '';
 
-    const targetUrl = scriptUrl || (formId ? `https://f.convertkit.com/${formId}/index.js` : null);
+    let cleanUrl = scriptUrl ? scriptUrl.trim() : null;
+    let uid = formId ? formId.trim() : '';
+
+    // If scriptUrl contains a raw <script ...> HTML tag string, parse out src and data-uid
+    if (cleanUrl && cleanUrl.includes('<script')) {
+      const srcMatch = cleanUrl.match(/src=["']([^"']+)["']/i);
+      const uidMatch = cleanUrl.match(/data-uid=["']([^"']+)["']/i);
+      if (srcMatch) cleanUrl = srcMatch[1];
+      if (uidMatch && !uid) uid = uidMatch[1];
+    }
+
+    const targetUrl = cleanUrl || (uid ? `https://f.convertkit.com/${uid}/index.js` : null);
 
     if (!targetUrl) return;
 
@@ -47,7 +58,9 @@ export default function KitScriptEmbed({
     const script = document.createElement('script');
     script.src = targetUrl;
     script.async = true;
-    script.setAttribute('data-uid', formId || '');
+    if (uid) {
+      script.setAttribute('data-uid', uid);
+    }
     containerRef.current.appendChild(script);
 
     return () => {

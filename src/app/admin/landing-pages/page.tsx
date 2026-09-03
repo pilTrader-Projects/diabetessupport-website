@@ -308,14 +308,14 @@ export default function AdminLandingPagesPage() {
 
               <div>
                 <label className="block font-bold text-slate-300 uppercase tracking-wider mb-1">
-                  Kit Script URL or Form Share URL
+                  Kit Script Tag Embed, Script URL, or Form Share URL
                 </label>
-                <input
-                  type="url"
-                  placeholder="https://f.convertkit.com/7483921/index.js or https://diabetescare.ck.page/..."
+                <textarea
+                  rows={3}
+                  placeholder={`Paste raw Kit script tag snippet (e.g. <script async data-uid="1d0f3e3530" src="https://glycosense.kit.com/1d0f3e3530/index.js"></script>) or direct URL...`}
                   value={kitScriptUrl}
                   onChange={(e) => setKitScriptUrl(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white text-xs font-mono focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
 

@@ -77,12 +77,22 @@ export async function POST(req: Request): Promise<NextResponse> {
       );
     }
 
+    let parsedUrl = kitScriptUrl ? kitScriptUrl.trim() : undefined;
+    let parsedFormId = kitFormId ? kitFormId.trim() : undefined;
+
+    if (parsedUrl && parsedUrl.includes('<script')) {
+      const srcMatch = parsedUrl.match(/src=["']([^"']+)["']/i);
+      const uidMatch = parsedUrl.match(/data-uid=["']([^"']+)["']/i);
+      if (srcMatch) parsedUrl = srcMatch[1];
+      if (uidMatch && !parsedFormId) parsedFormId = uidMatch[1];
+    }
+
     const newPage = await LandingPageModel.create({
       slug: cleanSlug,
       title: title.trim(),
       description: description ? description.trim() : undefined,
-      kitScriptUrl: kitScriptUrl ? kitScriptUrl.trim() : undefined,
-      kitFormId: kitFormId ? kitFormId.trim() : undefined,
+      kitScriptUrl: parsedUrl,
+      kitFormId: parsedFormId,
       embedType: embedType || 'script',
       metaTitle: metaTitle ? metaTitle.trim() : undefined,
       metaDescription: metaDescription ? metaDescription.trim() : undefined,
