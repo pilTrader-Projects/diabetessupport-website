@@ -10,6 +10,7 @@ interface LandingPage {
   description?: string;
   kitFormId?: string;
   kitScriptUrl?: string;
+  rawScriptTag?: string;
   embedType: 'script' | 'iframe' | 'hosted';
   metaTitle?: string;
   metaDescription?: string;
@@ -82,7 +83,7 @@ export default function AdminLandingPagesPage() {
     setTitle(page.title || '');
     setSlug(page.slug || '');
     setDescription(page.description || '');
-    setKitScriptUrl(page.kitScriptUrl || '');
+    setKitScriptUrl(page.rawScriptTag || page.kitScriptUrl || '');
     setKitFormId(page.kitFormId || '');
     setEmbedType(page.embedType || 'script');
     setMetaTitle(page.metaTitle || '');

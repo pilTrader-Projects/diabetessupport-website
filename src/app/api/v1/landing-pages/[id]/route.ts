@@ -33,11 +33,15 @@ export async function PUT(req: Request, { params }: RouteParams): Promise<NextRe
   try {
     const updateData = { ...body };
 
-    if (updateData.kitScriptUrl && typeof updateData.kitScriptUrl === 'string' && updateData.kitScriptUrl.includes('<script')) {
-      const srcMatch = updateData.kitScriptUrl.match(/src=["']([^"']+)["']/i);
-      const uidMatch = updateData.kitScriptUrl.match(/data-uid=["']([^"']+)["']/i);
-      if (srcMatch) updateData.kitScriptUrl = srcMatch[1];
-      if (uidMatch && !updateData.kitFormId) updateData.kitFormId = uidMatch[1];
+    if (updateData.kitScriptUrl && typeof updateData.kitScriptUrl === 'string') {
+      const raw = updateData.kitScriptUrl.trim();
+      updateData.rawScriptTag = raw;
+      if (raw.includes('<script')) {
+        const srcMatch = raw.match(/src=["']([^"']+)["']/i);
+        const uidMatch = raw.match(/data-uid=["']([^"']+)["']/i);
+        if (srcMatch) updateData.kitScriptUrl = srcMatch[1];
+        if (uidMatch && !updateData.kitFormId) updateData.kitFormId = uidMatch[1];
+      }
     }
 
     const updated = await LandingPageModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
