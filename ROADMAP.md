@@ -19,6 +19,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ### Milestone 4: Blog Engine & SEO Optimization
 - [x] **[Issue #5](https://github.com/pilTrader-Projects/diabetessupport-website/issues/5)** `[COMPLETED]`: Create Blog feed, post view, category navigation, dynamic SEO metadata, and sitemap.
+- [/] **[Feature #18]** `[IN PROGRESS]`: WYSIWYG Blog Article Editor for Admin Dashboard (/admin/posts).
 
 ### Milestone 5: Marketing & Lead Capture (Kit)
 - [x] **[Issue #6](https://github.com/pilTrader-Projects/diabetessupport-website/issues/6)** `[COMPLETED]`: Integrate Kit (ConvertKit) opt-in forms & landing page sub-routes.
