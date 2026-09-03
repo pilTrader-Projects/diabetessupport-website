@@ -21,7 +21,7 @@ export default function LeadMagnetCard({
   subtitle = 'Take proactive control over elevated glucose levels with our comprehensive, easy-to-use health tracking dashboard.',
 }: LeadMagnetCardProps) {
   return (
-    <div className="my-10 text-white rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 gradient-kit-panel grid grid-cols-1 lg:grid-cols-12">
+    <div className="my-2 sm:my-3 text-white rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 gradient-kit-panel grid grid-cols-1 lg:grid-cols-12">
       {/* Left Feature Bullet Area (Seamless Full-Card Gradient Integration) */}
       <div className="lg:col-span-6 p-8 sm:p-10 flex flex-col justify-between space-y-6 border-b lg:border-b-0 lg:border-r border-white/10">
         <div className="space-y-4">

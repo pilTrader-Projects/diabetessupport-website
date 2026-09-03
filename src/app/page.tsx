@@ -219,21 +219,21 @@ export default async function HomePage() {
       </section>
 
       {/* Connecting Statement Divider */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-4 pb-2">
-        <div className="relative flex py-4 items-center">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-2 pb-0">
+        <div className="relative flex py-2 items-center">
           <div className="flex-grow border-t border-slate-200"></div>
           <span className="flex-shrink mx-4 text-xs font-extrabold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-3.5 py-1 rounded-full border border-indigo-200/80 shadow-sm">
             Take Action Now
           </span>
           <div className="flex-grow border-t border-slate-200"></div>
         </div>
-        <p className="text-lg sm:text-2xl font-bold text-slate-800 leading-relaxed max-w-3xl mx-auto pt-2">
+        <p className="text-lg sm:text-2xl font-bold text-slate-800 leading-relaxed max-w-3xl mx-auto pt-1 pb-1">
           You cannot manage what you do not measure. <span className="text-indigo-700">High blood sugar operates in the dark</span>, but you don't have to. Stop guessing how your body feels and start knowing exactly where your health stands.
         </p>
       </section>
 
       {/* Campaign Call-to-Action Lead Capture */}
-      <section id="campaign" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 scroll-mt-24">
+      <section id="campaign" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-2 scroll-mt-24">
         <LeadMagnetCard
           title="Track Your Numbers. Prevent Complications."
         />
