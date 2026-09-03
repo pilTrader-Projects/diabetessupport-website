@@ -108,15 +108,15 @@ export default function WysiwygEditor({
   const insertLeadMagnetCard = () => {
     const title =
       window.prompt(
-        'Enter Lead Magnet Title:',
-        'Download The Free 7-Day Diabetes Action Plan & Cheatsheet'
-      ) || 'Download The Free 7-Day Diabetes Action Plan & Cheatsheet';
+        'Enter App Promo Title:',
+        'GlycoSense — Preventive Glucose & Lifestyle Intelligence App'
+      ) || 'GlycoSense — Preventive Glucose & Lifestyle Intelligence App';
 
     editor
       .chain()
       .focus()
       .insertContent(
-        `<div data-widget="lead-magnet" data-title="${title}" class="my-6 p-6 bg-slate-950/90 border border-amber-500 rounded-2xl text-amber-300 font-bold text-center">📑 [MARKETING WIDGET: Lead Magnet PDF Card - "${title}"]</div><p></p>`
+        `<div data-widget="lead-magnet" data-title="${title}" class="my-6 p-6 bg-slate-950/90 border border-amber-500 rounded-2xl text-amber-300 font-bold text-center">📱 [MARKETING WIDGET: GlycoSense App Promo Card - "${title}"]</div><p></p>`
       )
       .run();
   };
