@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --primary-50: #f0fdfa;
-  --primary-100: #ccfbf1;
-  --primary-500: #0ea5e9;
-  --primary-600: #0284c7;
-  --primary-700: #0369a1;
-  --primary-900: #0f172a;
+  --primary-50: #f5f3ff;
+  --primary-100: #ede9fe;
+  --primary-500: #6366f1;
+  --primary-600: #4f46e5;
+  --primary-700: #4338ca;
+  --primary-900: #1e1b4b;
   
-  --brand-cyan: #06b6d4;
-  --brand-teal: #0d9488;
-  --brand-magenta: #ec4899;
-  --accent-500: #0ea5e9;
-  --accent-600: #0284c7;
+  --brand-indigo: #4f46e5;
+  --brand-violet: #7c3aed;
+  --brand-fuchsia: #d946ef;
+  --accent-500: #8b5cf6;
+  --accent-600: #7c3aed;
   
   --slate-900: #0f172a;
   --slate-800: #1e293b;
@@ -30,17 +30,22 @@ body {
   line-height: 1.6;
 }
 
-.gradient-hero {
-  background: linear-gradient(135deg, #0f172a 0%, #0f766e 45%, #0284c7 100%);
+/* GlycoSense App Signature Gradient from Staging Hero Screen */
+.gradient-hero, .gradient-glycosense {
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 35%, #9333ea 70%, #d946ef 100%);
+}
+
+.gradient-glycosense-dark {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #581c87 75%, #701a75 100%);
 }
 
 .gradient-brand-badge {
-  background: linear-gradient(90deg, #06b6d4 0%, #ec4899 100%);
+  background: linear-gradient(90deg, #6366f1 0%, #d946ef 100%);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.01);
+  border: 1px solid rgba(241, 245, 249, 0.9);
+  box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.08), 0 8px 10px -6px rgba(99, 102, 241, 0.03);
 }
