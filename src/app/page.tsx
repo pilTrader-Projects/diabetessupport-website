@@ -3,6 +3,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import { PostModel } from '@/models/Post';
 import { IPost } from '@/types/blog';
 import Link from 'next/link';
+import LeadMagnetCard from '@/components/LeadMagnetCard';
 
 export const revalidate = 60; // Refresh static page every 60 seconds
 
@@ -218,18 +219,11 @@ export default async function HomePage() {
       </section>
 
       {/* Campaign Call-to-Action Lead Capture */}
-      <section id="campaign" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 scroll-mt-24">
-        <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-xl border border-slate-800">
-          <span className="text-teal-400 text-xs font-bold uppercase tracking-widest bg-teal-950 px-3 py-1 rounded-full border border-teal-800">
-            Take Proactive Control Today
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold">
-            Track Your Numbers. Prevent Complications.
-          </h2>
-          <p className="text-slate-300 max-w-2xl mx-auto text-base leading-relaxed">
-            Join our Diabetes Awareness initiative to receive free educational cheat sheets, HbA1c log templates, and dietary insights.
-          </p>
-        </div>
+      <section id="campaign" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 scroll-mt-24">
+        <LeadMagnetCard
+          title="Track Your Numbers. Prevent Complications. Download Free PDF Cheatsheet."
+          source="homepage_campaign"
+        />
       </section>
     </div>
   );
