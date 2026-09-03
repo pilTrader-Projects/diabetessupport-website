@@ -200,18 +200,18 @@ export default async function HomePage() {
           {AWARENESS_PILLARS.map((pillar) => (
             <div
               key={pillar.id}
-              className="bg-slate-900 text-white rounded-2xl p-8 shadow-md flex flex-col justify-between space-y-4"
+              className="bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 gradient-kit-panel text-white rounded-3xl p-8 shadow-xl border border-white/20 flex flex-col justify-between space-y-4 hover:scale-[1.02] transition-transform duration-300"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-3xl">{pillar.icon}</span>
-                  <span className="bg-teal-900/80 text-teal-300 text-xs font-bold px-3 py-1 rounded-full border border-teal-700">
+                  <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/30 backdrop-blur-md">
                     {pillar.stat}
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-white">{pillar.title}</h3>
-                <p className="text-xs font-semibold text-teal-400 uppercase tracking-wider">{pillar.subtitle}</p>
-                <p className="text-sm text-slate-300 leading-relaxed">{pillar.description}</p>
+                <p className="text-xs font-extrabold text-amber-300 uppercase tracking-wider">{pillar.subtitle}</p>
+                <p className="text-sm text-purple-100/90 leading-relaxed">{pillar.description}</p>
               </div>
             </div>
           ))}
