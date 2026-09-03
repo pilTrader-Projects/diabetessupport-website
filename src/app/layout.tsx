@@ -48,10 +48,10 @@ export default function RootLayout({
 
         <main className="flex-grow">{children}</main>
 
-        <footer className="bg-slate-950 text-slate-400 py-12 border-t border-purple-900/40 mt-16">
+        <footer className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white py-12 border-t border-white/10 mt-16 shadow-2xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-            <p className="font-semibold text-slate-300">© {new Date().getFullYear()} {SITE_CONFIG.author}. All rights reserved.</p>
-            <p className="max-w-3xl mx-auto text-xs text-slate-500 leading-relaxed">
+            <p className="font-bold text-white tracking-wide">© {new Date().getFullYear()} {SITE_CONFIG.author}. All rights reserved.</p>
+            <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
               Medical Disclaimer: DiabetesCare PH is an independent health awareness and educational campaign platform. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your health conditions.
             </p>
           </div>
