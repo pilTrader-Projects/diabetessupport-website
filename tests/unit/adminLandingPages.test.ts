@@ -122,6 +122,38 @@ describe('Owner Admin Auth & Dynamic Landing Page CMS API', () => {
       expect(body.success).toBe(true);
       expect(body.data.slug).toBe('free-cheatsheet');
     });
+
+    it('should parse raw Kit <script> HTML tags automatically', async () => {
+      const validSecret = process.env.API_SECRET_KEY || 'dev_secret_key_123';
+      const rawScriptTag = `<script async data-uid="1d0f3e3530" src="https://glycosense.kit.com/1d0f3e3530/index.js"></script>`;
+
+      (LandingPageModel.create as jest.Mock).mockImplementation((data) => Promise.resolve({ _id: 'lp_999', ...data }));
+
+      const req = new Request('http://localhost:3000/api/v1/landing-pages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${validSecret}`,
+        },
+        body: JSON.stringify({
+          slug: 'raw-script-test',
+          title: 'Raw Script Test',
+          kitScriptUrl: rawScriptTag,
+        }),
+      });
+
+      const res = await createLandingPage(req);
+      const body = await res.json();
+
+      expect(res.status).toBe(201);
+      expect(body.success).toBe(true);
+      expect(LandingPageModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kitScriptUrl: 'https://glycosense.kit.com/1d0f3e3530/index.js',
+          kitFormId: '1d0f3e3530',
+        })
+      );
+    });
   });
 
   describe('GET /api/v1/landing-pages', () => {
