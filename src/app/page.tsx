@@ -237,22 +237,19 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Connecting Statement Divider & Campaign Anchor Target */}
-      <section id="campaign" className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-mt-16 py-8 sm:py-12 space-y-8">
-        <div className="relative flex py-2 items-center max-w-4xl mx-auto w-full">
+      {/* Campaign Call-to-Action Lead Capture & Target */}
+      <section id="campaign" className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-mt-16 py-8 sm:py-12 space-y-6">
+        <div className="relative flex items-center max-w-3xl mx-auto w-full">
           <div className="flex-grow border-t border-slate-200"></div>
           <span className="flex-shrink mx-4 text-xs font-extrabold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-3.5 py-1 rounded-full border border-indigo-200/80 shadow-sm">
             Take Action Now
           </span>
           <div className="flex-grow border-t border-slate-200"></div>
         </div>
-        <p className="text-lg sm:text-2xl font-bold text-slate-800 leading-relaxed max-w-3xl mx-auto pt-1 pb-1">
+        <p className="text-base sm:text-xl font-bold text-slate-800 leading-relaxed max-w-3xl mx-auto">
           You cannot manage what you do not measure. <span className="text-indigo-700">High blood sugar operates in the dark</span>, but you don't have to. Stop guessing how your body feels and start knowing exactly where your health stands.
         </p>
-      </section>
 
-      {/* Campaign Call-to-Action Lead Capture */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-2">
         <LeadMagnetCard
           title="Track Your Numbers. Prevent Complications."
         />
