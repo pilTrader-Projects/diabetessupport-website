@@ -35,9 +35,9 @@ export default async function HomePage() {
   }));
 
   return (
-    <div className="space-y-20 py-8">
+    <div className="space-y-20 pb-8">
       {/* Clean Hero Awareness Banner */}
-      <section className="min-h-[75vh] sm:min-h-[80vh] flex flex-col items-center justify-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 py-12 sm:py-16">
+      <section className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 py-8 sm:py-12">
         <span className="inline-block bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200">
           💡 Diabetes Awareness & Prevention Campaign
         </span>
