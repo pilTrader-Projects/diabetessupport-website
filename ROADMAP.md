@@ -28,8 +28,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 6: Ad Monetization
 - [ ] **[Issue #7](https://github.com/pilTrader-Projects/diabetessupport-website/issues/7)**: Implement Google AdSense slots, fallback UI, and dynamic `/ads.txt`.
 
-### Milestone 7: PWA Apps Promotion Engine
+### Milestone 7: PWA Apps Promotion Engine & Mobile UI Optimization
 - [x] **[PR #19](https://github.com/pilTrader-Projects/diabetessupport-website/pull/19)** `[COMPLETED]`: GlycoSense Brand Theme Integration & High-Converting PWA Lead Capture Cards.
+- [x] **[PR #20](https://github.com/pilTrader-Projects/diabetessupport-website/pull/20)** `[COMPLETED]`: Mobile Responsiveness Optimization & Horizontal Right-Side White Margin Overflow Fix (Header Drawer Nav & Viewport Resets).
 - [ ] **[Issue #8](https://github.com/pilTrader-Projects/diabetessupport-website/issues/8)**: Implement high-converting PWA promotional banners, sticky CTAs, and app feature cards.
 
 ---
