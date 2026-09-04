@@ -81,7 +81,7 @@ export default async function HomePage() {
       </section>
 
       {/* Target Numbers & Progression Section */}
-      <section id="progression" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-24">
+      <section id="progression" className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 scroll-mt-16 py-8 sm:py-12">
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-extrabold text-slate-900">
             The 3 Essential Numbers You Must Track
@@ -137,7 +137,7 @@ export default async function HomePage() {
       </section>
 
       {/* Imported Post Articles Grid Section */}
-      <section id="education" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
+      <section id="education" className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-16 py-8 sm:py-12">
         <div id="articles" className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-teal-700">Educational Articles</span>
@@ -205,7 +205,7 @@ export default async function HomePage() {
       </section>
 
       {/* Awareness Pillars Grid */}
-      <section id="awareness" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-24">
+      <section id="awareness" className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 scroll-mt-16 py-8 sm:py-12">
         <div className="text-center space-y-3 max-w-3xl mx-auto">
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
             Why Diabetes Thrives in Status-Quo Neglect
@@ -238,8 +238,8 @@ export default async function HomePage() {
       </section>
 
       {/* Connecting Statement Divider & Campaign Anchor Target */}
-      <section id="campaign" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-2 pb-0 scroll-mt-24">
-        <div className="relative flex py-2 items-center">
+      <section id="campaign" className="min-h-[calc(100vh-4rem)] min-h-[calc(100dvh-4rem)] flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center scroll-mt-16 py-8 sm:py-12 space-y-8">
+        <div className="relative flex py-2 items-center max-w-4xl mx-auto w-full">
           <div className="flex-grow border-t border-slate-200"></div>
           <span className="flex-shrink mx-4 text-xs font-extrabold uppercase tracking-widest text-indigo-700 bg-indigo-50 px-3.5 py-1 rounded-full border border-indigo-200/80 shadow-sm">
             Take Action Now
