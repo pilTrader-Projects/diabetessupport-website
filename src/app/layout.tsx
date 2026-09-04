@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';
-import Link from 'next/link';
+import Header from '@/components/Header';
 
 /**
  * Next.js Metadata configuration object.
@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 /**
  * Root Layout Component for Next.js App Router.
  *
- * @usecase Wraps all page components with consistent HTML head metadata, header navigation, ExtensionGuard, and footer.
+ * @usecase Wraps all page components with consistent HTML head metadata, responsive header navigation, ExtensionGuard, and footer.
  * @param {Readonly<{ children: React.ReactNode }>} props Component props containing child pages.
- * @dependencies SITE_CONFIG, ExtensionGuard, globals.css.
+ * @dependencies SITE_CONFIG, ExtensionGuard, Header, globals.css.
  * @returns {JSX.Element} Rendered root HTML document structure.
  */
 export default function RootLayout({
@@ -29,24 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+      <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col max-w-full overflow-x-clip">
         <ExtensionGuard />
-        <header className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white sticky top-0 z-50 shadow-xl border-b border-white/10 backdrop-blur-md">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 font-black text-xl text-white tracking-tight hover:opacity-90 transition-opacity">
-              <span className="text-2xl">🩸</span>
-              <span className="bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent">DiabetesCare PH</span>
-            </Link>
-            <nav className="flex items-center space-x-6 text-sm font-semibold">
-              <Link href="/#progression" className="text-purple-100 hover:text-white transition-colors">Progression & Metrics</Link>
-              <Link href="/#education" className="text-purple-100 hover:text-white transition-colors">Educational Articles</Link>
-              <Link href="/#awareness" className="text-purple-100 hover:text-white transition-colors">The Silent Killer</Link>
-              <Link href="/#campaign" className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm">Take Action</Link>
-            </nav>
-          </div>
-        </header>
+        <Header />
 
-        <main className="flex-grow">{children}</main>
+        <main className="flex-grow w-full max-w-full overflow-x-clip">{children}</main>
 
         <footer className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white py-12 border-t border-white/10 mt-16 shadow-2xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">

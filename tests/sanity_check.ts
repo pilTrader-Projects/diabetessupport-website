@@ -39,6 +39,7 @@ async function runSanityCheck() {
         'src/app/sitemap.xml/route.ts',
         'src/app/feed.xml/route.ts',
         'src/components/ExtensionGuard.tsx',
+        'src/components/Header.tsx',
         'src/components/KitOptInForm.tsx',
         'src/components/LeadMagnetCard.tsx',
         'src/components/KitScriptEmbed.tsx',
