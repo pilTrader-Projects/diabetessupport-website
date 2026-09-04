@@ -1,12 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { dbConnect } from '../src/lib/dbConnect';
-import { PostModel } from '../src/models/Post';
-import { CategoryModel } from '../src/models/Category';
-import { SITE_CONFIG } from '../src/config/constants';
-import { transformWordPressPost, WordPressApiPostPayload } from '../src/services/wordpressMigration';
 
-// Load .env variables if present
+// Load .env variables if present BEFORE module imports
 const envPath = path.join(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');
@@ -17,6 +12,12 @@ if (fs.existsSync(envPath)) {
     }
   });
 }
+
+import { dbConnect } from '../src/lib/dbConnect';
+import { PostModel } from '../src/models/Post';
+import { CategoryModel } from '../src/models/Category';
+import { SITE_CONFIG } from '../src/config/constants';
+import { transformWordPressPost, WordPressApiPostPayload } from '../src/services/wordpressMigration';
 
 /**
  * Interface representing summary results of the WordPress migration process.
