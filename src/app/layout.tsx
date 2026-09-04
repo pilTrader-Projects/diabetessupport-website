@@ -29,11 +29,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col max-w-full overflow-x-hidden">
+      <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col max-w-full overflow-x-clip">
         <ExtensionGuard />
         <Header />
 
-        <main className="flex-grow w-full max-w-full overflow-x-hidden">{children}</main>
+        <main className="flex-grow w-full max-w-full overflow-x-clip">{children}</main>
 
         <footer className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white py-12 border-t border-white/10 mt-16 shadow-2xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
