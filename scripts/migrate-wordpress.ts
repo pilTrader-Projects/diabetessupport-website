@@ -6,6 +6,18 @@ import { CategoryModel } from '../src/models/Category';
 import { SITE_CONFIG } from '../src/config/constants';
 import { transformWordPressPost, WordPressApiPostPayload } from '../src/services/wordpressMigration';
 
+// Load .env variables if present
+const envPath = path.join(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf-8');
+  envContent.split('\n').forEach((line) => {
+    const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+    if (match && match[1] && !process.env[match[1]]) {
+      process.env[match[1]] = (match[2] || '').trim().replace(/^['"]|['"]$/g, '');
+    }
+  });
+}
+
 /**
  * Interface representing summary results of the WordPress migration process.
  * @usecase Strongly types output reports for migration runs.
@@ -68,7 +80,7 @@ async function downloadMediaFile(imageUrl: string): Promise<string> {
  * @returns {Promise<MigrationSummary>} Resolved execution summary containing import counters and errors.
  */
 export async function executeWordPressMigration(
-  apiUrl: string = SITE_CONFIG.wordpressApiUrl
+  apiUrl: string = process.env.WORDPRESS_API_URL || SITE_CONFIG.wordpressApiUrl
 ): Promise<MigrationSummary> {
   console.log(`🚀 Starting Self-Hosted WordPress Migration from: ${apiUrl}`);
   await dbConnect();

@@ -23,6 +23,7 @@ export const SITE_CONFIG = {
     'Unmasking diabetes as the silent killer. Learn the warning signs, understand insulin resistance, and take proactive control before complications arise.',
   domain: 'diabetescareph.com',
   wordpressApiUrl:
+    process.env.WORDPRESS_API_URL ||
     'https://public-api.wordpress.com/wp/v2/sites/diabetescareph.wordpress.com',
   author: 'DiabetesCare PH',
   social: {
