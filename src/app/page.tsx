@@ -37,7 +37,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-20 py-8">
       {/* Clean Hero Awareness Banner */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+      <section className="min-h-[75vh] sm:min-h-[80vh] flex flex-col items-center justify-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 py-12 sm:py-16">
         <span className="inline-block bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200">
           💡 Diabetes Awareness & Prevention Campaign
         </span>
@@ -53,9 +53,10 @@ export default async function HomePage() {
         <div className="pt-2 flex flex-wrap justify-center gap-4">
           <Link
             href="#progression"
-            className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-slate-900/20 transition-all text-base"
+            className="bg-slate-900 hover:bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-slate-900/20 transition-all text-base flex items-center gap-2"
           >
-            Know Your Target Numbers
+            <span>Know Your Target Numbers</span>
+            <span>↓</span>
           </Link>
           <Link
             href="/blog"
@@ -64,6 +65,19 @@ export default async function HomePage() {
             Explore Articles &rarr;
           </Link>
         </div>
+
+        <a
+          href="#progression"
+          aria-label="Scroll down to target numbers section"
+          className="pt-6 inline-flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer group"
+        >
+          <span className="text-xs font-semibold tracking-wider uppercase group-hover:translate-y-0.5 transition-transform">
+            Target Metrics Below
+          </span>
+          <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </a>
       </section>
 
       {/* Target Numbers & Progression Section */}
