@@ -20,7 +20,7 @@ export interface KitOptInFormProps {
  */
 export default function KitOptInForm({
   title = 'Get Our Free Diabetes Care & Insulin Sensitivity Guide',
-  subtitle = 'Join over 15,000+ individuals receiving evidence-based lifestyle tips, low-GI meal plans, and blood sugar tracking advice directly in their inbox.',
+  subtitle = 'Join the growing movement of Filipino family providers receiving evidence-based lifestyle tips, low-GI meal plans, and blood sugar tracking advice directly in their inbox.',
   buttonText = 'Claim Free Guide',
   layout = 'card',
   source = 'general_optin',
