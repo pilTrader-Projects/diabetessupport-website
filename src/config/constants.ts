@@ -20,7 +20,7 @@ export interface AwarenessPillar {
 export const SITE_CONFIG = {
   title: 'DiabetesCare PH - Educational & Awareness Campaign for Diabetes Care',
   description:
-    'Unmasking diabetes as the silent killer. Learn the warning signs, understand insulin resistance, and take proactive control before complications arise.',
+    'Protect your family and income from diabetes. Learn the vital numbers, manual tracking advantage, and reverse insulin resistance naturally.',
   domain: 'diabetescareph.com',
   wordpressApiUrl:
     process.env.WORDPRESS_API_URL ||
@@ -33,38 +33,38 @@ export const SITE_CONFIG = {
 };
 
 /**
- * Educational awareness pillars exposing the sneaky nature of diabetes and the risk of status-quo neglect.
+ * Educational awareness pillars exposing the sneaky nature of diabetes and framing manual tracking as wealth protection.
  *
- * @usecase Drives the educational awareness grid on the homepage.
+ * @usecase Drives the educational awareness grid and value proposition.
  * @dependencies AwarenessPillar interface.
  */
 export const AWARENESS_PILLARS: AwarenessPillar[] = [
   {
     id: 'silent-killer',
     title: 'The Silent Killer Threat',
-    subtitle: 'Thrives Without Symptoms',
+    subtitle: 'Over 4 Million Cases in PH',
     description:
-      'High blood sugar quietly damages blood vessels and organs for years before symptoms become noticeable. Up to 1 in 2 adults living with diabetes remain undiagnosed.',
+      'Over 4 million Filipinos are currently living with diabetes, and nearly half don’t even know it. Because it causes zero physical pain in the early stages, routine checking is your only early warning system.',
     icon: '🥷',
-    stat: '46% Undiagnosed',
+    stat: '46% Undiagnosed in PH',
   },
   {
     id: 'status-quo-trap',
-    title: 'The Danger of Status Quo',
-    subtitle: 'Complacency Feeds Progression',
+    title: 'Wealth Protection Tool',
+    subtitle: 'Prevent Family Catastrophe',
     description:
-      'Relying on "feeling healthy" is dangerous. Normal feelings often mask progressive insulin resistance until vascular, kidney, or nerve damage has already begun.',
-    icon: '⚠️',
-    stat: '5-10 Years Hidden',
+      'A box of finger-prick test strips is vastly cheaper than a continuous monitor, and infinitely cheaper than a dialysis session or stroke recovery bill.',
+    icon: '🛡️',
+    stat: 'Protect Your Income',
   },
   {
     id: 'early-detection',
-    title: 'Early Detection Saves Lives',
-    subtitle: 'HbA1c & Fasting Glucose',
+    title: 'The Reversibility Critical Window',
+    subtitle: 'Catch It Before Permanent Harm',
     description:
-      'Simple, routine blood tests reveal prediabetes early when it is completely reversible. Catching elevated glucose early prevents lifelong organ damage.',
+      'Catching elevated HbA1c between 5.7% and 6.4% gives you the critical window to reverse insulin resistance and restore metabolic balance through lifestyle changes before requiring insulin injections.',
     icon: '🔬',
-    stat: '100% Reversible Early',
+    stat: 'Reversible in Early Stages',
   },
 ];
 

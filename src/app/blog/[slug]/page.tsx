@@ -127,7 +127,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <div className="pt-8">
         <KitOptInForm
           title="Enjoyed this article? Get our free weekly health guides"
-          subtitle="Join over 15,000+ readers receiving low-GI recipes, blood sugar management tips, and free downloadable cheat sheets."
+          subtitle="Join the growing movement of Filipino family providers receiving low-GI recipes, blood sugar management tips, and free downloadable cheat sheets."
           buttonText="Subscribe Free"
           layout="inline"
           source={`article_${slug}`}
