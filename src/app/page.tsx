@@ -17,7 +17,7 @@ export const revalidate = 60; // Refresh static page every 60 seconds
  * @dependencies dbConnect, PostModel, HeroSection, CoreMetricsSection, ManualAdvantageSection, RoadmapsSection, LeadMagnetCard.
  * @returns {Promise<JSX.Element>} Rendered awareness landing page with modular sub-components.
  */
-export default async function HomePage(): Promise<JSX.Element> {
+export default async function HomePage(): Promise<React.JSX.Element> {
   let rawPosts: any[] = [];
   try {
     await dbConnect();
