@@ -39,7 +39,10 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <p className="font-bold text-white tracking-wide">© {new Date().getFullYear()} {SITE_CONFIG.author}. All rights reserved.</p>
             <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
-              Medical Disclaimer: DiabetesCare PH is an independent health awareness and educational campaign platform. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your health conditions.
+              <strong className="text-white">Medical Disclaimer:</strong> DiabetesCare PH is an independent health awareness and educational campaign platform. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your health conditions.
+            </p>
+            <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
+              <strong className="text-white">Data Privacy & Security Notice:</strong> Health metrics and logs entered into GlycoSense are treated as Sensitive Personal Information under Republic Act No. 10173 (Philippine Data Privacy Act of 2012). Data is encrypted, strictly owned by you, and utilized exclusively for generating your personal summaries and doctor-ready reports. We never sell, rent, or disclose your health data to third parties, advertisers, or insurers.
             </p>
           </div>
         </footer>

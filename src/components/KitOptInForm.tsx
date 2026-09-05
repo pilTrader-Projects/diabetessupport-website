@@ -180,7 +180,7 @@ export default function KitOptInForm({
           </button>
 
           <p className="text-center text-xs text-teal-200/70">
-            🔒 100% Privacy Guaranteed. Unsubscribe at any time with 1-click.
+            🔒 100% Privacy Guaranteed under RA 10173. Unsubscribe at any time with 1-click.
           </p>
         </form>
       )}

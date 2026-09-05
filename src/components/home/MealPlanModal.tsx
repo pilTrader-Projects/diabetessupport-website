@@ -148,7 +148,7 @@ export default function MealPlanModal({ isOpen, onClose }: MealPlanModalProps): 
               </button>
 
               <p className="text-[11px] text-slate-400 text-center">
-                🔒 100% Free &amp; Private. We will never share your email.
+                🔒 100% Secure &amp; Private under RA 10173. We never share or sell your data.
               </p>
             </form>
           </div>

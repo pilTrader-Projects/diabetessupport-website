@@ -84,9 +84,9 @@ export default function LeadMagnetCard({
             <span className="text-lg">➔</span>
           </Link>
 
-          <p className="text-[11px] text-purple-200/90 flex items-center justify-center gap-1">
+          <p className="text-[11px] text-purple-200/90 flex items-center justify-center gap-1.5 text-center">
             <span>🔒</span>
-            <span>100% Privacy Guaranteed. Safe, secure, and encrypted.</span>
+            <span>100% Privacy Guaranteed under RA 10173. Safe, encrypted, and never shared.</span>
           </p>
         </div>
       </div>
