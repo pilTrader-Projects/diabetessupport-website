@@ -21,7 +21,7 @@ export const SITE_CONFIG = {
   title: 'DiabetesCare PH - Educational & Awareness Campaign for Diabetes Care',
   description:
     'Protect your family and income from diabetes. Learn the vital numbers, manual tracking advantage, and reverse insulin resistance naturally.',
-  domain: 'diabetescareph.com',
+  domain: process.env.NEXT_PUBLIC_SITE_URL || 'diabetescareph.com',
   wordpressApiUrl:
     process.env.WORDPRESS_API_URL ||
     'https://public-api.wordpress.com/wp/v2/sites/diabetescareph.wordpress.com',
@@ -88,4 +88,35 @@ export const ADSENSE_CONFIG = {
 export const KIT_MARKETING_CONFIG = {
   formId: process.env.NEXT_PUBLIC_KIT_FORM_ID || '',
   scriptUrl: process.env.NEXT_PUBLIC_KIT_SCRIPT_URL || '',
+};
+
+/**
+ * Community Discussion Board & Guardrails Configuration.
+ *
+ * @usecase Configures forum category taxonomy, impersonation blocklists, rate limiting, and safe conditional email alerts.
+ */
+export const COMMUNITY_CONFIG = {
+  categories: [
+    'Daily Sugar Tracking',
+    'Low-GI Pinoy Meals',
+    'Medications & Doctor Visits',
+    'General Support',
+  ],
+  reservedAliases: [
+    'admin',
+    'moderator',
+    'diabetescare',
+    'diabetescare ph',
+    'doctor',
+    'dr.',
+    'staff',
+    'support',
+    'system',
+    'official',
+  ],
+  reportAutoQuarantineThreshold: 2,
+  syncCodeExpiresMinutes: 15,
+  emailNotificationsEnabled:
+    process.env.ENABLE_COMMUNITY_EMAIL_NOTIFICATIONS === 'true' &&
+    Boolean(process.env.RESEND_API_KEY),
 };
