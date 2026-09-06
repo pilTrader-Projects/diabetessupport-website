@@ -16,10 +16,7 @@ export function buildOrganizationSchema(): Record<string, any> {
     url: `https://${SITE_CONFIG.domain}`,
     logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
     description: SITE_CONFIG.description,
-    sameAs: [
-      SITE_CONFIG.social.facebook,
-      SITE_CONFIG.social.twitter,
-    ],
+    sameAs: [SITE_CONFIG.social.facebook, SITE_CONFIG.social.twitter],
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'Customer Support & Educational Inquiries',
@@ -37,10 +34,6 @@ export function buildOrganizationSchema(): Record<string, any> {
 
 /**
  * Builds WebSite JSON-LD Schema with SearchAction for Sitelinks Searchbox.
- *
- * @usecase Enables Google to render a dedicated search box in SERP for DiabetesCare PH queries.
- * @dependencies SITE_CONFIG constant.
- * @returns {Record<string, any>} Schema.org compliant WebSite JSON-LD object.
  */
 export function buildWebSiteSchema(): Record<string, any> {
   return {
@@ -162,5 +155,46 @@ export function buildSoftwareAppSchema(): Record<string, any> {
       'Doctor-ready printable PDF health summaries',
       'Zero continuous monitor lock-in',
     ],
+  };
+}
+
+/**
+ * Builds DiscussionForumPosting JSON-LD Schema for community thread pages.
+ *
+ * @usecase Powers Google's Discussion Forum rich snippets with question and comment structure.
+ * @param {IThread} thread Discussion thread entity.
+ * @param {IReply[]} replies List of community replies.
+ * @returns {Record<string, any>} Schema.org compliant DiscussionForumPosting JSON-LD object.
+ */
+export function buildDiscussionForumPostingSchema(
+  thread: { title: string; slug: string; content: string; authorAlias: string; authorTag: string; createdAt?: Date },
+  replies: Array<{ content: string; authorAlias: string; authorTag: string; createdAt?: Date }>
+): Record<string, any> {
+  const threadUrl = `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'DiscussionForumPosting',
+    '@id': threadUrl,
+    headline: thread.title,
+    articleBody: thread.content,
+    datePublished: thread.createdAt ? new Date(thread.createdAt).toISOString() : new Date().toISOString(),
+    author: {
+      '@type': 'Person',
+      name: `${thread.authorAlias} (${thread.authorTag})`,
+    },
+    interactionStatistic: {
+      '@type': 'InteractionCounter',
+      interactionType: 'https://schema.org/CommentAction',
+      userInteractionCount: replies.length,
+    },
+    comment: replies.map((r) => ({
+      '@type': 'Comment',
+      text: r.content,
+      dateCreated: r.createdAt ? new Date(r.createdAt).toISOString() : new Date().toISOString(),
+      author: {
+        '@type': 'Person',
+        name: `${r.authorAlias} (${r.authorTag})`,
+      },
+    })),
   };
 }
