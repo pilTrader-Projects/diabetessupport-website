@@ -97,3 +97,6 @@ const ThreadSchema = new Schema<IThread>(
 
 export const ThreadModel: Model<IThread> =
   mongoose.models.Thread || mongoose.model<IThread>('Thread', ThreadSchema);
+
+export const Thread = ThreadModel;
+export default ThreadModel;

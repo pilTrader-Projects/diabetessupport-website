@@ -8,6 +8,7 @@ import { GET as getSitemap } from '../../src/app/sitemap.xml/route';
 import { GET as getRssFeed } from '../../src/app/feed.xml/route';
 import { PostModel } from '../../src/models/Post';
 import { LandingPageModel } from '../../src/models/LandingPage';
+import { Thread } from '../../src/models/Thread';
 
 jest.mock('../../src/lib/dbConnect', () => ({
   dbConnect: jest.fn().mockResolvedValue(true),
@@ -21,6 +22,12 @@ jest.mock('../../src/models/Post', () => ({
 
 jest.mock('../../src/models/LandingPage', () => ({
   LandingPageModel: {
+    find: jest.fn(),
+  },
+}));
+
+jest.mock('../../src/models/Thread', () => ({
+  Thread: {
     find: jest.fn(),
   },
 }));
@@ -79,6 +86,17 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       };
       (LandingPageModel.find as jest.Mock).mockReturnValue(mockLpQuery);
 
+      const mockThreadQuery = {
+        sort: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([
+          {
+            slug: 'fasting-glucose-tips',
+            updatedAt: new Date('2026-09-04T10:00:00Z'),
+          },
+        ]),
+      };
+      (Thread.find as jest.Mock).mockReturnValue(mockThreadQuery);
+
       const response = await getSitemap();
       const xmlText = await response.text();
 
@@ -88,6 +106,7 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<urlset');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/blog</loc>');
+      expect(xmlText).toContain('<loc>https://diabetescareph.com/community</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/guides/cheatsheet</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/privacy-policy</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/terms-of-service</loc>');
@@ -96,6 +115,7 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<loc>https://diabetescareph.com/blog/understanding-insulin-resistance-early</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/blog/warning-signs-of-high-blood-sugar</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/free-starter-kit</loc>');
+      expect(xmlText).toContain('<loc>https://diabetescareph.com/community/fasting-glucose-tips</loc>');
     });
   });
 

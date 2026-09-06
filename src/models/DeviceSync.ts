@@ -49,3 +49,6 @@ const DeviceSyncSchema = new Schema<IDeviceSync>(
 export const DeviceSyncModel: Model<IDeviceSync> =
   mongoose.models.DeviceSync ||
   mongoose.model<IDeviceSync>('DeviceSync', DeviceSyncSchema);
+
+export const DeviceSync = DeviceSyncModel;
+export default DeviceSyncModel;

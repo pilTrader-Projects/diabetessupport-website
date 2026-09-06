@@ -34,6 +34,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #21](https://github.com/pilTrader-Projects/diabetessupport-website/pull/21)** `[COMPLETED]`: Breadwinner Pivot Copywriting Revamp, SaMD Regulatory Safe Harbor, and RA 10173 Data Privacy Compliance.
 - [ ] **[Issue #8](https://github.com/pilTrader-Projects/diabetessupport-website/issues/8)**: Implement high-converting PWA promotional banners, sticky CTAs, and app feature cards.
 
+### Milestone 8: Passwordless Community Forum & Discussion Board
+- [x] `[COMPLETED]`: Passwordless Community Forum (`/community` and `/community/[slug]`) with Display Names, 4-digit auto-tags, 6-digit cross-device sync PINs, OP highlight badges, conditional Resend email alerts, UGC link sanitization, and Google DiscussionForumPosting JSON-LD schemas.
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow

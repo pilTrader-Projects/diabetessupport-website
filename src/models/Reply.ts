@@ -69,3 +69,6 @@ const ReplySchema = new Schema<IReply>(
 
 export const ReplyModel: Model<IReply> =
   mongoose.models.Reply || mongoose.model<IReply>('Reply', ReplySchema);
+
+export const Reply = ReplyModel;
+export default ReplyModel;
