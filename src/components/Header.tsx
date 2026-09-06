@@ -47,6 +47,9 @@ export default function Header() {
           <Link href="/#awareness" className="text-purple-100 hover:text-white transition-colors">
             The Silent Killer
           </Link>
+          <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
+            Community
+          </Link>
           <Link
             href="/#campaign"
             className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm"
@@ -98,6 +101,13 @@ export default function Header() {
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
           >
             ⚠️ The Silent Killer
+          </Link>
+          <Link
+            href="/community"
+            onClick={closeMenu}
+            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            💬 Community Forum
           </Link>
           <div className="pt-2">
             <Link
