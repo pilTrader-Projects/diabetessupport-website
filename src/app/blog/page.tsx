@@ -5,6 +5,7 @@ import { getCategoryLookupMap, resolveCategoryName } from '@/lib/categoryUtils';
 import { IPost } from '@/types/blog';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import AdUnit from '@/components/ads/AdUnit';
 import { SITE_CONFIG } from '@/config/constants';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
@@ -205,6 +206,9 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
           </Link>
         </div>
       )}
+
+      {/* Blog Feed AdSense Unit */}
+      <AdUnit slotId="blog-feed-top" format="horizontal" />
 
       {/* Article Grid */}
       {filteredPosts.length === 0 ? (
