@@ -27,6 +27,15 @@ export default function SocialShareBar({
   isLiked = false,
 }: SocialShareBarProps) {
   const [copied, setCopied] = useState(false);
+  const [activeUrl, setActiveUrl] = useState(url);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.href) {
+      if (!window.location.hostname.includes('localhost')) {
+        setActiveUrl(window.location.href);
+      }
+    }
+  }, [url]);
 
   const cleanSnippet = snippet ? snippet.slice(0, 160).replace(/\s+/g, ' ').trim() : '';
   const shareText = cleanSnippet ? `"${cleanSnippet}..." — Join the discussion on DiabetesCare PH:` : title;
@@ -37,7 +46,7 @@ export default function SocialShareBar({
         await navigator.share({
           title,
           text: shareText,
-          url,
+          url: activeUrl,
         });
       } catch (err) {
         // User canceled or share failed; fall back gracefully
@@ -50,18 +59,18 @@ export default function SocialShareBar({
   const handleCopyQuote = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       const textToCopy = cleanSnippet
-        ? `"${cleanSnippet}..."\n\n🔗 Read full discussion on DiabetesCare PH:\n${url}`
-        : `${title}\n${url}`;
+        ? `"${cleanSnippet}..."\n\n🔗 Read full discussion on DiabetesCare PH:\n${activeUrl}`
+        : `${title}\n${activeUrl}`;
       navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
   };
 
-  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`;
-  const viberUrl = `viber://forward?text=${encodeURIComponent(shareText + '\n' + url)}`;
+  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(activeUrl)}`;
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(activeUrl)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(activeUrl)}`;
+  const viberUrl = `viber://forward?text=${encodeURIComponent(shareText + '\n' + activeUrl)}`;
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100 text-xs">
