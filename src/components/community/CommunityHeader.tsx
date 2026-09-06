@@ -58,7 +58,7 @@ export default function CommunityHeader({
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Diabetes Patient & Carer Discussions
+            DiabetesCarePH Community Discussions
           </h1>
           <p className="text-sm text-slate-600">
             Ask questions, share daily low-GI recipes, and exchange blood sugar management tips.
