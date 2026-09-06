@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AdUnit from '@/components/ads/AdUnit';
 import ReplyCard from './ReplyCard';
 import ReplyForm from './ReplyForm';
+import SocialShareBar from './SocialShareBar';
 import { IThread, IReply } from '@/types/community';
 
 interface ThreadViewClientProps {
@@ -18,13 +19,37 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
   const [currentAlias, setCurrentAlias] = useState('');
   const [reported, setReported] = useState(false);
   const [reportCount, setReportCount] = useState(thread.reportCount || 0);
+  const [likesCount, setLikesCount] = useState(thread.likes || 0);
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setCurrentAlias(localStorage.getItem('community_author_alias') || '');
       setCurrentTag(localStorage.getItem('community_author_tag') || '');
+      const likedThreads = JSON.parse(localStorage.getItem('community_liked_threads') || '[]');
+      if (likedThreads.includes(thread.slug)) {
+        setIsLiked(true);
+      }
     }
-  }, []);
+  }, [thread.slug]);
+
+  const handleLike = async () => {
+    if (isLiked) return;
+    setIsLiked(true);
+    setLikesCount((prev) => prev + 1);
+
+    if (typeof window !== 'undefined') {
+      const likedThreads = JSON.parse(localStorage.getItem('community_liked_threads') || '[]');
+      likedThreads.push(thread.slug);
+      localStorage.setItem('community_liked_threads', JSON.stringify(likedThreads));
+    }
+
+    try {
+      await fetch(`/api/v1/community/threads/${thread.slug}/like`, { method: 'POST' });
+    } catch (err) {
+      // Optimistic state remains smooth
+    }
+  };
 
   const handleReport = () => {
     if (reported) return;
@@ -47,6 +72,7 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
   const formattedDate = thread.createdAt
     ? new Date(thread.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : 'Recently';
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://diabetescareph.com/community/${thread.slug}`;
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
@@ -114,6 +140,17 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
         <div className="text-slate-700 leading-relaxed whitespace-pre-line text-base md:text-lg">
           {thread.content}
         </div>
+
+        {/* Social Share & Helpful Like Bar */}
+        <SocialShareBar
+          title={thread.title}
+          url={pageUrl}
+          snippet={thread.content}
+          showLikeButton={true}
+          likesCount={likesCount}
+          onLike={handleLike}
+          isLiked={isLiked}
+        />
       </article>
 
       {/* Mid-Thread AdSense Unit (Suppressed if quarantined) */}

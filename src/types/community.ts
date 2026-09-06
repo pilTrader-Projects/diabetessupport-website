@@ -23,6 +23,7 @@ export interface IThread {
   authorEditTokenHash?: string;
   status: CommunityStatus;
   reportCount: number;
+  likes?: number;
   views: number;
   repliesCount: number;
   pinned?: boolean;

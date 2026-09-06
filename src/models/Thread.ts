@@ -77,6 +77,10 @@ const ThreadSchema = new Schema<IThread>(
       type: Number,
       default: 0,
     },
+    likes: {
+      type: Number,
+      default: 0,
+    },
     views: {
       type: Number,
       default: 0,

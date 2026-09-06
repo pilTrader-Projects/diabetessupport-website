@@ -7,6 +7,7 @@ import { SITE_CONFIG } from '@/config/constants';
 import KitOptInForm from '@/components/KitOptInForm';
 import BlogPostContent from '@/components/BlogPostContent';
 import AdUnit from '@/components/ads/AdUnit';
+import SocialShareBar from '@/components/community/SocialShareBar';
 import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/schema';
 
 interface PageProps {
@@ -144,6 +145,13 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Article Body Content */}
         <BlogPostContent content={post.content} slug={slug} />
+
+        {/* Social Share Bar */}
+        <SocialShareBar
+          title={cleanTitle}
+          url={`https://${SITE_CONFIG.domain}/blog/${slug}`}
+          snippet={post.excerpt || cleanTitle}
+        />
 
         {/* In-Article AdSense Ad / House Ad Fallback */}
         <AdUnit slotId="blog-post-mid-article" />
