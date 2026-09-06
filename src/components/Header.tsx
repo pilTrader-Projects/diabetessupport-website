@@ -38,6 +38,9 @@ export default function Header() {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+          <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
+            Community Forum
+          </Link>
           <Link href="/#progression" className="text-purple-100 hover:text-white transition-colors">
             Progression & Metrics
           </Link>
@@ -78,6 +81,13 @@ export default function Header() {
       {/* Mobile Drawer Dropdown Menu */}
       {isMenuOpen && (
         <nav className="md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-white/10 px-4 pt-3 pb-6 space-y-3 shadow-2xl animate-fadeIn w-full">
+          <Link
+            href="/community"
+            onClick={closeMenu}
+            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            💬 Community Forum
+          </Link>
           <Link
             href="/#progression"
             onClick={closeMenu}

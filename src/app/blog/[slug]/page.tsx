@@ -6,6 +6,9 @@ import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
 import KitOptInForm from '@/components/KitOptInForm';
 import BlogPostContent from '@/components/BlogPostContent';
+import AdUnit from '@/components/ads/AdUnit';
+import SocialShareBar from '@/components/community/SocialShareBar';
+import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/schema';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -32,6 +35,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${title} | DiabetesCare PH`,
     description,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
     openGraph: {
       title,
       description,
@@ -57,8 +63,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  *
  * @usecase Renders full HTML content of an imported blog post document retrieved by unique slug.
  * @param {PageProps} props Route parameters containing slug.
- * @dependencies dbConnect, PostModel, notFound helper.
- * @returns {Promise<JSX.Element>} Rendered article view page.
+ * @dependencies dbConnect, PostModel, notFound helper, buildArticleSchema, buildBreadcrumbSchema, AdUnit.
+ * @returns {Promise<JSX.Element>} Rendered article view page with JSON-LD schema markup.
  */
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
@@ -82,67 +88,95 @@ export default async function BlogPostPage({ params }: PageProps) {
       })
     : '';
 
+  const baseUrl = `https://${SITE_CONFIG.domain}`;
+  const articleJsonLd = buildArticleSchema(post, slug);
+  const breadcrumbJsonLd = buildBreadcrumbSchema([
+    { name: 'Home', url: `${baseUrl}/` },
+    { name: 'Articles', url: `${baseUrl}/blog` },
+    { name: cleanTitle, url: `${baseUrl}/blog/${slug}` },
+  ]);
+
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      {/* Navigation Breadcrumb */}
-      <div className="flex items-center space-x-2 text-sm text-slate-500">
-        <Link href="/" className="hover:text-teal-600">Home</Link>
-        <span>/</span>
-        <Link href="/blog" className="hover:text-teal-600">Articles</Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium truncate max-w-xs">{cleanTitle}</span>
-      </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+        {/* Navigation Breadcrumb */}
+        <div className="flex items-center space-x-2 text-sm text-slate-500">
+          <Link href="/" className="hover:text-teal-600">Home</Link>
+          <span>/</span>
+          <Link href="/blog" className="hover:text-teal-600">Articles</Link>
+          <span>/</span>
+          <span className="text-slate-900 font-medium truncate max-w-xs">{cleanTitle}</span>
+        </div>
 
-      {/* Article Header */}
-      <header className="space-y-4 text-center sm:text-left">
-        <span className="inline-block bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-teal-200">
-          Diabetes Awareness Guide
-        </span>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-          {cleanTitle}
-        </h1>
-        {formattedDate && (
-          <p className="text-sm font-semibold text-slate-500">
-            Published on <time dateTime={post.publishedAt.toString()}>{formattedDate}</time> • DiabetesCare PH Team
-          </p>
+        {/* Article Header */}
+        <header className="space-y-4 text-center sm:text-left">
+          <span className="inline-block bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-teal-200">
+            Diabetes Awareness Guide
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            {cleanTitle}
+          </h1>
+          {formattedDate && (
+            <p className="text-sm font-semibold text-slate-500">
+              Published on <time dateTime={post.publishedAt.toString()}>{formattedDate}</time> • DiabetesCare PH Team
+            </p>
+          )}
+        </header>
+
+        {/* Featured Banner Image */}
+        {post.featuredImage && (
+          <div className="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-md">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.featuredImage}
+              alt={cleanTitle}
+              className="object-cover w-full h-full"
+            />
+          </div>
         )}
-      </header>
 
-      {/* Featured Banner Image */}
-      {post.featuredImage && (
-        <div className="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-md">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={post.featuredImage}
-            alt={cleanTitle}
-            className="object-cover w-full h-full"
+        {/* Article Body Content */}
+        <BlogPostContent content={post.content} slug={slug} />
+
+        {/* Social Share Bar */}
+        <SocialShareBar
+          title={cleanTitle}
+          url={`https://${SITE_CONFIG.domain}/blog/${slug}`}
+          snippet={post.excerpt || cleanTitle}
+        />
+
+        {/* In-Article AdSense Ad / House Ad Fallback */}
+        <AdUnit slotId="blog-post-mid-article" />
+
+        {/* Lead Capture Opt-In Form */}
+        <div className="pt-8">
+          <KitOptInForm
+            title="Enjoyed this article? Get our free weekly health guides"
+            subtitle="Join the growing movement of Filipino family providers receiving low-GI recipes, blood sugar management tips, and free downloadable cheat sheets."
+            buttonText="Subscribe Free"
+            layout="inline"
+            source={`article_${slug}`}
           />
         </div>
-      )}
 
-      {/* Article Body Content */}
-      <BlogPostContent content={post.content} slug={slug} />
-
-      {/* Lead Capture Opt-In Form */}
-      <div className="pt-8">
-        <KitOptInForm
-          title="Enjoyed this article? Get our free weekly health guides"
-          subtitle="Join the growing movement of Filipino family providers receiving low-GI recipes, blood sugar management tips, and free downloadable cheat sheets."
-          buttonText="Subscribe Free"
-          layout="inline"
-          source={`article_${slug}`}
-        />
-      </div>
-
-      {/* Footer Navigation */}
-      <div className="pt-8 border-t border-slate-200 flex justify-between items-center">
-        <Link
-          href="/blog"
-          className="bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-colors"
-        >
-          &larr; Back to All Articles
-        </Link>
-      </div>
-    </article>
+        {/* Footer Navigation */}
+        <div className="pt-8 border-t border-slate-200 flex justify-between items-center">
+          <Link
+            href="/blog"
+            className="bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-colors"
+          >
+            &larr; Back to All Articles
+          </Link>
+        </div>
+      </article>
+    </>
   );
 }

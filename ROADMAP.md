@@ -26,13 +26,16 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #18](https://github.com/pilTrader-Projects/diabetessupport-website/pull/18)** `[COMPLETED]`: Unified WYSIWYG Article Creator & Editor for Admin CMS (/admin/posts) with pre-populated MongoDB post fetching, sticky formatting toolbar, and dynamic marketing widget embeds.
 
 ### Milestone 6: Ad Monetization
-- [ ] **[Issue #7](https://github.com/pilTrader-Projects/diabetessupport-website/issues/7)**: Implement Google AdSense slots, fallback UI, and dynamic `/ads.txt`.
+- [x] **[PR #22](https://github.com/pilTrader-Projects/diabetessupport-website/pull/22)** `[COMPLETED]`: Technical SEO, JSON-LD Schemas, Dynamic `/ads.txt`, Legal Compliance Pages, and Zero-CLS AdSense Infrastructure (Closes Issue #7).
 
 ### Milestone 7: PWA Apps Promotion Engine & Mobile UI Optimization
 - [x] **[PR #19](https://github.com/pilTrader-Projects/diabetessupport-website/pull/19)** `[COMPLETED]`: GlycoSense Brand Theme Integration & High-Converting PWA Lead Capture Cards.
 - [x] **[PR #20](https://github.com/pilTrader-Projects/diabetessupport-website/pull/20)** `[COMPLETED]`: Mobile Responsiveness Optimization & Horizontal Right-Side White Margin Overflow Fix (Header Drawer Nav & Viewport Resets).
 - [x] **[PR #21](https://github.com/pilTrader-Projects/diabetessupport-website/pull/21)** `[COMPLETED]`: Breadwinner Pivot Copywriting Revamp, SaMD Regulatory Safe Harbor, and RA 10173 Data Privacy Compliance.
 - [ ] **[Issue #8](https://github.com/pilTrader-Projects/diabetessupport-website/issues/8)**: Implement high-converting PWA promotional banners, sticky CTAs, and app feature cards.
+
+### Milestone 8: Passwordless Community Forum & Discussion Board
+- [x] `[COMPLETED]`: Passwordless Community Forum (`/community` and `/community/[slug]`) with Display Names, 4-digit auto-tags, 6-digit cross-device sync PINs, OP highlight badges, conditional Resend email alerts, UGC link sanitization, and Google DiscussionForumPosting JSON-LD schemas.
 
 ---
 
