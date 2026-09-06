@@ -58,7 +58,7 @@ export default function CommunityHeader({
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            DiabetesCarePH Community Discussions
+            DiabetesCare Community Discussions
           </h1>
           <p className="text-sm text-slate-600">
             Ask questions, share daily low-GI recipes, and exchange blood sugar management tips.
@@ -116,18 +116,17 @@ export default function CommunityHeader({
                   ? `/community?search=${encodeURIComponent(searchQuery)}`
                   : '/community'
                 : searchQuery
-                ? `/community?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(searchQuery)}`
-                : `/community?category=${encodeURIComponent(cat)}`;
+                  ? `/community?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(searchQuery)}`
+                  : `/community?category=${encodeURIComponent(cat)}`;
 
             return (
               <Link
                 key={cat}
                 href={href}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
-                  isActive
-                    ? 'bg-teal-700 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                }`}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${isActive
+                  ? 'bg-teal-700 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
               >
                 {cat}
               </Link>
