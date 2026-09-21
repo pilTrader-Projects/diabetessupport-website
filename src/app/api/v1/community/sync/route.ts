@@ -118,3 +118,55 @@ export async function PUT(req: NextRequest): Promise<NextResponse> {
     );
   }
 }
+
+/**
+ * GET Handler for Checking Sync Code Status (Live Auto-Polling).
+ *
+ * @usecase Allows the displaying desktop device to poll and auto-close when the mobile phone scans/claims the code.
+ * @dependencies dbConnect, DeviceSyncModel.
+ * @param {NextRequest} req Incoming HTTP request containing code query param.
+ * @returns {Promise<NextResponse>} JSON response with claimed status.
+ */
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(req.url);
+    const code = searchParams.get('code');
+
+    if (!code || !code.trim()) {
+      return NextResponse.json(
+        { success: false, message: 'Sync code query parameter is required' },
+        { status: 400 }
+      );
+    }
+
+    const cleanCode = code.trim().replace(/\D/g, '');
+    const syncDoc = await DeviceSyncModel.findOne({
+      code: cleanCode,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!syncDoc) {
+      return NextResponse.json(
+        { success: false, message: 'Sync code not found or expired' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        code: syncDoc.code,
+        claimed: syncDoc.claimed,
+        authorAlias: syncDoc.authorAlias,
+        authorTag: syncDoc.authorTag,
+      },
+    });
+  } catch (error: any) {
+    console.error('Error checking sync code status:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to check sync status' },
+      { status: 500 }
+    );
+  }
+}

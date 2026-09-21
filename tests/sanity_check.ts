@@ -86,6 +86,7 @@ async function runSanityCheck() {
         'src/app/glycosense/page.tsx',
         'src/app/subscribe/page.tsx',
         'src/app/guides/cheatsheet/page.tsx',
+        'src/app/sync/page.tsx',
         'src/app/privacy-policy/page.tsx',
         'src/app/terms-of-service/page.tsx',
         'src/app/about/page.tsx',
