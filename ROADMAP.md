@@ -37,9 +37,13 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 8: Passwordless Community Forum & Discussion Board
 - [x] `[COMPLETED]`: Passwordless Community Forum (`/community` and `/community/[slug]`) with Display Names, 4-digit auto-tags, 6-digit cross-device sync PINs, OP highlight badges, conditional Resend email alerts, UGC link sanitization, and Google DiscussionForumPosting JSON-LD schemas.
 
+### Milestone 9: Low-Awareness Lead Capture Funnel (Bikman/Insulin Reset Protocol)
+- [ ] **[Issue #23](https://github.com/pilTrader-Projects/diabetessupport-website/issues/23)** `[IN PROGRESS]`: Low-Awareness Lead Funnel with Dr. Benjamin Bikman hyperinsulinemia protocol, interactive checklist, RA 10173 compliant lead capture, `/reset-success` bridge upsell to GlycoSense, and automated email delivery.
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow
 - **Test-Driven Development (TDD)**: Unit & Integration tests created before or alongside code.
 - **Sanity Checks**: Mandatory execution of `npm run sanity` before merging PRs.
 - **Surgical Git Workflow**: Feature branch (`<issue>-<slug>`) -> PR -> Code Review -> Merge to `main`.
+
