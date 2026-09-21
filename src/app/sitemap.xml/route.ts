@@ -46,6 +46,7 @@ export async function GET(): Promise<NextResponse> {
     { url: `${baseUrl}/blog`, priority: '0.9', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/community`, priority: '0.85', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/guides/cheatsheet`, priority: '0.85', changefreq: 'weekly', lastmod: now },
+    { url: `${baseUrl}/insulin-reset`, priority: '0.85', changefreq: 'weekly', lastmod: now },
     { url: `${baseUrl}/subscribe`, priority: '0.7', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/about`, priority: '0.7', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/contact`, priority: '0.7', changefreq: 'monthly', lastmod: now },

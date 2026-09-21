@@ -41,20 +41,20 @@ export default function Header() {
           <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
             Community Forum
           </Link>
-          <Link href="/#progression" className="text-purple-100 hover:text-white transition-colors">
-            Progression & Metrics
+          <Link href="/insulin-reset" className="text-purple-100 hover:text-white transition-colors">
+            Insulin Reset
           </Link>
-          <Link href="/#education" className="text-purple-100 hover:text-white transition-colors">
+          <Link href="/glycosense" className="text-purple-100 hover:text-white transition-colors">
+            GlycoSense App
+          </Link>
+          <Link href="/blog" className="text-purple-100 hover:text-white transition-colors">
             Educational Articles
           </Link>
-          <Link href="/#awareness" className="text-purple-100 hover:text-white transition-colors">
-            The Silent Killer
-          </Link>
           <Link
-            href="/#campaign"
+            href="/#resources"
             className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm"
           >
-            Take Action
+            Free Resources
           </Link>
         </nav>
 
@@ -89,37 +89,38 @@ export default function Header() {
             💬 Community Forum
           </Link>
           <Link
-            href="/#progression"
+            href="/insulin-reset"
             onClick={closeMenu}
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
           >
-            📊 Progression & Metrics
+            🧬 Insulin Reset Protocol
           </Link>
           <Link
-            href="/#education"
+            href="/glycosense"
+            onClick={closeMenu}
+            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            📱 GlycoSense Tracker
+          </Link>
+          <Link
+            href="/blog"
             onClick={closeMenu}
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
           >
             📖 Educational Articles
           </Link>
-          <Link
-            href="/#awareness"
-            onClick={closeMenu}
-            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            ⚠️ The Silent Killer
-          </Link>
           <div className="pt-2">
             <Link
-              href="/#campaign"
+              href="/#resources"
               onClick={closeMenu}
               className="block text-center py-3 px-4 rounded-xl text-base font-bold bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white shadow-lg border border-white/20 active:scale-98 transition-all"
             >
-              🚀 Take Action
+              🛠️ Free Tools &amp; Blueprints
             </Link>
           </div>
         </nav>
       )}
+
     </header>
   );
 }

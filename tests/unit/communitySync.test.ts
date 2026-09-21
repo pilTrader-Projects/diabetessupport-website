@@ -5,7 +5,7 @@
  * @dependencies src/lib/communityNotifications.ts, src/app/api/v1/community/sync/route.ts, src/models/DeviceSync.ts.
  */
 import { sendReplyNotification } from '../../src/lib/communityNotifications';
-import { POST as generateSyncCode, PUT as claimSyncCode } from '../../src/app/api/v1/community/sync/route';
+import { POST as generateSyncCode, PUT as claimSyncCode, GET as checkSyncStatus } from '../../src/app/api/v1/community/sync/route';
 import { DeviceSyncModel } from '../../src/models/DeviceSync';
 import { NextRequest } from 'next/server';
 
@@ -129,6 +129,59 @@ describe('Zero-Password Device Sync & Notification Engine (Step 3)', () => {
       expect(json.success).toBe(true);
       expect(json.data.authorAlias).toBe('Kuya Jun');
       expect(mockDoc.claimed).toBe(true);
+    });
+  });
+
+  describe('GET /api/v1/community/sync (Check Sync Status)', () => {
+    it('should return 400 when code query parameter is missing', async () => {
+      const req = new NextRequest('http://localhost/api/v1/community/sync', {
+        method: 'GET',
+      });
+
+      const res = await checkSyncStatus(req);
+      const json = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(json.success).toBe(false);
+    });
+
+    it('should return 404 when code does not exist or expired', async () => {
+      (DeviceSyncModel.findOne as jest.Mock).mockResolvedValue(null);
+
+      const req = new NextRequest('http://localhost/api/v1/community/sync?code=999999', {
+        method: 'GET',
+      });
+
+      const res = await checkSyncStatus(req);
+      const json = await res.json();
+
+      expect(res.status).toBe(404);
+      expect(json.success).toBe(false);
+    });
+
+    it('should return 200 with claimed status when code exists', async () => {
+      const mockDoc = {
+        code: '582194',
+        authorId: 'usr_abc123',
+        authorAlias: 'Kuya Jun',
+        authorTag: '#4821',
+        claimed: true,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      };
+      (DeviceSyncModel.findOne as jest.Mock).mockResolvedValue(mockDoc);
+
+      const req = new NextRequest('http://localhost/api/v1/community/sync?code=582194', {
+        method: 'GET',
+      });
+
+      const res = await checkSyncStatus(req);
+      const json = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(json.success).toBe(true);
+      expect(json.data.claimed).toBe(true);
+      expect(json.data.authorAlias).toBe('Kuya Jun');
+      expect(json.data.authorTag).toBe('#4821');
     });
   });
 });
