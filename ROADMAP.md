@@ -36,6 +36,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ### Milestone 8: Passwordless Community Forum & Discussion Board
 - [x] `[COMPLETED]`: Passwordless Community Forum (`/community` and `/community/[slug]`) with Display Names, 4-digit auto-tags, 6-digit cross-device sync PINs, OP highlight badges, conditional Resend email alerts, UGC link sanitization, and Google DiscussionForumPosting JSON-LD schemas.
+- [x] `[COMPLETED]`: Default QR Code cross-device synchronization with instant camera deep-linking (`/sync`), live auto-polling, and manual 6-digit PIN fallback.
 
 ### Milestone 9: Low-Awareness Lead Capture Funnel (Bikman/Insulin Reset Protocol)
 - [x] **[PR #24](https://github.com/pilTrader-Projects/diabetessupport-website/pull/24)** `[COMPLETED]`: Low-Awareness Lead Funnel with Dr. Benjamin Bikman hyperinsulinemia protocol, interactive checklist, RA 10173 compliant lead capture, `/reset-success` bridge upsell to GlycoSense, and automated email delivery (Closes Issue #23).
