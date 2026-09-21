@@ -1,16 +1,28 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';
 import Header from '@/components/Header';
 import AdSenseScript from '@/components/ads/AdSenseScript';
+import PwaRegister from '@/components/pwa/PwaRegister';
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/schema';
+
+/**
+ * Mobile and PWA Viewport configuration object for Next.js App Router.
+ * Configures theme color and device scale ergonomics for Android WebAPK and iOS Safari.
+ */
+export const viewport: Viewport = {
+  themeColor: '#1e3a8a',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 /**
  * Global Root Metadata configuration object for Next.js App Router.
  *
- * @usecase Configures site-wide metadataBase, title templates, OpenGraph, Twitter cards, and canonical alternates.
+ * @usecase Configures site-wide metadataBase, title templates, OpenGraph, Twitter cards, PWA manifest, and icons.
  * @dependencies SITE_CONFIG constant object.
  */
 export const metadata: Metadata = {
@@ -20,6 +32,22 @@ export const metadata: Metadata = {
     template: `%s | DiabetesCare PH`,
   },
   description: SITE_CONFIG.description,
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'DiabetesCare PH',
+  },
   alternates: {
     canonical: './',
   },
@@ -78,6 +106,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col max-w-full overflow-x-clip">
+        <PwaRegister />
         <ExtensionGuard />
         <AdSenseScript />
         <Header />
