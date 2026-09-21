@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 /**
  * Low-Awareness Lead Capture Landing Page (/insulin-reset).
  *
- * @usecase Captures low-awareness users who believe they are healthy because of "normal blood sugar tests" but exhibit chronic hyperinsulinemia symptoms.
+ * @usecase Captures low-awareness users who believe they are healthy because of "normal blood sugar tests" but exhibit chronic hyperinsulinemia symptoms. Matches global site layout.
  * @dependencies InsulinResetClient, buildInsulinResetSchema, SITE_CONFIG.
  * @returns {JSX.Element} Rendered landing page.
  */
@@ -47,24 +47,14 @@ export default function InsulinResetPage(): React.JSX.Element {
   const jsonLd = buildInsulinResetSchema();
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
       {/* JSON-LD Schema.org Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Ambient background glow accents */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-purple-600/10 blur-[120px] pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute top-1/3 right-10 w-80 h-80 bg-pink-600/10 blur-[100px] pointer-events-none"
-        aria-hidden="true"
-      />
-
-      <main className="relative max-w-5xl mx-auto">
+      <main>
         <InsulinResetClient />
       </main>
     </div>
