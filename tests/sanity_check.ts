@@ -83,6 +83,7 @@ async function runSanityCheck() {
         'src/app/insulin-reset/page.tsx',
         'src/app/hidden-clock/page.tsx',
         'src/app/reset-success/page.tsx',
+        'src/app/glycosense/page.tsx',
         'src/app/subscribe/page.tsx',
         'src/app/guides/cheatsheet/page.tsx',
         'src/app/privacy-policy/page.tsx',

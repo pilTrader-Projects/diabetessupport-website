@@ -246,3 +246,74 @@ export function buildInsulinResetSchema(): Record<string, any> {
   };
 }
 
+/**
+ * Builds MedicalOrganization JSON-LD Schema strictly aligning with institutional entity crawler grounding.
+ *
+ * @usecase Grounds DiabetesCare PH entity definition with address, mission, and institutional details for GEO/AEO crawler engines.
+ * @dependencies SITE_CONFIG constant.
+ * @returns {Record<string, any>} Schema.org compliant MedicalOrganization JSON-LD object.
+ */
+export function buildHomeMedicalOrgSchema(): Record<string, any> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalOrganization',
+    name: 'DiabetesCare PH',
+    url: `https://${SITE_CONFIG.domain}`,
+    logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
+    description:
+      'An advocacy community providing complimentary lifestyle tools and predictive metabolic frameworks to counter chronic disease vectors within the Philippines.',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'PH',
+    },
+  };
+}
+
+/**
+ * Builds FAQPage JSON-LD Schema for GEO/AEO conversational search answering.
+ *
+ * @usecase Optimizes the community root page for high-frequency voice search and LLM Answer Engine queries.
+ * @returns {Record<string, any>} Schema.org compliant FAQPage JSON-LD object.
+ */
+export function buildCommunityHomeFaqSchema(): Record<string, any> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How can I naturally reverse metabolic decline at home in the Philippines?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Reversing metabolic decline involves prioritizing clean ancestral proteins, eliminating hidden sugars in processed local products, utilizing time-restricted feeding windows, and accurately logging post-meal trends to identify systemic carbohydrate triggers.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Why is standard fasting blood sugar not enough to detect early insulin resistance?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Standard fasting glucose tests only elevate after the pancreas has spent 10 to 15 years overproducing insulin to compensate for resistance. Hyperinsulinemia and visceral adiposity appear more than a decade before fasting blood sugar crosses the prediabetes threshold.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is GlycoSense free and compliant with Philippine privacy laws?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes, GlycoSense is a zero-cost digital health dashboard designed for Filipino family providers, operating in strict compliance with the Philippine Data Privacy Act of 2012 (RA 10173).',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What are the common early symptoms of hyperinsulinemia in Filipino adults?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Common early warnings include stubborn midsection visceral fat (The Belly Anchor), severe post-lunch fatigue (The 3 PM Crash), neck skin tags or acanthosis nigricans (Skin Alarms), and frequent nocturnal urination (The 3 AM Wake-up).',
+        },
+      },
+    ],
+  };
+}
+
+

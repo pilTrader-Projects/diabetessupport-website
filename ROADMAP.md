@@ -40,6 +40,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 9: Low-Awareness Lead Capture Funnel (Bikman/Insulin Reset Protocol)
 - [x] **[PR #24](https://github.com/pilTrader-Projects/diabetessupport-website/pull/24)** `[COMPLETED]`: Low-Awareness Lead Funnel with Dr. Benjamin Bikman hyperinsulinemia protocol, interactive checklist, RA 10173 compliant lead capture, `/reset-success` bridge upsell to GlycoSense, and automated email delivery (Closes Issue #23).
 
+### Milestone 10: Organic Community Root Page & Advanced SEO/GEO/AEO Hub
+- [ ] **[Issue #25](https://github.com/pilTrader-Projects/diabetessupport-website/issues/25)** `[IN PROGRESS]`: Mission-driven organic educational hub on root path (`/`), FAQPage JSON-LD schema, direct-answer topical definitions, and passive routing to `/insulin-reset` and `/glycosense`.
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow
