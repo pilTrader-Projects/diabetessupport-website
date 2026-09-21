@@ -198,3 +198,51 @@ export function buildDiscussionForumPostingSchema(
     })),
   };
 }
+
+/**
+ * Builds MedicalWebPage and ItemPage JSON-LD Schema for the Insulin Reset / Hidden Clock Funnel.
+ *
+ * @usecase Exposes rich clinical context around Dr. Benjamin Bikman's hyperinsulinemia research and the free 3-page downloadable cheat sheet.
+ * @dependencies SITE_CONFIG constant.
+ * @returns {Record<string, any>} Schema.org compliant MedicalWebPage JSON-LD object.
+ */
+export function buildInsulinResetSchema(): Record<string, any> {
+  const pageUrl = `https://${SITE_CONFIG.domain}/insulin-reset`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': ['WebPage', 'MedicalWebPage'],
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': pageUrl,
+    },
+    headline: 'Your "Normal" Blood Sugar Test is a Lie: The Insulin Reset Protocol',
+    description:
+      'Your body can hide a crumbling metabolism for 10 to 15 years by forcing your pancreas to work overtime. Discover Dr. Bikman metabolic research and download the free 3-page cheat sheet.',
+    url: pageUrl,
+    about: [
+      {
+        '@type': 'MedicalCondition',
+        name: 'Hyperinsulinemia and Insulin Resistance',
+        code: {
+          '@type': 'MedicalCode',
+          code: 'E11.9',
+          codingSystem: 'ICD-10',
+        },
+      },
+    ],
+    hasPart: {
+      '@type': 'DigitalDocument',
+      name: 'The 3-Page Hidden Clock Cheat Sheet',
+      encodingFormat: 'application/pdf',
+      isAccessibleForFree: true,
+      description: 'The Glucose Illusion, The Organ Wrecking Ball, and The 4 Golden Rules to reset insulin sensitivity naturally.',
+    },
+    publisher: {
+      '@type': 'MedicalOrganization',
+      name: 'DiabetesCare PH',
+      url: `https://${SITE_CONFIG.domain}`,
+      logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
+    },
+  };
+}
+
