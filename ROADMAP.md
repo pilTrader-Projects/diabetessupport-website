@@ -45,6 +45,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 10: Organic Community Root Page & Advanced SEO/GEO/AEO Hub
 - [x] **[PR #26](https://github.com/pilTrader-Projects/diabetessupport-website/pull/26)** `[COMPLETED]`: Mission-driven organic educational hub on root path (`/`), FAQPage JSON-LD schema, direct-answer topical definitions, and passive routing to `/insulin-reset` and `/glycosense` (Closes Issue #25).
 
+### Milestone 11: Brand Repositioning & Rebranding Strategy (`BRD-2026-V1`)
+- [ ] **Architecture Directive**: Deprecate clinical naming overlap (`GlycoSense`) in favor of lifestyle-first companion brand `MetricPace` (`/dashboard` and `/insulin-reset`), detailed in [`docs/brand_repositioning_rebranding_strategy.md`](docs/brand_repositioning_rebranding_strategy.md).
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow

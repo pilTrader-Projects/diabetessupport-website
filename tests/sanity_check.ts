@@ -17,6 +17,7 @@ async function runSanityCheck() {
         'docs/standards.md',
         'docs/guardrails.md',
         'docs/intended-use-statement.md',
+        'docs/brand_repositioning_rebranding_strategy.md',
         '.agent/personas.md',
         'ROADMAP.md',
         '.env.example',
