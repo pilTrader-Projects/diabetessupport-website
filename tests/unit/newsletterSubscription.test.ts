@@ -1,8 +1,8 @@
 /**
- * Integration & Unit Test Suite for Kit (ConvertKit) Lead Capture & Subscription API.
+ * Unit & Integration Test Suite for Newsletter & Lead Capture Subscription API (/api/v1/subscribe).
  *
- * @usecase Validates that POST /api/v1/subscribe enforces email format validation and interacts with Kit API.
- * @dependencies POST handler from src/app/api/v1/subscribe/route.ts.
+ * @usecase Validates that POST /api/v1/subscribe enforces email format validation and syncs contacts to Brevo.
+ * @dependencies POST handler from src/app/api/v1/subscribe/route.ts, BrevoService.
  */
 import { POST } from '../../src/app/api/v1/subscribe/route';
 
@@ -10,7 +10,7 @@ jest.mock('../../src/lib/dbConnect', () => ({
   dbConnect: jest.fn().mockResolvedValue(true),
 }));
 
-describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
+describe('Newsletter & Lead Subscription API (/api/v1/subscribe)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -45,7 +45,7 @@ describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
     expect(body.error).toContain('valid email');
   });
 
-  it('should return 200 OK with success response for valid email', async () => {
+  it('should return 200 OK with success response for valid newsletter subscription', async () => {
     const req = new Request('http://localhost:3000/api/v1/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -60,47 +60,14 @@ describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
     expect(body.message).toContain('Thank you');
   });
 
-  it('should call ConvertKit API when KIT_API_KEY and KIT_FORM_ID are provided', async () => {
-    process.env.KIT_API_KEY = 'test_kit_api_key';
-    process.env.NEXT_PUBLIC_KIT_FORM_ID = '123456';
-
-    const mockFetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ subscription: { id: 999, state: 'active' } }),
-    });
-    global.fetch = mockFetch;
-
-    const req = new Request('http://localhost:3000/api/v1/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'convertkit@example.com', firstName: 'Alice' }),
-    });
-
-    const res = await POST(req);
-    const body = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(body.success).toBe(true);
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.convertkit.com/v3/forms/123456/subscribe',
-      expect.objectContaining({
-        method: 'POST',
-      })
-    );
-
-    delete process.env.KIT_API_KEY;
-    delete process.env.NEXT_PUBLIC_KIT_FORM_ID;
-  });
-
-  it('should sync subscriber to Brevo via BrevoService', async () => {
-    process.env.BREVO_NEWSLETTER_LIST_ID = '99';
+  it('should sync newsletter subscriber to Brevo subscribed_contacts list', async () => {
     const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
       .mockResolvedValueOnce({ success: true, contactId: 333 });
 
     const req = new Request('http://localhost:3000/api/v1/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'newsletter@example.com', firstName: 'Elena' }),
+      body: JSON.stringify({ email: 'newsletter@example.com', firstName: 'Elena', source: 'newsletter' }),
     });
 
     const res = await POST(req);
@@ -114,6 +81,32 @@ describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
         firstName: 'Elena',
         metabolicStage: 'GENERAL_AWARENESS',
         listIds: ['subscribed_contacts'],
+      })
+    );
+  });
+
+  it('should sync companion_app_users subscriber to Brevo companion_app_users list', async () => {
+    const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+      .mockResolvedValueOnce({ success: true, contactId: 444 });
+
+    const req = new Request('http://localhost:3000/api/v1/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'glycosense.user@example.com', firstName: 'Marco', source: 'companion_app_users' }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.message).toContain('Free account access reserved');
+    expect(syncSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'glycosense.user@example.com',
+        firstName: 'Marco',
+        metabolicStage: 'COMPANION_APP_USER',
+        listIds: ['companion_app_users'],
       })
     );
   });

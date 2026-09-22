@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import KitOptInForm from './KitOptInForm';
+import NewsletterOptInForm from './NewsletterOptInForm';
 import LeadMagnetCard from './LeadMagnetCard';
-import KitScriptEmbed from './KitScriptEmbed';
 
 export interface BlogPostContentProps {
   content: string;
@@ -13,14 +12,14 @@ export interface BlogPostContentProps {
 /**
  * Client Component for rendering Blog Post HTML body content with live dynamic marketing widgets.
  *
- * @usecase Replaces marketing data-widget tags (e.g. data-widget="kit-optin") inside article content with live interactive React components.
+ * @usecase Replaces marketing data-widget tags (e.g. data-widget="newsletter-optin") inside article content with live interactive React components.
  * @param {BlogPostContentProps} props Raw HTML content and post slug.
  * @returns {JSX.Element} Parsed HTML content containing live marketing forms and embeds.
  */
 export default function BlogPostContent({ content, slug }: BlogPostContentProps) {
   if (!content) return null;
 
-  // Regex matching <div ... data-widget="(kit-optin|lead-magnet|kit-embed)" ...> ... </div>
+  // Regex matching <div ... data-widget="(kit-optin|newsletter-optin|lead-magnet|kit-embed)" ...> ... </div>
   const widgetRegex = /<div\s+[^>]*data-widget=["']([^"']+)["'][^>]*>(?:[\s\S]*?<\/div>)?/gi;
 
   const parts: React.ReactNode[] = [];
@@ -53,13 +52,11 @@ export default function BlogPostContent({ content, slug }: BlogPostContentProps)
     const subtitle = getAttr('subtitle');
     const button = getAttr('button');
     const layout = getAttr('layout');
-    const url = getAttr('url');
-    const uid = getAttr('uid');
 
-    if (widgetType === 'kit-optin') {
+    if (widgetType === 'kit-optin' || widgetType === 'newsletter-optin') {
       parts.push(
         <div key={`widget-${matchIndex}`} className="my-8 not-prose">
-          <KitOptInForm
+          <NewsletterOptInForm
             title={title || 'Get Our Free Diabetes Care & Health Guide'}
             subtitle={subtitle}
             buttonText={button || 'Subscribe Free'}
@@ -68,22 +65,12 @@ export default function BlogPostContent({ content, slug }: BlogPostContentProps)
           />
         </div>
       );
-    } else if (widgetType === 'lead-magnet') {
+    } else if (widgetType === 'lead-magnet' || widgetType === 'kit-embed') {
       parts.push(
         <div key={`widget-${matchIndex}`} className="my-8 not-prose">
           <LeadMagnetCard
             title={title || 'GlycoSense — Preventive Glucose & Lifestyle Intelligence App'}
             source={`article_${slug}_lead_magnet`}
-          />
-        </div>
-      );
-    } else if (widgetType === 'kit-embed') {
-      parts.push(
-        <div key={`widget-${matchIndex}`} className="my-8 not-prose">
-          <KitScriptEmbed
-            scriptUrl={url}
-            formId={uid}
-            title={title}
           />
         </div>
       );

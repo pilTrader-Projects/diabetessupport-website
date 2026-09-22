@@ -1,6 +1,7 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { PostModel } from '@/models/Post';
-import { LandingPageModel } from '@/models/LandingPage';
+import { CampaignConfigModel } from '@/models/CampaignConfig';
+import { LeadModel } from '@/models/Lead';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
@@ -11,7 +12,7 @@ export const revalidate = 0; // Dynamic admin dashboard
  * Owner Admin Dashboard Overview Hub (/admin).
  *
  * @usecase Displays platform analytics overview, published content counts, and quick navigation links.
- * @dependencies isAdminAuthenticated, PostModel, LandingPageModel.
+ * @dependencies isAdminAuthenticated, PostModel, CampaignConfigModel, LeadModel.
  * @returns {Promise<JSX.Element>} Rendered admin dashboard.
  */
 export default async function AdminDashboardPage() {
@@ -23,8 +24,9 @@ export default async function AdminDashboardPage() {
   await dbConnect();
   const totalPosts = await PostModel.countDocuments();
   const publishedPosts = await PostModel.countDocuments({ status: 'published' });
-  const totalLandingPages = await LandingPageModel.countDocuments();
-  const activeLandingPages = await LandingPageModel.countDocuments({ isActive: true });
+  const totalCampaigns = await CampaignConfigModel.countDocuments();
+  const activeCampaigns = await CampaignConfigModel.countDocuments({ isActive: true });
+  const totalLeads = await LeadModel.countDocuments();
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 sm:p-10 space-y-10">
@@ -55,26 +57,26 @@ export default async function AdminDashboardPage() {
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Custom Landing Pages</div>
-          <div className="text-3xl font-extrabold text-white">{totalLandingPages}</div>
-          <div className="text-xs text-amber-400 font-semibold">{activeLandingPages} Active Kit Slugs</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Brevo Campaigns</div>
+          <div className="text-3xl font-extrabold text-white">{totalCampaigns}</div>
+          <div className="text-xs text-amber-400 font-semibold">{activeCampaigns} Active Funnels</div>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Publishing API</div>
-          <div className="text-3xl font-extrabold text-teal-400">Active</div>
-          <div className="text-xs text-slate-400 font-semibold">POST /api/v1/posts</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Captured Leads</div>
+          <div className="text-3xl font-extrabold text-teal-400">{totalLeads}</div>
+          <div className="text-xs text-slate-400 font-semibold">Synced to Brevo</div>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">SEO Feeds</div>
           <div className="text-3xl font-extrabold text-teal-400">Live</div>
-          <div className="text-xs text-slate-400 font-semibold">sitemap.xml & feed.xml</div>
+          <div className="text-xs text-slate-400 font-semibold">sitemap.xml &amp; feed.xml</div>
         </div>
       </div>
 
       {/* Management Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Brevo Campaigns Management Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all">
           <div className="space-y-3">
@@ -90,24 +92,6 @@ export default async function AdminDashboardPage() {
             className="w-full bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
           >
             Configure Campaigns &rarr;
-          </Link>
-        </div>
-
-        {/* Kit Landing Pages Management Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all">
-          <div className="space-y-3">
-            <span className="text-3xl">🎯</span>
-            <h2 className="text-2xl font-bold text-white">Kit Landing Pages &amp; Slugs</h2>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Create and manage custom website URLs (e.g. <code className="bg-slate-950 px-2 py-0.5 rounded text-teal-300">/subscribe</code>, <code className="bg-slate-950 px-2 py-0.5 rounded text-teal-300">/cheatsheet</code>) mapped directly to your Kit (ConvertKit) forms and lead capture embeds.
-            </p>
-          </div>
-
-          <Link
-            href="/admin/landing-pages"
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-sm py-3.5 rounded-xl border border-slate-700 transition-colors text-center inline-block"
-          >
-            Manage Kit Pages &rarr;
           </Link>
         </div>
 

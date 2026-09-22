@@ -4,16 +4,16 @@ import { CampaignService } from '@/services/campaignService';
 
 /**
  * Regex helper for basic email format validation.
- * @usecase Ensures submitted email input is well-formed before sending to Brevo/Kit API.
+ * @usecase Ensures submitted email input is well-formed before sending to Brevo API.
  */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * HTTP POST API Route handler for Newsletter & Lead Capture Subscriptions.
  *
- * @usecase Processes email newsletter opt-ins and lead magnet download requests via dynamic campaign configuration.
+ * @usecase Processes email newsletter opt-ins and companion app access requests via dynamic campaign configuration and Brevo.
  * @param {Request} req Incoming Next.js HTTP Request object with email, optional firstName, and optional source.
- * @dependencies BrevoService, CampaignService, process.env.KIT_API_KEY, process.env.NEXT_PUBLIC_KIT_FORM_ID.
+ * @dependencies BrevoService, CampaignService.
  * @returns {Promise<NextResponse>} JSON response indicating subscription result or validation error.
  * @throws {Error} Returns 400 Bad Request for invalid input or 500 for network errors.
  */
@@ -52,8 +52,9 @@ export async function POST(req: Request): Promise<NextResponse> {
   const campaign = await CampaignService.resolveCampaign(leadSource);
 
   // 2. Sync contact to Brevo using mapped list and metabolic stage
+  let syncResult: any = null;
   try {
-    await BrevoService.syncContact({
+    syncResult = await BrevoService.syncContact({
       email: cleanEmail,
       firstName: cleanFirstName,
       source: campaign.referenceCode,
@@ -64,50 +65,14 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error('Brevo newsletter sync error:', brevoErr);
   }
 
-  // 2. If Kit credentials configured, forward opt-in to ConvertKit REST API v3
-  const apiKey = process.env.KIT_API_KEY;
-  const formId = process.env.NEXT_PUBLIC_KIT_FORM_ID || process.env.KIT_FORM_ID;
+  const successMessage =
+    campaign.referenceCode === 'companion_app_users'
+      ? 'Free account access reserved! Check your email for login instructions.'
+      : 'Thank you for subscribing! Check your inbox for your free guide.';
 
-  if (apiKey && formId) {
-    try {
-      const kitResponse = await fetch(`https://api.convertkit.com/v3/forms/${formId}/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: apiKey,
-          email: cleanEmail,
-          first_name: cleanFirstName,
-        }),
-      });
-
-      const kitData = await kitResponse.json();
-
-      if (!kitResponse.ok) {
-        return NextResponse.json(
-          { success: false, error: kitData.message || 'Failed to submit subscription to Kit.' },
-          { status: kitResponse.status }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Thank you for subscribing! Please check your inbox to confirm your subscription.',
-        data: kitData.subscription,
-      });
-    } catch (err: any) {
-      console.error('Kit API subscription network error:', err);
-      return NextResponse.json(
-        { success: false, error: 'Network error communicating with subscriber service.' },
-        { status: 500 }
-      );
-    }
-  }
-
-  // Fallback dev mode success when third-party environment variables are not populated
-  console.log(`[Newsletter Dev Opt-In]: Subscribed ${cleanEmail} (First Name: ${cleanFirstName || 'N/A'})`);
   return NextResponse.json({
     success: true,
-    message: 'Thank you for subscribing! Check your inbox for your free guide.',
+    message: successMessage,
+    data: syncResult,
   });
 }
-

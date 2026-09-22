@@ -105,27 +105,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error('Brevo contact sync error:', brevoErr);
   }
 
-  // 3. Fallback sync with Kit (ConvertKit) if configured
-  const apiKey = process.env.KIT_API_KEY;
-  const formId = process.env.NEXT_PUBLIC_KIT_FORM_ID || process.env.KIT_FORM_ID;
-
-  if (apiKey && formId) {
-    try {
-      await fetch(`https://api.convertkit.com/v3/forms/${formId}/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: apiKey,
-          email: cleanEmail,
-          first_name: cleanFirstName,
-          tags: ['insulin-reset-protocol', 'hidden-clock'],
-        }),
-      });
-    } catch (kitErr) {
-      console.error('Kit subscription forward error:', kitErr);
-    }
-  }
-
   return NextResponse.json({
     success: true,
     message: 'Lead captured successfully. Check your email for your free cheat sheet!',

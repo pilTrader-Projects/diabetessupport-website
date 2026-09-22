@@ -134,42 +134,6 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       expect(data.redirectUrl).toBe('/reset-success');
     });
 
-    it('should forward subscriber to Kit API if KIT_API_KEY and KIT_FORM_ID are set', async () => {
-      process.env.KIT_API_KEY = 'mock_kit_api_key';
-      process.env.NEXT_PUBLIC_KIT_FORM_ID = 'mock_form_123';
-
-      const mockFetch = jest.fn().mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ subscription: { id: 999 } }),
-      });
-      global.fetch = mockFetch;
-
-      jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
-        _id: 'mock_lead_id',
-        email: 'juan@example.com',
-      } as any);
-
-      const req = new Request('http://localhost:3000/api/v1/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: 'juan@example.com',
-          firstName: 'Juan',
-        }),
-      });
-
-      const res = await POST(req);
-      const data = await res.json();
-
-      expect(res.status).toBe(200);
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('mock_form_123'),
-        expect.objectContaining({
-          method: 'POST',
-        })
-      );
-    });
-
     it('should qualify METABOLIC_STAGE, persist to DB, and sync to Brevo without direct email sending', async () => {
       const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
         .mockResolvedValueOnce({ success: true, contactId: 101 });
