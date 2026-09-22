@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/dbConnect';
 import { LeadModel } from '@/models/Lead';
 import { BrevoService } from '@/services/brevoService';
+import { CampaignService } from '@/services/campaignService';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * HTTP POST API Route handler for Low-Awareness Lead Capture (Bikman/Insulin Reset Protocol).
+ * HTTP POST API Route handler for Dynamic Lead Capture & Campaign Routing.
  *
- * @usecase Captures lead email, first name, and selected metabolic symptoms, persists to database, syncs with Brevo and Kit, and returns bridge redirect URL.
- * @param {Request} req Incoming Next.js Request with email, firstName, symptomsChecked, and source.
+ * @usecase Captures lead details, dynamically resolves target Brevo list & metabolic stage from campaign configuration, persists to DB, and syncs to Brevo.
+ * @param {Request} req Incoming Next.js Request with email, firstName, symptomsChecked, source, and optional metabolicStage.
  * @returns {Promise<NextResponse>} JSON response with success status and redirection target.
  */
 export async function POST(req: Request): Promise<NextResponse> {
@@ -44,19 +45,26 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanSymptoms = Array.isArray(symptomsChecked) ? symptomsChecked.map(String) : [];
   const leadSource = source && typeof source === 'string' ? source.trim() : 'insulin_reset_protocol';
 
-  // Qualify lead's metabolic status awareness depending on capture point and symptoms
+  // Resolve dynamic campaign mapping from Admin Configuration / defaults
+  const campaign = await CampaignService.resolveCampaign(leadSource);
+
+  // Qualify lead's metabolic status awareness depending on campaign config, capture point, and symptoms
   let qualifiedMetabolicStage =
     typeof metabolicStage === 'string' && metabolicStage.trim()
       ? metabolicStage.trim().toUpperCase()
       : undefined;
 
   if (!qualifiedMetabolicStage) {
-    if (cleanSymptoms.length >= 3) {
-      qualifiedMetabolicStage = 'HIGH_RISK_HYPERINSULINEMIA';
-    } else if (cleanSymptoms.length >= 1) {
-      qualifiedMetabolicStage = 'EARLY_STAGE_HYPERINSULINEMIA';
+    if (campaign.referenceCode === 'insulin_reset_funnel' || cleanSymptoms.length > 0) {
+      if (cleanSymptoms.length >= 3) {
+        qualifiedMetabolicStage = 'HIGH_RISK_HYPERINSULINEMIA';
+      } else if (cleanSymptoms.length >= 1) {
+        qualifiedMetabolicStage = 'EARLY_STAGE_HYPERINSULINEMIA';
+      } else {
+        qualifiedMetabolicStage = 'LOW_AWARENESS_CURIOUS';
+      }
     } else {
-      qualifiedMetabolicStage = 'LOW_AWARENESS_CURIOUS';
+      qualifiedMetabolicStage = campaign.defaultMetabolicStage;
     }
   }
 
@@ -83,7 +91,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error('Database error saving lead:', dbErr);
   }
 
-  // 2. Sync contact with Brevo for automated sequences, list enrollment & METABOLIC_STAGE labeling
+  // 2. Sync contact with Brevo for automated sequences, dynamic list enrollment & METABOLIC_STAGE labeling
   try {
     await BrevoService.syncContact({
       email: cleanEmail,
@@ -91,6 +99,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       source: leadSource,
       symptomsChecked: cleanSymptoms,
       metabolicStage: qualifiedMetabolicStage,
+      listIds: [campaign.brevoList],
     });
   } catch (brevoErr) {
     console.error('Brevo contact sync error:', brevoErr);

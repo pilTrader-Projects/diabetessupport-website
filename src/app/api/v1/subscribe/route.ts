@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BrevoService } from '@/services/brevoService';
+import { CampaignService } from '@/services/campaignService';
 
 /**
  * Regex helper for basic email format validation.
@@ -10,9 +11,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /**
  * HTTP POST API Route handler for Newsletter & Lead Capture Subscriptions.
  *
- * @usecase Processes email newsletter opt-ins and lead magnet download requests via Brevo and Kit.
- * @param {Request} req Incoming Next.js HTTP Request object with email and optional firstName.
- * @dependencies BrevoService, process.env.KIT_API_KEY, process.env.NEXT_PUBLIC_KIT_FORM_ID.
+ * @usecase Processes email newsletter opt-ins and lead magnet download requests via dynamic campaign configuration.
+ * @param {Request} req Incoming Next.js HTTP Request object with email, optional firstName, and optional source.
+ * @dependencies BrevoService, CampaignService, process.env.KIT_API_KEY, process.env.NEXT_PUBLIC_KIT_FORM_ID.
  * @returns {Promise<NextResponse>} JSON response indicating subscription result or validation error.
  * @throws {Error} Returns 400 Bad Request for invalid input or 500 for network errors.
  */
@@ -27,7 +28,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { email, firstName } = body || {};
+  const { email, firstName, source } = body || {};
 
   if (!email || typeof email !== 'string' || !email.trim()) {
     return NextResponse.json(
@@ -45,22 +46,22 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 
   const cleanFirstName = firstName ? String(firstName).trim() : undefined;
+  const leadSource = source && typeof source === 'string' ? source.trim() : 'newsletter';
 
-  // 1. Sync contact to Brevo Newsletter List if Brevo configured
-  const brevoNewsletterListId = process.env.BREVO_NEWSLETTER_LIST_ID?.trim();
+  // 1. Resolve dynamic campaign mapping
+  const campaign = await CampaignService.resolveCampaign(leadSource);
 
-  if (process.env.BREVO_API_KEY || brevoNewsletterListId) {
-    try {
-      await BrevoService.syncContact({
-        email: cleanEmail,
-        firstName: cleanFirstName,
-        source: 'newsletter_optin',
-        metabolicStage: 'GENERAL_AWARENESS',
-        listIds: brevoNewsletterListId ? [brevoNewsletterListId] : undefined,
-      });
-    } catch (brevoErr) {
-      console.error('Brevo newsletter sync error:', brevoErr);
-    }
+  // 2. Sync contact to Brevo using mapped list and metabolic stage
+  try {
+    await BrevoService.syncContact({
+      email: cleanEmail,
+      firstName: cleanFirstName,
+      source: campaign.referenceCode,
+      metabolicStage: campaign.defaultMetabolicStage,
+      listIds: [campaign.brevoList],
+    });
+  } catch (brevoErr) {
+    console.error('Brevo newsletter sync error:', brevoErr);
   }
 
   // 2. If Kit credentials configured, forward opt-in to ConvertKit REST API v3

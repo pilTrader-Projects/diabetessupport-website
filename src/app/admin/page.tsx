@@ -74,12 +74,30 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Management Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Brevo Campaigns Management Card */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all">
+          <div className="space-y-3">
+            <span className="text-3xl">📧</span>
+            <h2 className="text-2xl font-bold text-white">Brevo Campaigns &amp; Lead Lists</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Dynamically map lead capture reference codes to Brevo contact lists (<code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">subscribed_contacts</code>, <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">insulin_reset_funnel</code>, <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">companion_app_users</code>) and metabolic stages without code edits.
+            </p>
+          </div>
+
+          <Link
+            href="/admin/campaigns"
+            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
+          >
+            Configure Campaigns &rarr;
+          </Link>
+        </div>
+
         {/* Kit Landing Pages Management Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all">
           <div className="space-y-3">
             <span className="text-3xl">🎯</span>
-            <h2 className="text-2xl font-bold text-white">Kit Landing Pages & Slugs</h2>
+            <h2 className="text-2xl font-bold text-white">Kit Landing Pages &amp; Slugs</h2>
             <p className="text-sm text-slate-400 leading-relaxed">
               Create and manage custom website URLs (e.g. <code className="bg-slate-950 px-2 py-0.5 rounded text-teal-300">/subscribe</code>, <code className="bg-slate-950 px-2 py-0.5 rounded text-teal-300">/cheatsheet</code>) mapped directly to your Kit (ConvertKit) forms and lead capture embeds.
             </p>
@@ -87,9 +105,9 @@ export default async function AdminDashboardPage() {
 
           <Link
             href="/admin/landing-pages"
-            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
+            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-sm py-3.5 rounded-xl border border-slate-700 transition-colors text-center inline-block"
           >
-            Manage Kit Landing Pages &rarr;
+            Manage Kit Pages &rarr;
           </Link>
         </div>
 

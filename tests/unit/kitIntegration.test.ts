@@ -6,6 +6,10 @@
  */
 import { POST } from '../../src/app/api/v1/subscribe/route';
 
+jest.mock('../../src/lib/dbConnect', () => ({
+  dbConnect: jest.fn().mockResolvedValue(true),
+}));
+
 describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -109,10 +113,8 @@ describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
         email: 'newsletter@example.com',
         firstName: 'Elena',
         metabolicStage: 'GENERAL_AWARENESS',
-        listIds: ['99'],
+        listIds: ['subscribed_contacts'],
       })
     );
-
-    delete process.env.BREVO_NEWSLETTER_LIST_ID;
   });
 });
