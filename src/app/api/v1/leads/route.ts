@@ -85,7 +85,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           symptomsChecked: { $each: cleanSymptoms },
         },
       },
-      { upsert: true, new: true, runValidators: true }
+      { upsert: true, returnDocument: 'after', runValidators: true }
     );
   } catch (dbErr: any) {
     console.error('Database error saving lead:', dbErr);

@@ -84,7 +84,7 @@ export async function PUT(req: Request, { params }: RouteParams): Promise<NextRe
       );
     }
 
-    const updated = await PostModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+    const updated = await PostModel.findByIdAndUpdate(id, updateData, { returnDocument: 'after', runValidators: true });
 
     if (!updated) {
       return NextResponse.json({ success: false, error: 'Post not found.' }, { status: 404 });

@@ -112,7 +112,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           isActive: isActive !== false,
         },
       },
-      { upsert: true, new: true, runValidators: true }
+      { upsert: true, returnDocument: 'after', runValidators: true }
     );
 
     return NextResponse.json({

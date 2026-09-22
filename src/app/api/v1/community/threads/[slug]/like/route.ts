@@ -22,7 +22,7 @@ export async function POST(req: NextRequest, { params }: RouteParams): Promise<N
     const thread = await ThreadModel.findOneAndUpdate(
       { slug, status: { $ne: 'archived' } },
       { $inc: { likes: 1 } },
-      { new: true }
+      { returnDocument: 'after' }
     ).lean();
 
     if (!thread) {

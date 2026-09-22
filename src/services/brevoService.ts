@@ -109,8 +109,8 @@ export class BrevoService {
 
     // Graceful sandbox fallback when Brevo credentials are not configured
     if (!apiKey) {
-      console.log(
-        `[Brevo Sandbox Sync]: Enrolled ${cleanEmail} (Stage: ${params.metabolicStage || 'N/A'}, Lists: ${targetListIds.join(',') || 'none'})`
+      console.warn(
+        `[Brevo Sandbox Sync]: BREVO_API_KEY is missing. Skipped live sync for ${cleanEmail} (Stage: ${params.metabolicStage || 'N/A'}). Set BREVO_API_KEY in Vercel environment variables.`
       );
       return { success: true, sandbox: true };
     }
