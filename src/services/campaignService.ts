@@ -40,12 +40,18 @@ export class CampaignService {
             : await query;
 
         if (customConfig) {
+          const rawAsset = customConfig.assetFileName;
+          const resolvedAsset =
+            rawAsset !== undefined && rawAsset !== null
+              ? (rawAsset.trim() || undefined)
+              : DEFAULT_CAMPAIGNS[cleanCode]?.assetFileName;
+
           return {
             referenceCode: customConfig.referenceCode,
             name: customConfig.name,
             brevoList: customConfig.brevoList,
             defaultMetabolicStage: customConfig.defaultMetabolicStage,
-            assetFileName: customConfig.assetFileName?.trim() || undefined,
+            assetFileName: resolvedAsset,
             description: customConfig.description,
             isActive: customConfig.isActive,
           };

@@ -103,15 +103,18 @@ export async function POST(req: Request): Promise<NextResponse> {
       if (tokenDoc) {
         const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
         downloadUrl = `${origin}/api/v1/assets/download?token=${tokenDoc.token}`;
+        console.log(`[Lead Capture]: Issued token for ${campaign.assetFileName}: ${downloadUrl}`);
+      } else {
+        console.warn(`[Lead Capture]: Asset "${campaign.assetFileName}" not found in GridFS.`);
       }
     } catch (tokenErr) {
-      console.warn('Could not generate dynamic asset download link:', tokenErr);
+      console.warn('[Lead Capture]: Failed generating download link:', tokenErr);
     }
   }
 
   // 3. Sync contact with Brevo for automated sequences, dynamic list enrollment, METABOLIC_STAGE & DOWNLOAD_URL
   try {
-    await BrevoService.syncContact({
+    const brevoRes = await BrevoService.syncContact({
       email: cleanEmail,
       firstName: cleanFirstName,
       source: leadSource,
@@ -120,6 +123,9 @@ export async function POST(req: Request): Promise<NextResponse> {
       downloadUrl,
       listIds: [campaign.brevoList],
     });
+    if (!brevoRes.success) {
+      console.error('[Lead Capture] Brevo sync returned error:', brevoRes.error);
+    }
   } catch (brevoErr) {
     console.error('Brevo contact sync error:', brevoErr);
   }

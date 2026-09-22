@@ -151,8 +151,32 @@ export class BrevoService {
         return { success: true, updated: true };
       }
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
+        if (
+          apiKey &&
+          attributes[BREVO_ATTRIBUTES.DOWNLOAD_URL] &&
+          typeof data.message === 'string' &&
+          data.message.toLowerCase().includes('download_url')
+        ) {
+          console.log('[Brevo Auto-Provision]: Creating DOWNLOAD_URL attribute in Brevo...');
+          await fetch(`${this.BASE_URL}/contacts/attributes/normal/DOWNLOAD_URL`, {
+            method: 'POST',
+            headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'text' }),
+          }).catch(() => null);
+
+          const retryRes = await fetch(`${this.BASE_URL}/contacts`, {
+            method: 'POST',
+            headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (retryRes.status === 204) return { success: true, updated: true };
+          if (retryRes.ok) {
+            const retryData = await retryRes.json().catch(() => ({}));
+            return { success: true, contactId: retryData.id };
+          }
+        }
         return { success: false, error: data.message || `Brevo HTTP error ${response.status}` };
       }
 
