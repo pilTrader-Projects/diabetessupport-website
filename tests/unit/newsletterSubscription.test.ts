@@ -110,4 +110,29 @@ describe('Newsletter & Lead Subscription API (/api/v1/subscribe)', () => {
       })
     );
   });
+
+  it('should accept tag parameter and route tag: "newsletter" to subscribed_contacts', async () => {
+    const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+      .mockResolvedValueOnce({ success: true, contactId: 555 });
+
+    const req = new Request('http://localhost:3000/api/v1/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'tag.user@example.com', firstName: 'TagUser', tag: 'newsletter' }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(syncSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'tag.user@example.com',
+        firstName: 'TagUser',
+        metabolicStage: 'GENERAL_AWARENESS',
+        listIds: ['subscribed_contacts'],
+      })
+    );
+  });
 });

@@ -24,7 +24,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { email, firstName, symptomsChecked, source, metabolicStage } = body || {};
+  const { email, firstName, symptomsChecked, source, tag, tags, campaign: campaignParam, metabolicStage } = body || {};
 
   if (!email || typeof email !== 'string' || !email.trim()) {
     return NextResponse.json(
@@ -43,7 +43,8 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const cleanFirstName = firstName && typeof firstName === 'string' ? firstName.trim() : undefined;
   const cleanSymptoms = Array.isArray(symptomsChecked) ? symptomsChecked.map(String) : [];
-  const leadSource = source && typeof source === 'string' ? source.trim() : 'insulin_reset_protocol';
+  const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
+  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : 'insulin_reset_funnel';
 
   // Resolve dynamic campaign mapping from Admin Configuration / defaults
   const campaign = await CampaignService.resolveCampaign(leadSource);
@@ -55,7 +56,11 @@ export async function POST(req: Request): Promise<NextResponse> {
       : undefined;
 
   if (!qualifiedMetabolicStage) {
-    if (campaign.referenceCode === 'insulin_reset_funnel' || cleanSymptoms.length > 0) {
+    if (campaign.referenceCode === 'newsletter') {
+      qualifiedMetabolicStage = 'GENERAL_AWARENESS';
+    } else if (campaign.referenceCode === 'companion_app_users') {
+      qualifiedMetabolicStage = 'COMPANION_APP_USER';
+    } else if (campaign.referenceCode === 'insulin_reset_funnel' || cleanSymptoms.length > 0) {
       if (cleanSymptoms.length >= 3) {
         qualifiedMetabolicStage = 'HIGH_RISK_HYPERINSULINEMIA';
       } else if (cleanSymptoms.length >= 1) {

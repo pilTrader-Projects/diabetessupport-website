@@ -28,7 +28,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { email, firstName, source } = body || {};
+  const { email, firstName, source, tag, tags, campaign: campaignParam } = body || {};
 
   if (!email || typeof email !== 'string' || !email.trim()) {
     return NextResponse.json(
@@ -46,7 +46,8 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 
   const cleanFirstName = firstName ? String(firstName).trim() : undefined;
-  const leadSource = source && typeof source === 'string' ? source.trim() : 'newsletter';
+  const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
+  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : 'newsletter';
 
   // 1. Resolve dynamic campaign mapping
   const campaign = await CampaignService.resolveCampaign(leadSource);

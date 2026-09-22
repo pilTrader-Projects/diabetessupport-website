@@ -86,6 +86,15 @@ export class CampaignService {
     }
 
     if (
+      cleanCode.includes('newsletter') ||
+      cleanCode.includes('subscribe') ||
+      cleanCode.includes('general') ||
+      cleanCode.includes('weekly')
+    ) {
+      return DEFAULT_CAMPAIGNS.newsletter;
+    }
+
+    if (
       cleanCode.includes('insulin') ||
       cleanCode.includes('reset') ||
       cleanCode.includes('hidden_clock') ||

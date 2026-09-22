@@ -178,5 +178,40 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
         })
       );
     });
+
+    it('should route tag: "newsletter" to subscribed_contacts with GENERAL_AWARENESS stage', async () => {
+      const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+        .mockResolvedValueOnce({ success: true, contactId: 102 });
+
+      jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+        _id: 'mock_lead_id',
+        email: 'news@example.com',
+      } as any);
+
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'news@example.com',
+          firstName: 'NewsReader',
+          tag: 'newsletter',
+        }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'news@example.com',
+          firstName: 'NewsReader',
+          source: 'newsletter',
+          metabolicStage: 'GENERAL_AWARENESS',
+          listIds: ['subscribed_contacts'],
+        })
+      );
+    });
   });
 });

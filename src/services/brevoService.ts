@@ -2,7 +2,7 @@
  * Brevo (Sendinblue) API v3 Service Integration.
  *
  * @usecase Manages contact list synchronization, custom attributes, metabolic stage labeling, and automated sequence enrollment for captured leads.
- * @dependencies process.env.BREVO_API_KEY, process.env.BREVO_LEAD_LIST_ID, process.env.BREVO_NEWSLETTER_LIST_ID.
+ * @dependencies process.env.BREVO_API_KEY.
  */
 
 export interface BrevoContactParams {
@@ -12,6 +12,7 @@ export interface BrevoContactParams {
   symptomsChecked?: string[];
   metabolicStage?: string;
   listIds?: (number | string)[];
+  unlinkListIds?: (number | string)[];
 }
 
 export interface BrevoResult {
@@ -80,8 +81,8 @@ export class BrevoService {
    * Synchronizes or updates a subscriber contact within Brevo contact lists and sets METABOLIC_STAGE attributes.
    *
    * @usecase Labels and qualifies leads in Brevo by metabolic status awareness and adds to automated sequence lists.
-   * @param {BrevoContactParams} params Lead details including email, firstName, source, symptoms, metabolicStage, and target lists.
-   * @dependencies process.env.BREVO_API_KEY, process.env.BREVO_LEAD_LIST_ID, global.fetch
+   * @param {BrevoContactParams} params Lead details including email, firstName, source, symptoms, metabolicStage, target lists, and optional lists to unlink.
+   * @dependencies process.env.BREVO_API_KEY, global.fetch
    * @returns {Promise<BrevoResult>} Result status indicating success, contact ID, or error message.
    * @throws {Error} Safely caught and returned as structured error result.
    */
@@ -90,7 +91,7 @@ export class BrevoService {
     const cleanEmail = params.email.trim().toLowerCase();
     const cleanFirstName = params.firstName?.trim() || undefined;
 
-    // Collate candidate list identifiers from params and environment defaults
+    // Resolve target and unlink list identifiers strictly from params or fallback env
     const candidateListIds: (number | string)[] = [];
     if (params.listIds && params.listIds.length > 0) {
       candidateListIds.push(...params.listIds);
@@ -99,6 +100,9 @@ export class BrevoService {
     }
 
     const targetListIds = await this.resolveListIds(apiKey, candidateListIds);
+    const unlinkListIds = params.unlinkListIds && params.unlinkListIds.length > 0
+      ? await this.resolveListIds(apiKey, params.unlinkListIds)
+      : [];
 
     // Graceful sandbox fallback when Brevo credentials are not configured
     if (!apiKey) {
@@ -122,6 +126,7 @@ export class BrevoService {
     };
     if (Object.keys(attributes).length > 0) payload.attributes = attributes;
     if (targetListIds.length > 0) payload.listIds = targetListIds;
+    if (unlinkListIds.length > 0) payload.unlinkListIds = unlinkListIds;
 
     try {
       const response = await fetch(`${this.BASE_URL}/contacts`, {
