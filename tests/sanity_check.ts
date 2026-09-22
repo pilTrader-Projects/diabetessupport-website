@@ -23,6 +23,7 @@ async function runSanityCheck() {
         '.env.example',
         'docker-compose.yml',
         'src/config/constants.ts',
+        'src/config/leadConfig.ts',
         'src/lib/dbConnect.ts',
         'src/lib/schema.ts',
         'src/lib/communityUtils.ts',

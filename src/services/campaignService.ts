@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { dbConnect } from '@/lib/dbConnect';
 import { CampaignConfigModel, ICampaignConfigDocument } from '@/models/CampaignConfig';
+import { CAMPAIGN_CODES, METABOLIC_STAGES, BREVO_LISTS } from '@/config/leadConfig';
 
 export interface CampaignResolvedConfig {
   referenceCode: string;
@@ -12,27 +13,27 @@ export interface CampaignResolvedConfig {
 }
 
 export const DEFAULT_CAMPAIGNS: Record<string, CampaignResolvedConfig> = {
-  newsletter: {
-    referenceCode: 'newsletter',
+  [CAMPAIGN_CODES.NEWSLETTER]: {
+    referenceCode: CAMPAIGN_CODES.NEWSLETTER,
     name: 'Newsletter Subscription',
-    brevoList: 'subscribed_contacts',
-    defaultMetabolicStage: 'GENERAL_AWARENESS',
+    brevoList: BREVO_LISTS.SUBSCRIBED_CONTACTS,
+    defaultMetabolicStage: METABOLIC_STAGES.GENERAL_AWARENESS,
     description: 'General newsletter opt-ins and educational health updates',
     isActive: true,
   },
-  insulin_reset_funnel: {
-    referenceCode: 'insulin_reset_funnel',
+  [CAMPAIGN_CODES.INSULIN_RESET_FUNNEL]: {
+    referenceCode: CAMPAIGN_CODES.INSULIN_RESET_FUNNEL,
     name: 'Insulin Reset Protocol Cheat Sheet',
-    brevoList: 'insulin_reset_funnel',
-    defaultMetabolicStage: 'EARLY_STAGE_HYPERINSULINEMIA',
+    brevoList: BREVO_LISTS.INSULIN_RESET_FUNNEL,
+    defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
     description: 'Low-awareness metabolic symptom checklist & cheat sheet funnel',
     isActive: true,
   },
-  companion_app_users: {
-    referenceCode: 'companion_app_users',
+  [CAMPAIGN_CODES.COMPANION_APP_USERS]: {
+    referenceCode: CAMPAIGN_CODES.COMPANION_APP_USERS,
     name: 'GlycoSense Companion App Claim',
-    brevoList: 'companion_app_users',
-    defaultMetabolicStage: 'COMPANION_APP_USER',
+    brevoList: BREVO_LISTS.COMPANION_APP_USERS,
+    defaultMetabolicStage: METABOLIC_STAGES.COMPANION_APP_USER,
     description: 'Direct response companion app onboarding and claim leads',
     isActive: true,
   },

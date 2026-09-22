@@ -3,6 +3,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import { LeadModel } from '@/models/Lead';
 import { BrevoService } from '@/services/brevoService';
 import { CampaignService } from '@/services/campaignService';
+import { qualifyMetabolicStage } from '@/config/leadConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -50,28 +51,12 @@ export async function POST(req: Request): Promise<NextResponse> {
   const campaign = await CampaignService.resolveCampaign(leadSource);
 
   // Qualify lead's metabolic status awareness depending on campaign config, capture point, and symptoms
-  let qualifiedMetabolicStage =
-    typeof metabolicStage === 'string' && metabolicStage.trim()
-      ? metabolicStage.trim().toUpperCase()
-      : undefined;
-
-  if (!qualifiedMetabolicStage) {
-    if (campaign.referenceCode === 'newsletter') {
-      qualifiedMetabolicStage = 'GENERAL_AWARENESS';
-    } else if (campaign.referenceCode === 'companion_app_users') {
-      qualifiedMetabolicStage = 'COMPANION_APP_USER';
-    } else if (campaign.referenceCode === 'insulin_reset_funnel' || cleanSymptoms.length > 0) {
-      if (cleanSymptoms.length >= 3) {
-        qualifiedMetabolicStage = 'HIGH_RISK_HYPERINSULINEMIA';
-      } else if (cleanSymptoms.length >= 1) {
-        qualifiedMetabolicStage = 'EARLY_STAGE_HYPERINSULINEMIA';
-      } else {
-        qualifiedMetabolicStage = 'LOW_AWARENESS_CURIOUS';
-      }
-    } else {
-      qualifiedMetabolicStage = campaign.defaultMetabolicStage;
-    }
-  }
+  const qualifiedMetabolicStage = qualifyMetabolicStage({
+    explicitStage: metabolicStage,
+    campaignReferenceCode: campaign.referenceCode,
+    defaultMetabolicStage: campaign.defaultMetabolicStage,
+    symptomsCount: cleanSymptoms.length,
+  });
 
   // 1. Persist lead to MongoDB with qualified metabolicStage
   try {
