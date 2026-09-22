@@ -10,23 +10,24 @@ const DEFAULT_FORM_DATA: CampaignFormData = {
   name: '',
   brevoList: '',
   defaultMetabolicStage: METABOLIC_STAGES.GENERAL_AWARENESS,
+  assetFileName: '',
   description: '',
   isActive: true,
 };
 
 interface CampaignsManagerProps {
   initialCampaigns: CampaignResolvedConfig[];
+  availableAssets?: string[];
 }
 
 /**
  * Client Management Component for dynamic Brevo Campaigns & Lead Capture Mappings.
  *
- * @usecase Allows owner admin to dynamically configure and create campaigns, mapping reference codes to Brevo lists and metabolic stages.
- * @param {CampaignsManagerProps} props Initial server-fetched campaigns list.
- * @returns {JSX.Element} Interactive campaign manager dashboard interface.
+ * @usecase Decoupled campaign management mapping reference codes to Brevo lists and assets without code changes.
  */
 export default function CampaignsManagerClient({
   initialCampaigns,
+  availableAssets = [],
 }: CampaignsManagerProps): React.JSX.Element {
   const [campaigns, setCampaigns] = useState<CampaignResolvedConfig[]>(initialCampaigns);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,6 +49,7 @@ export default function CampaignsManagerClient({
       name: item.name,
       brevoList: item.brevoList,
       defaultMetabolicStage: item.defaultMetabolicStage,
+      assetFileName: item.assetFileName || '',
       description: item.description || '',
       isActive: item.isActive,
     });
@@ -71,22 +73,18 @@ export default function CampaignsManagerClient({
       }
 
       setCampaigns((prev) => {
-        const cleanCode = formData.referenceCode.trim().toLowerCase();
-        const index = prev.findIndex((c) => c.referenceCode === cleanCode);
+        const code = formData.referenceCode.trim().toLowerCase();
         const updated: CampaignResolvedConfig = {
-          referenceCode: cleanCode,
+          referenceCode: code,
           name: formData.name.trim(),
           brevoList: formData.brevoList.trim(),
           defaultMetabolicStage: formData.defaultMetabolicStage.trim().toUpperCase(),
+          assetFileName: formData.assetFileName.trim() || undefined,
           description: formData.description.trim() || undefined,
           isActive: formData.isActive,
         };
-        if (index >= 0) {
-          const next = [...prev];
-          next[index] = updated;
-          return next;
-        }
-        return [updated, ...prev];
+        const idx = prev.findIndex((c) => c.referenceCode === code);
+        return idx >= 0 ? prev.map((c, i) => (i === idx ? updated : c)) : [updated, ...prev];
       });
 
       setIsModalOpen(false);
@@ -100,7 +98,6 @@ export default function CampaignsManagerClient({
 
   return (
     <div className="space-y-8">
-      {/* Informational Guidance Callout */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
         <div className="flex items-center gap-2 text-teal-400 font-bold text-sm">
           <span>💡</span>
@@ -108,9 +105,8 @@ export default function CampaignsManagerClient({
         </div>
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
           Tag any lead capture page, dialog, or button with your custom reference code (e.g.{' '}
-          <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">
-            source=&quot;{CAMPAIGN_CODES.COMPANION_APP_USERS}&quot;
-          </code>). The system automatically enrolls the contact into your mapped Brevo list and assigns their <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">METABOLIC_STAGE</code> property dynamically.
+          <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">source=&quot;{CAMPAIGN_CODES.COMPANION_APP_USERS}&quot;</code>).
+          The system dynamically enrolls the contact into your mapped Brevo list, applies their metabolic stage, and issues tokenized download links for any attached asset.
         </p>
       </div>
 
@@ -120,7 +116,6 @@ export default function CampaignsManagerClient({
         </div>
       )}
 
-      {/* Header Actions */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold text-white">Active Campaign Configurations ({campaigns.length})</h2>
         <button
@@ -132,7 +127,6 @@ export default function CampaignsManagerClient({
         </button>
       </div>
 
-      {/* Campaigns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {campaigns.map((item) => (
           <div
@@ -144,13 +138,7 @@ export default function CampaignsManagerClient({
                 <span className="font-mono text-xs font-bold text-amber-300 bg-amber-950/60 border border-amber-800/60 px-2.5 py-1 rounded-md">
                   {item.referenceCode}
                 </span>
-                <span
-                  className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
-                    item.isActive
-                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                      : 'bg-rose-950 text-rose-300 border border-rose-800'
-                  }`}
-                >
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${item.isActive ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'}`}>
                   {item.isActive ? 'Active' : 'Disabled'}
                 </span>
               </div>
@@ -167,6 +155,16 @@ export default function CampaignsManagerClient({
                   <span className="text-slate-400">Metabolic Stage:</span>
                   <span className="font-mono font-bold text-purple-300">{item.defaultMetabolicStage}</span>
                 </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Attached Asset:</span>
+                  {item.assetFileName ? (
+                    <span className="font-mono font-bold text-emerald-400 truncate max-w-[140px]" title={item.assetFileName}>
+                      📄 {item.assetFileName}
+                    </span>
+                  ) : (
+                    <span className="text-slate-500 italic">None</span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -181,11 +179,11 @@ export default function CampaignsManagerClient({
         ))}
       </div>
 
-      {/* Modal Dialog */}
       <CampaignModal
         isOpen={isModalOpen}
         editingCode={editingCode}
         formData={formData}
+        availableAssets={availableAssets}
         submitting={submitting}
         onClose={() => setIsModalOpen(false)}
         onChange={setFormData}

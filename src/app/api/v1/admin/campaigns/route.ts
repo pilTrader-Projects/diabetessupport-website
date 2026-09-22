@@ -60,7 +60,15 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { referenceCode, name, brevoList, defaultMetabolicStage, description, isActive } = body || {};
+  const {
+    referenceCode,
+    name,
+    brevoList,
+    defaultMetabolicStage,
+    assetFileName,
+    description,
+    isActive,
+  } = body || {};
 
   if (!referenceCode || typeof referenceCode !== 'string' || !referenceCode.trim()) {
     return NextResponse.json(
@@ -87,6 +95,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanName = name.trim();
   const cleanList = brevoList.trim();
   const cleanStage = (defaultMetabolicStage || METABOLIC_STAGES.GENERAL_AWARENESS).trim().toUpperCase();
+  const cleanAsset = typeof assetFileName === 'string' && assetFileName.trim() ? assetFileName.trim() : '';
 
   try {
     await dbConnect();
@@ -98,6 +107,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           name: cleanName,
           brevoList: cleanList,
           defaultMetabolicStage: cleanStage,
+          assetFileName: cleanAsset,
           description: description?.trim() || undefined,
           isActive: isActive !== false,
         },

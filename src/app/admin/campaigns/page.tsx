@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { CampaignService } from '@/services/campaignService';
+import { AssetStorageService } from '@/services/assetStorageService';
 import CampaignsManagerClient from '@/components/admin/CampaignsManagerClient';
 
 export const revalidate = 0; // Dynamic admin dashboard
@@ -10,8 +11,8 @@ export const revalidate = 0; // Dynamic admin dashboard
 /**
  * Brevo Campaigns & Lead Capture Mapping Admin Dashboard Page (/admin/campaigns).
  *
- * @usecase Displays, configures, and dynamically creates lead capture campaigns mapped to Brevo lists and metabolic stages.
- * @dependencies isAdminAuthenticated, CampaignService.getAllCampaigns
+ * @usecase Displays, configures, and dynamically creates lead capture campaigns mapped to Brevo lists, metabolic stages, and downloadable digital assets.
+ * @dependencies isAdminAuthenticated, CampaignService.getAllCampaigns, AssetStorageService.listAssets
  * @returns {Promise<JSX.Element>} Rendered campaign management dashboard.
  */
 export default async function AdminCampaignsPage(): Promise<React.JSX.Element> {
@@ -20,7 +21,12 @@ export default async function AdminCampaignsPage(): Promise<React.JSX.Element> {
     redirect('/admin/login');
   }
 
-  const campaigns = await CampaignService.getAllCampaigns();
+  const [campaigns, assets] = await Promise.all([
+    CampaignService.getAllCampaigns(),
+    AssetStorageService.listAssets(),
+  ]);
+
+  const availableAssets = assets.map((a) => a.fileName);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 sm:p-10 space-y-10">
@@ -55,7 +61,10 @@ export default async function AdminCampaignsPage(): Promise<React.JSX.Element> {
       </div>
 
       {/* Main Interactive Client Interface */}
-      <CampaignsManagerClient initialCampaigns={campaigns} />
+      <CampaignsManagerClient
+        initialCampaigns={campaigns}
+        availableAssets={availableAssets}
+      />
     </div>
   );
 }

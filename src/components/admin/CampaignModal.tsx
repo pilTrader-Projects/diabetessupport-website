@@ -8,6 +8,7 @@ export interface CampaignFormData {
   name: string;
   brevoList: string;
   defaultMetabolicStage: string;
+  assetFileName: string;
   description: string;
   isActive: boolean;
 }
@@ -16,6 +17,7 @@ interface CampaignModalProps {
   isOpen: boolean;
   editingCode: string | null;
   formData: CampaignFormData;
+  availableAssets?: string[];
   submitting: boolean;
   onClose: () => void;
   onChange: (data: CampaignFormData) => void;
@@ -33,6 +35,7 @@ export default function CampaignModal({
   isOpen,
   editingCode,
   formData,
+  availableAssets,
   submitting,
   onClose,
   onChange,
@@ -109,11 +112,36 @@ export default function CampaignModal({
               required
               placeholder={`e.g. ${METABOLIC_STAGES.COMPANION_APP_USER}, ${METABOLIC_STAGES.GENERAL_AWARENESS}`}
               value={formData.defaultMetabolicStage}
-              onChange={(e) =>
-                onChange({ ...formData, defaultMetabolicStage: e.target.value })
-              }
+              onChange={(e) => onChange({ ...formData, defaultMetabolicStage: e.target.value })}
               className="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono uppercase"
             />
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <label className="block text-slate-300 font-bold uppercase tracking-wider">
+                Attached Digital Asset (GridFS)
+              </label>
+              <span className="text-[10px] text-slate-400">Sets DOWNLOAD_URL</span>
+            </div>
+            <select
+              value={formData.assetFileName}
+              onChange={(e) => onChange({ ...formData, assetFileName: e.target.value })}
+              className="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono"
+            >
+              <option value="">-- None (No Downloadable Asset) --</option>
+              {availableAssets?.map((file) => (
+                <option key={file} value={file}>
+                  📄 {file}
+                </option>
+              ))}
+              {formData.assetFileName &&
+                !availableAssets?.includes(formData.assetFileName) && (
+                  <option value={formData.assetFileName}>
+                    📄 {formData.assetFileName} (Configured)
+                  </option>
+                )}
+            </select>
           </div>
 
           <div>

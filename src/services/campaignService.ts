@@ -45,7 +45,7 @@ export class CampaignService {
             name: customConfig.name,
             brevoList: customConfig.brevoList,
             defaultMetabolicStage: customConfig.defaultMetabolicStage,
-            assetFileName: customConfig.assetFileName,
+            assetFileName: customConfig.assetFileName?.trim() || undefined,
             description: customConfig.description,
             isActive: customConfig.isActive,
           };
@@ -127,7 +127,10 @@ export class CampaignService {
               name: doc.name || existing.name,
               brevoList: doc.brevoList || existing.brevoList,
               defaultMetabolicStage: doc.defaultMetabolicStage || existing.defaultMetabolicStage,
-              assetFileName: doc.assetFileName !== undefined ? doc.assetFileName : existing.assetFileName,
+              assetFileName:
+                doc.assetFileName !== undefined
+                  ? (doc.assetFileName?.trim() || undefined)
+                  : existing.assetFileName,
               description: doc.description !== undefined ? doc.description : existing.description,
               isActive: doc.isActive !== undefined ? doc.isActive : existing.isActive,
             });
@@ -137,7 +140,7 @@ export class CampaignService {
               name: doc.name,
               brevoList: doc.brevoList,
               defaultMetabolicStage: doc.defaultMetabolicStage,
-              assetFileName: doc.assetFileName,
+              assetFileName: doc.assetFileName?.trim() || undefined,
               description: doc.description,
               isActive: doc.isActive !== false,
             });

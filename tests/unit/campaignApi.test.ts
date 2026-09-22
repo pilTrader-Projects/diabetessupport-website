@@ -90,24 +90,28 @@ describe('Admin Campaigns API (/api/v1/admin/campaigns)', () => {
       expect(data.error).toContain('required');
     });
 
-    it('should upsert campaign configuration successfully', async () => {
+    it('should upsert campaign configuration successfully including assetFileName', async () => {
       (isAdminAuthenticated as jest.Mock).mockResolvedValueOnce(true);
-      jest.spyOn(CampaignConfigModel, 'findOneAndUpdate').mockResolvedValueOnce({
-        referenceCode: 'companion_app_users',
-        name: 'GlycoSense Companion App Claim',
-        brevoList: 'companion_app_users',
-        defaultMetabolicStage: 'COMPANION_APP_USER',
-        isActive: true,
-      } as any);
+      const findOneAndUpdateSpy = jest
+        .spyOn(CampaignConfigModel, 'findOneAndUpdate')
+        .mockResolvedValueOnce({
+          referenceCode: 'insulin_reset_funnel',
+          name: 'Insulin Reset Protocol',
+          brevoList: 'insulin_reset_funnel',
+          defaultMetabolicStage: 'EARLY_STAGE_HYPERINSULINEMIA',
+          assetFileName: 'insulin_reset_protocol_cheat_sheet.pdf',
+          isActive: true,
+        } as any);
 
       const req = new Request('http://localhost:3000/api/v1/admin/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          referenceCode: 'companion_app_users',
-          name: 'GlycoSense Companion App Claim',
-          brevoList: 'companion_app_users',
-          defaultMetabolicStage: 'COMPANION_APP_USER',
+          referenceCode: 'insulin_reset_funnel',
+          name: 'Insulin Reset Protocol',
+          brevoList: 'insulin_reset_funnel',
+          defaultMetabolicStage: 'EARLY_STAGE_HYPERINSULINEMIA',
+          assetFileName: 'insulin_reset_protocol_cheat_sheet.pdf',
           isActive: true,
         }),
       });
@@ -116,7 +120,16 @@ describe('Admin Campaigns API (/api/v1/admin/campaigns)', () => {
 
       expect(res.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.referenceCode).toBe('companion_app_users');
+      expect(data.data.assetFileName).toBe('insulin_reset_protocol_cheat_sheet.pdf');
+      expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
+        { referenceCode: 'insulin_reset_funnel' },
+        expect.objectContaining({
+          $set: expect.objectContaining({
+            assetFileName: 'insulin_reset_protocol_cheat_sheet.pdf',
+          }),
+        }),
+        expect.any(Object)
+      );
     });
   });
 });
