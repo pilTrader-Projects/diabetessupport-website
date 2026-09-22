@@ -103,6 +103,15 @@ describe('CampaignConfig & CampaignService Unit Tests', () => {
       expect(campaign.brevoList).toBe('subscribed_contacts');
       expect(campaign.defaultMetabolicStage).toBe('GENERAL_AWARENESS');
     });
+
+    it('should resolve article-embedded newsletter opt-in even if slug contains "insulin"', async () => {
+      jest.spyOn(CampaignConfigModel, 'findOne').mockResolvedValueOnce(null);
+
+      const campaign = await CampaignService.resolveCampaign('article_understanding-insulin-resistance-diabetes');
+      expect(campaign.referenceCode).toBe(CAMPAIGN_CODES.NEWSLETTER);
+      expect(campaign.brevoList).toBe('subscribed_contacts');
+      expect(campaign.defaultMetabolicStage).toBe('GENERAL_AWARENESS');
+    });
   });
 
   describe('CampaignService.getAllCampaigns()', () => {

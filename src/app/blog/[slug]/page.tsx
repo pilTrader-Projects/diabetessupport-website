@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 import KitOptInForm from '@/components/KitOptInForm';
 import BlogPostContent from '@/components/BlogPostContent';
 import AdUnit from '@/components/ads/AdUnit';
@@ -163,7 +164,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             subtitle="Join the growing movement of Filipino family providers receiving low-GI recipes, blood sugar management tips, and free downloadable cheat sheets."
             buttonText="Subscribe Free"
             layout="inline"
-            source={`article_${slug}`}
+            source={CAMPAIGN_CODES.NEWSLETTER}
           />
         </div>
 

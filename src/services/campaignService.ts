@@ -60,27 +60,27 @@ export class CampaignService {
     }
 
     if (
-      cleanCode.includes('newsletter') ||
-      cleanCode.includes('subscribe') ||
-      cleanCode.includes('general') ||
-      cleanCode.includes('weekly')
+      cleanCode === 'newsletter' ||
+      cleanCode === 'newsletter_funnel' ||
+      cleanCode.startsWith('newsletter') ||
+      cleanCode.startsWith('article_') ||
+      cleanCode.includes('subscribe')
     ) {
       return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
     }
 
     if (
-      cleanCode.includes('insulin') ||
-      cleanCode.includes('reset') ||
-      cleanCode.includes('hidden_clock') ||
-      cleanCode.includes('cheat')
+      cleanCode === 'insulin_reset_funnel' ||
+      cleanCode === 'insulin_reset' ||
+      cleanCode.startsWith('insulin_reset_')
     ) {
       return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.INSULIN_RESET_FUNNEL];
     }
 
     if (
-      cleanCode.includes('companion') ||
-      cleanCode.includes('glycosense') ||
-      cleanCode.includes('app')
+      cleanCode === 'companion_app_users' ||
+      cleanCode === 'companion_app_users_funnel' ||
+      cleanCode.startsWith('companion_app_')
     ) {
       return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.COMPANION_APP_USERS];
     }

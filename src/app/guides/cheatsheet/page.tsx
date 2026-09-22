@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import LeadMagnetCard from '@/components/LeadMagnetCard';
 import { SITE_CONFIG } from '@/config/constants';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -35,7 +36,7 @@ export default function CheatsheetGuidePage() {
       {/* Main Lead Magnet Box */}
       <LeadMagnetCard
         title="Download Your Free 7-Day Diabetes Action Plan PDF"
-        source="cheatsheet_landing_page"
+        source={CAMPAIGN_CODES.COMPANION_APP_USERS}
       />
 
       {/* What's Inside Feature Grid */}

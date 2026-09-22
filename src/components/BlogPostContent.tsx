@@ -3,6 +3,7 @@
 import React from 'react';
 import NewsletterOptInForm from './NewsletterOptInForm';
 import LeadMagnetCard from './LeadMagnetCard';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 export interface BlogPostContentProps {
   content: string;
@@ -61,7 +62,7 @@ export default function BlogPostContent({ content, slug }: BlogPostContentProps)
             subtitle={subtitle}
             buttonText={button || 'Subscribe Free'}
             layout={(layout as any) || 'card'}
-            source={`article_${slug}`}
+            source={CAMPAIGN_CODES.NEWSLETTER}
           />
         </div>
       );
@@ -70,7 +71,7 @@ export default function BlogPostContent({ content, slug }: BlogPostContentProps)
         <div key={`widget-${matchIndex}`} className="my-8 not-prose">
           <LeadMagnetCard
             title={title || 'GlycoSense — Preventive Glucose & Lifestyle Intelligence App'}
-            source={`article_${slug}_lead_magnet`}
+            source={CAMPAIGN_CODES.COMPANION_APP_USERS}
           />
         </div>
       );
