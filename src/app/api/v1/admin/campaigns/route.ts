@@ -3,6 +3,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { CampaignConfigModel } from '@/models/CampaignConfig';
 import { CampaignService } from '@/services/campaignService';
+import { METABOLIC_STAGES } from '@/config/leadConfig';
 
 /**
  * HTTP GET handler for retrieving all Brevo campaign lead capture configurations.
@@ -85,7 +86,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanCode = referenceCode.trim().toLowerCase();
   const cleanName = name.trim();
   const cleanList = brevoList.trim();
-  const cleanStage = (defaultMetabolicStage || 'GENERAL_AWARENESS').trim().toUpperCase();
+  const cleanStage = (defaultMetabolicStage || METABOLIC_STAGES.GENERAL_AWARENESS).trim().toUpperCase();
 
   try {
     await dbConnect();

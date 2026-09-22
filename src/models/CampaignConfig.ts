@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { METABOLIC_STAGES } from '@/config/leadConfig';
 
 /**
  * Interface representing a Campaign Configuration document for dynamic lead routing and Brevo list assignment.
@@ -39,7 +40,7 @@ const CampaignConfigSchema: Schema = new Schema<ICampaignConfigDocument>(
       required: [true, 'Default metabolic stage is required'],
       trim: true,
       uppercase: true,
-      default: 'GENERAL_AWARENESS',
+      default: METABOLIC_STAGES.GENERAL_AWARENESS,
     },
     description: {
       type: String,

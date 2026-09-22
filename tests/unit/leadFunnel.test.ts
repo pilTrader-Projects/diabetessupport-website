@@ -52,13 +52,14 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       expect(err.errors.email).toBeDefined();
     });
 
-    it('should default source to insulin_reset_protocol if not provided', () => {
+    it('should fail validation if source is not provided', async () => {
       const lead = new LeadModel({
         email: 'user@example.com',
       });
 
-      expect(lead.source).toBe('insulin_reset_protocol');
-      expect(lead.status).toBe('subscribed');
+      const err = await lead.validate().catch((e) => e);
+      expect(err).toBeDefined();
+      expect(err.errors.source).toBeDefined();
     });
   });
 

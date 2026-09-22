@@ -27,7 +27,7 @@ const LeadSchema: Schema = new Schema<ILeadDocument>(
     },
     source: {
       type: String,
-      default: 'insulin_reset_protocol',
+      required: [true, 'Campaign source is required'],
       trim: true,
       index: true,
     },
