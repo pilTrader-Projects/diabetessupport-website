@@ -45,11 +45,26 @@ describe('Newsletter & Lead Subscription API (/api/v1/subscribe)', () => {
     expect(body.error).toContain('valid email');
   });
 
-  it('should return 200 OK with success response for valid newsletter subscription', async () => {
+  it('should return 400 Bad Request if campaign source is missing', async () => {
     const req = new Request('http://localhost:3000/api/v1/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'subscriber@example.com', firstName: 'Jane' }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.success).toBe(false);
+    expect(body.error).toContain('Campaign source is required');
+  });
+
+  it('should return 200 OK with success response for valid newsletter subscription', async () => {
+    const req = new Request('http://localhost:3000/api/v1/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'subscriber@example.com', firstName: 'Jane', source: 'newsletter_funnel' }),
     });
 
     const res = await POST(req);

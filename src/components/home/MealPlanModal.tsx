@@ -3,15 +3,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
+
 interface MealPlanModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 /**
- * High-Converting Filipino Meal Plan Lead Magnet Modal Component.
+ * Meal Plan Modal Component for capturing leads interested in the 7-day low-GI meal plan.
  *
- * @usecase Captures emails from Stage 2 roadmaps in exchange for the Filipino Diabetes Meal Plan, then seamlessly guides them to create their free GlycoSense account.
+ * @usecase Displays a high-converting, compliant opt-in modal triggered from educational and roadmap CTA buttons.
  * @param {MealPlanModalProps} props Component props controlling visibility and dismissal.
  * @dependencies React hooks, Next.js Link, fetch POST /api/v1/subscribe.
  * @returns {JSX.Element | null} Rendered Modal or null when closed.
@@ -35,7 +37,11 @@ export default function MealPlanModal({ isOpen, onClose }: MealPlanModalProps): 
       const res = await fetch('/api/v1/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), firstName: firstName.trim() || undefined }),
+        body: JSON.stringify({
+          email: email.trim(),
+          firstName: firstName.trim() || undefined,
+          source: CAMPAIGN_CODES.NEWSLETTER,
+        }),
       });
 
       const data = await res.json();

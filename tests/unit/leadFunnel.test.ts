@@ -108,12 +108,27 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       expect(data.error).toContain('valid email address');
     });
 
+    it('should return 400 Bad Request if campaign source is missing', async () => {
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'valid@example.com', firstName: 'Juan' }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Campaign source is required');
+    });
+
     it('should return 200 OK with redirectUrl to /reset-success on valid submission', async () => {
       jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
         _id: 'mock_lead_id',
         email: 'juan.delacruz@example.com',
         firstName: 'Juan',
-        source: 'insulin_reset_protocol',
+        source: 'insulin_reset_funnel',
       } as any);
 
       const req = new Request('http://localhost:3000/api/v1/leads', {
@@ -123,6 +138,7 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
           email: '  juan.delacruz@example.com  ',
           firstName: 'Juan',
           symptomsChecked: ['The Belly Anchor'],
+          source: 'insulin_reset_funnel',
         }),
       });
 

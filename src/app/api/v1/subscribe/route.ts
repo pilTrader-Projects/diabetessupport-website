@@ -48,7 +48,15 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const cleanFirstName = firstName ? String(firstName).trim() : undefined;
   const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
-  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : CAMPAIGN_CODES.NEWSLETTER;
+
+  if (!rawTag || typeof rawTag !== 'string' || !rawTag.trim()) {
+    return NextResponse.json(
+      { success: false, error: 'Campaign source is required.' },
+      { status: 400 }
+    );
+  }
+
+  const leadSource = rawTag.trim();
 
   // 1. Resolve dynamic campaign mapping
   const campaign = await CampaignService.resolveCampaign(leadSource);
