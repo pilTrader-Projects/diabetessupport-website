@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 interface LeadCaptureFormProps {
   symptomsChecked?: string[];
@@ -17,7 +18,7 @@ interface LeadCaptureFormProps {
  */
 export default function LeadCaptureForm({
   symptomsChecked = [],
-  source = 'insulin_reset_landing_page',
+  source = CAMPAIGN_CODES.INSULIN_RESET_FUNNEL,
 }: LeadCaptureFormProps): React.JSX.Element {
   const router = useRouter();
   const [firstName, setFirstName] = useState('');

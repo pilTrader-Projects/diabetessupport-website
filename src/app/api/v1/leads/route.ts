@@ -45,8 +45,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanFirstName = firstName && typeof firstName === 'string' ? firstName.trim() : undefined;
   const cleanSymptoms = Array.isArray(symptomsChecked) ? symptomsChecked.map(String) : [];
   const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
-  const defaultFallbackSource = cleanSymptoms.length > 0 ? CAMPAIGN_CODES.INSULIN_RESET_FUNNEL : CAMPAIGN_CODES.NEWSLETTER;
-  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : defaultFallbackSource;
+  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : CAMPAIGN_CODES.INSULIN_RESET_FUNNEL;
 
   // Resolve dynamic campaign mapping from Admin Configuration / defaults
   const campaign = await CampaignService.resolveCampaign(leadSource);

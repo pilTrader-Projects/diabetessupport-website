@@ -179,9 +179,54 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       );
     });
 
+    it('should route 3-page cheat sheet lead with 0 symptoms to insulin_reset_funnel with LOW_AWARENESS_CURIOUS stage', async () => {
+      const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+        .mockResolvedValueOnce({ success: true, contactId: 103 });
+
+      const findOneAndUpdateSpy = jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+        _id: 'mock_lead_id',
+        email: 'curious@example.com',
+      } as any);
+
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'curious@example.com',
+          firstName: 'CuriousVisitor',
+          symptomsChecked: [],
+          source: 'insulin_reset_funnel',
+        }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
+        { email: 'curious@example.com' },
+        expect.objectContaining({
+          $set: expect.objectContaining({
+            metabolicStage: 'LOW_AWARENESS_CURIOUS',
+          }),
+        }),
+        expect.any(Object)
+      );
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'curious@example.com',
+          firstName: 'CuriousVisitor',
+          source: 'insulin_reset_funnel',
+          metabolicStage: 'LOW_AWARENESS_CURIOUS',
+          listIds: ['insulin_reset_funnel'],
+        })
+      );
+    });
+
     it('should route tag: "newsletter" to subscribed_contacts with GENERAL_AWARENESS stage', async () => {
       const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
-        .mockResolvedValueOnce({ success: true, contactId: 102 });
+        .mockResolvedValueOnce({ success: true, contactId: 104 });
 
       jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
         _id: 'mock_lead_id',
