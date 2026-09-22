@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { CAMPAIGN_CODES, BREVO_LISTS, METABOLIC_STAGES } from '@/config/leadConfig';
 
 export interface CampaignFormData {
   referenceCode: string;
@@ -64,7 +65,7 @@ export default function CampaignModal({
               type="text"
               required
               disabled={Boolean(editingCode)}
-              placeholder="e.g. companion_app_users"
+              placeholder={`e.g. ${CAMPAIGN_CODES.COMPANION_APP_USERS}`}
               value={formData.referenceCode}
               onChange={(e) => onChange({ ...formData, referenceCode: e.target.value })}
               className="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono"
@@ -92,7 +93,7 @@ export default function CampaignModal({
             <input
               type="text"
               required
-              placeholder="e.g. companion_app_users or 42"
+              placeholder={`e.g. ${BREVO_LISTS.COMPANION_APP_USERS} or 42`}
               value={formData.brevoList}
               onChange={(e) => onChange({ ...formData, brevoList: e.target.value })}
               className="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-mono"
@@ -106,7 +107,7 @@ export default function CampaignModal({
             <input
               type="text"
               required
-              placeholder="e.g. COMPANION_APP_USER, GENERAL_AWARENESS"
+              placeholder={`e.g. ${METABOLIC_STAGES.COMPANION_APP_USER}, ${METABOLIC_STAGES.GENERAL_AWARENESS}`}
               value={formData.defaultMetabolicStage}
               onChange={(e) =>
                 onChange({ ...formData, defaultMetabolicStage: e.target.value })

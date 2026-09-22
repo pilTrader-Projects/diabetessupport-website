@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { BrevoService } from '@/services/brevoService';
 import { CampaignService } from '@/services/campaignService';
+import { CAMPAIGN_CODES, BREVO_LISTS } from '@/config/leadConfig';
 
 /**
  * Regex helper for basic email format validation.
@@ -47,7 +48,7 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const cleanFirstName = firstName ? String(firstName).trim() : undefined;
   const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
-  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : 'newsletter';
+  const leadSource = rawTag && typeof rawTag === 'string' ? rawTag.trim() : CAMPAIGN_CODES.NEWSLETTER;
 
   // 1. Resolve dynamic campaign mapping
   const campaign = await CampaignService.resolveCampaign(leadSource);
@@ -67,7 +68,8 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 
   const successMessage =
-    campaign.referenceCode === 'companion_app_users'
+    campaign.referenceCode === CAMPAIGN_CODES.COMPANION_APP_USERS ||
+    campaign.brevoList === BREVO_LISTS.COMPANION_APP_USERS
       ? 'Free account access reserved! Check your email for login instructions.'
       : 'Thank you for subscribing! Check your inbox for your free guide.';
 

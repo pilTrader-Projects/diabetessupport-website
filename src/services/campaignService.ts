@@ -1,43 +1,16 @@
 import mongoose from 'mongoose';
 import { dbConnect } from '@/lib/dbConnect';
 import { CampaignConfigModel, ICampaignConfigDocument } from '@/models/CampaignConfig';
-import { CAMPAIGN_CODES, METABOLIC_STAGES, BREVO_LISTS } from '@/config/leadConfig';
+import {
+  CAMPAIGN_CODES,
+  METABOLIC_STAGES,
+  BREVO_LISTS,
+  DEFAULT_CAMPAIGNS,
+  CampaignConfig as CampaignResolvedConfig,
+} from '@/config/leadConfig';
 
-export interface CampaignResolvedConfig {
-  referenceCode: string;
-  name: string;
-  brevoList: string;
-  defaultMetabolicStage: string;
-  description?: string;
-  isActive: boolean;
-}
-
-export const DEFAULT_CAMPAIGNS: Record<string, CampaignResolvedConfig> = {
-  [CAMPAIGN_CODES.NEWSLETTER]: {
-    referenceCode: CAMPAIGN_CODES.NEWSLETTER,
-    name: 'Newsletter Subscription',
-    brevoList: BREVO_LISTS.SUBSCRIBED_CONTACTS,
-    defaultMetabolicStage: METABOLIC_STAGES.GENERAL_AWARENESS,
-    description: 'General newsletter opt-ins and educational health updates',
-    isActive: true,
-  },
-  [CAMPAIGN_CODES.INSULIN_RESET_FUNNEL]: {
-    referenceCode: CAMPAIGN_CODES.INSULIN_RESET_FUNNEL,
-    name: 'Insulin Reset Protocol Cheat Sheet',
-    brevoList: BREVO_LISTS.INSULIN_RESET_FUNNEL,
-    defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
-    description: 'Low-awareness metabolic symptom checklist & cheat sheet funnel',
-    isActive: true,
-  },
-  [CAMPAIGN_CODES.COMPANION_APP_USERS]: {
-    referenceCode: CAMPAIGN_CODES.COMPANION_APP_USERS,
-    name: 'GlycoSense Companion App Claim',
-    brevoList: BREVO_LISTS.COMPANION_APP_USERS,
-    defaultMetabolicStage: METABOLIC_STAGES.COMPANION_APP_USER,
-    description: 'Direct response companion app onboarding and claim leads',
-    isActive: true,
-  },
-};
+export type { CampaignResolvedConfig };
+export { DEFAULT_CAMPAIGNS };
 
 /**
  * Service managing dynamic lead campaign routing, Brevo list mappings, and admin customization.
@@ -92,7 +65,7 @@ export class CampaignService {
       cleanCode.includes('general') ||
       cleanCode.includes('weekly')
     ) {
-      return DEFAULT_CAMPAIGNS.newsletter;
+      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
     }
 
     if (
@@ -101,7 +74,7 @@ export class CampaignService {
       cleanCode.includes('hidden_clock') ||
       cleanCode.includes('cheat')
     ) {
-      return DEFAULT_CAMPAIGNS.insulin_reset_funnel;
+      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.INSULIN_RESET_FUNNEL];
     }
 
     if (
@@ -109,48 +82,69 @@ export class CampaignService {
       cleanCode.includes('glycosense') ||
       cleanCode.includes('app')
     ) {
-      return DEFAULT_CAMPAIGNS.companion_app_users;
+      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.COMPANION_APP_USERS];
     }
 
     // Default fallback to newsletter
-    return DEFAULT_CAMPAIGNS.newsletter;
+    return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
   }
 
   /**
-   * Retrieves all campaign configurations from DB or seeds defaults if collection is empty.
+   * Retrieves all campaign configurations dynamically from config constants merged with database customizations.
    *
-   * @usecase Populates the Owner Admin Dashboard Campaign Manager UI.
-   * @returns {Promise<CampaignResolvedConfig[]>} List of all configured campaigns.
+   * @usecase Populates the Owner Admin Dashboard Campaign Manager UI with dynamic config constant defaults.
+   * @returns {Promise<CampaignResolvedConfig[]>} List of all active configured campaigns.
    */
   public static async getAllCampaigns(): Promise<CampaignResolvedConfig[]> {
-    await dbConnect();
-    const query = CampaignConfigModel.find().sort({ createdAt: -1 });
-    let campaigns: any[] =
-      query && typeof (query as any).lean === 'function' ? await (query as any).lean() : await query;
-
-    if (!campaigns || campaigns.length === 0) {
-      // Seed default campaigns for immediate admin visibility
-      for (const def of Object.values(DEFAULT_CAMPAIGNS)) {
-        await CampaignConfigModel.findOneAndUpdate(
-          { referenceCode: def.referenceCode },
-          { $setOnInsert: def },
-          { upsert: true, new: true }
-        );
-      }
-      const refetchQuery = CampaignConfigModel.find().sort({ createdAt: -1 });
-      campaigns =
-        refetchQuery && typeof (refetchQuery as any).lean === 'function'
-          ? await (refetchQuery as any).lean()
-          : await refetchQuery;
+    // 1. Initialize with active config constant settings
+    const campaignsMap = new Map<string, CampaignResolvedConfig>();
+    for (const def of Object.values(DEFAULT_CAMPAIGNS)) {
+      campaignsMap.set(def.referenceCode, { ...def });
     }
 
-    return campaigns.map((c) => ({
-      referenceCode: c.referenceCode,
-      name: c.name,
-      brevoList: c.brevoList,
-      defaultMetabolicStage: c.defaultMetabolicStage,
-      description: c.description,
-      isActive: c.isActive,
-    }));
+    // 2. Fetch custom campaigns or overrides from MongoDB
+    try {
+      await dbConnect();
+      const query = CampaignConfigModel.find().sort({ createdAt: -1 });
+      const dbDocs: any[] =
+        query && typeof (query as any).lean === 'function' ? await (query as any).lean() : await query;
+
+      if (Array.isArray(dbDocs)) {
+        for (const doc of dbDocs) {
+          const code = (doc.referenceCode || '').trim().toLowerCase();
+          if (!code) continue;
+
+          // Filter out obsolete legacy default codes that don't match current config constants
+          if (['newsletter', 'companion_app_users'].includes(code) && !campaignsMap.has(code)) {
+            continue;
+          }
+
+          if (campaignsMap.has(code)) {
+            const existing = campaignsMap.get(code)!;
+            campaignsMap.set(code, {
+              ...existing,
+              name: doc.name || existing.name,
+              brevoList: doc.brevoList || existing.brevoList,
+              defaultMetabolicStage: doc.defaultMetabolicStage || existing.defaultMetabolicStage,
+              description: doc.description !== undefined ? doc.description : existing.description,
+              isActive: doc.isActive !== undefined ? doc.isActive : existing.isActive,
+            });
+          } else {
+            campaignsMap.set(code, {
+              referenceCode: code,
+              name: doc.name,
+              brevoList: doc.brevoList,
+              defaultMetabolicStage: doc.defaultMetabolicStage,
+              description: doc.description,
+              isActive: doc.isActive !== false,
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error('CampaignService.getAllCampaigns DB lookup warning:', err);
+    }
+
+    return Array.from(campaignsMap.values());
   }
 }

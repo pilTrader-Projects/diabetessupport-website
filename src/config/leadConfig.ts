@@ -26,9 +26,9 @@ export type MetabolicStage = (typeof METABOLIC_STAGES)[keyof typeof METABOLIC_ST
  * @usecase Decouples lead capture forms from hardcoded list names and magic strings.
  */
 export const CAMPAIGN_CODES = {
-  NEWSLETTER: 'newsletter',
+  NEWSLETTER: 'newsletter_funnel',
   INSULIN_RESET_FUNNEL: 'insulin_reset_funnel',
-  COMPANION_APP_USERS: 'companion_app_users',
+  COMPANION_APP_USERS: 'companion_app_users_funnel',
 } as const;
 
 export type CampaignCode = (typeof CAMPAIGN_CODES)[keyof typeof CAMPAIGN_CODES];
@@ -58,6 +58,50 @@ export const SYMPTOM_STAGING_THRESHOLDS = {
   EARLY_STAGE: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
   DEFAULT_STAGE: METABOLIC_STAGES.LOW_AWARENESS_CURIOUS,
 } as const;
+
+/**
+ * Configuration definition for an active lead capture campaign.
+ */
+export interface CampaignConfig {
+  referenceCode: string;
+  name: string;
+  brevoList: string;
+  defaultMetabolicStage: string;
+  description?: string;
+  isActive: boolean;
+}
+
+/**
+ * Standardized default active campaigns dynamically generated from config constants.
+ *
+ * @usecase Drives default lead capture routes and admin dashboard active campaign cards without hardcoded strings.
+ */
+export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
+  [CAMPAIGN_CODES.NEWSLETTER]: {
+    referenceCode: CAMPAIGN_CODES.NEWSLETTER,
+    name: 'Newsletter Subscription',
+    brevoList: BREVO_LISTS.SUBSCRIBED_CONTACTS,
+    defaultMetabolicStage: METABOLIC_STAGES.GENERAL_AWARENESS,
+    description: 'General newsletter opt-ins and educational health updates',
+    isActive: true,
+  },
+  [CAMPAIGN_CODES.INSULIN_RESET_FUNNEL]: {
+    referenceCode: CAMPAIGN_CODES.INSULIN_RESET_FUNNEL,
+    name: 'Insulin Reset Protocol Cheat Sheet',
+    brevoList: BREVO_LISTS.INSULIN_RESET_FUNNEL,
+    defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
+    description: 'Low-awareness metabolic symptom checklist & cheat sheet funnel',
+    isActive: true,
+  },
+  [CAMPAIGN_CODES.COMPANION_APP_USERS]: {
+    referenceCode: CAMPAIGN_CODES.COMPANION_APP_USERS,
+    name: 'GlycoSense Companion App Claim',
+    brevoList: BREVO_LISTS.COMPANION_APP_USERS,
+    defaultMetabolicStage: METABOLIC_STAGES.COMPANION_APP_USER,
+    description: 'Direct response companion app onboarding and claim leads',
+    isActive: true,
+  },
+};
 
 export interface QualifyMetabolicStageParams {
   explicitStage?: string;

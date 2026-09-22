@@ -7,6 +7,7 @@
 import mongoose from 'mongoose';
 import { CampaignConfigModel } from '../../src/models/CampaignConfig';
 import { CampaignService } from '../../src/services/campaignService';
+import { CAMPAIGN_CODES } from '../../src/config/leadConfig';
 
 // Mock dbConnect
 jest.mock('../../src/lib/dbConnect', () => ({
@@ -57,7 +58,7 @@ describe('CampaignConfig & CampaignService Unit Tests', () => {
       jest.spyOn(CampaignConfigModel, 'findOne').mockResolvedValueOnce(null);
 
       const campaign = await CampaignService.resolveCampaign('newsletter');
-      expect(campaign.referenceCode).toBe('newsletter');
+      expect(campaign.referenceCode).toBe(CAMPAIGN_CODES.NEWSLETTER);
       expect(campaign.brevoList).toBe('subscribed_contacts');
       expect(campaign.defaultMetabolicStage).toBe('GENERAL_AWARENESS');
     });
@@ -66,7 +67,7 @@ describe('CampaignConfig & CampaignService Unit Tests', () => {
       jest.spyOn(CampaignConfigModel, 'findOne').mockResolvedValueOnce(null);
 
       const campaign = await CampaignService.resolveCampaign('insulin_reset_funnel');
-      expect(campaign.referenceCode).toBe('insulin_reset_funnel');
+      expect(campaign.referenceCode).toBe(CAMPAIGN_CODES.INSULIN_RESET_FUNNEL);
       expect(campaign.brevoList).toBe('insulin_reset_funnel');
       expect(campaign.defaultMetabolicStage).toBe('EARLY_STAGE_HYPERINSULINEMIA');
     });
@@ -75,7 +76,7 @@ describe('CampaignConfig & CampaignService Unit Tests', () => {
       jest.spyOn(CampaignConfigModel, 'findOne').mockResolvedValueOnce(null);
 
       const campaign = await CampaignService.resolveCampaign('companion_app_users');
-      expect(campaign.referenceCode).toBe('companion_app_users');
+      expect(campaign.referenceCode).toBe(CAMPAIGN_CODES.COMPANION_APP_USERS);
       expect(campaign.brevoList).toBe('companion_app_users');
       expect(campaign.defaultMetabolicStage).toBe('COMPANION_APP_USER');
     });
@@ -101,6 +102,41 @@ describe('CampaignConfig & CampaignService Unit Tests', () => {
       const campaign = await CampaignService.resolveCampaign('unknown_promo');
       expect(campaign.brevoList).toBe('subscribed_contacts');
       expect(campaign.defaultMetabolicStage).toBe('GENERAL_AWARENESS');
+    });
+  });
+
+  describe('CampaignService.getAllCampaigns()', () => {
+    it('should dynamically return active campaigns based on config constant settings', async () => {
+      jest.spyOn(CampaignConfigModel, 'find').mockReturnValue({
+        sort: jest.fn().mockResolvedValue([]),
+      } as any);
+
+      const campaigns = await CampaignService.getAllCampaigns();
+      expect(campaigns.length).toBeGreaterThanOrEqual(3);
+
+      const codes = campaigns.map((c) => c.referenceCode);
+      expect(codes).toContain(CAMPAIGN_CODES.NEWSLETTER);
+      expect(codes).toContain(CAMPAIGN_CODES.INSULIN_RESET_FUNNEL);
+      expect(codes).toContain(CAMPAIGN_CODES.COMPANION_APP_USERS);
+    });
+
+    it('should merge custom campaigns from MongoDB alongside config constants', async () => {
+      jest.spyOn(CampaignConfigModel, 'find').mockReturnValue({
+        sort: jest.fn().mockResolvedValue([
+          {
+            referenceCode: 'corporate_wellness',
+            name: 'Corporate Wellness',
+            brevoList: 'corporate_list',
+            defaultMetabolicStage: 'CORPORATE_EMPLOYEE',
+            isActive: true,
+          },
+        ]),
+      } as any);
+
+      const campaigns = await CampaignService.getAllCampaigns();
+      const codes = campaigns.map((c) => c.referenceCode);
+      expect(codes).toContain('corporate_wellness');
+      expect(codes).toContain(CAMPAIGN_CODES.NEWSLETTER);
     });
   });
 });

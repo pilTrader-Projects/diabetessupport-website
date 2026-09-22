@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 export interface NewsletterOptInFormProps {
   title?: string;
@@ -23,7 +24,7 @@ export default function NewsletterOptInForm({
   subtitle = 'Join the growing movement of Filipino family providers receiving evidence-based lifestyle tips, low-GI meal plans, and blood sugar tracking advice directly in their inbox.',
   buttonText = 'Claim Free Guide',
   layout = 'card',
-  source = 'newsletter',
+  source = CAMPAIGN_CODES.NEWSLETTER,
 }: NewsletterOptInFormProps) {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');

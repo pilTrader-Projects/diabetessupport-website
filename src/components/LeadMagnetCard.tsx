@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 export interface LeadMagnetCardProps {
   title?: string;
@@ -19,7 +20,7 @@ export interface LeadMagnetCardProps {
 export default function LeadMagnetCard({
   title = "Secure Your Health. Protect Your Family's Future.",
   subtitle = 'Turn everyday manual finger-prick logs and blood pressure checks into clear, organized health trends to share with your physician.',
-  source = 'companion_app_users',
+  source = CAMPAIGN_CODES.COMPANION_APP_USERS,
 }: LeadMagnetCardProps): React.JSX.Element {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -47,7 +48,7 @@ export default function LeadMagnetCard({
         body: JSON.stringify({
           firstName: firstName.trim() || undefined,
           email: cleanEmail,
-          source: source || 'companion_app_users',
+          source: source || CAMPAIGN_CODES.COMPANION_APP_USERS,
         }),
       });
 

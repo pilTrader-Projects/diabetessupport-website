@@ -8,6 +8,7 @@ import {
   METABOLIC_STAGES,
   CAMPAIGN_CODES,
   BREVO_LISTS,
+  DEFAULT_CAMPAIGNS,
   SYMPTOM_STAGING_THRESHOLDS,
   qualifyMetabolicStage,
 } from '../../src/config/leadConfig';
@@ -23,15 +24,35 @@ describe('Lead Qualification Config & Helper', () => {
     });
 
     it('should define standardized CAMPAIGN_CODES', () => {
-      expect(CAMPAIGN_CODES.NEWSLETTER).toBe('newsletter');
+      expect(CAMPAIGN_CODES.NEWSLETTER).toBe('newsletter_funnel');
       expect(CAMPAIGN_CODES.INSULIN_RESET_FUNNEL).toBe('insulin_reset_funnel');
-      expect(CAMPAIGN_CODES.COMPANION_APP_USERS).toBe('companion_app_users');
+      expect(CAMPAIGN_CODES.COMPANION_APP_USERS).toBe('companion_app_users_funnel');
     });
 
     it('should define standardized BREVO_LISTS', () => {
       expect(BREVO_LISTS.SUBSCRIBED_CONTACTS).toBe('subscribed_contacts');
       expect(BREVO_LISTS.INSULIN_RESET_FUNNEL).toBe('insulin_reset_funnel');
       expect(BREVO_LISTS.COMPANION_APP_USERS).toBe('companion_app_users');
+    });
+
+    it('should dynamically construct DEFAULT_CAMPAIGNS from constants', () => {
+      const newsletter = DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
+      expect(newsletter).toBeDefined();
+      expect(newsletter.referenceCode).toBe(CAMPAIGN_CODES.NEWSLETTER);
+      expect(newsletter.brevoList).toBe(BREVO_LISTS.SUBSCRIBED_CONTACTS);
+      expect(newsletter.defaultMetabolicStage).toBe(METABOLIC_STAGES.GENERAL_AWARENESS);
+
+      const companion = DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.COMPANION_APP_USERS];
+      expect(companion).toBeDefined();
+      expect(companion.referenceCode).toBe(CAMPAIGN_CODES.COMPANION_APP_USERS);
+      expect(companion.brevoList).toBe(BREVO_LISTS.COMPANION_APP_USERS);
+      expect(companion.defaultMetabolicStage).toBe(METABOLIC_STAGES.COMPANION_APP_USER);
+
+      const insulin = DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.INSULIN_RESET_FUNNEL];
+      expect(insulin).toBeDefined();
+      expect(insulin.referenceCode).toBe(CAMPAIGN_CODES.INSULIN_RESET_FUNNEL);
+      expect(insulin.brevoList).toBe(BREVO_LISTS.INSULIN_RESET_FUNNEL);
+      expect(insulin.defaultMetabolicStage).toBe(METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA);
     });
 
     it('should define symptom count thresholds', () => {

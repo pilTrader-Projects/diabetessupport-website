@@ -3,6 +3,16 @@
 import React, { useState } from 'react';
 import { CampaignResolvedConfig } from '@/services/campaignService';
 import CampaignModal, { CampaignFormData } from '@/components/admin/CampaignModal';
+import { METABOLIC_STAGES, CAMPAIGN_CODES } from '@/config/leadConfig';
+
+const DEFAULT_FORM_DATA: CampaignFormData = {
+  referenceCode: '',
+  name: '',
+  brevoList: '',
+  defaultMetabolicStage: METABOLIC_STAGES.GENERAL_AWARENESS,
+  description: '',
+  isActive: true,
+};
 
 interface CampaignsManagerProps {
   initialCampaigns: CampaignResolvedConfig[];
@@ -21,27 +31,13 @@ export default function CampaignsManagerClient({
   const [campaigns, setCampaigns] = useState<CampaignResolvedConfig[]>(initialCampaigns);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCode, setEditingCode] = useState<string | null>(null);
-  const [formData, setFormData] = useState<CampaignFormData>({
-    referenceCode: '',
-    name: '',
-    brevoList: '',
-    defaultMetabolicStage: 'GENERAL_AWARENESS',
-    description: '',
-    isActive: true,
-  });
+  const [formData, setFormData] = useState<CampaignFormData>(DEFAULT_FORM_DATA);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const handleOpenAdd = () => {
     setEditingCode(null);
-    setFormData({
-      referenceCode: '',
-      name: '',
-      brevoList: '',
-      defaultMetabolicStage: 'GENERAL_AWARENESS',
-      description: '',
-      isActive: true,
-    });
+    setFormData(DEFAULT_FORM_DATA);
     setIsModalOpen(true);
   };
 
@@ -112,7 +108,9 @@ export default function CampaignsManagerClient({
         </div>
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
           Tag any lead capture page, dialog, or button with your custom reference code (e.g.{' '}
-          <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">source=&quot;companion_app_users&quot;</code>). The system automatically enrolls the contact into your mapped Brevo list and assigns their <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">METABOLIC_STAGE</code> property dynamically.
+          <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">
+            source=&quot;{CAMPAIGN_CODES.COMPANION_APP_USERS}&quot;
+          </code>). The system automatically enrolls the contact into your mapped Brevo list and assigns their <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">METABOLIC_STAGE</code> property dynamically.
         </p>
       </div>
 
