@@ -32,6 +32,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #19](https://github.com/pilTrader-Projects/diabetessupport-website/pull/19)** `[COMPLETED]`: GlycoSense Brand Theme Integration & High-Converting PWA Lead Capture Cards.
 - [x] **[PR #20](https://github.com/pilTrader-Projects/diabetessupport-website/pull/20)** `[COMPLETED]`: Mobile Responsiveness Optimization & Horizontal Right-Side White Margin Overflow Fix (Header Drawer Nav & Viewport Resets).
 - [x] **[PR #21](https://github.com/pilTrader-Projects/diabetessupport-website/pull/21)** `[COMPLETED]`: Breadwinner Pivot Copywriting Revamp, SaMD Regulatory Safe Harbor, and RA 10173 Data Privacy Compliance.
+- [x] `[COMPLETED]`: PWA Android & Mobile WebAPK Installability with Web App Manifest, maskable and standard high-DPI icons, registered Service Worker (/sw.js) with fetch event handling, and pre-cached /offline fallback.
 - [ ] **[Issue #8](https://github.com/pilTrader-Projects/diabetessupport-website/issues/8)**: Implement high-converting PWA promotional banners, sticky CTAs, and app feature cards.
 
 ### Milestone 8: Passwordless Community Forum & Discussion Board
@@ -43,6 +44,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ### Milestone 10: Organic Community Root Page & Advanced SEO/GEO/AEO Hub
 - [x] **[PR #26](https://github.com/pilTrader-Projects/diabetessupport-website/pull/26)** `[COMPLETED]`: Mission-driven organic educational hub on root path (`/`), FAQPage JSON-LD schema, direct-answer topical definitions, and passive routing to `/insulin-reset` and `/glycosense` (Closes Issue #25).
+
+### Milestone 11: Brand Repositioning & Rebranding Strategy (`BRD-2026-V1`)
+- [ ] **Architecture Directive**: Deprecate clinical naming overlap (`GlycoSense`) in favor of lifestyle-first companion brand `MetricPace` (`/dashboard` and `/insulin-reset`), detailed in [`docs/brand_repositioning_rebranding_strategy.md`](docs/brand_repositioning_rebranding_strategy.md).
 
 ---
 
