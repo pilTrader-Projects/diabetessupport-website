@@ -135,7 +135,14 @@ export class AssetStorageService {
     if (params.fileId) {
       query._id = new mongoose.Types.ObjectId(params.fileId);
     } else if (params.fileName) {
-      query.filename = params.fileName.trim();
+      const raw = params.fileName.trim();
+      const escRaw = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const sanitized = raw.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.$or = [
+        { filename: new RegExp(`^${escRaw}$`, 'i') },
+        { filename: new RegExp(`^${sanitized}$`, 'i') },
+        { 'metadata.originalName': new RegExp(`^${escRaw}$`, 'i') },
+      ];
     } else {
       throw new Error('Either fileId or fileName must be provided.');
     }
