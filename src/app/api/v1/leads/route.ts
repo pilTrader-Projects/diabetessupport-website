@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/dbConnect';
 import { LeadModel } from '@/models/Lead';
+import { BrevoService } from '@/services/brevoService';
+import { CampaignService } from '@/services/campaignService';
+import { AssetStorageService } from '@/services/assetStorageService';
+import { qualifyMetabolicStage, CAMPAIGN_CODES } from '@/config/leadConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * HTTP POST API Route handler for Low-Awareness Lead Capture (Bikman/Insulin Reset Protocol).
+ * HTTP POST API Route handler for Dynamic Lead Capture & Campaign Routing.
  *
- * @usecase Captures lead email, first name, and selected metabolic symptoms, persists to database, syncs with Kit, and returns bridge redirect URL.
- * @param {Request} req Incoming Next.js Request with email, firstName, symptomsChecked, and source.
+ * @usecase Captures lead details, dynamically resolves target Brevo list & metabolic stage from campaign configuration, persists to DB, and syncs to Brevo.
+ * @param {Request} req Incoming Next.js Request with email, firstName, symptomsChecked, source, and optional metabolicStage.
  * @returns {Promise<NextResponse>} JSON response with success status and redirection target.
  */
 export async function POST(req: Request): Promise<NextResponse> {
@@ -22,7 +26,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { email, firstName, symptomsChecked, source } = body || {};
+  const { email, firstName, symptomsChecked, source, tag, tags, campaign: campaignParam, metabolicStage } = body || {};
 
   if (!email || typeof email !== 'string' || !email.trim()) {
     return NextResponse.json(
@@ -41,11 +45,32 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const cleanFirstName = firstName && typeof firstName === 'string' ? firstName.trim() : undefined;
   const cleanSymptoms = Array.isArray(symptomsChecked) ? symptomsChecked.map(String) : [];
-  const leadSource = source && typeof source === 'string' ? source.trim() : 'insulin_reset_protocol';
+  const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
 
-  // 1. Persist lead to MongoDB
+  if (!rawTag || typeof rawTag !== 'string' || !rawTag.trim()) {
+    return NextResponse.json(
+      { success: false, error: 'Campaign source is required.' },
+      { status: 400 }
+    );
+  }
+
+  const leadSource = rawTag.trim();
+  await dbConnect();
+
+  // Resolve dynamic campaign mapping from MongoDB
+  const campaign = await CampaignService.resolveCampaign(leadSource);
+  console.log(`[Lead Capture]: Resolved campaign "${campaign.referenceCode}" from MongoDB -> Asset: "${campaign.assetFileName || 'None'}", Brevo List: "${campaign.brevoList}"`);
+
+  // Qualify lead's metabolic status awareness depending on campaign config, capture point, and symptoms
+  const qualifiedMetabolicStage = qualifyMetabolicStage({
+    explicitStage: metabolicStage,
+    campaignReferenceCode: campaign.referenceCode,
+    defaultMetabolicStage: campaign.defaultMetabolicStage,
+    symptomsCount: cleanSymptoms.length,
+  });
+
+  // 1. Persist lead to MongoDB with qualified metabolicStage
   try {
-    await dbConnect();
     await LeadModel.findOneAndUpdate(
       { email: cleanEmail },
       {
@@ -53,6 +78,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           email: cleanEmail,
           firstName: cleanFirstName,
           source: leadSource,
+          metabolicStage: qualifiedMetabolicStage,
           status: 'subscribed',
         },
         $addToSet: {
@@ -63,67 +89,52 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   } catch (dbErr: any) {
     console.error('Database error saving lead:', dbErr);
-    // Proceed to attempt marketing webhook/sync even if DB logs warning
   }
 
-  // 2. Sync with Kit (ConvertKit) if configured
-  const apiKey = process.env.KIT_API_KEY;
-  const formId = process.env.NEXT_PUBLIC_KIT_FORM_ID || process.env.KIT_FORM_ID;
-
-  if (apiKey && formId) {
+  // 2. Generate personalized, expiring digital asset token if campaign delivers an asset
+  let downloadUrl: string | undefined = undefined;
+  if (campaign.assetFileName) {
     try {
-      await fetch(`https://api.convertkit.com/v3/forms/${formId}/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: apiKey,
-          email: cleanEmail,
-          first_name: cleanFirstName,
-          tags: ['insulin-reset-protocol', 'hidden-clock'],
-        }),
+      const tokenDoc = await AssetStorageService.generateDownloadToken({
+        fileName: campaign.assetFileName,
+        expiresInHours: 48,
+        maxDownloads: 3,
+        createdBy: `lead_${cleanEmail}`,
       });
-    } catch (kitErr) {
-      console.error('Kit subscription forward error:', kitErr);
+      if (tokenDoc) {
+        const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        downloadUrl = `${origin}/api/v1/assets/download?token=${tokenDoc.token}`;
+        console.log(`[Lead Capture]: Issued token for ${campaign.assetFileName}: ${downloadUrl}`);
+      } else {
+        console.warn(`[Lead Capture]: Asset "${campaign.assetFileName}" not found in GridFS.`);
+      }
+    } catch (tokenErr) {
+      console.warn('[Lead Capture]: Failed generating download link:', tokenErr);
     }
-  } else {
-    console.log(`[Lead Capture Dev/Sandbox]: Subscribed ${cleanEmail} (First Name: ${cleanFirstName || 'N/A'}, Source: ${leadSource})`);
   }
 
-  // 3. Dispatch automated email payload via Resend if enabled
-  const resendApiKey = process.env.RESEND_API_KEY;
-  if (resendApiKey) {
-    try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${resendApiKey}`,
-        },
-        body: JSON.stringify({
-          from: 'DiabetesCare PH <protocols@diabetescareph.com>',
-          to: [cleanEmail],
-          subject: 'Your 3-Page Hidden Clock & Insulin Reset Protocol Cheat Sheet',
-          html: `
-            <div style="font-family: sans-serif; line-height: 1.6; color: #1e293b; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <h2>Hi ${cleanFirstName || 'there'},</h2>
-              <p>Thank you for requesting the <strong>3-Page "Hidden Clock" Insulin Reset Cheat Sheet</strong>.</p>
-              <p>Your guide reveals how chronic hyperinsulinemia operates silently 10 to 15 years before blood sugar tests sound the alarm, plus the 4 golden rules to reset your metabolic response tonight.</p>
-              <div style="margin: 25px 0;">
-                <a href="https://diabetescareph.com/downloads/hidden-clock-cheat-sheet.pdf" style="background-color: #0f172a; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Download Free 3-Page Cheat Sheet (PDF)</a>
-              </div>
-              <p>Warm regards,<br/>The DiabetesCare PH &amp; GlycoSense Team</p>
-            </div>
-          `,
-        }),
-      });
-    } catch (emailErr) {
-      console.error('Automated email dispatch error:', emailErr);
+  // 3. Sync contact with Brevo for automated sequences, dynamic list enrollment, METABOLIC_STAGE & DOWNLOAD_URL
+  try {
+    const brevoRes = await BrevoService.syncContact({
+      email: cleanEmail,
+      firstName: cleanFirstName,
+      source: leadSource,
+      symptomsChecked: cleanSymptoms,
+      metabolicStage: qualifiedMetabolicStage,
+      downloadUrl,
+      listIds: [campaign.brevoList],
+    });
+    if (!brevoRes.success) {
+      console.error('[Lead Capture] Brevo sync returned error:', brevoRes.error);
     }
+  } catch (brevoErr) {
+    console.error('Brevo contact sync error:', brevoErr);
   }
 
   return NextResponse.json({
     success: true,
     message: 'Lead captured successfully. Check your email for your free cheat sheet!',
     redirectUrl: '/reset-success',
+    downloadUrl,
   });
 }

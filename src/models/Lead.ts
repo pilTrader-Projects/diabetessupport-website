@@ -5,6 +5,7 @@ export interface ILeadDocument extends Document {
   firstName?: string;
   source: string;
   symptomsChecked?: string[];
+  metabolicStage?: string;
   status: 'pending' | 'subscribed' | 'unsubscribed';
   ipAddress?: string;
   createdAt: Date;
@@ -26,13 +27,18 @@ const LeadSchema: Schema = new Schema<ILeadDocument>(
     },
     source: {
       type: String,
-      default: 'insulin_reset_protocol',
+      required: [true, 'Campaign source is required'],
       trim: true,
       index: true,
     },
     symptomsChecked: {
       type: [String],
       default: [],
+    },
+    metabolicStage: {
+      type: String,
+      trim: true,
+      index: true,
     },
     status: {
       type: String,

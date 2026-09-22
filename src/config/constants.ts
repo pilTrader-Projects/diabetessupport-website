@@ -80,17 +80,6 @@ export const ADSENSE_CONFIG = {
 };
 
 /**
- * Kit (ConvertKit) marketing integration configuration.
- *
- * @usecase Configures lead capture forms and newsletter subscription embeds.
- * @dependencies process.env.NEXT_PUBLIC_KIT_FORM_ID, process.env.NEXT_PUBLIC_KIT_SCRIPT_URL.
- */
-export const KIT_MARKETING_CONFIG = {
-  formId: process.env.NEXT_PUBLIC_KIT_FORM_ID || '',
-  scriptUrl: process.env.NEXT_PUBLIC_KIT_SCRIPT_URL || '',
-};
-
-/**
  * Community Discussion Board & Guardrails Configuration.
  *
  * @usecase Configures forum category taxonomy, impersonation blocklists, rate limiting, and safe conditional email alerts.

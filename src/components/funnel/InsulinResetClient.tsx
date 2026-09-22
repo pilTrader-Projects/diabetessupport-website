@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import SymptomChecklist from '@/components/funnel/SymptomChecklist';
 import LeadCaptureForm from '@/components/funnel/LeadCaptureForm';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 /**
  * Client-Side Interactive Funnel Container for the Insulin Reset Landing Page.
@@ -164,7 +165,7 @@ export default function InsulinResetClient(): React.JSX.Element {
       <section className="max-w-2xl mx-auto">
         <LeadCaptureForm
           symptomsChecked={selectedSymptoms}
-          source="insulin_reset_landing_page"
+          source={CAMPAIGN_CODES.INSULIN_RESET_FUNNEL}
         />
       </section>
 

@@ -1,17 +1,21 @@
 import { NextResponse } from 'next/server';
+import { BrevoService } from '@/services/brevoService';
+import { CampaignService } from '@/services/campaignService';
+import { AssetStorageService } from '@/services/assetStorageService';
+import { CAMPAIGN_CODES, BREVO_LISTS } from '@/config/leadConfig';
 
 /**
  * Regex helper for basic email format validation.
- * @usecase Ensures submitted email input is well-formed before sending to Kit API.
+ * @usecase Ensures submitted email input is well-formed before sending to Brevo API.
  */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * HTTP POST API Route handler for Kit (ConvertKit) Lead Capture Subscriptions.
+ * HTTP POST API Route handler for Newsletter & Lead Capture Subscriptions.
  *
- * @usecase Processes email newsletter opt-ins and lead magnet download requests.
- * @param {Request} req Incoming Next.js HTTP Request object with email and optional firstName.
- * @dependencies process.env.KIT_API_KEY, process.env.NEXT_PUBLIC_KIT_FORM_ID.
+ * @usecase Processes email newsletter opt-ins and companion app access requests via dynamic campaign configuration and Brevo.
+ * @param {Request} req Incoming Next.js HTTP Request object with email, optional firstName, and optional source.
+ * @dependencies BrevoService, CampaignService.
  * @returns {Promise<NextResponse>} JSON response indicating subscription result or validation error.
  * @throws {Error} Returns 400 Bad Request for invalid input or 500 for network errors.
  */
@@ -26,7 +30,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { email, firstName } = body || {};
+  const { email, firstName, source, tag, tags, campaign: campaignParam } = body || {};
 
   if (!email || typeof email !== 'string' || !email.trim()) {
     return NextResponse.json(
@@ -43,49 +47,65 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const apiKey = process.env.KIT_API_KEY;
-  const formId = process.env.NEXT_PUBLIC_KIT_FORM_ID || process.env.KIT_FORM_ID;
+  const cleanFirstName = firstName ? String(firstName).trim() : undefined;
+  const rawTag = source || tag || (Array.isArray(tags) ? tags[0] : undefined) || campaignParam;
 
-  // If Kit credentials configured, forward opt-in to ConvertKit REST API v3
-  if (apiKey && formId) {
+  if (!rawTag || typeof rawTag !== 'string' || !rawTag.trim()) {
+    return NextResponse.json(
+      { success: false, error: 'Campaign source is required.' },
+      { status: 400 }
+    );
+  }
+
+  const leadSource = rawTag.trim();
+
+  // 1. Resolve dynamic campaign mapping
+  const campaign = await CampaignService.resolveCampaign(leadSource);
+
+  // 2. Generate personalized, expiring digital asset token if campaign delivers an asset
+  let downloadUrl: string | undefined = undefined;
+  if (campaign.assetFileName) {
     try {
-      const kitResponse = await fetch(`https://api.convertkit.com/v3/forms/${formId}/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          api_key: apiKey,
-          email: cleanEmail,
-          first_name: firstName ? String(firstName).trim() : undefined,
-        }),
+      const tokenDoc = await AssetStorageService.generateDownloadToken({
+        fileName: campaign.assetFileName,
+        expiresInHours: 48,
+        maxDownloads: 3,
+        createdBy: `subscriber_${cleanEmail}`,
       });
-
-      const kitData = await kitResponse.json();
-
-      if (!kitResponse.ok) {
-        return NextResponse.json(
-          { success: false, error: kitData.message || 'Failed to submit subscription to Kit.' },
-          { status: kitResponse.status }
-        );
+      if (tokenDoc) {
+        const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        downloadUrl = `${origin}/api/v1/assets/download?token=${tokenDoc.token}`;
       }
-
-      return NextResponse.json({
-        success: true,
-        message: 'Thank you for subscribing! Please check your inbox to confirm your subscription.',
-        data: kitData.subscription,
-      });
-    } catch (err: any) {
-      console.error('Kit API subscription network error:', err);
-      return NextResponse.json(
-        { success: false, error: 'Network error communicating with subscriber service.' },
-        { status: 500 }
-      );
+    } catch (tokenErr) {
+      console.warn('Could not generate dynamic asset download link for subscriber:', tokenErr);
     }
   }
 
-  // Fallback dev mode success when Kit environment variables are not populated
-  console.log(`[Kit Dev Opt-In]: Subscribed ${cleanEmail} (First Name: ${firstName || 'N/A'})`);
+  // 3. Sync contact to Brevo using mapped list, metabolic stage, and DOWNLOAD_URL
+  let syncResult: any = null;
+  try {
+    syncResult = await BrevoService.syncContact({
+      email: cleanEmail,
+      firstName: cleanFirstName,
+      source: campaign.referenceCode,
+      metabolicStage: campaign.defaultMetabolicStage,
+      downloadUrl,
+      listIds: [campaign.brevoList],
+    });
+  } catch (brevoErr) {
+    console.error('Brevo newsletter sync error:', brevoErr);
+  }
+
+  const successMessage =
+    campaign.referenceCode === CAMPAIGN_CODES.COMPANION_APP_USERS ||
+    campaign.brevoList === BREVO_LISTS.COMPANION_APP_USERS
+      ? 'Free account access reserved! Check your email for login instructions.'
+      : 'Thank you for subscribing! Check your inbox for your free guide.';
+
   return NextResponse.json({
     success: true,
-    message: 'Thank you for subscribing! Check your inbox for your free guide.',
+    message: successMessage,
+    downloadUrl,
+    data: syncResult,
   });
 }

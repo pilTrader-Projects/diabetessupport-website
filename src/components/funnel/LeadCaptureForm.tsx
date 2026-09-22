@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 interface LeadCaptureFormProps {
   symptomsChecked?: string[];
-  source?: string;
+  source: string;
 }
 
 /**
@@ -17,7 +18,7 @@ interface LeadCaptureFormProps {
  */
 export default function LeadCaptureForm({
   symptomsChecked = [],
-  source = 'insulin_reset_landing_page',
+  source,
 }: LeadCaptureFormProps): React.JSX.Element {
   const router = useRouter();
   const [firstName, setFirstName] = useState('');
@@ -28,6 +29,11 @@ export default function LeadCaptureForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+
+    if (!source || !source.trim()) {
+      setErrorMessage('Campaign source configuration is missing.');
+      return;
+    }
 
     const cleanEmail = email.trim();
     if (!cleanEmail || !cleanEmail.includes('@')) {

@@ -52,13 +52,14 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       expect(err.errors.email).toBeDefined();
     });
 
-    it('should default source to insulin_reset_protocol if not provided', () => {
+    it('should fail validation if source is not provided', async () => {
       const lead = new LeadModel({
         email: 'user@example.com',
       });
 
-      expect(lead.source).toBe('insulin_reset_protocol');
-      expect(lead.status).toBe('subscribed');
+      const err = await lead.validate().catch((e) => e);
+      expect(err).toBeDefined();
+      expect(err.errors.source).toBeDefined();
     });
   });
 
@@ -108,12 +109,27 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       expect(data.error).toContain('valid email address');
     });
 
+    it('should return 400 Bad Request if campaign source is missing', async () => {
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'valid@example.com', firstName: 'Juan' }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Campaign source is required');
+    });
+
     it('should return 200 OK with redirectUrl to /reset-success on valid submission', async () => {
       jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
         _id: 'mock_lead_id',
         email: 'juan.delacruz@example.com',
         firstName: 'Juan',
-        source: 'insulin_reset_protocol',
+        source: 'insulin_reset_funnel',
       } as any);
 
       const req = new Request('http://localhost:3000/api/v1/leads', {
@@ -123,6 +139,7 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
           email: '  juan.delacruz@example.com  ',
           firstName: 'Juan',
           symptomsChecked: ['The Belly Anchor'],
+          source: 'insulin_reset_funnel',
         }),
       });
 
@@ -134,27 +151,23 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       expect(data.redirectUrl).toBe('/reset-success');
     });
 
-    it('should forward subscriber to Kit API if KIT_API_KEY and KIT_FORM_ID are set', async () => {
-      process.env.KIT_API_KEY = 'mock_kit_api_key';
-      process.env.NEXT_PUBLIC_KIT_FORM_ID = 'mock_form_123';
+    it('should qualify METABOLIC_STAGE, persist to DB, and sync to Brevo without direct email sending', async () => {
+      const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+        .mockResolvedValueOnce({ success: true, contactId: 101 });
 
-      const mockFetch = jest.fn().mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ subscription: { id: 999 } }),
-      });
-      global.fetch = mockFetch;
-
-      jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+      const findOneAndUpdateSpy = jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
         _id: 'mock_lead_id',
-        email: 'juan@example.com',
+        email: 'patient@example.com',
       } as any);
 
       const req = new Request('http://localhost:3000/api/v1/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'juan@example.com',
-          firstName: 'Juan',
+          email: 'patient@example.com',
+          firstName: 'Maria',
+          symptomsChecked: ['The Belly Anchor', 'The 3 PM Crash', 'Brain Fog'],
+          source: 'insulin_reset_protocol',
         }),
       });
 
@@ -162,10 +175,103 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       const data = await res.json();
 
       expect(res.status).toBe(200);
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('mock_form_123'),
+      expect(data.success).toBe(true);
+      expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
+        { email: 'patient@example.com' },
         expect.objectContaining({
-          method: 'POST',
+          $set: expect.objectContaining({
+            metabolicStage: 'HIGH_RISK_HYPERINSULINEMIA',
+          }),
+        }),
+        expect.any(Object)
+      );
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'patient@example.com',
+          firstName: 'Maria',
+          source: 'insulin_reset_protocol',
+          symptomsChecked: ['The Belly Anchor', 'The 3 PM Crash', 'Brain Fog'],
+          metabolicStage: 'HIGH_RISK_HYPERINSULINEMIA',
+        })
+      );
+    });
+
+    it('should route 3-page cheat sheet lead with 0 symptoms to insulin_reset_funnel with LOW_AWARENESS_CURIOUS stage', async () => {
+      const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+        .mockResolvedValueOnce({ success: true, contactId: 103 });
+
+      const findOneAndUpdateSpy = jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+        _id: 'mock_lead_id',
+        email: 'curious@example.com',
+      } as any);
+
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'curious@example.com',
+          firstName: 'CuriousVisitor',
+          symptomsChecked: [],
+          source: 'insulin_reset_funnel',
+        }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
+        { email: 'curious@example.com' },
+        expect.objectContaining({
+          $set: expect.objectContaining({
+            metabolicStage: 'LOW_AWARENESS_CURIOUS',
+          }),
+        }),
+        expect.any(Object)
+      );
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'curious@example.com',
+          firstName: 'CuriousVisitor',
+          source: 'insulin_reset_funnel',
+          metabolicStage: 'LOW_AWARENESS_CURIOUS',
+          listIds: ['insulin_reset_funnel'],
+        })
+      );
+    });
+
+    it('should route tag: "newsletter" to subscribed_contacts with GENERAL_AWARENESS stage', async () => {
+      const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+        .mockResolvedValueOnce({ success: true, contactId: 104 });
+
+      jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+        _id: 'mock_lead_id',
+        email: 'news@example.com',
+      } as any);
+
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'news@example.com',
+          firstName: 'NewsReader',
+          tag: 'newsletter',
+        }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'news@example.com',
+          firstName: 'NewsReader',
+          source: 'newsletter',
+          metabolicStage: 'GENERAL_AWARENESS',
+          listIds: ['subscribed_contacts'],
         })
       );
     });

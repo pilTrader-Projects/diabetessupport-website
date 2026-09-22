@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import KitOptInForm from '@/components/KitOptInForm';
 import { SITE_CONFIG } from '@/config/constants';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -38,7 +39,7 @@ export default function SubscribePage() {
         subtitle="Receive our latest educational guides, blood sugar management strategies, and exclusive downloadable resources."
         buttonText="Subscribe Now (Free)"
         layout="card"
-        source="subscribe_page"
+        source={CAMPAIGN_CODES.NEWSLETTER}
       />
 
       {/* Benefit Highlights */}

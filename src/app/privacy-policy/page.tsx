@@ -80,12 +80,12 @@ export default function PrivacyPolicyPage() {
       </section>
 
       <section className="space-y-4 text-sm sm:text-base leading-relaxed">
-        <h2 className="text-xl font-bold text-slate-900">3. Email Subscription & Lead Capture (Kit)</h2>
+        <h2 className="text-xl font-bold text-slate-900">3. Email Subscription & Lead Capture (Brevo)</h2>
         <p>
-          When you subscribe to our weekly newsletter or download our free educational PDFs, your email address is
-          processed through our email service partner (Kit / ConvertKit). We utilize this information exclusively to
-          deliver health guides, low-GI meal swaps, and platform updates. You may unsubscribe at any time via the
-          single-click &quot;Unsubscribe&quot; link in every email.
+          When you subscribe to our weekly newsletter, download our free educational PDFs, or register for GlycoSense,
+          your email address is securely processed through our email delivery partner (Brevo). We utilize this
+          information exclusively to deliver health guides, metabolic education, and platform access. You may
+          unsubscribe at any time via the single-click &quot;Unsubscribe&quot; link in every email.
         </p>
       </section>
 

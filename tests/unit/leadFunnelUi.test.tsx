@@ -11,6 +11,7 @@ import ResetSuccessPage, { metadata as resetSuccessMetadata } from '@/app/reset-
 import InsulinResetPage, { metadata as insulinResetMetadata } from '@/app/insulin-reset/page';
 import HiddenClockPage, { metadata as hiddenClockMetadata } from '@/app/hidden-clock/page';
 import { buildInsulinResetSchema } from '@/lib/schema';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 // Mock useRouter from next/navigation
 jest.mock('next/navigation', () => ({
@@ -64,7 +65,12 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
 
   describe('LeadCaptureForm Component', () => {
     it('instantiates valid JSX element with default and customized props', () => {
-      const element = <LeadCaptureForm symptomsChecked={['The Belly Anchor']} />;
+      const element = (
+        <LeadCaptureForm
+          symptomsChecked={['The Belly Anchor']}
+          source={CAMPAIGN_CODES.INSULIN_RESET_FUNNEL}
+        />
+      );
       expect(element).toBeDefined();
       expect(typeof LeadCaptureForm).toBe('function');
     });

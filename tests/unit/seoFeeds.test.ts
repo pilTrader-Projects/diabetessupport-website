@@ -7,7 +7,6 @@
 import { GET as getSitemap } from '../../src/app/sitemap.xml/route';
 import { GET as getRssFeed } from '../../src/app/feed.xml/route';
 import { PostModel } from '../../src/models/Post';
-import { LandingPageModel } from '../../src/models/LandingPage';
 import { Thread } from '../../src/models/Thread';
 
 jest.mock('../../src/lib/dbConnect', () => ({
@@ -16,12 +15,6 @@ jest.mock('../../src/lib/dbConnect', () => ({
 
 jest.mock('../../src/models/Post', () => ({
   PostModel: {
-    find: jest.fn(),
-  },
-}));
-
-jest.mock('../../src/models/LandingPage', () => ({
-  LandingPageModel: {
     find: jest.fn(),
   },
 }));
@@ -58,33 +51,17 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
     },
   ];
 
-  const mockLandingPages = [
-    {
-      _id: 'lp1',
-      slug: 'free-starter-kit',
-      title: 'Free Diabetes Starter Kit',
-      isActive: true,
-      updatedAt: new Date('2026-09-03T10:00:00Z'),
-    },
-  ];
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('GET /sitemap.xml', () => {
-    it('should generate valid XML sitemap containing static, post, and landing page URLs', async () => {
+    it('should generate valid XML sitemap containing static, post, and thread URLs', async () => {
       const mockPostQuery = {
         sort: jest.fn().mockReturnThis(),
         lean: jest.fn().mockResolvedValue(mockPosts),
       };
       (PostModel.find as jest.Mock).mockReturnValue(mockPostQuery);
-
-      const mockLpQuery = {
-        sort: jest.fn().mockReturnThis(),
-        lean: jest.fn().mockResolvedValue(mockLandingPages),
-      };
-      (LandingPageModel.find as jest.Mock).mockReturnValue(mockLpQuery);
 
       const mockThreadQuery = {
         sort: jest.fn().mockReturnThis(),
@@ -107,6 +84,7 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<loc>https://diabetescareph.com/</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/blog</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/community</loc>');
+      expect(xmlText).toContain('<loc>https://diabetescareph.com/glycosense</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/guides/cheatsheet</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/privacy-policy</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/terms-of-service</loc>');
@@ -114,7 +92,6 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<loc>https://diabetescareph.com/contact</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/blog/understanding-insulin-resistance-early</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/blog/warning-signs-of-high-blood-sugar</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/free-starter-kit</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/community/fasting-glucose-tips</loc>');
     });
   });

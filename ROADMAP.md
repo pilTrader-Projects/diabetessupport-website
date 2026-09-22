@@ -20,10 +20,11 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 4: Blog Engine & SEO Optimization
 - [x] **[Issue #5](https://github.com/pilTrader-Projects/diabetessupport-website/issues/5)** `[COMPLETED]`: Create Blog feed, post view, category navigation, dynamic SEO metadata, and sitemap.
 
-### Milestone 5: Marketing & Lead Capture (Kit)
+### Milestone 5: Marketing & Lead Capture (Kit & Brevo)
 - [x] **[Issue #6](https://github.com/pilTrader-Projects/diabetessupport-website/issues/6)** `[COMPLETED]`: Integrate Kit (ConvertKit) opt-in forms & landing page sub-routes.
 - [x] **[PR #17](https://github.com/pilTrader-Projects/diabetessupport-website/pull/17)** `[COMPLETED]`: Admin CMS editing for Kit landing pages, raw script tag preservation, and direct Kit hosted URL iframe embedding.
 - [x] **[PR #18](https://github.com/pilTrader-Projects/diabetessupport-website/pull/18)** `[COMPLETED]`: Unified WYSIWYG Article Creator & Editor for Admin CMS (/admin/posts) with pre-populated MongoDB post fetching, sticky formatting toolbar, and dynamic marketing widget embeds.
+- [x] **[Issue #28](https://github.com/pilTrader-Projects/diabetessupport-website/issues/28)** `[COMPLETED]`: Integrate Brevo for Email Marketing, Lead Capture Sequence Automation, and Transactional Delivery.
 
 ### Milestone 6: Ad Monetization
 - [x] **[PR #22](https://github.com/pilTrader-Projects/diabetessupport-website/pull/22)** `[COMPLETED]`: Technical SEO, JSON-LD Schemas, Dynamic `/ads.txt`, Legal Compliance Pages, and Zero-CLS AdSense Infrastructure (Closes Issue #7).
