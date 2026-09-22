@@ -169,5 +169,42 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
         })
       );
     });
+
+    it('should sync contact and trigger lead magnet cheat sheet via BrevoService', async () => {
+      const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+        .mockResolvedValueOnce({ success: true, contactId: 101 });
+      const emailSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'sendLeadMagnetCheatSheet')
+        .mockResolvedValueOnce({ success: true, messageId: 'msg-brevo-001' });
+
+      jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+        _id: 'mock_lead_id',
+        email: 'patient@example.com',
+      } as any);
+
+      const req = new Request('http://localhost:3000/api/v1/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'patient@example.com',
+          firstName: 'Maria',
+          symptomsChecked: ['The Belly Anchor'],
+          source: 'insulin_reset_protocol',
+        }),
+      });
+
+      const res = await POST(req);
+      const data = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(syncSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          email: 'patient@example.com',
+          firstName: 'Maria',
+          symptomsChecked: ['The Belly Anchor'],
+        })
+      );
+      expect(emailSpy).toHaveBeenCalledWith('patient@example.com', 'Maria');
+    });
   });
 });

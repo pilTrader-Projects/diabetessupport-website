@@ -38,6 +38,7 @@ async function runSanityCheck() {
         'src/models/DeviceSync.ts',
         'src/models/Lead.ts',
         'src/services/wordpressMigration.ts',
+        'src/services/brevoService.ts',
         'scripts/migrate-wordpress.ts',
         'src/app/api/v1/migration/route.ts',
         'src/app/api/v1/posts/route.ts',

@@ -87,4 +87,31 @@ describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
     delete process.env.KIT_API_KEY;
     delete process.env.NEXT_PUBLIC_KIT_FORM_ID;
   });
+
+  it('should sync subscriber to Brevo via BrevoService', async () => {
+    process.env.BREVO_NEWSLETTER_LIST_ID = '99';
+    const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+      .mockResolvedValueOnce({ success: true, contactId: 333 });
+
+    const req = new Request('http://localhost:3000/api/v1/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'newsletter@example.com', firstName: 'Elena' }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(syncSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'newsletter@example.com',
+        firstName: 'Elena',
+        listIds: [99],
+      })
+    );
+
+    delete process.env.BREVO_NEWSLETTER_LIST_ID;
+  });
 });
