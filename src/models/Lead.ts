@@ -5,6 +5,7 @@ export interface ILeadDocument extends Document {
   firstName?: string;
   source: string;
   symptomsChecked?: string[];
+  metabolicStage?: string;
   status: 'pending' | 'subscribed' | 'unsubscribed';
   ipAddress?: string;
   createdAt: Date;
@@ -33,6 +34,11 @@ const LeadSchema: Schema = new Schema<ILeadDocument>(
     symptomsChecked: {
       type: [String],
       default: [],
+    },
+    metabolicStage: {
+      type: String,
+      trim: true,
+      index: true,
     },
     status: {
       type: String,

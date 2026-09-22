@@ -23,7 +23,7 @@ export async function POST(req: Request): Promise<NextResponse> {
     );
   }
 
-  const { email, firstName, symptomsChecked, source } = body || {};
+  const { email, firstName, symptomsChecked, source, metabolicStage } = body || {};
 
   if (!email || typeof email !== 'string' || !email.trim()) {
     return NextResponse.json(
@@ -44,7 +44,23 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanSymptoms = Array.isArray(symptomsChecked) ? symptomsChecked.map(String) : [];
   const leadSource = source && typeof source === 'string' ? source.trim() : 'insulin_reset_protocol';
 
-  // 1. Persist lead to MongoDB
+  // Qualify lead's metabolic status awareness depending on capture point and symptoms
+  let qualifiedMetabolicStage =
+    typeof metabolicStage === 'string' && metabolicStage.trim()
+      ? metabolicStage.trim().toUpperCase()
+      : undefined;
+
+  if (!qualifiedMetabolicStage) {
+    if (cleanSymptoms.length >= 3) {
+      qualifiedMetabolicStage = 'HIGH_RISK_HYPERINSULINEMIA';
+    } else if (cleanSymptoms.length >= 1) {
+      qualifiedMetabolicStage = 'EARLY_STAGE_HYPERINSULINEMIA';
+    } else {
+      qualifiedMetabolicStage = 'LOW_AWARENESS_CURIOUS';
+    }
+  }
+
+  // 1. Persist lead to MongoDB with qualified metabolicStage
   try {
     await dbConnect();
     await LeadModel.findOneAndUpdate(
@@ -54,6 +70,7 @@ export async function POST(req: Request): Promise<NextResponse> {
           email: cleanEmail,
           firstName: cleanFirstName,
           source: leadSource,
+          metabolicStage: qualifiedMetabolicStage,
           status: 'subscribed',
         },
         $addToSet: {
@@ -66,17 +83,17 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error('Database error saving lead:', dbErr);
   }
 
-  // 2. Sync contact with Brevo and dispatch automated sequence / cheat sheet
+  // 2. Sync contact with Brevo for automated sequences, list enrollment & METABOLIC_STAGE labeling
   try {
     await BrevoService.syncContact({
       email: cleanEmail,
       firstName: cleanFirstName,
       source: leadSource,
       symptomsChecked: cleanSymptoms,
+      metabolicStage: qualifiedMetabolicStage,
     });
-    await BrevoService.sendLeadMagnetCheatSheet(cleanEmail, cleanFirstName);
   } catch (brevoErr) {
-    console.error('Brevo sync / dispatch error:', brevoErr);
+    console.error('Brevo contact sync error:', brevoErr);
   }
 
   // 3. Fallback sync with Kit (ConvertKit) if configured

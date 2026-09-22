@@ -108,7 +108,8 @@ describe('Kit Lead Capture Subscription API (/api/v1/subscribe)', () => {
       expect.objectContaining({
         email: 'newsletter@example.com',
         firstName: 'Elena',
-        listIds: [99],
+        metabolicStage: 'GENERAL_AWARENESS',
+        listIds: ['99'],
       })
     );
 

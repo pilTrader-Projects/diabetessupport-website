@@ -47,16 +47,15 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanFirstName = firstName ? String(firstName).trim() : undefined;
 
   // 1. Sync contact to Brevo Newsletter List if Brevo configured
-  const brevoNewsletterListId = process.env.BREVO_NEWSLETTER_LIST_ID
-    ? Number(process.env.BREVO_NEWSLETTER_LIST_ID)
-    : undefined;
+  const brevoNewsletterListId = process.env.BREVO_NEWSLETTER_LIST_ID?.trim();
 
-  if (process.env.BREVO_API_KEY || process.env.BREVO_NEWSLETTER_LIST_ID) {
+  if (process.env.BREVO_API_KEY || brevoNewsletterListId) {
     try {
       await BrevoService.syncContact({
         email: cleanEmail,
         firstName: cleanFirstName,
         source: 'newsletter_optin',
+        metabolicStage: 'GENERAL_AWARENESS',
         listIds: brevoNewsletterListId ? [brevoNewsletterListId] : undefined,
       });
     } catch (brevoErr) {

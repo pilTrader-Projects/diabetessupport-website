@@ -170,13 +170,11 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
       );
     });
 
-    it('should sync contact and trigger lead magnet cheat sheet via BrevoService', async () => {
+    it('should qualify METABOLIC_STAGE, persist to DB, and sync to Brevo without direct email sending', async () => {
       const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
         .mockResolvedValueOnce({ success: true, contactId: 101 });
-      const emailSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'sendLeadMagnetCheatSheet')
-        .mockResolvedValueOnce({ success: true, messageId: 'msg-brevo-001' });
 
-      jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
+      const findOneAndUpdateSpy = jest.spyOn(LeadModel, 'findOneAndUpdate').mockResolvedValueOnce({
         _id: 'mock_lead_id',
         email: 'patient@example.com',
       } as any);
@@ -187,7 +185,7 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
         body: JSON.stringify({
           email: 'patient@example.com',
           firstName: 'Maria',
-          symptomsChecked: ['The Belly Anchor'],
+          symptomsChecked: ['The Belly Anchor', 'The 3 PM Crash', 'Brain Fog'],
           source: 'insulin_reset_protocol',
         }),
       });
@@ -197,14 +195,24 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
 
       expect(res.status).toBe(200);
       expect(data.success).toBe(true);
+      expect(findOneAndUpdateSpy).toHaveBeenCalledWith(
+        { email: 'patient@example.com' },
+        expect.objectContaining({
+          $set: expect.objectContaining({
+            metabolicStage: 'HIGH_RISK_HYPERINSULINEMIA',
+          }),
+        }),
+        expect.any(Object)
+      );
       expect(syncSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           email: 'patient@example.com',
           firstName: 'Maria',
-          symptomsChecked: ['The Belly Anchor'],
+          source: 'insulin_reset_protocol',
+          symptomsChecked: ['The Belly Anchor', 'The 3 PM Crash', 'Brain Fog'],
+          metabolicStage: 'HIGH_RISK_HYPERINSULINEMIA',
         })
       );
-      expect(emailSpy).toHaveBeenCalledWith('patient@example.com', 'Maria');
     });
   });
 });
