@@ -9,6 +9,7 @@ export interface ICampaignConfigDocument extends Document {
   name: string;
   brevoList: string;
   defaultMetabolicStage: string;
+  assetFileName?: string;
   description?: string;
   isActive: boolean;
   createdAt: Date;
@@ -41,6 +42,10 @@ const CampaignConfigSchema: Schema = new Schema<ICampaignConfigDocument>(
       trim: true,
       uppercase: true,
       default: METABOLIC_STAGES.GENERAL_AWARENESS,
+    },
+    assetFileName: {
+      type: String,
+      trim: true,
     },
     description: {
       type: String,

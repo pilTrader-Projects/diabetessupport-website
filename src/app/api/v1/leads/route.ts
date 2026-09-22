@@ -3,6 +3,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import { LeadModel } from '@/models/Lead';
 import { BrevoService } from '@/services/brevoService';
 import { CampaignService } from '@/services/campaignService';
+import { AssetStorageService } from '@/services/assetStorageService';
 import { qualifyMetabolicStage, CAMPAIGN_CODES } from '@/config/leadConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -89,7 +90,26 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error('Database error saving lead:', dbErr);
   }
 
-  // 2. Sync contact with Brevo for automated sequences, dynamic list enrollment & METABOLIC_STAGE labeling
+  // 2. Generate personalized, expiring digital asset token if campaign delivers an asset
+  let downloadUrl: string | undefined = undefined;
+  if (campaign.assetFileName) {
+    try {
+      const tokenDoc = await AssetStorageService.generateDownloadToken({
+        fileName: campaign.assetFileName,
+        expiresInHours: 48,
+        maxDownloads: 3,
+        createdBy: `lead_${cleanEmail}`,
+      });
+      if (tokenDoc) {
+        const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        downloadUrl = `${origin}/api/v1/assets/download?token=${tokenDoc.token}`;
+      }
+    } catch (tokenErr) {
+      console.warn('Could not generate dynamic asset download link:', tokenErr);
+    }
+  }
+
+  // 3. Sync contact with Brevo for automated sequences, dynamic list enrollment, METABOLIC_STAGE & DOWNLOAD_URL
   try {
     await BrevoService.syncContact({
       email: cleanEmail,
@@ -97,6 +117,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       source: leadSource,
       symptomsChecked: cleanSymptoms,
       metabolicStage: qualifiedMetabolicStage,
+      downloadUrl,
       listIds: [campaign.brevoList],
     });
   } catch (brevoErr) {
@@ -107,5 +128,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     success: true,
     message: 'Lead captured successfully. Check your email for your free cheat sheet!',
     redirectUrl: '/reset-success',
+    downloadUrl,
   });
 }

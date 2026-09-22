@@ -5,12 +5,15 @@
  * @dependencies process.env.BREVO_API_KEY.
  */
 
+import { BREVO_ATTRIBUTES } from '@/config/leadConfig';
+
 export interface BrevoContactParams {
   email: string;
   firstName?: string;
   source?: string;
   symptomsChecked?: string[];
   metabolicStage?: string;
+  downloadUrl?: string;
   listIds?: (number | string)[];
   unlinkListIds?: (number | string)[];
 }
@@ -113,11 +116,16 @@ export class BrevoService {
     }
 
     const attributes: Record<string, string> = {};
-    if (cleanFirstName) attributes.FIRSTNAME = cleanFirstName;
-    if (params.source) attributes.SOURCE = params.source.trim();
-    if (params.metabolicStage) attributes.METABOLIC_STAGE = params.metabolicStage.trim().toUpperCase();
+    if (cleanFirstName) attributes[BREVO_ATTRIBUTES.FIRSTNAME] = cleanFirstName;
+    if (params.source) attributes[BREVO_ATTRIBUTES.SOURCE] = params.source.trim();
+    if (params.metabolicStage) {
+      attributes[BREVO_ATTRIBUTES.METABOLIC_STAGE] = params.metabolicStage.trim().toUpperCase();
+    }
     if (params.symptomsChecked && params.symptomsChecked.length > 0) {
-      attributes.SYMPTOMS = params.symptomsChecked.join(', ');
+      attributes[BREVO_ATTRIBUTES.SYMPTOMS] = params.symptomsChecked.join(', ');
+    }
+    if (params.downloadUrl) {
+      attributes[BREVO_ATTRIBUTES.DOWNLOAD_URL] = params.downloadUrl.trim();
     }
 
     const payload: Record<string, any> = {

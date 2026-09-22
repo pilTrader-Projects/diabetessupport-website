@@ -175,6 +175,31 @@ describe('BrevoService Unit Tests', () => {
       expect(result.error).toContain('Key not found');
     });
 
+    it('should include DOWNLOAD_URL attribute when downloadUrl is provided', async () => {
+      process.env.BREVO_API_KEY = 'xkeysib-mock-test-key';
+      process.env.BREVO_LEAD_LIST_ID = '42';
+
+      const mockFetch = jest.fn().mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        json: async () => ({ id: 999 }),
+      });
+      global.fetch = mockFetch;
+
+      const result = await BrevoService.syncContact({
+        email: 'subscriber@example.com',
+        firstName: 'Elena',
+        source: 'insulin_reset_protocol',
+        downloadUrl: 'http://localhost:3000/api/v1/assets/download?token=sec_mock123',
+      });
+
+      expect(result.success).toBe(true);
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(requestBody.attributes.DOWNLOAD_URL).toBe(
+        'http://localhost:3000/api/v1/assets/download?token=sec_mock123'
+      );
+    });
+
     it('should catch and handle unexpected network errors gracefully', async () => {
       process.env.BREVO_API_KEY = 'xkeysib-mock-test-key';
 

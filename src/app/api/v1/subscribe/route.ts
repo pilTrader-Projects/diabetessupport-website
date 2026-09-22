@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { BrevoService } from '@/services/brevoService';
 import { CampaignService } from '@/services/campaignService';
+import { AssetStorageService } from '@/services/assetStorageService';
 import { CAMPAIGN_CODES, BREVO_LISTS } from '@/config/leadConfig';
 
 /**
@@ -61,7 +62,26 @@ export async function POST(req: Request): Promise<NextResponse> {
   // 1. Resolve dynamic campaign mapping
   const campaign = await CampaignService.resolveCampaign(leadSource);
 
-  // 2. Sync contact to Brevo using mapped list and metabolic stage
+  // 2. Generate personalized, expiring digital asset token if campaign delivers an asset
+  let downloadUrl: string | undefined = undefined;
+  if (campaign.assetFileName) {
+    try {
+      const tokenDoc = await AssetStorageService.generateDownloadToken({
+        fileName: campaign.assetFileName,
+        expiresInHours: 48,
+        maxDownloads: 3,
+        createdBy: `subscriber_${cleanEmail}`,
+      });
+      if (tokenDoc) {
+        const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        downloadUrl = `${origin}/api/v1/assets/download?token=${tokenDoc.token}`;
+      }
+    } catch (tokenErr) {
+      console.warn('Could not generate dynamic asset download link for subscriber:', tokenErr);
+    }
+  }
+
+  // 3. Sync contact to Brevo using mapped list, metabolic stage, and DOWNLOAD_URL
   let syncResult: any = null;
   try {
     syncResult = await BrevoService.syncContact({
@@ -69,6 +89,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       firstName: cleanFirstName,
       source: campaign.referenceCode,
       metabolicStage: campaign.defaultMetabolicStage,
+      downloadUrl,
       listIds: [campaign.brevoList],
     });
   } catch (brevoErr) {
@@ -84,6 +105,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   return NextResponse.json({
     success: true,
     message: successMessage,
+    downloadUrl,
     data: syncResult,
   });
 }

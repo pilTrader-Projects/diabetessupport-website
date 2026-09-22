@@ -72,6 +72,13 @@ export async function POST(
       maxDownloads: Number(maxDownloads) || 3,
     });
 
+    if (!tokenDoc) {
+      return NextResponse.json(
+        { success: false, error: 'Digital asset not found.' },
+        { status: 404 }
+      );
+    }
+
     const url = new URL(req.url);
     const downloadUrl = `${url.origin}/api/v1/assets/download?token=${tokenDoc.token}`;
 

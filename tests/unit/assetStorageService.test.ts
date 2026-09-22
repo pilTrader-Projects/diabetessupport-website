@@ -82,7 +82,9 @@ describe('Digital Assets & Tokenized Downloads (TDD Unit Tests)', () => {
       };
 
       const mockFind = jest.fn().mockReturnValue({
-        toArray: jest.fn().mockResolvedValue([mockFile]),
+        sort: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([mockFile]),
+        }),
       });
 
       jest.spyOn(AssetStorageService, 'getBucket').mockResolvedValue({
@@ -98,30 +100,64 @@ describe('Digital Assets & Tokenized Downloads (TDD Unit Tests)', () => {
         fileId: mockFileId.toString(),
       });
 
-      expect(tokenDoc.token).toMatch(/^sec_[a-f0-9]{48}$/);
-      expect(tokenDoc.maxDownloads).toBe(3);
-      expect(tokenDoc.downloadCount).toBe(0);
-      expect(tokenDoc.isActive).toBe(true);
-      expect(tokenDoc.fileName).toBe('Meal_Plan_7_Days.pdf');
+      expect(tokenDoc).not.toBeNull();
+      expect(tokenDoc!.token).toMatch(/^sec_[a-f0-9]{48}$/);
+      expect(tokenDoc!.maxDownloads).toBe(3);
+      expect(tokenDoc!.downloadCount).toBe(0);
+      expect(tokenDoc!.isActive).toBe(true);
+      expect(tokenDoc!.fileName).toBe('Meal_Plan_7_Days.pdf');
 
       const hoursDifference =
-        (tokenDoc.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60);
+        (tokenDoc!.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60);
       expect(Math.round(hoursDifference)).toBe(48);
     });
 
-    it('should throw an error if the requested asset does not exist in GridFS', async () => {
+    it('should return null if the requested asset does not exist in GridFS', async () => {
       const mockFileId = new mongoose.Types.ObjectId();
       const mockFind = jest.fn().mockReturnValue({
-        toArray: jest.fn().mockResolvedValue([]),
+        sort: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([]),
+        }),
       });
 
       jest.spyOn(AssetStorageService, 'getBucket').mockResolvedValue({
         find: mockFind,
       } as any);
 
-      await expect(
-        AssetStorageService.generateDownloadToken({ fileId: mockFileId.toString() })
-      ).rejects.toThrow('Digital asset not found.');
+      const tokenDoc = await AssetStorageService.generateDownloadToken({
+        fileId: mockFileId.toString(),
+      });
+      expect(tokenDoc).toBeNull();
+    });
+
+    it('should generate a token when querying by fileName', async () => {
+      const mockFileId = new mongoose.Types.ObjectId();
+      const mockFile = {
+        _id: mockFileId,
+        filename: 'insulin_reset_cheat_sheet.pdf',
+        contentType: 'application/pdf',
+      };
+
+      const mockFind = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue([mockFile]),
+        }),
+      });
+
+      jest.spyOn(AssetStorageService, 'getBucket').mockResolvedValue({
+        find: mockFind,
+      } as any);
+
+      jest.spyOn(AssetDownloadTokenModel, 'create').mockImplementation(async (data: any) => ({
+        ...data,
+        _id: new mongoose.Types.ObjectId(),
+      }));
+
+      const tokenDoc = await AssetStorageService.generateDownloadToken({
+        fileName: 'insulin_reset_cheat_sheet.pdf',
+      });
+      expect(tokenDoc).toBeDefined();
+      expect(tokenDoc?.fileName).toBe('insulin_reset_cheat_sheet.pdf');
     });
   });
 });

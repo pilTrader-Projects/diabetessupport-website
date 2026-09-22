@@ -47,6 +47,21 @@ export const BREVO_LISTS = {
 export type BrevoList = (typeof BREVO_LISTS)[keyof typeof BREVO_LISTS];
 
 /**
+ * Standardized Brevo contact attribute field names.
+ *
+ * @usecase Syncs lead metadata, clinical status, and dynamic secure download links into Brevo contact records.
+ */
+export const BREVO_ATTRIBUTES = {
+  FIRSTNAME: 'FIRSTNAME',
+  SOURCE: 'SOURCE',
+  METABOLIC_STAGE: 'METABOLIC_STAGE',
+  SYMPTOMS: 'SYMPTOMS',
+  DOWNLOAD_URL: 'DOWNLOAD_URL',
+} as const;
+
+export type BrevoAttribute = (typeof BREVO_ATTRIBUTES)[keyof typeof BREVO_ATTRIBUTES];
+
+/**
  * Symptom count thresholds and corresponding metabolic stage ratings.
  *
  * @usecase Evaluates symptom checklist submissions to calculate clinical hyperinsulinemia probability.
@@ -67,6 +82,7 @@ export interface CampaignConfig {
   name: string;
   brevoList: string;
   defaultMetabolicStage: string;
+  assetFileName?: string;
   description?: string;
   isActive: boolean;
 }
@@ -90,6 +106,7 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     name: 'Insulin Reset Protocol Cheat Sheet',
     brevoList: BREVO_LISTS.INSULIN_RESET_FUNNEL,
     defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
+    assetFileName: 'insulin_reset_protocol_cheat_sheet.pdf',
     description: 'Low-awareness metabolic symptom checklist & cheat sheet funnel',
     isActive: true,
   },
@@ -98,6 +115,7 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     name: 'GlycoSense Companion App Claim',
     brevoList: BREVO_LISTS.COMPANION_APP_USERS,
     defaultMetabolicStage: METABOLIC_STAGES.COMPANION_APP_USER,
+    assetFileName: 'glycosense_starter_guide.pdf',
     description: 'Direct response companion app onboarding and claim leads',
     isActive: true,
   },
