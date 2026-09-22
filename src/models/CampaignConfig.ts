@@ -62,6 +62,10 @@ const CampaignConfigSchema: Schema = new Schema<ICampaignConfigDocument>(
   }
 );
 
+if (mongoose.models.CampaignConfig) {
+  delete (mongoose.models as any).CampaignConfig;
+}
+
 export const CampaignConfigModel: Model<ICampaignConfigDocument> =
   mongoose.models.CampaignConfig ||
   mongoose.model<ICampaignConfigDocument>('CampaignConfig', CampaignConfigSchema);
