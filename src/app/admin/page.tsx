@@ -2,6 +2,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import { PostModel } from '@/models/Post';
 import { CampaignConfigModel } from '@/models/CampaignConfig';
 import { LeadModel } from '@/models/Lead';
+import { AssetStorageService } from '@/services/assetStorageService';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
@@ -12,7 +13,7 @@ export const revalidate = 0; // Dynamic admin dashboard
  * Owner Admin Dashboard Overview Hub (/admin).
  *
  * @usecase Displays platform analytics overview, published content counts, and quick navigation links.
- * @dependencies isAdminAuthenticated, PostModel, CampaignConfigModel, LeadModel.
+ * @dependencies isAdminAuthenticated, PostModel, CampaignConfigModel, LeadModel, AssetStorageService.
  * @returns {Promise<JSX.Element>} Rendered admin dashboard.
  */
 export default async function AdminDashboardPage() {
@@ -27,6 +28,13 @@ export default async function AdminDashboardPage() {
   const totalCampaigns = await CampaignConfigModel.countDocuments();
   const activeCampaigns = await CampaignConfigModel.countDocuments({ isActive: true });
   const totalLeads = await LeadModel.countDocuments();
+  let totalAssets = 0;
+  try {
+    const assets = await AssetStorageService.listAssets();
+    totalAssets = assets.length;
+  } catch (err) {
+    console.error('Error counting assets:', err);
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 sm:p-10 space-y-10">
@@ -76,14 +84,14 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Management Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Brevo Campaigns Management Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all">
           <div className="space-y-3">
             <span className="text-3xl">📧</span>
             <h2 className="text-2xl font-bold text-white">Brevo Campaigns &amp; Lead Lists</h2>
             <p className="text-sm text-slate-400 leading-relaxed">
-              Dynamically map lead capture reference codes to Brevo contact lists (<code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">subscribed_contacts</code>, <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">insulin_reset_funnel</code>, <code className="bg-slate-950 px-2 py-0.5 rounded text-amber-300">companion_app_users</code>) and metabolic stages without code edits.
+              Dynamically map lead capture reference codes to Brevo contact lists and metabolic stages without code edits.
             </p>
           </div>
 
@@ -92,6 +100,24 @@ export default async function AdminDashboardPage() {
             className="w-full bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
           >
             Configure Campaigns &rarr;
+          </Link>
+        </div>
+
+        {/* Digital Assets Management Card */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all">
+          <div className="space-y-3">
+            <span className="text-3xl">📦</span>
+            <h2 className="text-2xl font-bold text-white">Digital Assets &amp; Downloads</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Store lead magnet PDFs in MongoDB GridFS and generate secured, tokenized links with expiration and quotas ({totalAssets} uploaded).
+            </p>
+          </div>
+
+          <Link
+            href="/admin/assets"
+            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
+          >
+            Manage Assets &rarr;
           </Link>
         </div>
 
