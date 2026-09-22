@@ -27,8 +27,9 @@ export class CampaignService {
   public static async resolveCampaign(rawCode?: string): Promise<CampaignResolvedConfig> {
     const cleanCode = (rawCode || '').trim().toLowerCase();
 
-    // 1. Check MongoDB for custom active campaign configuration if connection is open
+    // 1. Check MongoDB for custom active campaign configuration
     try {
+      await dbConnect();
       if (mongoose.connection && mongoose.connection.readyState === 1) {
         const query = CampaignConfigModel.findOne({
           referenceCode: cleanCode,
@@ -40,18 +41,12 @@ export class CampaignService {
             : await query;
 
         if (customConfig) {
-          const rawAsset = customConfig.assetFileName;
-          const resolvedAsset =
-            rawAsset !== undefined && rawAsset !== null
-              ? (rawAsset.trim() || undefined)
-              : DEFAULT_CAMPAIGNS[cleanCode]?.assetFileName;
-
           return {
             referenceCode: customConfig.referenceCode,
             name: customConfig.name,
             brevoList: customConfig.brevoList,
             defaultMetabolicStage: customConfig.defaultMetabolicStage,
-            assetFileName: resolvedAsset,
+            assetFileName: customConfig.assetFileName?.trim() || undefined,
             description: customConfig.description,
             isActive: customConfig.isActive,
           };

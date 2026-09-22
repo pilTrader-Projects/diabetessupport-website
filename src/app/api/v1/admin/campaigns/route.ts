@@ -13,7 +13,7 @@ import { METABOLIC_STAGES } from '@/config/leadConfig';
  * @returns {Promise<NextResponse>} JSON response containing list of campaigns or 401 if unauthorized.
  */
 export async function GET(req: Request): Promise<NextResponse> {
-  const isAuth = await isAdminAuthenticated();
+  const isAuth = await isAdminAuthenticated(req);
   if (!isAuth) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized. Admin session required.' },
@@ -42,7 +42,7 @@ export async function GET(req: Request): Promise<NextResponse> {
  * @returns {Promise<NextResponse>} JSON response containing the upserted campaign document.
  */
 export async function POST(req: Request): Promise<NextResponse> {
-  const isAuth = await isAdminAuthenticated();
+  const isAuth = await isAdminAuthenticated(req);
   if (!isAuth) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized. Admin session required.' },

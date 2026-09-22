@@ -55,9 +55,11 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 
   const leadSource = rawTag.trim();
+  await dbConnect();
 
-  // Resolve dynamic campaign mapping from Admin Configuration / defaults
+  // Resolve dynamic campaign mapping from MongoDB
   const campaign = await CampaignService.resolveCampaign(leadSource);
+  console.log(`[Lead Capture]: Resolved campaign "${campaign.referenceCode}" from MongoDB -> Asset: "${campaign.assetFileName || 'None'}", Brevo List: "${campaign.brevoList}"`);
 
   // Qualify lead's metabolic status awareness depending on campaign config, capture point, and symptoms
   const qualifiedMetabolicStage = qualifyMetabolicStage({
@@ -69,7 +71,6 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   // 1. Persist lead to MongoDB with qualified metabolicStage
   try {
-    await dbConnect();
     await LeadModel.findOneAndUpdate(
       { email: cleanEmail },
       {
