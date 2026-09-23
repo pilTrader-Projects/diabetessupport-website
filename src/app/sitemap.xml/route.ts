@@ -48,6 +48,7 @@ export async function GET(): Promise<NextResponse> {
     { url: `${baseUrl}/hidden-clock`, priority: '0.85', changefreq: 'weekly', lastmod: now },
     { url: `${baseUrl}/subscribe`, priority: '0.7', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/about`, priority: '0.7', changefreq: 'monthly', lastmod: now },
+    { url: `${baseUrl}/about/story`, priority: '0.7', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/contact`, priority: '0.7', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/privacy-policy`, priority: '0.5', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/terms-of-service`, priority: '0.5', changefreq: 'monthly', lastmod: now },

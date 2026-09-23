@@ -98,6 +98,7 @@ async function runSanityCheck() {
         'src/app/privacy-policy/page.tsx',
         'src/app/terms-of-service/page.tsx',
         'src/app/about/page.tsx',
+        'src/app/about/story/page.tsx',
         'src/app/contact/page.tsx',
         'src/app/not-found.tsx',
         'src/app/admin/page.tsx',
