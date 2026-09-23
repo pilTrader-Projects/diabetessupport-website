@@ -57,10 +57,10 @@ describe('AboutPage & Founder Story Flow', () => {
       // Reference Section
       expect(html).toContain('Data Sources &amp; Statistical References');
       expect(html).toContain('International Diabetes Federation (IDF)');
-      expect(html).toContain('https://idf.org/our-network/regions-and-members/western-pacific/members/philippines/');
+      expect(html).toContain('https://idf.org/our-network/regions-and-members/western-pacific/members/the-philippines/');
       expect(html).toContain('https://diabetesatlas.org/');
       expect(html).toContain('Philippine Statistics Authority (PSA)');
-      expect(html).toContain('https://psa.gov.ph/content/causes-deaths-philippines');
+      expect(html).toContain('https://psa.gov.ph/statistics/vital-statistics');
       expect(html).toContain('DOST-FNRI');
       expect(html).toContain('https://www.fnri.dost.gov.ph/');
     });

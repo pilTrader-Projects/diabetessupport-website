@@ -191,7 +191,7 @@ export default function AboutPage() {
             <strong className="text-slate-900">4.3 Million Living with Diabetes in the Philippines:</strong>{' '}
             International Diabetes Federation (IDF). <em>IDF Diabetes Atlas (10th Edition, 2021)</em> &amp; Western Pacific Country Reports. Estimates 4,303,800 adult diabetes cases in the Philippines (7.5% comparative prevalence in adults aged 20–79).{' '}
             <a
-              href="https://idf.org/our-network/regions-and-members/western-pacific/members/philippines/"
+              href="https://idf.org/our-network/regions-and-members/western-pacific/members/the-philippines/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-600 hover:text-indigo-800 font-bold underline decoration-indigo-300 hover:decoration-indigo-500 transition-colors ml-1"
@@ -215,7 +215,7 @@ export default function AboutPage() {
             <strong className="text-slate-900">Top 5 Leading Causes of Mortality:</strong>{' '}
             Philippine Statistics Authority (PSA). <em>Registered Deaths in the Philippines: Causes of Deaths Releases</em>. Diabetes mellitus consistently ranks as the 4th to 5th leading cause of death nationwide, claiming tens of thousands of lives annually.{' '}
             <a
-              href="https://psa.gov.ph/content/causes-deaths-philippines"
+              href="https://psa.gov.ph/statistics/vital-statistics"
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-600 hover:text-indigo-800 font-bold underline decoration-indigo-300 hover:decoration-indigo-500 transition-colors ml-1"
