@@ -29,7 +29,7 @@ export default function FounderStoryPage() {
     author: {
       '@type': 'Person',
       name: 'Bong Bungalan Jr.',
-      jobTitle: 'Founder & Patient Advocate',
+      jobTitle: 'Founder & Advocate',
       url: `https://${SITE_CONFIG.domain}/about`,
     },
     publisher: {
@@ -71,7 +71,7 @@ export default function FounderStoryPage() {
           </div>
           <div className="text-left">
             <p className="text-slate-900 font-bold text-sm">Bong Bungalan Jr.</p>
-            <p className="text-indigo-700 text-xs font-semibold">Founder &amp; Patient Advocate &bull; 5 min read</p>
+            <p className="text-indigo-700 text-xs font-semibold">Founder &amp; Advocate &bull; 5 min read</p>
           </div>
         </div>
       </header>

@@ -75,7 +75,7 @@ export default function AboutPage() {
             </div>
             <div>
               <p className="text-white font-bold text-sm drop-shadow-sm">Bong Bungalan Jr.</p>
-              <p className="text-amber-300 text-xs font-semibold">Founder &amp; Patient Advocate</p>
+              <p className="text-amber-300 text-xs font-semibold">Founder &amp; Advocate</p>
             </div>
           </div>
         </div>

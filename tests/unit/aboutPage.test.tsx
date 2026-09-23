@@ -27,7 +27,7 @@ describe('AboutPage & Founder Story Flow', () => {
       const html = ReactDOMServer.renderToString(<AboutPage />);
 
       expect(html).toContain('The Personal Story Behind Our Advocacy');
-      expect(html).toContain('Founder &amp; Patient Advocate');
+      expect(html).toContain('Founder &amp; Advocate');
       expect(html).toContain('Chris');
       expect(html).toContain('36 years old');
       expect(html).toContain('the diagnosis is not where the story begins');
@@ -57,7 +57,7 @@ describe('AboutPage & Founder Story Flow', () => {
 
       expect(html).toContain('Why We Started This Mission');
       expect(html).toContain('We Don&#x27;t Want Families to Discover Diabetes Too Late');
-      expect(html).toContain('Founder &amp; Patient Advocate');
+      expect(html).toContain('Founder &amp; Advocate');
       expect(html).toContain('Chris');
       expect(html).toContain('36 years old, he was gone');
       expect(html).toContain('What is insulin resistance?');
