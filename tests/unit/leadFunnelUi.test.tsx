@@ -33,6 +33,7 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
       expect(schema.headline).toContain('Normal');
       expect(schema.url).toContain('/insulin-reset');
       expect(schema.about[0].name).toContain('Hyperinsulinemia');
+      expect(schema.hasPart.name).toContain('The Hidden Metabolic Clock');
       expect(schema.hasPart.encodingFormat).toBe('application/pdf');
     });
   });
@@ -105,7 +106,7 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
 
       const hiddenClockElement = <HiddenClockPage />;
       expect(hiddenClockElement).toBeDefined();
-      expect(hiddenClockMetadata.title).toContain('Hidden Clock');
+      expect(hiddenClockMetadata.title).toContain('Hidden Metabolic Clock');
       expect(hiddenClockMetadata.alternates?.canonical).toContain('/insulin-reset');
     });
   });

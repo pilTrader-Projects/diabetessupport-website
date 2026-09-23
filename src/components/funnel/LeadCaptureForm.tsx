@@ -79,10 +79,10 @@ export default function LeadCaptureForm({
           🎁 Instant Free Download
         </span>
         <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-          Claim Your Free 3-Page &ldquo;Hidden Clock&rdquo; Cheat Sheet
+          Claim Your Free 8-Page Guide: &ldquo;The Hidden Metabolic Clock&rdquo;
         </h3>
         <p className="text-sm text-purple-100 max-w-lg mx-auto leading-relaxed">
-          Where should we send your protocol? Enter your best email below for immediate access.
+          Where should we send your report? Enter your best email below for immediate access.
         </p>
       </div>
 
@@ -132,10 +132,10 @@ export default function LeadCaptureForm({
           className="w-full min-h-[52px] bg-white hover:bg-slate-100 text-blue-900 font-black text-base py-3.5 px-6 rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2 border border-white"
         >
           {loading ? (
-            <span>Sending Your Cheat Sheet...</span>
+            <span>Sending Your 8-Page Guide...</span>
           ) : (
             <>
-              <span>Send Me The Free 3-Page Cheat Sheet</span>
+              <span>Send Me The Free 8-Page Guide</span>
               <span className="text-xl">➔</span>
             </>
           )}

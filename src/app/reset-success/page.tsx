@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '🎉 Your Free Report is on the Way! | Next Critical Step',
   description:
-    'Your free 3-page Insulin Reset Protocol Cheat Sheet is on its way to your inbox. Read this critical next step to start tracking your local food triggers with GlycoSense.',
+    'Your free 8-page Hidden Metabolic Clock report is on its way to your inbox. Read this critical next step to start tracking your local food triggers with GlycoSense.',
   robots: {
     index: false,
     follow: false,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 /**
  * High-Converting Bridge Page / Upsell Route (/reset-success).
  *
- * @usecase Bridges the freshly opted-in lead from the 3-page cheat sheet to immediate adoption of the GlycoSense digital tracking dashboard, styled in full harmony with the site's global theme.
+ * @usecase Bridges the freshly opted-in lead from the 8-page guide to immediate adoption of the GlycoSense digital tracking dashboard, styled in full harmony with the site's global theme.
  * @dependencies Next.js Link component, Tailwind CSS styling.
  * @returns {JSX.Element} Rendered bridge upsell page.
  */
@@ -31,7 +31,7 @@ export default function ResetSuccessPage(): React.JSX.Element {
             Your Free Report is on the Way to Your Inbox!
           </h1>
           <p className="text-base text-slate-600 font-medium max-w-xl mx-auto leading-relaxed">
-            Check your inbox in 2 to 5 minutes for your 3-page PDF. If you do not see it, please check your spam or promotions tab.
+            Check your inbox in 2 to 5 minutes for your 8-page PDF guide. If you do not see it, please check your spam or promotions tab.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function ResetSuccessPage(): React.JSX.Element {
         {/* Fallback Direct Download Box */}
         <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm text-center space-y-3">
           <p className="text-sm text-slate-600">
-            Need immediate offline access? You can also download the cheat sheet directly:
+            Need immediate offline access? You can also download the guide directly:
           </p>
           <div>
             <a
@@ -100,7 +100,7 @@ export default function ResetSuccessPage(): React.JSX.Element {
               download
               className="inline-flex items-center gap-2 text-sm font-bold text-teal-700 hover:text-teal-900 underline decoration-teal-400"
             >
-              <span>📥 Download 3-Page Hidden Clock Protocol PDF directly</span>
+              <span>📥 Download 8-Page Hidden Metabolic Clock PDF directly</span>
             </a>
           </div>
         </div>

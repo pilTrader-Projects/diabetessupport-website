@@ -3,9 +3,9 @@ import { SITE_CONFIG } from '@/config/constants';
 import InsulinResetPage from '@/app/insulin-reset/page';
 
 export const metadata: Metadata = {
-  title: `The Hidden Clock: Your "Normal" Blood Sugar Test is a Lie | DiabetesCare PH`,
+  title: `The Hidden Metabolic Clock: Why "Normal" Blood Sugar Isn't the Whole Story | DiabetesCare PH`,
   description:
-    'Your body can hide metabolic breakdown for 10 to 15 years behind normal glucose readings. Download the free 3-page Hidden Clock Insulin Reset cheat sheet.',
+    'Your body can hide metabolic breakdown for years behind normal glucose readings. Download the free 8-page guide: The Hidden Metabolic Clock.',
   alternates: {
     canonical: `https://${SITE_CONFIG.domain}/insulin-reset`,
   },

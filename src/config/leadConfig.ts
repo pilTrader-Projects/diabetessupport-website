@@ -103,10 +103,10 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
   },
   [CAMPAIGN_CODES.INSULIN_RESET_FUNNEL]: {
     referenceCode: CAMPAIGN_CODES.INSULIN_RESET_FUNNEL,
-    name: 'Insulin Reset Protocol Cheat Sheet',
+    name: 'The Hidden Metabolic Clock Guide',
     brevoList: BREVO_LISTS.INSULIN_RESET_FUNNEL,
     defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
-    description: 'Low-awareness metabolic symptom checklist & cheat sheet funnel',
+    description: 'Low-awareness metabolic symptom checklist & 8-page educational guide funnel',
     isActive: true,
   },
   [CAMPAIGN_CODES.COMPANION_APP_USERS]: {

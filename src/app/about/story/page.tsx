@@ -429,7 +429,7 @@ export default function FounderStoryPage() {
                 Insulin Risk Checklist
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Take our 60-second interactive symptom audit and get the Free 3-Page Filipino Metabolic Cheat Sheet.
+                Take our 60-second interactive symptom audit and get the Free 8-Page Hidden Metabolic Clock Report.
               </p>
             </div>
             <Link
