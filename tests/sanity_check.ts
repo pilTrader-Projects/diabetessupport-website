@@ -123,6 +123,7 @@ async function runSanityCheck() {
         'public/icons/icon-maskable-192x192.png',
         'public/icons/icon-maskable-512x512.png',
         'src/app/layout.tsx',
+        'src/app/template.tsx',
         'src/app/page.tsx',
         'src/app/globals.css'
     ];

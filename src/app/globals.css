@@ -70,6 +70,42 @@ pre, code {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Standardized Page Transition: Page slides up from bottom and fades in */
+@keyframes pageSlideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition-enter {
+  animation: pageSlideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Progressive enhancement: Native View Transitions API for modern browsers */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  /* Targeted smooth scrolling for anchor targets without global html scroll-smooth conflict */
+  html:has(:target) {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Accessibility: Disable motion when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-enter {
+    animation: none !important;
+  }
+}
+
 /* GlycoSense Signature Gradient Palette */
 .gradient-hero, .gradient-glycosense {
   background: linear-gradient(135deg, #1e40af 0%, #701a75 50%, #db2777 100%);

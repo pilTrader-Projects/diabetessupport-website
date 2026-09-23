@@ -94,7 +94,7 @@ export default function RootLayout({
   const webSiteSchema = buildWebSiteSchema();
 
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <head>
         <script
           type="application/ld+json"
