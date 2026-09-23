@@ -17,6 +17,7 @@ export const metadata: Metadata = {
  * @usecase Unabridged personal narrative of the founder detailing the loss of Chris,
  * family lived experience with diabetes, cultural dietary realities, the advocacy mission,
  * and clear action pathways for readers.
+ * Styled with DiabetesCare PH signature brand theme (blue-800 to purple-900 to pink-600 gradient-kit-panel).
  */
 export default function FounderStoryPage() {
   const storySchema = {
@@ -52,32 +53,32 @@ export default function FounderStoryPage() {
       <header className="space-y-4 border-b border-slate-200 pb-8 text-center sm:text-left">
         <Link
           href="/about"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800 transition-colors uppercase tracking-wider"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-700 hover:text-indigo-900 transition-colors uppercase tracking-wider"
         >
           <span>&larr;</span> Back to About Us
         </Link>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Why We Started This Mission
         </h1>
-        <p className="text-lg sm:text-xl font-bold text-teal-800 leading-snug">
+        <p className="text-lg sm:text-xl font-bold text-indigo-900 leading-snug">
           We Don&apos;t Want Families to Discover Diabetes Too Late
         </p>
 
         {/* Founder Byline */}
         <div className="flex items-center justify-center sm:justify-start gap-3 pt-3">
-          <div className="w-11 h-11 rounded-full bg-teal-100 border border-teal-300 flex items-center justify-center text-teal-800 font-bold text-sm shadow-sm">
+          <div className="w-11 h-11 rounded-full bg-indigo-100 border border-indigo-300 flex items-center justify-center text-indigo-900 font-bold text-sm shadow-sm">
             BB
           </div>
           <div className="text-left">
             <p className="text-slate-900 font-bold text-sm">Bong Bungalan Jr.</p>
-            <p className="text-teal-700 text-xs font-semibold">Founder &amp; Patient Advocate &bull; 5 min read</p>
+            <p className="text-indigo-700 text-xs font-semibold">Founder &amp; Patient Advocate &bull; 5 min read</p>
           </div>
         </div>
       </header>
 
       {/* Section 1: Chris */}
       <section className="space-y-5 text-base sm:text-lg leading-relaxed text-slate-700">
-        <p className="text-lg sm:text-xl font-medium text-slate-900 leading-relaxed italic border-l-4 border-teal-500 pl-4 py-1 bg-slate-50 rounded-r-lg">
+        <p className="text-lg sm:text-xl font-medium text-slate-900 leading-relaxed italic border-l-4 border-indigo-600 pl-4 py-1 bg-slate-50 rounded-r-lg">
           There are moments in life that change the way you see things forever.
         </p>
         <p>
@@ -129,27 +130,27 @@ export default function FounderStoryPage() {
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
           <ul className="space-y-3 font-semibold text-slate-800">
             <li className="flex items-start gap-3">
-              <span className="text-teal-600 font-bold text-lg leading-none mt-1">?</span>
+              <span className="text-indigo-600 font-bold text-lg leading-none mt-1">?</span>
               <span>What exactly is happening inside the body when someone develops diabetes?</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-600 font-bold text-lg leading-none mt-1">?</span>
+              <span className="text-indigo-600 font-bold text-lg leading-none mt-1">?</span>
               <span>What does the pancreas actually do?</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-600 font-bold text-lg leading-none mt-1">?</span>
+              <span className="text-indigo-600 font-bold text-lg leading-none mt-1">?</span>
               <span>What is insulin?</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-600 font-bold text-lg leading-none mt-1">?</span>
+              <span className="text-indigo-600 font-bold text-lg leading-none mt-1">?</span>
               <span>What is insulin resistance?</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-600 font-bold text-lg leading-none mt-1">?</span>
+              <span className="text-indigo-600 font-bold text-lg leading-none mt-1">?</span>
               <span>Why can blood sugar appear manageable for a period of time while something deeper may already be going wrong?</span>
             </li>
-            <li className="flex items-start gap-3 text-teal-900 font-bold">
-              <span className="text-teal-700 font-bold text-lg leading-none mt-1">✓</span>
+            <li className="flex items-start gap-3 text-indigo-950 font-bold">
+              <span className="text-indigo-700 font-bold text-lg leading-none mt-1">✓</span>
               <span>And most importantly: Can we recognize the problem earlier—before it reaches the point where the consequences become devastating?</span>
             </li>
           </ul>
@@ -165,14 +166,14 @@ export default function FounderStoryPage() {
         <p>
           The more I learned about metabolism, insulin, glucose regulation, and insulin resistance, the more I realized that diabetes is not simply a story about eating too much sugar.
         </p>
-        <p className="text-lg font-bold text-teal-900">
+        <p className="text-lg font-bold text-indigo-950">
           It is a story about how the body manages energy.
         </p>
         <p>
           Our educational material on diabetes explains this progression as a process: insulin normally helps glucose enter cells, but when insulin resistance develops, the pancreas has to compensate by producing more insulin. Over time, pancreatic &beta;-cells can lose their ability to compensate adequately, allowing blood glucose to rise into the diabetic range.
         </p>
         <p>That realization gave me a completely different perspective.</p>
-        <p className="bg-teal-50 border-l-4 border-teal-600 p-4 rounded-r-lg font-bold text-teal-950">
+        <p className="bg-indigo-50 border-l-4 border-indigo-600 p-4 rounded-r-lg font-bold text-indigo-950">
           I began to understand that the diagnosis is not necessarily where the story begins.
         </p>
         <p>There can be years of metabolic changes before diabetes becomes obvious.</p>
@@ -214,13 +215,19 @@ export default function FounderStoryPage() {
         </p>
       </section>
 
-      {/* Section 5: Raising the Flag */}
+      {/* Section 5: Raising the Flag (Website Signature Brand Card) */}
       <section className="space-y-6 pt-2">
-        <div className="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white p-8 sm:p-10 rounded-3xl shadow-lg space-y-6">
-          <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-teal-300">
-            This Is Why We Are Raising the Flag
-          </h2>
-          <div className="space-y-3 text-slate-200 text-base sm:text-lg leading-relaxed">
+        <div className="bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 gradient-kit-panel text-white rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/20 space-y-6">
+          <div className="space-y-3">
+            <span className="inline-block bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-white/30 backdrop-blur-md shadow-sm">
+              🚩 ADVOCACY MANIFESTO
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight drop-shadow-sm">
+              This Is Why We Are Raising the Flag
+            </h2>
+          </div>
+
+          <div className="space-y-3 text-purple-100 text-base sm:text-lg leading-relaxed">
             <p>This advocacy was born from those experiences.</p>
             <p>From witnessing families struggle.</p>
             <p>From watching loved ones become critically ill.</p>
@@ -229,20 +236,20 @@ export default function FounderStoryPage() {
             <p>And from experiencing firsthand how difficult it can be to manage diabetes once the problem has already become established.</p>
           </div>
 
-          <div className="border-t border-teal-800/80 pt-6 space-y-4">
+          <div className="border-t border-white/15 pt-6 space-y-4">
             <p className="text-xl sm:text-2xl font-black text-white">So I am raising a flag.</p>
-            <p className="text-teal-300 font-bold text-lg">Not a flag of fear. A flag of awareness.</p>
+            <p className="text-amber-300 font-bold text-lg">Not a flag of fear. A flag of awareness.</p>
 
-            <div className="space-y-3 bg-slate-800/60 p-5 rounded-2xl border border-teal-700/50">
-              <p className="font-semibold text-teal-200">&ldquo;Don&apos;t wait until the disease becomes impossible to ignore.&rdquo;</p>
-              <p className="font-semibold text-teal-200">&ldquo;Don&apos;t wait until a loved one is in critical condition.&rdquo;</p>
-              <p className="font-semibold text-teal-200">&ldquo;Don&apos;t wait until the complications have already taken their toll.&rdquo;</p>
+            <div className="space-y-3 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 shadow-inner">
+              <p className="font-semibold text-white">&ldquo;Don&apos;t wait until the disease becomes impossible to ignore.&rdquo;</p>
+              <p className="font-semibold text-white">&ldquo;Don&apos;t wait until a loved one is in critical condition.&rdquo;</p>
+              <p className="font-semibold text-white">&ldquo;Don&apos;t wait until the complications have already taken their toll.&rdquo;</p>
             </div>
 
             <p className="text-white text-base sm:text-lg font-bold leading-relaxed pt-2">
               There is another path: understand what is happening inside your body, recognize the warning signs early, and start making informed changes while there is still an opportunity to act.
             </p>
-            <p className="text-teal-200 text-sm italic">That is the spirit behind this advocacy.</p>
+            <p className="text-purple-200 text-sm italic">That is the spirit behind this advocacy.</p>
           </div>
         </div>
       </section>
@@ -261,7 +268,7 @@ export default function FounderStoryPage() {
         </p>
         <p>We want to make the invisible processes happening inside the body less mysterious.</p>
         <p className="font-bold text-slate-900 text-lg">
-          And most importantly, we want to encourage people to <span className="text-teal-700 underline decoration-teal-500 decoration-2">pay attention early</span>.
+          And most importantly, we want to encourage people to <span className="text-indigo-700 underline decoration-indigo-500 decoration-2">pay attention early</span>.
         </p>
         <p>
           Because your blood sugar number is not merely a number. It is information. Your HbA1c is information. Your waistline, blood pressure, activity level, eating patterns, sleep, and other aspects of your health can provide information too.
@@ -271,7 +278,7 @@ export default function FounderStoryPage() {
         </p>
       </section>
 
-      {/* Section 7: From Personal Loss to Collective Action (Streamlined & Focused) */}
+      {/* Section 7: From Personal Loss to Collective Action */}
       <section className="space-y-5 text-base sm:text-lg leading-relaxed text-slate-700 pt-2">
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Sharing What We Learned with Every Filipino Home
@@ -283,7 +290,7 @@ export default function FounderStoryPage() {
           When you watch someone close to you deteriorate from something that began silently decades earlier, you realize that knowledge cannot remain locked away in medical textbooks or private grief.
         </p>
         <p className="font-semibold text-slate-900">It has to be shared openly, freely, and relentlessly.</p>
-        <div className="bg-slate-50 border-l-4 border-teal-500 p-5 rounded-r-xl space-y-2">
+        <div className="bg-indigo-50/70 border-l-4 border-indigo-600 p-5 rounded-r-xl space-y-2">
           <p>
             Somewhere out there right now is another Filipino family whose parent, breadwinner, spouse, or child may be quietly developing metabolic dysfunction without knowing it:
           </p>
@@ -309,23 +316,23 @@ export default function FounderStoryPage() {
         <p className="font-semibold text-slate-900">
           And we should never replace qualified medical care with internet advice.
         </p>
-        <div className="space-y-3 bg-teal-50/70 border border-teal-200 rounded-2xl p-6 sm:p-8">
-          <p className="font-bold text-teal-950 text-lg">What we can and will do:</p>
+        <div className="space-y-3 bg-indigo-50/70 border border-indigo-200 rounded-2xl p-6 sm:p-8">
+          <p className="font-bold text-indigo-950 text-lg">What we can and will do:</p>
           <ul className="space-y-2 text-slate-800 font-medium">
             <li className="flex items-center gap-2">
-              <span className="text-teal-600 font-bold">✓</span>
+              <span className="text-indigo-600 font-bold">✓</span>
               <span>We can help people understand what is happening under the hood.</span>
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-teal-600 font-bold">✓</span>
+              <span className="text-indigo-600 font-bold">✓</span>
               <span>We can help people ask smarter, more direct questions to their doctors.</span>
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-teal-600 font-bold">✓</span>
+              <span className="text-indigo-600 font-bold">✓</span>
               <span>We can help families recognize that metabolic health deserves attention long before an emergency room visit.</span>
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-teal-600 font-bold">✓</span>
+              <span className="text-indigo-600 font-bold">✓</span>
               <span>And we can encourage sustainable, culturally realistic food choices without stripping joy from family celebrations.</span>
             </li>
           </ul>
@@ -334,59 +341,65 @@ export default function FounderStoryPage() {
         <p>
           Not a revolution against doctors. Not a revolution against medicine. Not a revolution against food.
         </p>
-        <p className="text-xl font-black text-teal-900">
+        <p className="text-xl font-black text-indigo-950">
           It is a revolution against ignorance and complacency.
         </p>
         <p>It is the decision to stop treating metabolic disease as something that only matters after the diagnosis.</p>
         <p className="font-bold text-slate-900">It is the decision to start paying attention earlier.</p>
       </section>
 
-      {/* Section 9: Our Message Is Simple */}
+      {/* Section 9: Our Message Is Simple (Website Signature Brand Card matching Reference Image) */}
       <section className="space-y-6 pt-2">
-        <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 space-y-6 shadow-xl">
-          <h2 className="text-2xl sm:text-3xl font-black text-teal-400">
-            Our Message Is Simple
-          </h2>
-          <p className="text-xl sm:text-2xl font-black tracking-tight text-white">
-            Don&apos;t cross the road blindly.
-          </p>
+        <div className="bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 gradient-kit-panel text-white rounded-3xl p-8 sm:p-10 space-y-6 shadow-2xl border border-white/20">
+          <div className="space-y-3">
+            <span className="inline-block bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-white/30 backdrop-blur-md shadow-sm">
+              💡 CORE ADVOCACY PRINCIPLE
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight drop-shadow-sm">
+              Our Message Is Simple
+            </h2>
+            <p className="text-xl sm:text-2xl font-black tracking-tight text-amber-300 drop-shadow-sm">
+              Don&apos;t cross the road blindly.
+            </p>
+          </div>
 
-          <ul className="space-y-3 text-slate-200 text-base sm:text-lg">
+          <ul className="space-y-3 text-purple-100 text-base sm:text-lg">
             <li className="flex items-start gap-3">
-              <span className="text-teal-400 font-bold text-lg">•</span>
+              <span className="text-amber-300 font-bold text-lg mt-0.5">•</span>
               <span>If you can see the warning signs, learn what they mean.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-400 font-bold text-lg">•</span>
+              <span className="text-amber-300 font-bold text-lg mt-0.5">•</span>
               <span>If you have risk factors, don&apos;t ignore them.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-400 font-bold text-lg">•</span>
+              <span className="text-amber-300 font-bold text-lg mt-0.5">•</span>
               <span>If you&apos;ve been diagnosed with diabetes, don&apos;t give up.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-400 font-bold text-lg">•</span>
+              <span className="text-amber-300 font-bold text-lg mt-0.5">•</span>
               <span>If someone you love has diabetes, learn alongside them.</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-teal-400 font-bold text-lg">•</span>
+              <span className="text-amber-300 font-bold text-lg mt-0.5">•</span>
               <span>And if you&apos;re currently healthy, don&apos;t assume that means you never need to think about metabolic health.</span>
             </li>
           </ul>
 
-          <div className="border-t border-slate-700 pt-6 space-y-2">
-            <p className="text-slate-300 font-medium">
+          <div className="border-t border-white/15 pt-6 space-y-2">
+            <p className="text-purple-200 font-medium">
               Because prevention, early detection, and informed management begin with one thing:
             </p>
-            <p className="text-2xl font-extrabold text-teal-300">Awareness.</p>
-            <p className="text-slate-300">That is why we are here. That is why this advocacy exists.</p>
+            <p className="text-2xl font-extrabold text-white">Awareness.</p>
+            <p className="text-purple-200">That is why we are here. That is why this advocacy exists.</p>
           </div>
 
-          <div className="bg-teal-950/80 border-2 border-teal-500/80 rounded-2xl p-6 sm:p-8 text-center space-y-2">
-            <p className="text-xs uppercase tracking-widest text-teal-300 font-black">
-              The Flag We Continue Raising
-            </p>
-            <h3 className="text-lg sm:text-2xl font-black text-white leading-snug">
+          {/* Frosted Glass Callout Box */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/25 rounded-2xl p-6 sm:p-8 text-center space-y-3 shadow-2xl">
+            <span className="inline-block bg-amber-400/25 text-amber-200 text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-amber-300/40 backdrop-blur-sm">
+              THE FLAG WE CONTINUE RAISING
+            </span>
+            <h3 className="text-lg sm:text-2xl font-black text-white leading-snug drop-shadow-sm">
               Don&apos;t wait for the disease to become loud before you listen to what your body has been telling you quietly for years.
             </h3>
           </div>
@@ -394,9 +407,9 @@ export default function FounderStoryPage() {
       </section>
 
       {/* Section 10: Where Do We Go From Here? Next Steps Action Pathways */}
-      <section className="bg-gradient-to-br from-teal-50 via-slate-50 to-teal-50/50 border-2 border-teal-600/30 rounded-3xl p-6 sm:p-10 space-y-8 shadow-sm">
+      <section className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-10 space-y-8 shadow-sm">
         <div className="space-y-2 text-center sm:text-left">
-          <span className="bg-teal-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full inline-block">
+          <span className="bg-gradient-to-r from-blue-700 via-purple-700 to-pink-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full inline-block shadow-sm">
             Take Action Now
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -409,7 +422,7 @@ export default function FounderStoryPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Insulin Reset Funnel */}
-          <div className="bg-white p-6 rounded-2xl border border-teal-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-2xl border border-indigo-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
             <div className="space-y-2">
               <span className="text-3xl">📋</span>
               <h3 className="font-bold text-slate-900 text-lg leading-snug">
@@ -421,7 +434,7 @@ export default function FounderStoryPage() {
             </div>
             <Link
               href="/insulin-reset"
-              className="inline-flex items-center justify-center gap-1.5 w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
             >
               <span>Take Free Checklist</span>
               <span aria-hidden="true">&rarr;</span>
@@ -449,7 +462,7 @@ export default function FounderStoryPage() {
           </div>
 
           {/* Card 3: GlycoSense App */}
-          <div className="bg-white p-6 rounded-2xl border border-teal-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-2xl border border-purple-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
             <div className="space-y-2">
               <span className="text-3xl">📱</span>
               <h3 className="font-bold text-slate-900 text-lg leading-snug">
@@ -461,7 +474,7 @@ export default function FounderStoryPage() {
             </div>
             <Link
               href="/glycosense"
-              className="inline-flex items-center justify-center gap-1.5 w-full bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-300 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 w-full bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
             >
               <span>Explore GlycoSense</span>
               <span aria-hidden="true">&rarr;</span>
@@ -471,7 +484,7 @@ export default function FounderStoryPage() {
       </section>
 
       {/* Footer Navigation */}
-      <footer className="pt-6 border-t border-slate-200 flex justify-between items-center text-xs sm:text-sm font-bold text-teal-700">
+      <footer className="pt-6 border-t border-slate-200 flex justify-between items-center text-xs sm:text-sm font-bold text-indigo-700">
         <Link href="/about" className="hover:underline flex items-center gap-1">
           <span>&larr;</span> Back to About Us
         </Link>
