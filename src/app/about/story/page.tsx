@@ -422,7 +422,7 @@ export default function FounderStoryPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1: Insulin Reset Funnel */}
-          <div className="bg-white p-6 rounded-2xl border border-indigo-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-2xl border border-purple-100/90 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md hover:border-purple-300 transition-all">
             <div className="space-y-2">
               <span className="text-3xl">📋</span>
               <h3 className="font-bold text-slate-900 text-lg leading-snug">
@@ -434,7 +434,7 @@ export default function FounderStoryPage() {
             </div>
             <Link
               href="/insulin-reset"
-              className="inline-flex items-center justify-center gap-1.5 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-700 via-purple-700 to-pink-600 hover:from-blue-800 hover:via-purple-800 hover:to-pink-700 text-white font-extrabold text-xs px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
             >
               <span>Take Free Checklist</span>
               <span aria-hidden="true">&rarr;</span>
@@ -442,7 +442,7 @@ export default function FounderStoryPage() {
           </div>
 
           {/* Card 2: Community Forum */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-2xl border border-purple-100/90 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md hover:border-purple-300 transition-all">
             <div className="space-y-2">
               <span className="text-3xl">💬</span>
               <h3 className="font-bold text-slate-900 text-lg leading-snug">
@@ -454,7 +454,7 @@ export default function FounderStoryPage() {
             </div>
             <Link
               href="/community"
-              className="inline-flex items-center justify-center gap-1.5 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-700 via-purple-700 to-pink-600 hover:from-blue-800 hover:via-purple-800 hover:to-pink-700 text-white font-extrabold text-xs px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
             >
               <span>Visit Discussions</span>
               <span aria-hidden="true">&rarr;</span>
@@ -462,7 +462,7 @@ export default function FounderStoryPage() {
           </div>
 
           {/* Card 3: GlycoSense App */}
-          <div className="bg-white p-6 rounded-2xl border border-purple-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+          <div className="bg-white p-6 rounded-2xl border border-purple-100/90 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md hover:border-purple-300 transition-all">
             <div className="space-y-2">
               <span className="text-3xl">📱</span>
               <h3 className="font-bold text-slate-900 text-lg leading-snug">
@@ -474,7 +474,7 @@ export default function FounderStoryPage() {
             </div>
             <Link
               href="/glycosense"
-              className="inline-flex items-center justify-center gap-1.5 w-full bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-blue-700 via-purple-700 to-pink-600 hover:from-blue-800 hover:via-purple-800 hover:to-pink-700 text-white font-extrabold text-xs px-4 py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
             >
               <span>Explore GlycoSense</span>
               <span aria-hidden="true">&rarr;</span>
