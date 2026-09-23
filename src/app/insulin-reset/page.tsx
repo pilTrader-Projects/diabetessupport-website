@@ -4,35 +4,37 @@ import { buildInsulinResetSchema } from '@/lib/schema';
 import InsulinResetClient from '@/components/funnel/InsulinResetClient';
 
 export const metadata: Metadata = {
-  title: `Your "Normal" Blood Sugar Test is a Lie | Insulin Reset Protocol Cheat Sheet`,
+  title: `Why "Normal" Blood Sugar Isn't the Whole Story | The Hidden Metabolic Clock`,
   description:
-    'Your body can hide metabolic breakdown for 10 to 15 years behind normal glucose readings. Discover Dr. Bikman\'s metabolic research and download the free 3-page Insulin Reset cheat sheet.',
+    'Your body can hide metabolic breakdown for years behind normal glucose readings. Discover insulin resistance research and download the free 8-page guide: The Hidden Metabolic Clock.',
   keywords: [
+    'The Hidden Metabolic Clock',
     'insulin resistance',
     'hyperinsulinemia',
     'Benjamin Bikman',
-    'normal blood sugar lie',
+    'normal blood sugar whole story',
     'insulin reset protocol',
     'prediabetes symptoms',
     'metabolic health',
     'fasting insulin test',
+    'Filipino metabolic health',
   ],
   alternates: {
     canonical: `https://${SITE_CONFIG.domain}/insulin-reset`,
   },
   openGraph: {
-    title: 'Your "Normal" Blood Sugar Test is a Lie | Free 3-Page Cheat Sheet',
+    title: 'Why "Normal" Blood Sugar Isn\'t the Whole Story | Free 8-Page Guide',
     description:
-      'Discover the single invisible hormone silently driving fatigue and weight gain 10-15 years before standard blood sugar tests detect it.',
+      'Discover the invisible metabolic compensation silently progressing years before standard blood sugar tests cross diagnostic thresholds.',
     url: `https://${SITE_CONFIG.domain}/insulin-reset`,
     siteName: SITE_CONFIG.title,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Your "Normal" Blood Sugar Test is a Lie',
+    title: 'Why "Normal" Blood Sugar Isn\'t the Whole Story',
     description:
-      'Learn why tracking glucose alone misses chronic hyperinsulinemia and get the 4 Golden Rules to reset insulin sensitivity.',
+      'Learn why tracking glucose alone misses chronic hyperinsulinemia and get the practical Filipino metabolic health action framework.',
   },
 };
 

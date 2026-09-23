@@ -9,7 +9,7 @@ import { CAMPAIGN_CODES } from '@/config/leadConfig';
 /**
  * Client-Side Interactive Funnel Container for the Insulin Reset Landing Page.
  *
- * @usecase Bridges the interactive symptom self-check checklist with the lead capture form in strict alignment with the site's global slate-50 and brand design system.
+ * @usecase Bridges the interactive symptom self-check checklist with the lead capture form for "The Hidden Metabolic Clock" 8-page educational guide.
  * @returns {JSX.Element} Interactive landing page layout.
  */
 export default function InsulinResetClient(): React.JSX.Element {
@@ -35,18 +35,18 @@ export default function InsulinResetClient(): React.JSX.Element {
       {/* Above-The-Fold Hero Section */}
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-6">
         <span className="inline-block bg-amber-100 text-amber-900 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-amber-300 shadow-xs">
-          🧬 Dr. Benjamin Bikman Metabolic Insight
+          🧬 Metabolic Health Education &bull; Filipino Context
         </span>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
-          Your &ldquo;Normal&rdquo; Blood Sugar Test is a{' '}
-          <span className="text-rose-600 underline decoration-rose-300">
-            Lie.
+          Why &ldquo;Normal&rdquo; Blood Sugar{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-purple-700 to-pink-600">
+            Isn&apos;t the Whole Story.
           </span>
         </h1>
 
         <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal">
-          Your body can hide a crumbling metabolism for 10 to 15 years by forcing your pancreas to work overtime. Discover the single, invisible hormone that is silently making you sick, fat, and tired—long before it shows up on a standard doctor&apos;s test.
+          Your body can spend years compensating for insulin resistance before fasting blood sugar reaches a diabetic threshold. Learn how your energy management system works, recognize early physical warning clues, and get the practical framework designed for the Filipino context.
         </p>
 
         {/* Above-the-fold Primary CTA Button */}
@@ -54,15 +54,15 @@ export default function InsulinResetClient(): React.JSX.Element {
           <button
             type="button"
             onClick={handleScrollToForm}
-            className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-black text-base sm:text-lg px-8 py-4 sm:py-4.5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border border-slate-700"
+            className="w-full sm:w-auto bg-gradient-to-r from-blue-700 via-purple-700 to-pink-600 hover:from-blue-800 hover:via-purple-800 hover:to-pink-700 text-white font-black text-base sm:text-lg px-8 py-4 sm:py-4.5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/20"
           >
-            <span>Get the Free 3-Page Cheat Sheet</span>
-            <span className="text-xl">↓</span>
+            <span>Get the Free 8-Page Guide</span>
+            <span className="text-xl">&darr;</span>
           </button>
         </div>
 
         <p className="text-xs text-slate-500">
-          ⚡ 100% Free 3-Page PDF • Instant Download • No Prescription Needed
+          ⚡ 100% Free 8-Page PDF &bull; Instant Download &bull; Filipino Context
         </p>
       </section>
 
@@ -74,75 +74,75 @@ export default function InsulinResetClient(): React.JSX.Element {
         />
       </section>
 
-      {/* Section 2: The Hook Bullet Points */}
+      {/* Section 2: What's Inside The Free 8-Page Guide */}
       <section className="space-y-8 max-w-4xl mx-auto">
         <div className="text-center space-y-3">
-          <span className="inline-block bg-teal-100 text-teal-900 text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-teal-200">
-            📑 Metabolic Reset Protocol
+          <span className="inline-block bg-indigo-100 text-indigo-900 text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-indigo-200">
+            📑 The Hidden Metabolic Clock
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            What&apos;s Inside This Free 3-Page Cheat Sheet:
+            What&apos;s Inside This Free 8-Page Guide:
           </h2>
           <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Distilled from decades of clinical insulin physiology research into simple, actionable steps you can apply at your next meal.
+            A practical introduction to insulin resistance, metabolic compensation, and early warning signals—specifically written for Filipino households.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Module 1 */}
-          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          {/* Pillar 1 */}
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-purple-100/90 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md hover:border-purple-300 transition-all">
+            <div className="space-y-3">
+              <span className="text-3xl">🔄</span>
+              <span className="inline-block text-xs font-bold uppercase tracking-wider text-indigo-800 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-md">
+                Steps 1–3
+              </span>
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                Your Energy Management System
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                How insulin acts as your body&apos;s energy traffic-control system. Understand the compensation phase where the pancreas works overtime to keep glucose normal while resistance silently deepens.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-slate-100 text-xs font-bold text-indigo-700">
+              ✓ Pages 2–3 &bull; Mechanism &amp; Compensation
+            </div>
+          </div>
+
+          {/* Pillar 2 */}
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-purple-100/90 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md hover:border-purple-300 transition-all">
             <div className="space-y-3">
               <span className="text-3xl">🔍</span>
-              <span className="inline-block text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-md">
-                Module 1
+              <span className="inline-block text-xs font-bold uppercase tracking-wider text-purple-800 bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-md">
+                Steps 4–6
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                The Glucose Illusion
+                7 Warning Clues Beyond Glucose
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Why tracking blood sugar alone lets the real killer slip through the cracks. Learn how insulin spikes to toxic heights decades before fasting glucose rises.
+                Why blood glucose is just one piece of the picture. Learn the physical signals: waist circumference, skin tags, acanthosis nigricans, blood pressure, lipids, and liver fat (MASLD).
               </p>
             </div>
-            <div className="pt-3 border-t border-slate-100 text-xs font-bold text-teal-700">
-              ✓ Page 1 Breakdown
+            <div className="pt-3 border-t border-slate-100 text-xs font-bold text-purple-700">
+              ✓ Pages 4–5 &bull; Trajectory &amp; Clues
             </div>
           </div>
 
-          {/* Module 2 */}
-          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+          {/* Pillar 3 */}
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-purple-100/90 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md hover:border-purple-300 transition-all">
             <div className="space-y-3">
-              <span className="text-3xl">🫀</span>
-              <span className="inline-block text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-md">
-                Module 2
+              <span className="text-3xl">🇵🇭</span>
+              <span className="inline-block text-xs font-bold uppercase tracking-wider text-pink-800 bg-pink-50 border border-pink-200 px-2.5 py-1 rounded-md">
+                Step 7 &amp; Action Plan
               </span>
               <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                The Organ Wrecking Ball
+                The Filipino Metabolic Reality
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                How chronic high insulin silently hardens your arteries and stalls your cellular energy, locking body fat in place regardless of calorie counting.
+                Carbohydrates are part of Filipino culture and family love. The goal is not to declare war on rice, but to adopt a sustainable protocol: Measure &rarr; Understand &rarr; Intervene &rarr; Monitor &rarr; Adjust.
               </p>
             </div>
-            <div className="pt-3 border-t border-slate-100 text-xs font-bold text-teal-700">
-              ✓ Page 2 Insights
-            </div>
-          </div>
-
-          {/* Module 3 */}
-          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
-            <div className="space-y-3">
-              <span className="text-3xl">⚡</span>
-              <span className="inline-block text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-md">
-                Module 3
-              </span>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
-                The 4 Golden Rules
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Simple, immediate nutritional shifts you can make at home tonight—without a medical prescription—to flip your body back into fat-burning mode.
-              </p>
-            </div>
-            <div className="pt-3 border-t border-slate-100 text-xs font-bold text-teal-700">
-              ✓ Page 3 Action Plan
+            <div className="pt-3 border-t border-slate-100 text-xs font-bold text-pink-700">
+              ✓ Pages 6–7 &bull; Practical Action Framework
             </div>
           </div>
         </div>
@@ -157,7 +157,16 @@ export default function InsulinResetClient(): React.JSX.Element {
           </h3>
         </div>
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          Dr. Benjamin Bikman, a renowned bioenergetics professor and laboratory scientist, has demonstrated that hyperinsulinemia is the root driver of metabolic dysfunction. Conventional checkups measure glucose—the very last marker to deteriorate. This protocol equips you with the metrics and nutritional rules to stop hyperinsulinemia in its tracks.
+          This report was developed around the insulin-resistance and metabolic-health framework explored in{' '}
+          <a
+            href="https://link.amazon/B03KBSMOg"
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="font-semibold text-teal-700 hover:text-teal-900 underline decoration-teal-400 hover:decoration-teal-600 transition-colors"
+          >
+            <em>Why We Get Sick</em> by Dr. Benjamin Bikman, PhD
+          </a>
+          . It examines how impaired glucose regulation begins years before standard diagnosis, and how recognizing early warning clues gives families the power to intervene before a crisis occurs.
         </p>
       </section>
 
@@ -171,7 +180,7 @@ export default function InsulinResetClient(): React.JSX.Element {
 
       {/* Back Link Footer */}
       <div className="text-center pt-4 border-t border-slate-200">
-        <Link href="/blog" className="text-sm font-bold text-teal-700 hover:text-teal-900">
+        <Link href="/blog" className="text-sm font-bold text-indigo-700 hover:text-indigo-900">
           &larr; Browse All Diabetes Educational Articles
         </Link>
       </div>

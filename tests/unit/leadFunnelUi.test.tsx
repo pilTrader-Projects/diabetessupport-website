@@ -33,6 +33,7 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
       expect(schema.headline).toContain('Normal');
       expect(schema.url).toContain('/insulin-reset');
       expect(schema.about[0].name).toContain('Hyperinsulinemia');
+      expect(schema.hasPart.name).toContain('The Hidden Metabolic Clock');
       expect(schema.hasPart.encodingFormat).toBe('application/pdf');
     });
   });
@@ -82,6 +83,18 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
       expect(element).toBeDefined();
       expect(typeof InsulinResetClient).toBe('function');
     });
+
+    it('contains the Amazon affiliate link for Dr. Bikman book with rel sponsored', () => {
+      const fs = require('fs');
+      const path = require('path');
+      const fileContent = fs.readFileSync(
+        path.resolve(__dirname, '../../src/components/funnel/InsulinResetClient.tsx'),
+        'utf-8'
+      );
+      expect(fileContent).toContain('https://link.amazon/B03KBSMOg');
+      expect(fileContent).toContain('rel="noopener noreferrer sponsored"');
+      expect(fileContent).toContain('Why We Get Sick');
+    });
   });
 
   describe('ResetSuccessPage (Bridge / Upsell)', () => {
@@ -105,7 +118,7 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
 
       const hiddenClockElement = <HiddenClockPage />;
       expect(hiddenClockElement).toBeDefined();
-      expect(hiddenClockMetadata.title).toContain('Hidden Clock');
+      expect(hiddenClockMetadata.title).toContain('Hidden Metabolic Clock');
       expect(hiddenClockMetadata.alternates?.canonical).toContain('/insulin-reset');
     });
   });

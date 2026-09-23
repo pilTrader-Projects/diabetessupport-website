@@ -202,7 +202,7 @@ export function buildDiscussionForumPostingSchema(
 /**
  * Builds MedicalWebPage and ItemPage JSON-LD Schema for the Insulin Reset / Hidden Clock Funnel.
  *
- * @usecase Exposes rich clinical context around Dr. Benjamin Bikman's hyperinsulinemia research and the free 3-page downloadable cheat sheet.
+ * @usecase Exposes rich clinical context around Dr. Benjamin Bikman's hyperinsulinemia research and the free 8-page downloadable report.
  * @dependencies SITE_CONFIG constant.
  * @returns {Record<string, any>} Schema.org compliant MedicalWebPage JSON-LD object.
  */
@@ -215,9 +215,9 @@ export function buildInsulinResetSchema(): Record<string, any> {
       '@type': 'WebPage',
       '@id': pageUrl,
     },
-    headline: 'Your "Normal" Blood Sugar Test is a Lie: The Insulin Reset Protocol',
+    headline: 'The Hidden Metabolic Clock: Why "Normal" Blood Sugar Isn\'t the Whole Story',
     description:
-      'Your body can hide a crumbling metabolism for 10 to 15 years by forcing your pancreas to work overtime. Discover Dr. Bikman metabolic research and download the free 3-page cheat sheet.',
+      'Your body can hide metabolic dysfunction for years behind normal glucose readings. Discover insulin resistance research and download the free 8-page guide: The Hidden Metabolic Clock.',
     url: pageUrl,
     about: [
       {
@@ -232,10 +232,10 @@ export function buildInsulinResetSchema(): Record<string, any> {
     ],
     hasPart: {
       '@type': 'DigitalDocument',
-      name: 'The 3-Page Hidden Clock Cheat Sheet',
+      name: 'The Hidden Metabolic Clock: Why "Normal" Blood Sugar Isn\'t the Whole Story',
       encodingFormat: 'application/pdf',
       isAccessibleForFree: true,
-      description: 'The Glucose Illusion, The Organ Wrecking Ball, and The 4 Golden Rules to reset insulin sensitivity naturally.',
+      description: 'An 8-page practical guide to insulin resistance, metabolic health, and early warning signals in the Filipino context.',
     },
     publisher: {
       '@type': 'MedicalOrganization',
