@@ -157,7 +157,16 @@ export default function InsulinResetClient(): React.JSX.Element {
           </h3>
         </div>
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          This report was developed around the insulin-resistance and metabolic-health framework explored in <em>Why We Get Sick</em> by Dr. Benjamin Bikman, PhD. It examines how impaired glucose regulation begins years before standard diagnosis, and how recognizing early warning clues gives families the power to intervene before a crisis occurs.
+          This report was developed around the insulin-resistance and metabolic-health framework explored in{' '}
+          <a
+            href="https://link.amazon/B03KBSMOg"
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            className="font-semibold text-teal-700 hover:text-teal-900 underline decoration-teal-400 hover:decoration-teal-600 transition-colors"
+          >
+            <em>Why We Get Sick</em> by Dr. Benjamin Bikman, PhD
+          </a>
+          . It examines how impaired glucose regulation begins years before standard diagnosis, and how recognizing early warning clues gives families the power to intervene before a crisis occurs.
         </p>
       </section>
 

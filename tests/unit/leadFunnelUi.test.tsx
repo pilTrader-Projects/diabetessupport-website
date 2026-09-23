@@ -83,6 +83,18 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
       expect(element).toBeDefined();
       expect(typeof InsulinResetClient).toBe('function');
     });
+
+    it('contains the Amazon affiliate link for Dr. Bikman book with rel sponsored', () => {
+      const fs = require('fs');
+      const path = require('path');
+      const fileContent = fs.readFileSync(
+        path.resolve(__dirname, '../../src/components/funnel/InsulinResetClient.tsx'),
+        'utf-8'
+      );
+      expect(fileContent).toContain('https://link.amazon/B03KBSMOg');
+      expect(fileContent).toContain('rel="noopener noreferrer sponsored"');
+      expect(fileContent).toContain('Why We Get Sick');
+    });
   });
 
   describe('ResetSuccessPage (Bridge / Upsell)', () => {
