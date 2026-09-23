@@ -23,10 +23,11 @@ describe('AboutPage & Founder Story Flow', () => {
       expect(html).toContain('Editorial &amp; Independence Standards');
     });
 
-    it('renders an impactful, concise gist of the founder personal story with link to the full article', () => {
+    it('renders an impactful, concise gist of the founder personal story with byline and link to the full article', () => {
       const html = ReactDOMServer.renderToString(<AboutPage />);
 
       expect(html).toContain('The Personal Story Behind Our Advocacy');
+      expect(html).toContain('Founder &amp; Patient Advocate');
       expect(html).toContain('Chris');
       expect(html).toContain('36 years old');
       expect(html).toContain('the diagnosis is not where the story begins');
@@ -36,6 +37,13 @@ describe('AboutPage & Founder Story Flow', () => {
       expect(html).toContain('href="/about/story"');
       expect(html).toContain('Why We Started This Mission');
     });
+
+    it('renders JSON-LD MedicalOrganization structured data', () => {
+      const html = ReactDOMServer.renderToString(<AboutPage />);
+      expect(html).toContain('application/ld+json');
+      expect(html).toContain('MedicalOrganization');
+      expect(html).toContain('DiabetesCare PH');
+    });
   });
 
   describe('Full Founder Story Page (src/app/about/story/page.tsx)', () => {
@@ -44,11 +52,12 @@ describe('AboutPage & Founder Story Flow', () => {
       expect(storyMetadata.alternates?.canonical).toBe('/about/story');
     });
 
-    it('renders the complete, unabridged personal story and mission', () => {
+    it('renders the complete personal story, founder byline, and mission', () => {
       const html = ReactDOMServer.renderToString(<FounderStoryPage />);
 
       expect(html).toContain('Why We Started This Mission');
       expect(html).toContain('We Don&#x27;t Want Families to Discover Diabetes Too Late');
+      expect(html).toContain('Founder &amp; Patient Advocate');
       expect(html).toContain('Chris');
       expect(html).toContain('36 years old, he was gone');
       expect(html).toContain('What is insulin resistance?');
@@ -59,6 +68,21 @@ describe('AboutPage & Founder Story Flow', () => {
       // Link back to About Us
       expect(html).toContain('href="/about"');
       expect(html).toContain('Back to About Us');
+    });
+
+    it('renders the Next Steps Action Card with direct pathways to funnels, community, and tools', () => {
+      const html = ReactDOMServer.renderToString(<FounderStoryPage />);
+
+      expect(html).toContain('Where Do We Go From Here?');
+      expect(html).toContain('href="/insulin-reset"');
+      expect(html).toContain('href="/community"');
+      expect(html).toContain('href="/glycosense"');
+    });
+
+    it('renders JSON-LD Article structured data', () => {
+      const html = ReactDOMServer.renderToString(<FounderStoryPage />);
+      expect(html).toContain('application/ld+json');
+      expect(html).toContain('Article');
     });
   });
 });

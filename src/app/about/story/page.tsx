@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { SITE_CONFIG } from '@/config/constants';
 
 export const metadata: Metadata = {
   title: 'Why We Started This Mission: The Founder\'s Story | DiabetesCare PH',
@@ -14,11 +15,39 @@ export const metadata: Metadata = {
  * Full Founder Story & Mission Page.
  *
  * @usecase Unabridged personal narrative of the founder detailing the loss of Chris,
- * family lived experience with diabetes, cultural dietary realities, and the advocacy mission.
+ * family lived experience with diabetes, cultural dietary realities, the advocacy mission,
+ * and clear action pathways for readers.
  */
 export default function FounderStoryPage() {
+  const storySchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Why We Started This Mission: We Don\'t Want Families to Discover Diabetes Too Late',
+    description:
+      'The personal story behind DiabetesCare PH: how family loss, lived experience with diabetes, and Filipino culture sparked an urgent advocacy for early metabolic awareness.',
+    author: {
+      '@type': 'Person',
+      name: 'Bong Bungalan Jr.',
+      jobTitle: 'Founder & Patient Advocate',
+      url: `https://${SITE_CONFIG.domain}/about`,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'DiabetesCare PH',
+      url: `https://${SITE_CONFIG.domain}`,
+      logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
+    },
+    mainEntityOfPage: `https://${SITE_CONFIG.domain}/about/story`,
+  };
+
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12 text-slate-800">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storySchema) }}
+      />
+
       {/* Header */}
       <header className="space-y-4 border-b border-slate-200 pb-8 text-center sm:text-left">
         <Link
@@ -33,6 +62,17 @@ export default function FounderStoryPage() {
         <p className="text-lg sm:text-xl font-bold text-teal-800 leading-snug">
           We Don&apos;t Want Families to Discover Diabetes Too Late
         </p>
+
+        {/* Founder Byline */}
+        <div className="flex items-center justify-center sm:justify-start gap-3 pt-3">
+          <div className="w-11 h-11 rounded-full bg-teal-100 border border-teal-300 flex items-center justify-center text-teal-800 font-bold text-sm shadow-sm">
+            BB
+          </div>
+          <div className="text-left">
+            <p className="text-slate-900 font-bold text-sm">Bong Bungalan Jr.</p>
+            <p className="text-teal-700 text-xs font-semibold">Founder &amp; Patient Advocate &bull; 5 min read</p>
+          </div>
+        </div>
       </header>
 
       {/* Section 1: Chris */}
@@ -231,36 +271,32 @@ export default function FounderStoryPage() {
         </p>
       </section>
 
-      {/* Section 7: This Is Personal */}
+      {/* Section 7: From Personal Loss to Collective Action (Streamlined & Focused) */}
       <section className="space-y-5 text-base sm:text-lg leading-relaxed text-slate-700 pt-2">
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          This Is Personal
+          Sharing What We Learned with Every Filipino Home
         </h2>
-        <p>I did not start this mission because I wanted to build another website about diabetes.</p>
-        <p className="text-slate-900 font-extrabold text-xl">
-          I started because <span className="text-teal-700">diabetes became personal</span>.
+        <p>
+          Simply hoping someone will remain &ldquo;okay&rdquo; is not a medical strategy.
         </p>
-        <p>I saw what happened to Chris.</p>
-        <p>I saw what his death did to his mother and his family.</p>
-        <p>I had already seen diabetes inside my own home.</p>
-        <p className="font-bold text-slate-900">
-          And I realized that simply hoping someone will remain &ldquo;okay&rdquo; is not a strategy.
+        <p>
+          When you watch someone close to you deteriorate from something that began silently decades earlier, you realize that knowledge cannot remain locked away in medical textbooks or private grief.
         </p>
-        <p>That experience pushed me to learn.</p>
-        <p>And the more I learned, the more I felt that this knowledge should not remain with me.</p>
-        <p className="font-semibold text-slate-900">It should be shared.</p>
+        <p className="font-semibold text-slate-900">It has to be shared openly, freely, and relentlessly.</p>
         <div className="bg-slate-50 border-l-4 border-teal-500 p-5 rounded-r-xl space-y-2">
           <p>
-            Because somewhere out there is another Filipino family whose parent, spouse, brother, sister, or child may be quietly developing metabolic problems without realizing what is happening.
+            Somewhere out there right now is another Filipino family whose parent, breadwinner, spouse, or child may be quietly developing metabolic dysfunction without knowing it:
           </p>
           <ul className="list-disc list-inside space-y-1 text-slate-700 text-sm sm:text-base pt-1">
-            <li>Maybe they still feel perfectly fine.</li>
-            <li>Maybe their blood sugar is only slightly elevated.</li>
-            <li>Maybe their doctor has told them to &ldquo;watch it.&rdquo;</li>
-            <li>Maybe they have no symptoms at all.</li>
+            <li>Maybe they still feel energetic and strong.</li>
+            <li>Maybe their fasting blood sugar was only slightly borderline on their last checkup.</li>
+            <li>Maybe their doctor casually told them to &ldquo;just watch what they eat.&rdquo;</li>
+            <li>Maybe they have zero obvious symptoms today.</li>
           </ul>
         </div>
-        <p className="font-bold text-slate-900 text-lg">That is exactly why awareness matters.</p>
+        <p className="font-bold text-slate-900 text-lg">
+          That is why early metabolic literacy is the single highest-return investment a provider can make for their household.
+        </p>
       </section>
 
       {/* Section 8: Act Before Crisis */}
@@ -274,27 +310,27 @@ export default function FounderStoryPage() {
           And we should never replace qualified medical care with internet advice.
         </p>
         <div className="space-y-3 bg-teal-50/70 border border-teal-200 rounded-2xl p-6 sm:p-8">
-          <p className="font-bold text-teal-950 text-lg">But we can do something:</p>
+          <p className="font-bold text-teal-950 text-lg">What we can and will do:</p>
           <ul className="space-y-2 text-slate-800 font-medium">
             <li className="flex items-center gap-2">
               <span className="text-teal-600 font-bold">✓</span>
-              <span>We can help people understand.</span>
+              <span>We can help people understand what is happening under the hood.</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-teal-600 font-bold">✓</span>
-              <span>We can help people ask better questions.</span>
+              <span>We can help people ask smarter, more direct questions to their doctors.</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-teal-600 font-bold">✓</span>
-              <span>We can help families recognize that metabolic health deserves attention long before a crisis occurs.</span>
+              <span>We can help families recognize that metabolic health deserves attention long before an emergency room visit.</span>
             </li>
             <li className="flex items-center gap-2">
               <span className="text-teal-600 font-bold">✓</span>
-              <span>And we can encourage people to work with their healthcare professionals while making practical, sustainable improvements in their daily lives.</span>
+              <span>And we can encourage sustainable, culturally realistic food choices without stripping joy from family celebrations.</span>
             </li>
           </ul>
         </div>
-        <p className="text-lg font-bold text-slate-900">That is the revolution I am talking about.</p>
+        <p className="text-lg font-bold text-slate-900">That is the revolution we are advocating.</p>
         <p>
           Not a revolution against doctors. Not a revolution against medicine. Not a revolution against food.
         </p>
@@ -353,6 +389,83 @@ export default function FounderStoryPage() {
             <h3 className="text-lg sm:text-2xl font-black text-white leading-snug">
               Don&apos;t wait for the disease to become loud before you listen to what your body has been telling you quietly for years.
             </h3>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 10: Where Do We Go From Here? Next Steps Action Pathways */}
+      <section className="bg-gradient-to-br from-teal-50 via-slate-50 to-teal-50/50 border-2 border-teal-600/30 rounded-3xl p-6 sm:p-10 space-y-8 shadow-sm">
+        <div className="space-y-2 text-center sm:text-left">
+          <span className="bg-teal-600 text-white text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full inline-block">
+            Take Action Now
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Where Do We Go From Here?
+          </h2>
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Awareness is meaningless without practical action. We have built 100% free tools and resources to help you protect yourself and your family right now.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Insulin Reset Funnel */}
+          <div className="bg-white p-6 rounded-2xl border border-teal-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+            <div className="space-y-2">
+              <span className="text-3xl">📋</span>
+              <h3 className="font-bold text-slate-900 text-lg leading-snug">
+                Insulin Risk Checklist
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Take our 60-second interactive symptom audit and get the Free 3-Page Filipino Metabolic Cheat Sheet.
+              </p>
+            </div>
+            <Link
+              href="/insulin-reset"
+              className="inline-flex items-center justify-center gap-1.5 w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+            >
+              <span>Take Free Checklist</span>
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+
+          {/* Card 2: Community Forum */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+            <div className="space-y-2">
+              <span className="text-3xl">💬</span>
+              <h3 className="font-bold text-slate-900 text-lg leading-snug">
+                Join the Community
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Ask questions, share lived experiences, and learn together with fellow Filipino patients and families.
+              </p>
+            </div>
+            <Link
+              href="/community"
+              className="inline-flex items-center justify-center gap-1.5 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+            >
+              <span>Visit Discussions</span>
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+
+          {/* Card 3: GlycoSense App */}
+          <div className="bg-white p-6 rounded-2xl border border-teal-200/80 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+            <div className="space-y-2">
+              <span className="text-3xl">📱</span>
+              <h3 className="font-bold text-slate-900 text-lg leading-snug">
+                GlycoSense Companion
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Log daily finger-prick glucose checks and instantly generate doctor-ready PDF reports without subscription lock-ins.
+              </p>
+            </div>
+            <Link
+              href="/glycosense"
+              className="inline-flex items-center justify-center gap-1.5 w-full bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-300 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+            >
+              <span>Explore GlycoSense</span>
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
           </div>
         </div>
       </section>

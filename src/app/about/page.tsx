@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { buildOrganizationSchema } from '@/lib/schema';
 
 export const metadata: Metadata = {
   title: 'About Us & Mission | DiabetesCare PH',
@@ -18,8 +19,16 @@ export const metadata: Metadata = {
  * @returns {JSX.Element} Rendered about page.
  */
 export default function AboutPage() {
+  const orgSchema = buildOrganizationSchema();
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-12 text-slate-800">
+      {/* JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
+
       {/* Header */}
       <header className="space-y-4 text-center sm:text-left border-b border-slate-200 pb-8">
         <span className="bg-teal-100 text-teal-900 text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full border border-teal-200 inline-block">
@@ -50,13 +59,24 @@ export default function AboutPage() {
 
       {/* Impactful Gist of the Founder's Personal Story */}
       <section className="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white p-7 sm:p-9 rounded-3xl shadow-lg space-y-6">
-        <div className="space-y-2">
+        <div className="space-y-3">
           <span className="text-teal-400 text-xs font-black uppercase tracking-wider">
             A Personal Turning Point
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             The Personal Story Behind Our Advocacy
           </h2>
+
+          {/* Founder Byline */}
+          <div className="flex items-center gap-3 pt-1">
+            <div className="w-10 h-10 rounded-full bg-teal-500/20 border border-teal-400 flex items-center justify-center text-teal-300 font-bold text-sm">
+              BB
+            </div>
+            <div>
+              <p className="text-white font-bold text-sm">Bong Bungalan Jr.</p>
+              <p className="text-teal-300 text-xs font-semibold">Founder &amp; Patient Advocate</p>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-4 text-slate-200 text-sm sm:text-base leading-relaxed">
