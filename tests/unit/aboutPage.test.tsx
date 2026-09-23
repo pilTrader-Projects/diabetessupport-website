@@ -44,6 +44,26 @@ describe('AboutPage & Founder Story Flow', () => {
       expect(html).toContain('MedicalOrganization');
       expect(html).toContain('DiabetesCare PH');
     });
+
+    it('renders numerical stats with clickable annotations and legitimate reference citations', () => {
+      const html = ReactDOMServer.renderToString(<AboutPage />);
+
+      // Annotations
+      expect(html).toContain('href="#ref-idf"');
+      expect(html).toContain('href="#ref-undiagnosed"');
+      expect(html).toContain('href="#ref-psa"');
+      expect(html).toContain('href="#ref-fnri"');
+
+      // Reference Section
+      expect(html).toContain('Data Sources &amp; Statistical References');
+      expect(html).toContain('International Diabetes Federation (IDF)');
+      expect(html).toContain('https://idf.org/our-network/regions-and-members/western-pacific/members/philippines/');
+      expect(html).toContain('https://diabetesatlas.org/');
+      expect(html).toContain('Philippine Statistics Authority (PSA)');
+      expect(html).toContain('https://psa.gov.ph/content/causes-deaths-philippines');
+      expect(html).toContain('DOST-FNRI');
+      expect(html).toContain('https://www.fnri.dost.gov.ph/');
+    });
   });
 
   describe('Full Founder Story Page (src/app/about/story/page.tsx)', () => {

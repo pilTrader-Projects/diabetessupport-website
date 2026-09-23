@@ -39,7 +39,31 @@ export default function AboutPage() {
           Protecting Filipino Families from the Silent Threat of Diabetes
         </h1>
         <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-medium">
-          Over 4 million Filipinos are currently living with diabetes, and nearly half remain undiagnosed until irreversible complications arise.
+          Over 4.3 million adult Filipinos are currently living with diabetes
+          <a
+            href="#ref-idf"
+            className="text-indigo-600 hover:text-indigo-800 font-bold ml-1 text-xs align-super hover:underline"
+            title="International Diabetes Federation (IDF) Diabetes Atlas"
+          >
+            [1]
+          </a>
+          , and nearly half remain undiagnosed until irreversible complications arise
+          <a
+            href="#ref-undiagnosed"
+            className="text-indigo-600 hover:text-indigo-800 font-bold ml-1 text-xs align-super hover:underline"
+            title="IDF &amp; DOH Undiagnosed Prevalence Data"
+          >
+            [2]
+          </a>
+          . It consistently ranks among the top 5 leading causes of mortality nationwide
+          <a
+            href="#ref-psa"
+            className="text-indigo-600 hover:text-indigo-800 font-bold ml-1 text-xs align-super hover:underline"
+            title="Philippine Statistics Authority (PSA) Vital Statistics"
+          >
+            [3]
+          </a>
+          .
         </p>
       </header>
 
@@ -54,7 +78,15 @@ export default function AboutPage() {
         <p>
           <strong>DiabetesCare PH</strong> was established to bridge the awareness gap by offering free, evidence-based,
           and practical education tailored to the Philippine context—addressing staple Filipino dietary habits (like white rice,
-          pancit, and merienda) and advocating early detection, accessible tracking, and metabolic literacy before an emergency occurs.
+          pancit, and merienda)
+          <a
+            href="#ref-fnri"
+            className="text-indigo-600 hover:text-indigo-800 font-bold ml-1 text-xs align-super hover:underline"
+            title="DOST-FNRI Expanded National Nutrition Survey"
+          >
+            [4]
+          </a>
+          {' '}and advocating early detection, accessible tracking, and metabolic literacy before an emergency occurs.
         </p>
       </section>
 
@@ -143,6 +175,67 @@ export default function AboutPage() {
         <p className="text-xs text-slate-600 leading-relaxed">
           <strong>Medical Notice:</strong> Information on this website is for educational purposes only and is not intended as medical advice or personalized treatment plans. Always consult your licensed physician or endocrinologist before modifying medications or dietary routines.
         </p>
+      </section>
+
+      {/* Data Sources & Statistical References */}
+      <section className="space-y-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm text-xs leading-relaxed text-slate-600">
+        <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-base border-b border-slate-200 pb-3">
+          <span className="text-xl">📚</span>
+          <h2 className="text-base sm:text-lg font-bold text-slate-900">Data Sources &amp; Statistical References</h2>
+        </div>
+        <p className="text-slate-500 text-xs">
+          DiabetesCare PH adheres to strict fact-checking and public health data verification. All epidemiological estimates and mortality statistics cited on this platform are derived from official health registries and peer-reviewed international surveys:
+        </p>
+        <ol className="space-y-3.5 list-decimal list-inside text-slate-600 pt-1">
+          <li id="ref-idf" className="pl-1">
+            <strong className="text-slate-900">4.3 Million Living with Diabetes in the Philippines:</strong>{' '}
+            International Diabetes Federation (IDF). <em>IDF Diabetes Atlas (10th Edition, 2021)</em> &amp; Western Pacific Country Reports. Estimates 4,303,800 adult diabetes cases in the Philippines (7.5% comparative prevalence in adults aged 20–79).{' '}
+            <a
+              href="https://idf.org/our-network/regions-and-members/western-pacific/members/philippines/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 font-bold underline decoration-indigo-300 hover:decoration-indigo-500 transition-colors ml-1"
+            >
+              View Official IDF Philippines Data ↗
+            </a>
+          </li>
+          <li id="ref-undiagnosed" className="pl-1">
+            <strong className="text-slate-900">Undiagnosed Diabetes Gap (~45% to 48%):</strong>{' '}
+            IDF Diabetes Atlas &amp; Philippine Department of Health (DOH). Highlights that an estimated 2.8 million Filipinos live with undetected hyperinsulinemia and diabetes, discovering their condition only after microvascular or macrovascular damage has occurred.{' '}
+            <a
+              href="https://diabetesatlas.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 font-bold underline decoration-indigo-300 hover:decoration-indigo-500 transition-colors ml-1"
+            >
+              View IDF Global Atlas ↗
+            </a>
+          </li>
+          <li id="ref-psa" className="pl-1">
+            <strong className="text-slate-900">Top 5 Leading Causes of Mortality:</strong>{' '}
+            Philippine Statistics Authority (PSA). <em>Registered Deaths in the Philippines: Causes of Deaths Releases</em>. Diabetes mellitus consistently ranks as the 4th to 5th leading cause of death nationwide, claiming tens of thousands of lives annually.{' '}
+            <a
+              href="https://psa.gov.ph/content/causes-deaths-philippines"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 font-bold underline decoration-indigo-300 hover:decoration-indigo-500 transition-colors ml-1"
+            >
+              View PSA Causes of Death Report ↗
+            </a>
+          </li>
+          <li id="ref-fnri" className="pl-1">
+            <strong className="text-slate-900">National Dietary Patterns &amp; Elevated Fasting Blood Sugar:</strong>{' '}
+            Department of Science and Technology – Food and Nutrition Research Institute (DOST-FNRI). <em>Expanded National Nutrition Survey (ENNS)</em>. Documents increasing prevalence of high fasting blood glucose and metabolic syndrome across Philippine socio-demographic clusters.{' '}
+            <a
+              href="https://www.fnri.dost.gov.ph/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 hover:text-indigo-800 font-bold underline decoration-indigo-300 hover:decoration-indigo-500 transition-colors ml-1"
+            >
+              View DOST-FNRI Research ↗
+            </a>
+          </li>
+        </ol>
       </section>
 
       {/* Footer Navigation */}

@@ -483,8 +483,16 @@ export default function FounderStoryPage() {
         </div>
       </section>
 
+      {/* Data Sources Cross-Link */}
+      <div className="text-center text-xs text-slate-500 pt-2">
+        Looking for official public health statistics and research citations?{' '}
+        <Link href="/about#ref-idf" className="text-indigo-600 hover:text-indigo-800 font-semibold underline">
+          View Data Sources &amp; Statistical References &rarr;
+        </Link>
+      </div>
+
       {/* Footer Navigation */}
-      <footer className="pt-6 border-t border-slate-200 flex justify-between items-center text-xs sm:text-sm font-bold text-indigo-700">
+      <footer className="pt-4 border-t border-slate-200 flex justify-between items-center text-xs sm:text-sm font-bold text-indigo-700">
         <Link href="/about" className="hover:underline flex items-center gap-1">
           <span>&larr;</span> Back to About Us
         </Link>
