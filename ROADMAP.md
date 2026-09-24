@@ -52,6 +52,12 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 12: Founder Story, Multi-Agent Company OS & Lead Funnel Alignment
 - [x] **[PR #30](https://github.com/pilTrader-Projects/diabetessupport-website/pull/30)** `[COMPLETED]`: Founder Story (/about & /about/story), Multi-Agent Company Operating System & AI COO orchestration, website theme gradient & glassmorphism harmonization, 8-page 'The Hidden Metabolic Clock' funnel copy alignment, Amazon affiliate monetization, and primary statistical citations (IDF, PSA, DOST-FNRI).
 
+### Milestone 13: Page Transition Standardization & UI Navigation Polish
+- [x] **[PR #31](https://github.com/pilTrader-Projects/diabetessupport-website/pull/31)** `[COMPLETED]`: Standardize page transitions across App Router with root template component (`src/app/template.tsx`), hardware-accelerated slide-up keyframes (`pageSlideUpFade`), reduced-motion accessibility support, and scoped anchor smooth scrolling.
+
+### Milestone 14: GlycoSense Cross-Project Collaboration Protocol & Alignment Contract
+- [ ] **[PR #32](https://github.com/pilTrader-Projects/diabetessupport-website/pull/32)** `[IN PROGRESS]`: Cross-Project Synchronization Protocols, Master Alignment Contract v1.2.0, Agent Rules (`glycosense_alignment.md`), and Email Migration Campaign Bridge.
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow
