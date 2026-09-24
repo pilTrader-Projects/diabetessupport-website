@@ -115,7 +115,10 @@ describe('Newsletter & Lead Subscription API (/api/v1/subscribe)', () => {
 
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
-    expect(body.message).toContain('Free account access reserved');
+    expect(body.message).toContain('Free account access');
+    expect(body.appUrl).toBeDefined();
+    expect(body.appName).toBeDefined();
+    expect(body.ctaText).toBeDefined();
     expect(syncSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         email: 'glycosense.user@example.com',

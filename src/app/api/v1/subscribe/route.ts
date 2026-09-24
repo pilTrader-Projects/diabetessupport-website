@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { BrevoService } from '@/services/brevoService';
 import { CampaignService } from '@/services/campaignService';
 import { AssetStorageService } from '@/services/assetStorageService';
+import { AppConfigService } from '@/services/appConfigService';
 import { CAMPAIGN_CODES, BREVO_LISTS } from '@/config/leadConfig';
 
 /**
@@ -96,16 +97,25 @@ export async function POST(req: Request): Promise<NextResponse> {
     console.error('Brevo newsletter sync error:', brevoErr);
   }
 
-  const successMessage =
+  const isCompanionApp =
     campaign.referenceCode === CAMPAIGN_CODES.COMPANION_APP_USERS ||
-    campaign.brevoList === BREVO_LISTS.COMPANION_APP_USERS
-      ? 'Free account access reserved! Check your email for login instructions.'
-      : 'Thank you for subscribing! Check your inbox for your free guide.';
+    campaign.brevoList === BREVO_LISTS.COMPANION_APP_USERS;
+
+  const appConfig = await AppConfigService.getAppConfig();
+
+  const successMessage = isCompanionApp
+    ? appConfig.successMessage || 'Free account access ready! Click below to launch your account.'
+    : 'Thank you for subscribing! Check your inbox for your free guide.';
 
   return NextResponse.json({
     success: true,
     message: successMessage,
     downloadUrl,
+    appUrl: isCompanionApp ? appConfig.appUrl : undefined,
+    appName: isCompanionApp ? appConfig.appName : undefined,
+    ctaText: isCompanionApp ? appConfig.ctaText : undefined,
+    successTitle: isCompanionApp ? appConfig.successTitle : undefined,
+    openInNewTab: isCompanionApp ? appConfig.openInNewTab : undefined,
     data: syncResult,
   });
 }

@@ -26,12 +26,43 @@ export default function LeadMagnetCard({
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [appName, setAppName] = useState('GlycoSense');
+  const [appUrl, setAppUrl] = useState('https://glycosense.vercel.app');
+  const [ctaText, setCtaText] = useState('Launch GlycoSense App Now');
+  const [openInNewTab, setOpenInNewTab] = useState(true);
+  const [successData, setSuccessData] = useState<{
+    successTitle: string;
+    successMsg: string;
+    appUrl: string;
+    appName: string;
+    ctaText: string;
+    openInNewTab: boolean;
+  } | null>(null);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch('/api/v1/app-config')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((payload) => {
+        if (isMounted && payload?.success && payload?.data) {
+          if (payload.data.appName) setAppName(payload.data.appName);
+          if (payload.data.appUrl) setAppUrl(payload.data.appUrl);
+          if (payload.data.ctaText) setCtaText(payload.data.ctaText);
+          if (payload.data.openInNewTab !== undefined) setOpenInNewTab(Boolean(payload.data.openInNewTab));
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully to default constants if fetch fails
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
-    setSuccessMsg(null);
+    setSuccessData(null);
 
     const cleanEmail = email.trim();
     if (!cleanEmail || !cleanEmail.includes('@')) {
@@ -57,7 +88,24 @@ export default function LeadMagnetCard({
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || 'Failed to claim account access. Please try again.');
       } else {
-        setSuccessMsg(data.message || 'Free account access reserved! Check your email for login instructions.');
+        const resolvedUrl = data.appUrl || appUrl || 'https://glycosense.vercel.app';
+        const resolvedName = data.appName || appName || 'GlycoSense';
+        const resolvedCta = data.ctaText || ctaText || `Launch ${resolvedName} App Now`;
+        const resolvedTitle = data.successTitle || 'Free Account Access Ready!';
+        const resolvedMsg =
+          data.message ||
+          'Your free account access is ready! Click below to launch your companion app immediately.';
+        const resolvedTab = data.openInNewTab !== undefined ? Boolean(data.openInNewTab) : openInNewTab;
+
+        setSuccessData({
+          successTitle: resolvedTitle,
+          successMsg: resolvedMsg,
+          appUrl: resolvedUrl,
+          appName: resolvedName,
+          ctaText: resolvedCta,
+          openInNewTab: resolvedTab,
+        });
+
         setEmail('');
         setFirstName('');
       }
@@ -119,15 +167,35 @@ export default function LeadMagnetCard({
             </span>
             <h4 className="text-2xl font-extrabold text-white">Get Instant Access to Your Free Account</h4>
             <p className="text-xs text-purple-100 max-w-md mx-auto leading-relaxed">
-              Enter your details below to get FREE ACCESS to the GlycoSense App and secure your health for the people who count on you.
+              Enter your details below to get FREE ACCESS to the {appName} App and secure your health for the people who count on you.
             </p>
           </div>
 
-          {successMsg ? (
-            <div className="p-5 bg-white/20 backdrop-blur-md rounded-2xl text-center space-y-2 border border-white/30 animate-fadeIn">
-              <span className="text-3xl">🎉</span>
-              <h5 className="text-lg font-black text-white">Free Account Access Reserved!</h5>
-              <p className="text-xs text-purple-100 leading-relaxed">{successMsg}</p>
+          {successData ? (
+            <div className="p-6 bg-white/20 backdrop-blur-md rounded-2xl text-center space-y-4 border border-white/30 animate-fadeIn">
+              <span className="text-4xl block animate-bounce">🎉</span>
+              <div className="space-y-1">
+                <h5 className="text-xl font-black text-white">{successData.successTitle}</h5>
+                <p className="text-xs sm:text-sm text-purple-100 leading-relaxed">{successData.successMsg}</p>
+              </div>
+
+              {/* Immediate App Link CTA - No waiting for email */}
+              <div className="pt-2">
+                <a
+                  id="lead-magnet-app-cta"
+                  href={successData.appUrl}
+                  target={successData.openInNewTab ? '_blank' : '_self'}
+                  rel="noopener noreferrer"
+                  className="w-full py-4 px-6 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-200 hover:to-amber-400 text-slate-950 font-black text-base sm:text-lg rounded-2xl shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-amber-200 cursor-pointer"
+                >
+                  <span>{successData.ctaText}</span>
+                  <span className="text-lg">➔</span>
+                </a>
+              </div>
+
+              <p className="text-[11px] text-purple-200/90 leading-tight">
+                ⚡ Instant access active — click above to open your account now. A confirmation has also been recorded for your email.
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3.5 text-left">
@@ -179,7 +247,7 @@ export default function LeadMagnetCard({
                   <span>Claiming Free Access...</span>
                 ) : (
                   <>
-                    <span>Claim Your Free GlycoSense Account</span>
+                    <span>Claim Your Free {appName} Account</span>
                     <span className="text-lg">➔</span>
                   </>
                 )}
