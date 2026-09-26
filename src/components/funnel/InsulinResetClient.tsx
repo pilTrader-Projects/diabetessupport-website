@@ -181,7 +181,7 @@ export default function InsulinResetClient(): React.JSX.Element {
       {/* Back Link Footer */}
       <div className="text-center pt-4 border-t border-slate-200">
         <Link href="/blog" className="text-sm font-bold text-indigo-700 hover:text-indigo-900">
-          &larr; Browse All Diabetes Educational Articles
+          &larr; Browse All Learning Materials
         </Link>
       </div>
     </div>

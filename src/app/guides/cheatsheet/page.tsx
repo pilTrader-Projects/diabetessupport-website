@@ -90,7 +90,7 @@ export default function CheatsheetGuidePage() {
       {/* Navigation Footer */}
       <div className="text-center pt-8 border-t border-slate-200">
         <Link href="/blog" className="text-sm font-bold text-teal-700 hover:text-teal-900">
-          &larr; Browse All Diabetes Educational Articles
+          &larr; Browse All Learning Materials
         </Link>
       </div>
     </div>

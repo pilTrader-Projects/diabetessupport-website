@@ -359,7 +359,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div>
               <h2 className="text-2xl font-extrabold text-slate-900">
-                Latest Peer Guides &amp; Educational Articles
+                Latest Learning Materials &amp; Evidence Guides
               </h2>
               <p className="text-sm text-slate-600">
                 Practical, evidence-based guides written for Filipino households.
