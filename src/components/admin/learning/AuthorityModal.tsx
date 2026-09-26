@@ -184,17 +184,17 @@ export default function AuthorityModal({
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Official YouTube Channel ID
+                YouTube Channel (@handle, Channel URL, or Channel ID)
               </label>
               <input
                 type="text"
                 value={formData.youtubeChannelId}
                 onChange={(e) => setFormData({ ...formData, youtubeChannelId: e.target.value })}
-                placeholder="e.g. UCXvLhAqyQvFz9D64QZp7wBg (from channel URL: /channel/UC...)"
-                className="w-full bg-slate-900 border border-slate-750 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500"
+                placeholder="e.g. @benbikman, https://www.youtube.com/@benbikman, or UCblbxPFG0XAsQA2LwzT6xDQ"
+                className="w-full bg-slate-900 border border-slate-750 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 text-xs font-mono"
               />
               <p className="text-[11px] text-slate-500 mt-1">
-                System automatically queries official public RSS to import newest video uploads with zero API quotas.
+                Accepts full URLs, handles (@name), or UC IDs. The system automatically resolves and imports video uploads.
               </p>
             </div>
 

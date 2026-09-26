@@ -109,15 +109,28 @@ export default function AuthoritiesManagerClient({
       if (!res.ok) throw new Error(data.error || 'Sync failed');
 
       const added = data.data?.addedCount ?? 0;
-      showNotification(
-        'success',
-        `Sync completed for ${name}: ${added} new video(s) ingested into library.`
-      );
+      const errors = data.data?.errors || [];
 
-      // Update local lastSyncAt
-      setAuthorities((prev) =>
-        prev.map((item) => (item._id === id ? { ...item, lastSyncAt: new Date() } : item))
-      );
+      if (errors.length > 0 && added === 0) {
+        showNotification('error', `Sync issue for ${name}: ${errors.join('; ')}`);
+      } else if (errors.length > 0) {
+        showNotification(
+          'success',
+          `Sync completed for ${name}: ${added} new video(s) added. Note: ${errors[0]}`
+        );
+      } else {
+        showNotification(
+          'success',
+          `Sync completed for ${name}: ${added} new video(s) ingested into library.`
+        );
+      }
+
+      // Update local lastSyncAt and re-fetch authorities list to show resolved UC ID
+      const ref = await fetch('/api/v1/admin/learning/authorities');
+      const refData = await ref.json();
+      if (refData.success) {
+        setAuthorities(refData.data);
+      }
     } catch (err: any) {
       showNotification('error', err.message || 'Sync failed');
     } finally {

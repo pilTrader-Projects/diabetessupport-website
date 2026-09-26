@@ -60,6 +60,22 @@ describe('LearningService (TDD Unit Tests)', () => {
         expect.objectContaining({ slug: 'dr-david-unwin', name: 'Dr. David Unwin' })
       );
     });
+
+    it('should resolve raw UC channel ID directly', async () => {
+      const channelId = await LearningService.resolveYouTubeChannelId('UCblbxPFG0XAsQA2LwzT6xDQ');
+      expect(channelId).toBe('UCblbxPFG0XAsQA2LwzT6xDQ');
+    });
+
+    it('should resolve handle or handle URL to channel ID via fetch', async () => {
+      const mockHtml = `<html><head><meta property="channel_id" content="UCblbxPFG0XAsQA2LwzT6xDQ"><link rel="canonical" href="https://www.youtube.com/channel/UCblbxPFG0XAsQA2LwzT6xDQ"></head></html>`;
+      const mockFetch = jest.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(mockHtml),
+      });
+
+      const channelId = await LearningService.resolveYouTubeChannelId('https://www.youtube.com/@benbikman', mockFetch as any);
+      expect(channelId).toBe('UCblbxPFG0XAsQA2LwzT6xDQ');
+    });
   });
 
   describe('YouTube RSS XML Parser', () => {

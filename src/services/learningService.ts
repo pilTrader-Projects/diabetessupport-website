@@ -21,6 +21,61 @@ export class LearningService {
       .replace(/^-+|-+$/g, '');
   }
 
+  /**
+   * Resolves a raw 24-char UC channel ID, @handle, or channel URL to a canonical UC channel ID.
+   */
+  public static async resolveYouTubeChannelId(
+    input: string,
+    customFetch?: (url: string, init?: any) => Promise<any>
+  ): Promise<string | null> {
+    if (!input) return null;
+    const trimmed = input.trim();
+
+    // Case 1: Already a Channel ID starting with UC
+    if (/^UC[\w-]{6,30}$/.test(trimmed)) {
+      return trimmed;
+    }
+
+    // Case 2: URL containing /channel/(UC...)
+    const channelUrlMatch = trimmed.match(/\/channel\/(UC[\w-]{6,30})/);
+    if (channelUrlMatch) {
+      return channelUrlMatch[1];
+    }
+
+    // Case 3: Handle or custom URL (e.g. @benbikman or https://www.youtube.com/@benbikman)
+    let targetUrl = trimmed;
+    if (!targetUrl.startsWith('http')) {
+      targetUrl = targetUrl.startsWith('@')
+        ? `https://www.youtube.com/${targetUrl}`
+        : `https://www.youtube.com/@${targetUrl}`;
+    }
+
+    try {
+      const fetchFn = customFetch || fetch;
+      const res = await fetchFn(targetUrl, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      });
+      if (!res.ok) return null;
+      const html = typeof res.text === 'function' ? await res.text() : String(res);
+
+      const match =
+        html.match(/channel_id=(UC[\w-]{22})/) ||
+        html.match(/"channelId":"(UC[\w-]{22})"/) ||
+        html.match(/\/channel\/(UC[\w-]{22})/);
+
+      if (match) {
+        return match[1];
+      }
+    } catch (err: any) {
+      console.error('Error resolving YouTube channel ID:', err.message);
+    }
+
+    return null;
+  }
+
   /* =========================================================================
    * AUTHORITY CRUD OPERATIONS
    * ========================================================================= */
@@ -51,9 +106,18 @@ export class LearningService {
   public static async createAuthority(data: Partial<IAuthority>): Promise<IAuthority> {
     await dbConnect();
     const slug = data.slug || this.generateSlug(data.name || 'authority');
+    let resolvedChannelId = data.youtubeChannelId?.trim();
+    if (resolvedChannelId) {
+      const canonicalId = await this.resolveYouTubeChannelId(resolvedChannelId);
+      if (canonicalId) {
+        resolvedChannelId = canonicalId;
+      }
+    }
+
     const created = await AuthorityModel.create({
       ...data,
       slug,
+      youtubeChannelId: resolvedChannelId,
       isActive: data.isActive ?? true,
       autoPublish: data.autoPublish ?? true,
       specialties: data.specialties || [],
@@ -66,9 +130,17 @@ export class LearningService {
 
   public static async updateAuthority(id: string, data: Partial<IAuthority>): Promise<IAuthority | null> {
     await dbConnect();
+    const updatePayload = { ...data };
+    if (updatePayload.youtubeChannelId) {
+      const canonicalId = await this.resolveYouTubeChannelId(updatePayload.youtubeChannelId);
+      if (canonicalId) {
+        updatePayload.youtubeChannelId = canonicalId;
+      }
+    }
+
     const updated = await AuthorityModel.findByIdAndUpdate(
       id,
-      { $set: data },
+      { $set: updatePayload },
       { new: true, runValidators: true }
     ).lean();
     if (!updated) return null;
@@ -262,10 +334,29 @@ export class LearningService {
     await dbConnect();
     const authority = await AuthorityModel.findById(authorityId);
     if (!authority || !authority.youtubeChannelId) {
-      return { addedCount: 0, errors: ['Authority has no registered YouTube Channel ID'] };
+      return { addedCount: 0, errors: ['Authority has no registered YouTube Channel ID or handle'] };
     }
 
-    const channelId = authority.youtubeChannelId.trim();
+    const rawInput = authority.youtubeChannelId.trim();
+    let channelId = rawInput;
+
+    // If input is not a standard UC ID, auto-resolve handle/URL
+    if (!/^UC[\w-]{6,30}$/.test(channelId)) {
+      const resolved = await this.resolveYouTubeChannelId(channelId);
+      if (resolved) {
+        channelId = resolved;
+        // Persist resolved UC ID back to database for fast future syncs
+        await AuthorityModel.findByIdAndUpdate(authorityId, { youtubeChannelId: resolved });
+      } else {
+        return {
+          addedCount: 0,
+          errors: [
+            `Could not resolve YouTube Channel ID from "${rawInput}". Please verify the @handle or channel URL.`,
+          ],
+        };
+      }
+    }
+
     const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
     let xmlText = '';
