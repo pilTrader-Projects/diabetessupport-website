@@ -154,7 +154,7 @@ export class LearningService {
     const updated = await AuthorityModel.findByIdAndUpdate(
       id,
       { $set: updatePayload },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).lean();
     if (!updated) return null;
     return {
@@ -256,7 +256,7 @@ export class LearningService {
     const updated = await LearningResourceModel.findByIdAndUpdate(
       id,
       { $set: data },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     ).lean();
     if (!updated) return null;
     return {
