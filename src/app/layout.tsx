@@ -118,7 +118,7 @@ export default function RootLayout({
             {/* Quick Links Navigation */}
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/blog" className="hover:text-white transition-colors">Educational Articles</Link>
+              <Link href="/blog" className="hover:text-white transition-colors">Learning Materials</Link>
               <Link href="/guides/cheatsheet" className="hover:text-white transition-colors">7-Day Plan PDF</Link>
               <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>

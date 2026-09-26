@@ -48,7 +48,7 @@ export default function Header() {
             GlycoSense App
           </Link>
           <Link href="/blog" className="text-purple-100 hover:text-white transition-colors">
-            Educational Articles
+            Learning Materials
           </Link>
           <Link
             href="/#resources"
@@ -107,7 +107,7 @@ export default function Header() {
             onClick={closeMenu}
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
           >
-            📖 Educational Articles
+            🎓 Learning Materials
           </Link>
           <div className="pt-2">
             <Link

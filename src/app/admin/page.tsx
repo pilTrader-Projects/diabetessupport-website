@@ -4,19 +4,14 @@ import { CampaignConfigModel } from '@/models/CampaignConfig';
 import { LeadModel } from '@/models/Lead';
 import { AssetStorageService } from '@/services/assetStorageService';
 import { AppConfigService } from '@/services/appConfigService';
+import { AuthorityModel } from '@/models/Authority';
+import { LearningResourceModel } from '@/models/LearningResource';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export const revalidate = 0; // Dynamic admin dashboard
 
-/**
- * Owner Admin Dashboard Overview Hub (/admin).
- *
- * @usecase Displays platform analytics overview, published content counts, and quick navigation links.
- * @dependencies isAdminAuthenticated, PostModel, CampaignConfigModel, LeadModel, AssetStorageService, AppConfigService.
- * @returns {Promise<JSX.Element>} Rendered admin dashboard.
- */
 export default async function AdminDashboardPage() {
   const isAuth = await isAdminAuthenticated();
   if (!isAuth) {
@@ -26,6 +21,8 @@ export default async function AdminDashboardPage() {
   await dbConnect();
   const totalPosts = await PostModel.countDocuments();
   const publishedPosts = await PostModel.countDocuments({ status: 'published' });
+  const totalAuthorities = await AuthorityModel.countDocuments();
+  const totalResources = await LearningResourceModel.countDocuments();
   const totalCampaigns = await CampaignConfigModel.countDocuments();
   const activeCampaigns = await CampaignConfigModel.countDocuments({ isActive: true });
   const totalLeads = await LeadModel.countDocuments();
@@ -60,26 +57,32 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Analytics Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Blog Posts</div>
           <div className="text-3xl font-extrabold text-white">{totalPosts}</div>
           <div className="text-xs text-teal-400 font-semibold">{publishedPosts} Published Articles</div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Learning Materials</div>
+          <div className="text-3xl font-extrabold text-white">{totalResources}</div>
+          <div className="text-xs text-teal-400 font-semibold">{totalAuthorities} Monitored Doctors</div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Brevo Campaigns</div>
           <div className="text-3xl font-extrabold text-white">{totalCampaigns}</div>
           <div className="text-xs text-amber-400 font-semibold">{activeCampaigns} Active Funnels</div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Captured Leads</div>
           <div className="text-3xl font-extrabold text-teal-400">{totalLeads}</div>
           <div className="text-xs text-slate-400 font-semibold">Synced to Brevo</div>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-2">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Companion App</div>
           <div className="text-2xl font-extrabold text-teal-400 truncate" title={appConfig.appName}>
             {appConfig.appName}
@@ -91,7 +94,32 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Management Navigation Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Learning Materials & Authorities Card */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all shadow-xl">
+          <div className="space-y-3">
+            <span className="text-3xl">🎓</span>
+            <h2 className="text-xl font-bold text-white">Learning Materials &amp; Doctors</h2>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Define monitored authorities &amp; doctors (Bikman, Fung, Unwin), configure automated YouTube/PubMed feeds, and curate cataloged resources with link-rot checks.
+            </p>
+          </div>
+
+          <div className="flex gap-2">
+            <Link
+              href="/admin/learning/authorities"
+              className="flex-1 bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
+            >
+              Doctors &amp; Feeds &rarr;
+            </Link>
+            <Link
+              href="/admin/learning/resources"
+              className="flex-1 bg-slate-800 hover:bg-slate-750 text-slate-200 font-bold text-xs py-3.5 rounded-xl border border-slate-700 transition-colors text-center inline-block"
+            >
+              Catalog &rarr;
+            </Link>
+          </div>
+        </div>
         {/* Companion App Integration Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all shadow-xl">
           <div className="space-y-3">
