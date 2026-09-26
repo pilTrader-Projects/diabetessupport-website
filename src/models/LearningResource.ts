@@ -125,6 +125,14 @@ const LearningResourceSchema = new Schema<ILearningResource>(
   }
 );
 
+// Hot-reload guard: if an older model was cached in-memory without the 'rejected' status enum, invalidate it
+if (
+  mongoose.models.LearningResource &&
+  !(mongoose.models.LearningResource.schema.path('status') as any)?.enumValues?.includes('rejected')
+) {
+  delete (mongoose.models as any).LearningResource;
+}
+
 export const LearningResourceModel: Model<ILearningResource> =
   mongoose.models.LearningResource ||
   mongoose.model<ILearningResource>('LearningResource', LearningResourceSchema);
