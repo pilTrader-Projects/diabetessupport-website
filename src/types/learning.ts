@@ -6,8 +6,19 @@
 
 export type ResourceType = 'video' | 'podcast' | 'study' | 'article';
 export type ResourcePlatform = 'youtube' | 'spotify' | 'pubmed' | 'web' | 'apple-podcasts';
-export type ResourceStatus = 'published' | 'pending_review' | 'archived' | 'broken_link';
+export type ResourceStatus = 'published' | 'pending_review' | 'rejected' | 'archived' | 'broken_link';
 export type ValidationStatus = 'healthy' | 'broken' | 'redirected' | 'unverified';
+
+/**
+ * Result of AI advocacy relevance qualification.
+ */
+export interface IRelevanceQualification {
+  isRelevant: boolean;
+  relevanceScore: number;        // 0-100 relevance score
+  relevanceReason: string;       // Clinical/advocacy explanation of qualification decision
+  matchedTopics: string[];       // Curated topics mapped to our advocacy taxonomy
+  suggestedTakeaways: string[];  // 3-point clinical takeaway bullets for metabolic health
+}
 
 /**
  * Domain interface for Authorities & Personalities monitored by the ingestion engine.
@@ -68,6 +79,8 @@ export interface ILearningResource {
   
   // Moderation & Health Status
   status: ResourceStatus;
+  relevanceScore?: number;       // 0-100 score from AI qualification engine
+  relevanceReason?: string;      // Rationale explaining qualification or disqualification
   viewCount?: number;
   saveCount?: number;
   lastValidatedAt?: Date;

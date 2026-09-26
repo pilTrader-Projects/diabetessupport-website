@@ -85,9 +85,18 @@ const LearningResourceSchema = new Schema<ILearningResource>(
     },
     status: {
       type: String,
-      enum: ['published', 'pending_review', 'archived', 'broken_link'],
+      enum: ['published', 'pending_review', 'rejected', 'archived', 'broken_link'],
       default: 'published',
       index: true,
+    },
+    relevanceScore: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
+    relevanceReason: {
+      type: String,
+      trim: true,
     },
     viewCount: {
       type: Number,

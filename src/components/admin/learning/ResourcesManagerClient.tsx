@@ -133,6 +133,25 @@ export default function ResourcesManagerClient({
     }
   };
 
+  const handlePublishResource = async (id: string, title: string) => {
+    try {
+      const res = await fetch(`/api/v1/admin/learning/resources/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'published' }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to publish resource');
+
+      setResources((prev) =>
+        prev.map((item) => (item._id === id ? { ...item, status: 'published' } : item))
+      );
+      showNotification('success', `Published "${title}" to the live library.`);
+    } catch (err: any) {
+      showNotification('error', err.message || 'Publish failed');
+    }
+  };
+
   // Filter local resources based on type, status, and search
   const filtered = resources.filter((item) => {
     const matchesType = filterType === 'all' || item.type === filterType;
@@ -217,8 +236,9 @@ export default function ResourcesManagerClient({
             <option value="all">All Statuses</option>
             <option value="published">🟢 Published</option>
             <option value="pending_review">🟡 Pending Review</option>
+            <option value="rejected">⚪ Rejected (Non-Relevant)</option>
             <option value="broken_link">🔴 Broken Link</option>
-            <option value="archived">⚪ Archived</option>
+            <option value="archived">📁 Archived</option>
           </select>
         </div>
       </div>
@@ -286,20 +306,37 @@ export default function ResourcesManagerClient({
                   )}
                 </div>
 
-                {/* Author Info */}
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-teal-400">{item.authorityName}</span>
-                  <span
-                    className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                      item.status === 'published'
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                        : item.status === 'pending_review'
-                        ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                        : 'bg-rose-950 text-rose-300 border border-rose-800'
-                    }`}
-                  >
-                    {item.status.replace('_', ' ')}
-                  </span>
+                {/* Author Info & Status Badges */}
+                <div className="flex items-center justify-between text-xs gap-2">
+                  <span className="font-bold text-teal-400 truncate">{item.authorityName}</span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {item.relevanceScore !== undefined && item.relevanceScore !== null && (
+                      <span
+                        title={item.relevanceReason || 'AI Advocacy Evaluation'}
+                        className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border cursor-help ${
+                          item.relevanceScore >= 50
+                            ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
+                            : 'bg-slate-800 text-slate-400 border-slate-700'
+                        }`}
+                      >
+                        {item.relevanceScore >= 50 ? '🎯 ' : '⚠️ '}
+                        {item.relevanceScore}%
+                      </span>
+                    )}
+                    <span
+                      className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
+                        item.status === 'published'
+                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                          : item.status === 'pending_review'
+                          ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                          : item.status === 'rejected'
+                          ? 'bg-slate-800 text-slate-300 border border-slate-700'
+                          : 'bg-rose-950 text-rose-300 border border-rose-800'
+                      }`}
+                    >
+                      {item.status.replace('_', ' ')}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Title */}
@@ -319,6 +356,14 @@ export default function ResourcesManagerClient({
                       • {item.keyTakeaways[0]}
                     </p>
                   </div>
+                )}
+
+                {/* AI Rationale Preview */}
+                {item.relevanceReason && (
+                  <p className="text-[10px] text-slate-400 italic bg-slate-950/40 px-2.5 py-1.5 rounded-lg border border-slate-800/60 line-clamp-2">
+                    <span className="text-teal-400 font-semibold not-italic">AI Rationale:</span>{' '}
+                    {item.relevanceReason}
+                  </p>
                 )}
 
                 {/* Topics */}
@@ -346,6 +391,16 @@ export default function ResourcesManagerClient({
                 </a>
 
                 <div className="flex items-center gap-1.5">
+                  {item.status !== 'published' && (
+                    <button
+                      type="button"
+                      onClick={() => handlePublishResource(item._id!, item.title)}
+                      className="px-2.5 py-1.5 bg-emerald-700/80 hover:bg-emerald-600 text-emerald-100 text-xs font-bold rounded-lg transition-colors border border-emerald-600/50"
+                      title="Approve and publish to public Learning Materials hub"
+                    >
+                      ✓ Publish
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => handleOpenEdit(item)}

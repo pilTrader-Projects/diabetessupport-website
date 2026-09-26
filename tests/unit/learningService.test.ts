@@ -192,6 +192,77 @@ describe('LearningService (TDD Unit Tests)', () => {
         })
       );
     });
+
+    it('should classify off-topic video as rejected and increment skippedCount', async () => {
+      const mockAuthority = {
+        _id: 'auth_fitness',
+        name: 'Dr. John Doe',
+        title: 'Researcher',
+        youtubeChannelId: 'UCfitness',
+        autoPublish: true,
+        specialties: [],
+      };
+
+      (AuthorityModel.findById as jest.Mock).mockResolvedValue(mockAuthority);
+      (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
+      (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_rejected' });
+      (AuthorityModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(true);
+
+      const mockXml = `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+        <entry>
+          <yt:videoId>vid_offtopic</yt:videoId>
+          <title>My 2026 Gaming Setup and Unboxing Tour</title>
+          <published>2026-02-01T00:00:00Z</published>
+          <media:group xmlns:media="http://search.yahoo.com/mrss/">
+            <media:description>Touring my gaming room and unboxing new studio lights.</media:description>
+          </media:group>
+        </entry>
+      </feed>`;
+
+      const mockFetch = jest.fn().mockResolvedValue(mockXml);
+
+      const syncResult = await LearningService.syncAuthorityYouTubeFeed('auth_fitness', mockFetch);
+      expect(syncResult.addedCount).toBe(0);
+      expect(syncResult.skippedCount).toBe(1);
+      expect(LearningResourceModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'rejected',
+          embedId: 'vid_offtopic',
+        })
+      );
+    });
+
+    it('should run cron syndication across all active authorities', async () => {
+      const mockAuthorities = [
+        {
+          _id: 'auth_1',
+          name: 'Dr. Benjamin Bikman',
+          youtubeChannelId: 'UCbikman',
+        },
+      ];
+
+      (AuthorityModel.find as jest.Mock).mockResolvedValue(mockAuthorities);
+      (AuthorityModel.findById as jest.Mock).mockResolvedValue(mockAuthorities[0]);
+      (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
+      (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_cron' });
+      (AuthorityModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(true);
+
+      const mockXml = `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+        <entry>
+          <yt:videoId>vid_cron_1</yt:videoId>
+          <title>Metabolic Syndrome and Insulin Resistance</title>
+          <published>2026-02-01T00:00:00Z</published>
+        </entry>
+      </feed>`;
+
+      const mockFetch = jest.fn().mockResolvedValue(mockXml);
+
+      const cronResult = await LearningService.runCronSyndication(mockFetch);
+      expect(cronResult.processedAuthorities).toBe(1);
+      expect(cronResult.totalAdded).toBe(1);
+      expect(cronResult.totalSkipped).toBe(0);
+      expect(cronResult.details[0].authority).toBe('Dr. Benjamin Bikman');
+    });
   });
 
   describe('Link-Rot Health Check Engine', () => {

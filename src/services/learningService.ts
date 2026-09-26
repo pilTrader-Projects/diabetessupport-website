@@ -2,6 +2,7 @@ import { dbConnect } from '@/lib/dbConnect';
 import { AuthorityModel } from '@/models/Authority';
 import { LearningResourceModel } from '@/models/LearningResource';
 import { IAuthority, ILearningResource, ResourceStatus, ValidationStatus } from '@/types/learning';
+import { AiQualifierService } from './aiQualifierService';
 
 /**
  * Service orchestrating Learning Authorities, Curated Materials, Ingestion & Link Health.
@@ -122,9 +123,21 @@ export class LearningService {
       autoPublish: data.autoPublish ?? true,
       specialties: data.specialties || [],
     });
+
+    const authorityId = (created as any)._id?.toString();
+
+    // Trigger initial ingestion and AI qualification once at the time authority is added
+    if (resolvedChannelId && authorityId) {
+      try {
+        await this.syncAuthorityYouTubeFeed(authorityId);
+      } catch (err: any) {
+        console.warn(`Initial sync for ${created.name} encountered error:`, err.message);
+      }
+    }
+
     return {
       ...(created.toObject ? created.toObject() : created),
-      _id: (created as any)._id?.toString(),
+      _id: authorityId,
     };
   }
 
@@ -325,16 +338,17 @@ export class LearningService {
   }
 
   /**
-   * Syncs YouTube feed for a specific authority without hard-coded limits.
+   * Syncs YouTube feed for a specific authority with AI advocacy qualification.
    */
   public static async syncAuthorityYouTubeFeed(
     authorityId: string,
-    fetchXmlFn?: (url: string) => Promise<string>
-  ): Promise<{ addedCount: number; errors: string[] }> {
+    fetchXmlFn?: (url: string) => Promise<string>,
+    customAiFetch?: (url: string, init?: any) => Promise<any>
+  ): Promise<{ addedCount: number; skippedCount: number; errors: string[] }> {
     await dbConnect();
     const authority = await AuthorityModel.findById(authorityId);
     if (!authority || !authority.youtubeChannelId) {
-      return { addedCount: 0, errors: ['Authority has no registered YouTube Channel ID or handle'] };
+      return { addedCount: 0, skippedCount: 0, errors: ['Authority has no registered YouTube Channel ID or handle'] };
     }
 
     const rawInput = authority.youtubeChannelId.trim();
@@ -350,6 +364,7 @@ export class LearningService {
       } else {
         return {
           addedCount: 0,
+          skippedCount: 0,
           errors: [
             `Could not resolve YouTube Channel ID from "${rawInput}". Please verify the @handle or channel URL.`,
           ],
@@ -366,16 +381,17 @@ export class LearningService {
       } else {
         const res = await fetch(feedUrl, { headers: { 'User-Agent': 'DiabetesSupport-Harvester/1.0' } });
         if (!res.ok) {
-          return { addedCount: 0, errors: [`Failed to fetch channel feed (HTTP ${res.status})`] };
+          return { addedCount: 0, skippedCount: 0, errors: [`Failed to fetch channel feed (HTTP ${res.status})`] };
         }
         xmlText = await res.text();
       }
     } catch (err: any) {
-      return { addedCount: 0, errors: [err.message || 'Network error fetching YouTube feed'] };
+      return { addedCount: 0, skippedCount: 0, errors: [err.message || 'Network error fetching YouTube feed'] };
     }
 
     const entries = this.parseYouTubeFeed(xmlText);
     let addedCount = 0;
+    let skippedCount = 0;
     const errors: string[] = [];
 
     for (const entry of entries) {
@@ -383,64 +399,147 @@ export class LearningService {
         // De-duplicate: check if video embedId already exists
         const existing = await LearningResourceModel.findOne({ embedId: entry.videoId });
         if (existing) {
-          continue; // Already ingested
+          continue; // Already processed in past sync
         }
-
-        const takeaways = this.extractTakeaways(entry.description, entry.title);
-        const status: ResourceStatus = authority.autoPublish ? 'published' : 'pending_review';
 
         const resourceSlug = this.generateSlug(entry.title) + '-' + entry.videoId.slice(0, 6);
 
-        await LearningResourceModel.create({
+        // Run through AI relevance qualification engine
+        const qualification = await AiQualifierService.qualifyResource({
           title: entry.title,
-          slug: resourceSlug,
-          type: 'video',
-          authorityId: authority._id,
+          description: entry.description,
           authorityName: authority.name,
-          authorityTitle: authority.title,
-          authorityAvatar: authority.avatarUrl,
-          summary: entry.description.slice(0, 300) || `Lecture by ${authority.name}`,
-          keyTakeaways: takeaways,
-          sourceUrl: `https://www.youtube.com/watch?v=${entry.videoId}`,
-          platform: 'youtube',
-          embedId: entry.videoId,
-          thumbnailUrl: `https://i.ytimg.com/vi/${entry.videoId}/hqdefault.jpg`,
-          topics: authority.specialties.length > 0 ? authority.specialties : ['Metabolic Health'],
-          status,
-          validationStatus: 'healthy',
-          publishedAt: entry.publishedAt,
+          authoritySpecialties: authority.specialties,
+          customFetch: customAiFetch,
         });
 
-        addedCount++;
+        if (qualification.isRelevant) {
+          const status: ResourceStatus = authority.autoPublish ? 'published' : 'pending_review';
+          const topics =
+            qualification.matchedTopics.length > 0
+              ? qualification.matchedTopics
+              : authority.specialties.length > 0
+              ? authority.specialties
+              : ['Metabolic Health'];
+
+          await LearningResourceModel.create({
+            title: entry.title,
+            slug: resourceSlug,
+            type: 'video',
+            authorityId: authority._id,
+            authorityName: authority.name,
+            authorityTitle: authority.title,
+            authorityAvatar: authority.avatarUrl,
+            summary: entry.description.slice(0, 300) || `Lecture by ${authority.name}`,
+            keyTakeaways:
+              qualification.suggestedTakeaways.length > 0
+                ? qualification.suggestedTakeaways
+                : this.extractTakeaways(entry.description, entry.title),
+            sourceUrl: `https://www.youtube.com/watch?v=${entry.videoId}`,
+            platform: 'youtube',
+            embedId: entry.videoId,
+            thumbnailUrl: `https://i.ytimg.com/vi/${entry.videoId}/hqdefault.jpg`,
+            topics,
+            status,
+            relevanceScore: qualification.relevanceScore,
+            relevanceReason: qualification.relevanceReason,
+            validationStatus: 'healthy',
+            publishedAt: entry.publishedAt,
+          });
+
+          addedCount++;
+        } else {
+          // Record as rejected to avoid re-evaluating on subsequent cron jobs and give admin full visibility
+          await LearningResourceModel.create({
+            title: entry.title,
+            slug: resourceSlug,
+            type: 'video',
+            authorityId: authority._id,
+            authorityName: authority.name,
+            authorityTitle: authority.title,
+            authorityAvatar: authority.avatarUrl,
+            summary: entry.description.slice(0, 300) || `Lecture by ${authority.name}`,
+            keyTakeaways: qualification.suggestedTakeaways,
+            sourceUrl: `https://www.youtube.com/watch?v=${entry.videoId}`,
+            platform: 'youtube',
+            embedId: entry.videoId,
+            thumbnailUrl: `https://i.ytimg.com/vi/${entry.videoId}/hqdefault.jpg`,
+            topics: qualification.matchedTopics,
+            status: 'rejected',
+            relevanceScore: qualification.relevanceScore,
+            relevanceReason: qualification.relevanceReason,
+            validationStatus: 'healthy',
+            publishedAt: entry.publishedAt,
+          });
+
+          skippedCount++;
+        }
       } catch (err: any) {
-        errors.push(`Error inserting video ${entry.videoId}: ${err.message}`);
+        errors.push(`Error evaluating video ${entry.videoId}: ${err.message}`);
       }
     }
 
     // Update authority's lastSyncAt
     await AuthorityModel.findByIdAndUpdate(authorityId, { lastSyncAt: new Date() });
 
-    return { addedCount, errors };
+    return { addedCount, skippedCount, errors };
   }
 
   /**
-   * Syncs all active authorities with registered feeds.
+   * Cron syndication engine that monitors active authorities for new additions since last run,
+   * runs them through the AI qualifier engine, and either publishes or skips each item.
    */
-  public static async syncAllActiveAuthorities(): Promise<{ totalAdded: number; details: any[] }> {
+  public static async runCronSyndication(
+    fetchXmlFn?: (url: string) => Promise<string>,
+    customAiFetch?: (url: string, init?: any) => Promise<any>
+  ): Promise<{
+    processedAuthorities: number;
+    totalAdded: number;
+    totalSkipped: number;
+    details: Array<{ authority: string; added: number; skipped: number; errors: string[] }>;
+  }> {
     await dbConnect();
     const activeAuthorities = await AuthorityModel.find({ isActive: true });
     let totalAdded = 0;
+    let totalSkipped = 0;
     const details = [];
 
     for (const auth of activeAuthorities) {
       if (auth.youtubeChannelId) {
-        const res = await this.syncAuthorityYouTubeFeed(auth._id.toString());
+        const res = await this.syncAuthorityYouTubeFeed(auth._id.toString(), fetchXmlFn, customAiFetch);
         totalAdded += res.addedCount;
-        details.push({ authority: auth.name, added: res.addedCount, errors: res.errors });
+        totalSkipped += res.skippedCount;
+        details.push({
+          authority: auth.name,
+          added: res.addedCount,
+          skipped: res.skippedCount,
+          errors: res.errors,
+        });
       }
     }
 
-    return { totalAdded, details };
+    return {
+      processedAuthorities: activeAuthorities.length,
+      totalAdded,
+      totalSkipped,
+      details,
+    };
+  }
+
+  /**
+   * Syncs all active authorities with registered feeds (alias for runCronSyndication).
+   */
+  public static async syncAllActiveAuthorities(): Promise<{
+    totalAdded: number;
+    totalSkipped: number;
+    details: any[];
+  }> {
+    const result = await this.runCronSyndication();
+    return {
+      totalAdded: result.totalAdded,
+      totalSkipped: result.totalSkipped,
+      details: result.details,
+    };
   }
 
   /* =========================================================================

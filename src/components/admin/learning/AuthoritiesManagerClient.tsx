@@ -109,14 +109,15 @@ export default function AuthoritiesManagerClient({
       if (!res.ok) throw new Error(data.error || 'Sync failed');
 
       const added = data.data?.addedCount ?? 0;
+      const skipped = data.data?.skippedCount ?? 0;
       const errors = data.data?.errors || [];
 
       if (errors.length > 0 && added === 0) {
         showNotification('error', `Sync issue for ${name}: ${errors.join('; ')}`);
-      } else if (errors.length > 0) {
+      } else if (skipped > 0) {
         showNotification(
           'success',
-          `Sync completed for ${name}: ${added} new video(s) added. Note: ${errors[0]}`
+          `Sync completed for ${name}: ${added} qualified video(s) added, ${skipped} non-relevant video(s) skipped.`
         );
       } else {
         showNotification(
@@ -147,14 +148,17 @@ export default function AuthoritiesManagerClient({
         body: JSON.stringify({}),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Global sync failed');
+      if (!res.ok) throw new Error(data.error || 'Syndication cron failed');
+
+      const added = data.data?.totalAdded ?? 0;
+      const skipped = data.data?.totalSkipped ?? 0;
 
       showNotification(
         'success',
-        `Global sync complete! Total ${data.data?.totalAdded || 0} new materials added across all channels.`
+        `Syndication cron complete! Ingested ${added} qualified video(s), skipped ${skipped} non-relevant video(s) across all active authorities.`
       );
     } catch (err: any) {
-      showNotification('error', err.message || 'Global sync failed');
+      showNotification('error', err.message || 'Syndication cron failed');
     } finally {
       setSyncingAll(false);
     }
@@ -167,7 +171,7 @@ export default function AuthoritiesManagerClient({
         <div>
           <h2 className="text-xl font-bold text-white">Monitored Doctors &amp; Authorities</h2>
           <p className="text-xs text-slate-400 mt-1">
-            Define reputable medical authorities to track. The system dynamically harvests their channel uploads &amp; research.
+            Define reputable medical authorities to track. Feeds are AI-qualified against advocacy topics.
           </p>
         </div>
 
@@ -185,7 +189,7 @@ export default function AuthoritiesManagerClient({
             disabled={syncingAll}
             className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-lg transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
           >
-            <span>{syncingAll ? '⏳ Syncing All...' : '⚡ Sync All Feeds'}</span>
+            <span>{syncingAll ? '⏳ Running Syndication Cron...' : '⚡ Run Syndication Cron'}</span>
           </button>
 
           <button
