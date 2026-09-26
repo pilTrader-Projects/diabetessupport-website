@@ -19,6 +19,25 @@ export class AiQualifierService {
   private static readonly QUALIFICATION_THRESHOLD = 50;
 
   /**
+   * Sanitizes video descriptions to minimize token consumption by stripping URLs,
+   * promo/affiliate links, timestamps, and boilerplate disclaimers.
+   */
+  public static sanitizeDescription(desc: string, maxChars = 400): string {
+    if (!desc) return '';
+    return desc
+      // Remove URLs (http/https)
+      .replace(/https?:\/\/\S+/gi, '')
+      // Remove timestamps like 00:00 or 12:34
+      .replace(/\b\d{1,2}:\d{2}(?::\d{2})?\b/g, '')
+      // Remove promo codes and affiliate boilerplate
+      .replace(/(?:use code|discount code|subscribe|follow me on|disclaimer:).*/gi, '')
+      // Normalize whitespace
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, maxChars);
+  }
+
+  /**
    * Evaluates a resource candidate and decides if it is qualified to be published.
    */
   public static async qualifyResource(params: {
@@ -30,6 +49,9 @@ export class AiQualifierService {
   }): Promise<IRelevanceQualification> {
     const { title, description = '', authorityName = '', authoritySpecialties = [], customFetch } = params;
 
+    // Token optimization: Clean and trim description to essential topic summary only
+    const cleanDescription = this.sanitizeDescription(description);
+
     // Check if an AI API key is configured (Gemini or OpenAI)
     const geminiKey = process.env.GEMINI_API_KEY;
     const openAiKey = process.env.OPENAI_API_KEY;
@@ -38,7 +60,7 @@ export class AiQualifierService {
       try {
         const aiResult = await this.evaluateWithGemini(
           title,
-          description,
+          cleanDescription,
           authorityName,
           authoritySpecialties,
           geminiKey,
@@ -52,7 +74,7 @@ export class AiQualifierService {
       try {
         const aiResult = await this.evaluateWithOpenAI(
           title,
-          description,
+          cleanDescription,
           authorityName,
           authoritySpecialties,
           openAiKey,
@@ -65,7 +87,7 @@ export class AiQualifierService {
     }
 
     // Default: Deterministic Clinical Ontology Engine
-    return this.evaluateWithHeuristicEngine(title, description, authorityName, authoritySpecialties);
+    return this.evaluateWithHeuristicEngine(title, cleanDescription, authorityName, authoritySpecialties);
   }
 
   /**
@@ -274,8 +296,8 @@ export class AiQualifierService {
 
 Candidate Content:
 - Title: "${title}"
-- Description: "${description.slice(0, 600)}"
-- Authority: "${authorityName}" (Specialties: ${authoritySpecialties.join(', ')})
+- Description: "${description}"
+- Authority: "${authorityName}" (Specialties: ${authoritySpecialties.slice(0, 3).join(', ')})
 
 Evaluate if this content is HIGHLY RELEVANT to metabolic health advocacy. Disqualify general gym workouts, travel vlogs, personal updates, or off-topic banter.
 

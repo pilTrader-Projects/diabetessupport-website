@@ -14,6 +14,27 @@ describe('AiQualifierService (TDD Unit Tests)', () => {
     process.env = originalEnv;
   });
 
+  describe('Token Optimization & Sanitization', () => {
+    it('should strip URLs, promo codes, timestamps, and cap description length', () => {
+      const rawDescription = `In this episode, we break down insulin resistance and visceral fat.
+Check out our sponsor at https://example.com/sponsor and use code BEN5 for 10% off.
+Timestamps:
+00:00 Introduction
+02:15 What is Insulin Resistance?
+10:45 Reversing Fatty Liver
+Follow me on Instagram https://instagram.com/drbenbikman
+Disclaimer: This video is for educational purposes only and is not medical advice.`;
+
+      const sanitized = AiQualifierService.sanitizeDescription(rawDescription, 200);
+      expect(sanitized).not.toContain('https://');
+      expect(sanitized).not.toContain('use code');
+      expect(sanitized).not.toContain('00:00');
+      expect(sanitized).not.toContain('Disclaimer:');
+      expect(sanitized).toContain('insulin resistance and visceral fat');
+      expect(sanitized.length).toBeLessThanOrEqual(200);
+    });
+  });
+
   describe('Deterministic Heuristic Classifier', () => {
     it('should qualify high-relevance content on Insulin Resistance and Diabetes', async () => {
       const result = await AiQualifierService.qualifyResource({
