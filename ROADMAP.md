@@ -62,7 +62,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #34](https://github.com/pilTrader-Projects/diabetessupport-website/pull/34)** `[COMPLETED]`: Decouple companion app destination (PlayStore / AppStore / Web) and brand naming from static code; provide instant access redirection link on lead capture and dynamic admin panel management without re-deployment (Closes Issue #33).
 
 ### Milestone 16: Dynamic Learning Materials Hub & Automated Resource Library
-- [ ] `[IN PROGRESS]`: Rebrand and elevate Educational Articles (`/blog`) into a comprehensive Learning Materials & Evidence Hub. Features zero-hardcoding Admin Management for Authorities & Personalities (`/admin/learning/authorities`), automated YouTube RSS & PubMed clinical trial ingestion, automated link-rot health verification, lite video player modal with "Watch on Source" handoff, multi-dimensional filtering (Format, Topics, Authorities), and "Save to Protocol" bookmark lead capture drawer.
+- [x] **Feature Branch `feature/learning-materials-hub`** `[VERIFIED ON FEATURE BRANCH]`: Rebrand and elevate Educational Articles (`/blog`) into a comprehensive Learning Materials & Evidence Hub. Features zero-hardcoding Admin Management for Authorities & Personalities (`/admin/learning/authorities`), automated YouTube RSS & PubMed clinical trial ingestion, automated link-rot health verification (`/admin/learning/resources`), lite video player modal with "Watch on YouTube" handoff, multi-dimensional filtering (Format, Topics, Authorities), and "Save to Protocol" bookmark lead capture drawer synced with Brevo.
 
 ---
 
