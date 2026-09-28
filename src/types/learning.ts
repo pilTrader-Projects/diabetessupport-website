@@ -30,6 +30,7 @@ export interface IAuthority {
   title: string;                 // e.g. "Professor of Cell Biology & Physiology, BYU"
   avatarUrl?: string;
   bio?: string;
+  aliases?: string[];            // e.g. ["Benjamin Bikman", "Ben Bikman"] for guest detection
   specialties: string[];         // e.g. ["Insulin Resistance", "Ketosis", "Autophagy"]
   
   // Monitoring Feeds (Admin Configured)
@@ -50,6 +51,33 @@ export interface IAuthority {
 }
 
 /**
+ * Domain interface for Monitored Official Podcast Channels (e.g. DOAC, Joe Rogan Experience).
+ */
+export interface IPodcastChannel {
+  _id?: string;
+  name: string;                  // e.g. "The Diary Of A CEO", "The Joe Rogan Experience"
+  slug: string;                  // URL-friendly unique identifier
+  host?: string;                 // e.g. "Steven Bartlett", "Joe Rogan"
+  avatarUrl?: string;
+  description?: string;
+  
+  // Feed integration
+  youtubeChannelId?: string;     // e.g. @TheDiaryOfACEO, @joerogan, or UC...
+  spotifyShowId?: string;
+  applePodcastsUrl?: string;
+  websiteUrl?: string;
+
+  // Automation controls
+  isActive: boolean;             // If false, paused from automated syndication
+  autoPublish: boolean;          // If true, qualified guest appearances go live immediately
+  displayOrder: number;
+  lastSyncAt?: Date;
+
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+/**
  * Domain interface for Learning Resources (Videos, Studies, Articles, Podcasts).
  */
 export interface ILearningResource {
@@ -63,6 +91,11 @@ export interface ILearningResource {
   authorityName: string;
   authorityTitle?: string;
   authorityAvatar?: string;
+
+  // Podcast Channel attribution (for guest appearances)
+  podcastChannelId?: string;
+  podcastChannelName?: string;
+  isGuestAppearance?: boolean;
 
   summary: string;
   keyTakeaways: string[];        // 3-5 bullet points for rapid 10-second consumption

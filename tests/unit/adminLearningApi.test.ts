@@ -108,6 +108,26 @@ describe('Learning API Routes (TDD Unit Tests)', () => {
       expect(json.data.totalAdded).toBe(3);
     });
 
+    it('POST /api/v1/admin/learning/sync triggers sync of single podcast channel', async () => {
+      (isAdminAuthenticated as jest.Mock).mockResolvedValueOnce(true);
+      (LearningService.syncPodcastChannelYouTubeFeed as jest.Mock).mockResolvedValueOnce({
+        addedCount: 1,
+        skippedCount: 4,
+        errors: [],
+      });
+
+      const req = new Request('http://localhost/api/v1/admin/learning/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ podcastChannelId: 'pod_123' }),
+      });
+      const res = await postSync(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.data.addedCount).toBe(1);
+      expect(json.data.skippedCount).toBe(4);
+    });
+
     it('POST /api/v1/admin/learning/validate triggers link-rot check', async () => {
       (isAdminAuthenticated as jest.Mock).mockResolvedValueOnce(true);
       (LearningService.runLinkRotHealthCheck as jest.Mock).mockResolvedValueOnce({

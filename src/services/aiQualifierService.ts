@@ -91,6 +91,116 @@ export class AiQualifierService {
   }
 
   /**
+   * Helper to scan title and description for mentions of registered authorities and their aliases.
+   */
+  public static identifyAuthorityGuest(
+    title: string,
+    description: string,
+    candidates: Array<{ _id?: string; name: string; title?: string; avatarUrl?: string; specialties?: string[]; aliases?: string[] }>
+  ): { _id?: string; name: string; title?: string; avatarUrl?: string; specialties?: string[]; aliases?: string[] } | null {
+    if (!candidates || !Array.isArray(candidates)) return null;
+    const combined = `${title} ${description}`.toLowerCase();
+
+    for (const auth of candidates) {
+      if (!auth || !auth.name) continue;
+      // Build candidate name variations
+      const rawName = auth.name
+        .replace(/^(dr\.?|professor|prof\.?|phd|md)\s+/i, '')
+        .replace(/,\s*(phd|md|do|facp)$/i, '')
+        .trim();
+
+      const variations = [
+        auth.name.toLowerCase(),
+        rawName.toLowerCase(),
+        ...(auth.aliases || []).map((a) => a.toLowerCase()),
+      ];
+
+      // Check for surname with Dr prefix (e.g. "Dr. Bikman", "Dr Bikman", "Dr Fung")
+      const parts = rawName.split(/\s+/);
+      if (parts.length > 1) {
+        const lastName = parts[parts.length - 1].toLowerCase();
+        variations.push(`dr. ${lastName}`, `dr ${lastName}`, `doctor ${lastName}`);
+      }
+
+      for (const variant of variations) {
+        if (!variant || variant.length < 3) continue;
+        const reg = new RegExp(`\\b${variant.replace('.', '\\.')}\\b`, 'i');
+        if (reg.test(combined)) {
+          return auth;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Evaluates a podcast channel episode to determine if any registered authority is a guest,
+   * and whether the discussion qualifies under our metabolic health advocacy.
+   */
+  public static async qualifyPodcastEpisode(params: {
+    title: string;
+    description?: string;
+    podcastChannelName: string;
+    hostName?: string;
+    candidates?: Array<{ _id?: string; name: string; title?: string; avatarUrl?: string; specialties?: string[]; aliases?: string[] }>;
+    candidateAuthorities?: Array<{ _id?: string; name: string; title?: string; avatarUrl?: string; specialties?: string[]; aliases?: string[] }>;
+    customFetch?: (url: string, init?: any) => Promise<any>;
+  }): Promise<{
+    isRelevant: boolean;
+    matchedAuthority?: { _id?: string; name: string; title?: string; avatarUrl?: string; specialties?: string[]; aliases?: string[] };
+    relevanceScore: number;
+    relevanceReason: string;
+    matchedTopics: string[];
+    suggestedTakeaways: string[];
+  }> {
+    const { title, description = '', podcastChannelName, hostName, customFetch } = params;
+    const candidates = params.candidates || params.candidateAuthorities || [];
+    const cleanDescription = this.sanitizeDescription(description);
+
+    // 1. Identify if any registered authority is present
+    const matchedAuthority = this.identifyAuthorityGuest(title, cleanDescription, candidates);
+
+    if (!matchedAuthority) {
+      return {
+        isRelevant: false,
+        relevanceScore: 0,
+        relevanceReason: `Episode on "${podcastChannelName}" does not feature any registered medical or scientific authority.`,
+        matchedTopics: ['Podcast'],
+        suggestedTakeaways: [],
+      };
+    }
+
+    // 2. Evaluate topic relevance for the identified authority
+    const topicEval = this.evaluateWithHeuristicEngine(
+      title,
+      cleanDescription,
+      matchedAuthority.name,
+      matchedAuthority.specialties || []
+    );
+
+    if (!topicEval.isRelevant) {
+      return {
+        isRelevant: false,
+        matchedAuthority,
+        relevanceScore: topicEval.relevanceScore,
+        relevanceReason: `Features ${matchedAuthority.name} on "${podcastChannelName}", but topic does not focus on metabolic health advocacy (${topicEval.relevanceScore}/100).`,
+        matchedTopics: topicEval.matchedTopics,
+        suggestedTakeaways: [],
+      };
+    }
+
+    return {
+      isRelevant: true,
+      matchedAuthority,
+      relevanceScore: topicEval.relevanceScore,
+      relevanceReason: `Guest appearance by ${matchedAuthority.name} on "${podcastChannelName}" (${topicEval.matchedTopics.slice(0, 3).join(', ')}). Score: ${topicEval.relevanceScore}/100.`,
+      matchedTopics: topicEval.matchedTopics,
+      suggestedTakeaways: topicEval.suggestedTakeaways,
+    };
+  }
+
+  /**
    * Deterministic Medical Advocacy Ontology Evaluator.
    */
   public static evaluateWithHeuristicEngine(

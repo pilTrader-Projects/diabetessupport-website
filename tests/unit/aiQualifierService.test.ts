@@ -161,4 +161,78 @@ Disclaimer: This video is for educational purposes only and is not medical advic
       expect(result.matchedTopics).toContain('Insulin Resistance');
     });
   });
+
+  describe('Podcast Guest Appearance Qualification', () => {
+    const mockCandidates = [
+      {
+        _id: 'auth_bikman',
+        name: 'Dr. Ben Bikman, PhD',
+        specialties: ['Insulin Resistance', 'Low Carb'],
+        aliases: ['Benjamin Bikman', 'Ben Bikman'],
+      },
+      {
+        _id: 'auth_fung',
+        name: 'Dr. Jason Fung',
+        specialties: ['Intermittent Fasting', 'Type 2 Diabetes'],
+        aliases: ['Jason Fung'],
+      },
+    ];
+
+    it('should qualify episode featuring Dr. Ben Bikman on DOAC discussing metabolic health', async () => {
+      const result = await AiQualifierService.qualifyPodcastEpisode({
+        title: 'Dr. Benjamin Bikman: The Real Cause of Insulin Resistance, Visceral Fat & Diabetes | The Diary Of A CEO',
+        description: 'Steven Bartlett sits down with leading metabolic scientist Dr. Ben Bikman to unpack how insulin locks fat.',
+        podcastChannelName: 'The Diary Of A CEO',
+        hostName: 'Steven Bartlett',
+        candidates: mockCandidates,
+      });
+
+      expect(result.isRelevant).toBe(true);
+      expect(result.matchedAuthority?._id).toBe('auth_bikman');
+      expect(result.relevanceScore).toBeGreaterThanOrEqual(70);
+      expect(result.relevanceReason).toContain('The Diary Of A CEO');
+      expect(result.matchedTopics).toContain('Insulin Resistance');
+    });
+
+    it('should qualify episode featuring Dr. Jason Fung on Joe Rogan discussing fasting', async () => {
+      const result = await AiQualifierService.qualifyPodcastEpisode({
+        title: 'Joe Rogan Experience #2100 - Dr. Jason Fung on Fasting & Insulin',
+        description: 'Dr. Jason Fung breaks down intermittent fasting regimens, diabetes reversal, and autophagy.',
+        podcastChannelName: 'The Joe Rogan Experience',
+        hostName: 'Joe Rogan',
+        candidates: mockCandidates,
+      });
+
+      expect(result.isRelevant).toBe(true);
+      expect(result.matchedAuthority?._id).toBe('auth_fung');
+      expect(result.matchedTopics).toContain('Intermittent Fasting');
+    });
+
+    it('should disqualify podcast episode with an unrelated guest (not registered authority)', async () => {
+      const result = await AiQualifierService.qualifyPodcastEpisode({
+        title: 'The Diary Of A CEO: Billionaire Founder Shares Secrets to Scaling a Tech Startup',
+        description: 'Steven Bartlett interviews a tech CEO about enterprise software and startup funding.',
+        podcastChannelName: 'The Diary Of A CEO',
+        hostName: 'Steven Bartlett',
+        candidates: mockCandidates,
+      });
+
+      expect(result.isRelevant).toBe(false);
+      expect(result.matchedAuthority).toBeUndefined();
+      expect(result.relevanceReason).toContain('does not feature any registered medical or scientific authority');
+    });
+
+    it('should disqualify episode featuring registered authority if topic is unrelated to metabolic health', async () => {
+      const result = await AiQualifierService.qualifyPodcastEpisode({
+        title: 'Ben Bikman on College Football Highlights and Utah Outdoor Adventures',
+        description: 'Casual chat about favorite mountain hikes, college football predictions, and weekend gear.',
+        podcastChannelName: 'Outdoor Chat Podcast',
+        candidates: mockCandidates,
+      });
+
+      expect(result.isRelevant).toBe(false);
+      expect(result.matchedAuthority?._id).toBe('auth_bikman');
+      expect(result.relevanceReason).toContain('does not focus on metabolic health advocacy');
+    });
+  });
 });

@@ -23,7 +23,7 @@ export default function LearningHubClient({
   initialSearch = '',
   initialTopic = 'All',
 }: LearningHubClientProps): React.JSX.Element {
-  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'article' | 'study'>('all');
+  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study'>('all');
   const [selectedAuthorityId, setSelectedAuthorityId] = useState<string>('all');
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
@@ -99,14 +99,16 @@ export default function LearningHubClient({
   const allItems: ILearningResource[] = [...initialResources, ...articleItems];
 
   // Counts for format tabs
-  const videoCount = allItems.filter((i) => i.type === 'video' || i.type === 'podcast').length;
+  const videoCount = allItems.filter((i) => i.type === 'video' && !i.isGuestAppearance).length;
+  const podcastCount = allItems.filter((i) => i.type === 'podcast' || i.isGuestAppearance).length;
   const studyCount = allItems.filter((i) => i.type === 'study').length;
   const articleCount = allItems.filter((i) => i.type === 'article').length;
 
   // Filter items
   const filteredItems = allItems.filter((item) => {
     // Format filter
-    if (activeFormat === 'video' && item.type !== 'video' && item.type !== 'podcast') return false;
+    if (activeFormat === 'video' && (item.type !== 'video' || item.isGuestAppearance)) return false;
+    if (activeFormat === 'podcast' && item.type !== 'podcast' && !item.isGuestAppearance) return false;
     if (activeFormat === 'study' && item.type !== 'study') return false;
     if (activeFormat === 'article' && item.type !== 'article') return false;
 
@@ -213,6 +215,19 @@ export default function LearningHubClient({
           >
             <span>🎬 Videos &amp; Talks</span>
             <span className="text-[11px] opacity-80">({videoCount})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveFormat('podcast')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+              activeFormat === 'podcast'
+                ? 'bg-teal-700 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span>🎙️ Podcasts &amp; Shows</span>
+            <span className="text-[11px] opacity-80">({podcastCount})</span>
           </button>
 
           <button
@@ -391,7 +406,7 @@ export default function LearningHubClient({
 
                       {/* Platform & Duration Badges */}
                       <span className="absolute top-3 left-3 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-950/85 text-white backdrop-blur-md border border-white/20">
-                        🎬 {item.platform}
+                        {item.type === 'podcast' || item.isGuestAppearance ? '🎙️ Podcast' : `🎬 ${item.platform}`}
                       </span>
                       {item.duration && (
                         <span className="absolute bottom-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded bg-black/80 text-white">
@@ -402,11 +417,22 @@ export default function LearningHubClient({
 
                     {/* Author & Title */}
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center justify-between text-xs gap-2">
                         <span className="font-bold text-teal-800 truncate max-w-[200px]">
                           {item.authorityName}
                         </span>
-                        <span className="text-slate-400 font-medium">Lecture</span>
+                        {item.isGuestAppearance && item.podcastChannelName ? (
+                          <span
+                            className="bg-purple-100 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[160px]"
+                            title={`Guest on ${item.podcastChannelName}`}
+                          >
+                            🎙️ {item.podcastChannelName}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400 font-medium">
+                            {item.type === 'podcast' ? 'Podcast' : 'Lecture'}
+                          </span>
+                        )}
                       </div>
 
                       <h2

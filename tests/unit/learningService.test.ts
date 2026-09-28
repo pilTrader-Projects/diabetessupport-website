@@ -6,6 +6,7 @@
 import { LearningService } from '../../src/services/learningService';
 import { AuthorityModel } from '../../src/models/Authority';
 import { LearningResourceModel } from '../../src/models/LearningResource';
+import { PodcastChannelModel } from '../../src/models/PodcastChannel';
 
 jest.mock('../../src/lib/dbConnect', () => ({
   dbConnect: jest.fn().mockResolvedValue(true),
@@ -13,6 +14,7 @@ jest.mock('../../src/lib/dbConnect', () => ({
 
 jest.mock('../../src/models/Authority');
 jest.mock('../../src/models/LearningResource');
+jest.mock('../../src/models/PodcastChannel');
 
 describe('LearningService (TDD Unit Tests)', () => {
   afterEach(() => {
@@ -242,6 +244,7 @@ describe('LearningService (TDD Unit Tests)', () => {
       ];
 
       (AuthorityModel.find as jest.Mock).mockResolvedValue(mockAuthorities);
+      (PodcastChannelModel.find as jest.Mock).mockResolvedValue([]);
       (AuthorityModel.findById as jest.Mock).mockResolvedValue(mockAuthorities[0]);
       (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
       (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_cron' });
@@ -262,6 +265,187 @@ describe('LearningService (TDD Unit Tests)', () => {
       expect(cronResult.totalAdded).toBe(1);
       expect(cronResult.totalSkipped).toBe(0);
       expect(cronResult.details[0].authority).toBe('Dr. Benjamin Bikman');
+    });
+  });
+
+  describe('Podcast Channel Management & Guest Syndication', () => {
+    it('should list active podcast channels', async () => {
+      const mockChannels = [
+        { _id: 'pod_1', name: 'The Diary Of A CEO', host: 'Steven Bartlett', isActive: true, displayOrder: 1 },
+      ];
+
+      (PodcastChannelModel.find as jest.Mock).mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue(mockChannels),
+        }),
+      });
+
+      const list = await LearningService.listPodcastChannels({ activeOnly: true });
+      expect(list).toHaveLength(1);
+      expect(list[0].name).toBe('The Diary Of A CEO');
+    });
+
+    it('should create a new podcast channel with auto-generated slug', async () => {
+      const input = {
+        name: 'The Diary Of A CEO',
+        host: 'Steven Bartlett',
+        youtubeChannelId: 'UCdoac',
+        autoPublish: true,
+      };
+
+      (PodcastChannelModel.create as jest.Mock).mockResolvedValue({
+        _id: 'pod_doac',
+        ...input,
+        slug: 'the-diary-of-a-ceo',
+      });
+
+      const created = await LearningService.createPodcastChannel(input);
+      expect(created._id).toBe('pod_doac');
+      expect(created.slug).toBe('the-diary-of-a-ceo');
+      expect(PodcastChannelModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({ slug: 'the-diary-of-a-ceo', name: 'The Diary Of A CEO' })
+      );
+    });
+
+    it('should syndicate podcast episode if guest is a registered authority and topic is metabolic health', async () => {
+      const mockChannel = {
+        _id: 'pod_doac',
+        name: 'The Diary Of A CEO',
+        youtubeChannelId: 'UCdoac',
+        autoPublish: true,
+      };
+
+      const mockAuthorities = [
+        {
+          _id: 'auth_ben',
+          name: 'Dr. Benjamin Bikman',
+          title: 'Professor of Cell Biology',
+          avatarUrl: '/images/bikman.jpg',
+          specialties: ['Insulin Resistance', 'Metabolic Health'],
+          aliases: ['Ben Bikman', 'Dr. Ben Bikman'],
+          isActive: true,
+        },
+      ];
+
+      (PodcastChannelModel.findById as jest.Mock).mockResolvedValue(mockChannel);
+      (AuthorityModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockAuthorities),
+      });
+      // Not already in DB
+      (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
+      (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_guest_1' });
+      (PodcastChannelModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(true);
+
+      const mockXml = `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+        <entry>
+          <yt:videoId>doac_bikman_1</yt:videoId>
+          <title>Dr. Ben Bikman: The #1 Cause of Belly Fat & Insulin Resistance</title>
+          <published>2026-03-20T00:00:00Z</published>
+          <media:group xmlns:media="http://search.yahoo.com/mrss/">
+            <media:description>Dr. Ben Bikman joins Steven Bartlett to reveal how insulin controls metabolic health and fat loss.</media:description>
+          </media:group>
+        </entry>
+      </feed>`;
+
+      const mockFetch = jest.fn().mockResolvedValue(mockXml);
+
+      const res = await LearningService.syncPodcastChannelYouTubeFeed('pod_doac', mockFetch);
+      expect(res.addedCount).toBe(1);
+      expect(res.skippedCount).toBe(0);
+      expect(LearningResourceModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'podcast',
+          authorityId: 'auth_ben',
+          authorityName: 'Dr. Benjamin Bikman',
+          podcastChannelId: 'pod_doac',
+          podcastChannelName: 'The Diary Of A CEO',
+          isGuestAppearance: true,
+          status: 'published',
+          embedId: 'doac_bikman_1',
+        })
+      );
+    });
+
+    it('should mark podcast episode as rejected if guest is unrelated or off-topic, preventing re-evaluation', async () => {
+      const mockChannel = {
+        _id: 'pod_doac',
+        name: 'The Diary Of A CEO',
+        youtubeChannelId: 'UCdoac',
+        autoPublish: true,
+      };
+
+      const mockAuthorities = [
+        {
+          _id: 'auth_ben',
+          name: 'Dr. Benjamin Bikman',
+          isActive: true,
+          aliases: ['Ben Bikman'],
+        },
+      ];
+
+      (PodcastChannelModel.findById as jest.Mock).mockResolvedValue(mockChannel);
+      (AuthorityModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockAuthorities),
+      });
+      (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
+      (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_rejected_1' });
+      (PodcastChannelModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(true);
+
+      const mockXml = `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+        <entry>
+          <yt:videoId>doac_ceos_crypto</yt:videoId>
+          <title>Crypto Billionaire: How I Made $100M in Real Estate and Web3</title>
+          <published>2026-03-22T00:00:00Z</published>
+          <media:group xmlns:media="http://search.yahoo.com/mrss/">
+            <media:description>Steven Bartlett talks tech investments with crypto founder.</media:description>
+          </media:group>
+        </entry>
+      </feed>`;
+
+      const mockFetch = jest.fn().mockResolvedValue(mockXml);
+
+      const res = await LearningService.syncPodcastChannelYouTubeFeed('pod_doac', mockFetch);
+      expect(res.addedCount).toBe(0);
+      expect(res.skippedCount).toBe(1);
+      expect(LearningResourceModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'podcast',
+          podcastChannelId: 'pod_doac',
+          podcastChannelName: 'The Diary Of A CEO',
+          status: 'rejected',
+          embedId: 'doac_ceos_crypto',
+        })
+      );
+    });
+
+    it('should skip already evaluated podcast episodes without calling AI or creating duplicates', async () => {
+      const mockChannel = {
+        _id: 'pod_doac',
+        name: 'The Diary Of A CEO',
+        youtubeChannelId: 'UCdoac',
+      };
+
+      (PodcastChannelModel.findById as jest.Mock).mockResolvedValue(mockChannel);
+      (AuthorityModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue([]),
+      });
+      // Already cached in DB as rejected or published
+      (LearningResourceModel.findOne as jest.Mock).mockResolvedValue({ _id: 'cached_id', embedId: 'existing_vid' });
+      (PodcastChannelModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(true);
+
+      const mockXml = `<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+        <entry>
+          <yt:videoId>existing_vid</yt:videoId>
+          <title>Some Previous Episode</title>
+        </entry>
+      </feed>`;
+
+      const mockFetch = jest.fn().mockResolvedValue(mockXml);
+
+      const res = await LearningService.syncPodcastChannelYouTubeFeed('pod_doac', mockFetch);
+      expect(res.addedCount).toBe(0);
+      expect(res.skippedCount).toBe(0);
+      expect(LearningResourceModel.create).not.toHaveBeenCalled();
     });
   });
 

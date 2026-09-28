@@ -34,6 +34,10 @@ const AuthoritySchema = new Schema<IAuthority>(
       type: String,
       trim: true,
     },
+    aliases: {
+      type: [String],
+      default: [],
+    },
     specialties: {
       type: [String],
       default: [],

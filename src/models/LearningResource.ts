@@ -45,6 +45,21 @@ const LearningResourceSchema = new Schema<ILearningResource>(
       type: String,
       trim: true,
     },
+    podcastChannelId: {
+      type: Schema.Types.ObjectId,
+      ref: 'PodcastChannel',
+      index: true,
+    },
+    podcastChannelName: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+    isGuestAppearance: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     summary: {
       type: String,
       required: [true, 'Summary is required'],

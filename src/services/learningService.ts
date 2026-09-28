@@ -1,7 +1,8 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { AuthorityModel } from '@/models/Authority';
 import { LearningResourceModel } from '@/models/LearningResource';
-import { IAuthority, ILearningResource, ResourceStatus, ValidationStatus } from '@/types/learning';
+import { PodcastChannelModel } from '@/models/PodcastChannel';
+import { IAuthority, ILearningResource, IPodcastChannel, ResourceStatus, ValidationStatus } from '@/types/learning';
 import { AiQualifierService } from './aiQualifierService';
 
 /**
@@ -33,7 +34,7 @@ export class LearningService {
     const trimmed = input.trim();
 
     // Case 1: Already a Channel ID starting with UC
-    if (/^UC[\w-]{6,30}$/.test(trimmed)) {
+    if (/^UC[\w-]{4,30}$/.test(trimmed)) {
       return trimmed;
     }
 
@@ -170,6 +171,97 @@ export class LearningService {
   }
 
   /* =========================================================================
+   * PODCAST CHANNEL CRUD OPERATIONS
+   * ========================================================================= */
+
+  public static async listPodcastChannels(filter?: { activeOnly?: boolean }): Promise<IPodcastChannel[]> {
+    await dbConnect();
+    const query: any = {};
+    if (filter?.activeOnly) {
+      query.isActive = true;
+    }
+    const channels = await PodcastChannelModel.find(query).sort({ displayOrder: 1, name: 1 }).lean();
+    return channels.map((doc: any) => ({
+      ...doc,
+      _id: doc._id?.toString(),
+    })) as IPodcastChannel[];
+  }
+
+  public static async getPodcastChannelById(id: string): Promise<IPodcastChannel | null> {
+    await dbConnect();
+    const channel = await PodcastChannelModel.findById(id).lean();
+    if (!channel) return null;
+    return {
+      ...(channel as any),
+      _id: (channel as any)._id?.toString(),
+    };
+  }
+
+  public static async createPodcastChannel(data: Partial<IPodcastChannel>): Promise<IPodcastChannel> {
+    await dbConnect();
+    const slug = data.slug || this.generateSlug(data.name || 'podcast-channel');
+    let resolvedChannelId = data.youtubeChannelId?.trim();
+    if (resolvedChannelId) {
+      const canonicalId = await this.resolveYouTubeChannelId(resolvedChannelId);
+      if (canonicalId) {
+        resolvedChannelId = canonicalId;
+      }
+    }
+
+    const created = await PodcastChannelModel.create({
+      ...data,
+      slug,
+      youtubeChannelId: resolvedChannelId,
+      isActive: data.isActive ?? true,
+      autoPublish: data.autoPublish ?? true,
+    });
+
+    const podcastChannelId = (created as any)._id?.toString();
+
+    // Trigger initial ingestion and AI qualification once at the time podcast channel is added
+    if (resolvedChannelId && podcastChannelId) {
+      try {
+        await this.syncPodcastChannelYouTubeFeed(podcastChannelId);
+      } catch (err: any) {
+        console.warn(`Initial sync for ${created.name} encountered error:`, err.message);
+      }
+    }
+
+    return {
+      ...(created.toObject ? created.toObject() : created),
+      _id: podcastChannelId,
+    };
+  }
+
+  public static async updatePodcastChannel(id: string, data: Partial<IPodcastChannel>): Promise<IPodcastChannel | null> {
+    await dbConnect();
+    const updatePayload = { ...data };
+    if (updatePayload.youtubeChannelId) {
+      const canonicalId = await this.resolveYouTubeChannelId(updatePayload.youtubeChannelId);
+      if (canonicalId) {
+        updatePayload.youtubeChannelId = canonicalId;
+      }
+    }
+
+    const updated = await PodcastChannelModel.findByIdAndUpdate(
+      id,
+      { $set: updatePayload },
+      { returnDocument: 'after', runValidators: true }
+    ).lean();
+    if (!updated) return null;
+    return {
+      ...(updated as any),
+      _id: (updated as any)._id?.toString(),
+    };
+  }
+
+  public static async deletePodcastChannel(id: string): Promise<boolean> {
+    await dbConnect();
+    const res = await PodcastChannelModel.findByIdAndDelete(id);
+    return !!res;
+  }
+
+  /* =========================================================================
    * LEARNING RESOURCE CRUD OPERATIONS
    * ========================================================================= */
 
@@ -177,6 +269,8 @@ export class LearningService {
     type?: string;
     topic?: string;
     authorityId?: string;
+    podcastChannelId?: string;
+    isGuestAppearance?: boolean;
     status?: string;
     search?: string;
     limit?: number;
@@ -194,6 +288,12 @@ export class LearningService {
     if (filter?.authorityId) {
       query.authorityId = filter.authorityId;
     }
+    if (filter?.podcastChannelId) {
+      query.podcastChannelId = filter.podcastChannelId;
+    }
+    if (filter?.isGuestAppearance !== undefined) {
+      query.isGuestAppearance = filter.isGuestAppearance;
+    }
     if (filter?.topic && filter.topic !== 'all') {
       query.topics = { $regex: new RegExp(`^${filter.topic}$`, 'i') };
     }
@@ -203,6 +303,7 @@ export class LearningService {
         { title: searchRegex },
         { summary: searchRegex },
         { authorityName: searchRegex },
+        { podcastChannelName: searchRegex },
         { topics: searchRegex },
       ];
     }
@@ -218,6 +319,7 @@ export class LearningService {
       ...doc,
       _id: doc._id?.toString(),
       authorityId: doc.authorityId?.toString(),
+      podcastChannelId: doc.podcastChannelId?.toString(),
     })) as ILearningResource[];
 
     return { resources, total };
@@ -355,7 +457,7 @@ export class LearningService {
     let channelId = rawInput;
 
     // If input is not a standard UC ID, auto-resolve handle/URL
-    if (!/^UC[\w-]{6,30}$/.test(channelId)) {
+    if (!/^UC[\w-]{4,30}$/.test(channelId)) {
       const resolved = await this.resolveYouTubeChannelId(channelId);
       if (resolved) {
         channelId = resolved;
@@ -486,7 +588,164 @@ export class LearningService {
   }
 
   /**
-   * Cron syndication engine that monitors active authorities for new additions since last run,
+   * Syncs YouTube feed for a monitored podcast channel to discover and qualify
+   * guest appearances of registered authorities on metabolic advocacy topics.
+   * Off-topic episodes or non-authority guests are stored as 'rejected' to avoid re-evaluating.
+   */
+  public static async syncPodcastChannelYouTubeFeed(
+    podcastChannelId: string,
+    fetchXmlFn?: (url: string) => Promise<string>,
+    customAiFetch?: (url: string, init?: any) => Promise<any>
+  ): Promise<{ addedCount: number; skippedCount: number; errors: string[] }> {
+    await dbConnect();
+    const channel = await PodcastChannelModel.findById(podcastChannelId);
+    if (!channel || !channel.youtubeChannelId) {
+      return { addedCount: 0, skippedCount: 0, errors: ['Podcast channel has no registered YouTube Channel ID or handle'] };
+    }
+
+    const rawInput = channel.youtubeChannelId.trim();
+    let channelId = rawInput;
+
+    if (!/^UC[\w-]{4,30}$/.test(channelId)) {
+      const resolved = await this.resolveYouTubeChannelId(channelId);
+      if (resolved) {
+        channelId = resolved;
+        await PodcastChannelModel.findByIdAndUpdate(podcastChannelId, { youtubeChannelId: resolved });
+      } else {
+        return {
+          addedCount: 0,
+          skippedCount: 0,
+          errors: [
+            `Could not resolve YouTube Channel ID from "${rawInput}". Please verify the @handle or channel URL.`,
+          ],
+        };
+      }
+    }
+
+    const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+
+    let xmlText = '';
+    try {
+      if (fetchXmlFn) {
+        xmlText = await fetchXmlFn(feedUrl);
+      } else {
+        const res = await fetch(feedUrl, { headers: { 'User-Agent': 'DiabetesSupport-Harvester/1.0' } });
+        if (!res.ok) {
+          return { addedCount: 0, skippedCount: 0, errors: [`Failed to fetch channel feed (HTTP ${res.status})`] };
+        }
+        xmlText = await res.text();
+      }
+    } catch (err: any) {
+      return { addedCount: 0, skippedCount: 0, errors: [err.message || 'Network error fetching podcast feed'] };
+    }
+
+    const entries = this.parseYouTubeFeed(xmlText);
+    let addedCount = 0;
+    let skippedCount = 0;
+    const errors: string[] = [];
+
+    // Fetch all active authorities as candidate persons of interest
+    const candidateAuthorities = (await AuthorityModel.find({ isActive: true }).lean()) as IAuthority[];
+
+    for (const entry of entries) {
+      try {
+        // Fast de-duplication: check if video embedId already exists in DB (either published or rejected)
+        const existing = await LearningResourceModel.findOne({ embedId: entry.videoId });
+        if (existing) {
+          continue; // Already processed in past sync with 0 AI cost
+        }
+
+        const resourceSlug = this.generateSlug(entry.title) + '-' + entry.videoId.slice(0, 6);
+
+        // Qualify episode: checks if person of interest is guest AND topic is metabolic advocacy
+        const qualification = await AiQualifierService.qualifyPodcastEpisode({
+          title: entry.title,
+          description: entry.description,
+          podcastChannelName: channel.name,
+          candidateAuthorities,
+          customFetch: customAiFetch,
+        });
+
+        if (qualification.isRelevant && qualification.matchedAuthority) {
+          const matchedAuth = qualification.matchedAuthority;
+          const status: ResourceStatus = channel.autoPublish ? 'published' : 'pending_review';
+          const topics =
+            qualification.matchedTopics.length > 0
+              ? qualification.matchedTopics
+              : matchedAuth.specialties && matchedAuth.specialties.length > 0
+              ? matchedAuth.specialties
+              : ['Metabolic Health', 'Podcast'];
+
+          await LearningResourceModel.create({
+            title: entry.title,
+            slug: resourceSlug,
+            type: 'podcast',
+            authorityId: matchedAuth._id,
+            authorityName: matchedAuth.name,
+            authorityTitle: matchedAuth.title,
+            authorityAvatar: matchedAuth.avatarUrl,
+            podcastChannelId: channel._id,
+            podcastChannelName: channel.name,
+            isGuestAppearance: true,
+            summary: entry.description.slice(0, 300) || `${matchedAuth.name} on ${channel.name}`,
+            keyTakeaways:
+              qualification.suggestedTakeaways.length > 0
+                ? qualification.suggestedTakeaways
+                : this.extractTakeaways(entry.description, entry.title),
+            sourceUrl: `https://www.youtube.com/watch?v=${entry.videoId}`,
+            platform: 'youtube',
+            embedId: entry.videoId,
+            thumbnailUrl: `https://i.ytimg.com/vi/${entry.videoId}/hqdefault.jpg`,
+            topics,
+            status,
+            relevanceScore: qualification.relevanceScore,
+            relevanceReason: qualification.relevanceReason,
+            validationStatus: 'healthy',
+            publishedAt: entry.publishedAt,
+          });
+
+          addedCount++;
+        } else {
+          // If not relevant, or podcast involved persons we are not interested:
+          // Tag as rejected so that it will NEVER be evaluated again by our AI classifier
+          await LearningResourceModel.create({
+            title: entry.title,
+            slug: resourceSlug,
+            type: 'podcast',
+            podcastChannelId: channel._id,
+            podcastChannelName: channel.name,
+            authorityId: qualification.matchedAuthority ? qualification.matchedAuthority._id : undefined,
+            authorityName: qualification.matchedAuthority ? qualification.matchedAuthority.name : undefined,
+            isGuestAppearance: !!qualification.matchedAuthority,
+            summary: entry.description.slice(0, 300) || `Episode from ${channel.name}`,
+            keyTakeaways: qualification.suggestedTakeaways,
+            sourceUrl: `https://www.youtube.com/watch?v=${entry.videoId}`,
+            platform: 'youtube',
+            embedId: entry.videoId,
+            thumbnailUrl: `https://i.ytimg.com/vi/${entry.videoId}/hqdefault.jpg`,
+            topics: qualification.matchedTopics,
+            status: 'rejected',
+            relevanceScore: qualification.relevanceScore,
+            relevanceReason: qualification.relevanceReason,
+            validationStatus: 'healthy',
+            publishedAt: entry.publishedAt,
+          });
+
+          skippedCount++;
+        }
+      } catch (err: any) {
+        errors.push(`Error evaluating podcast video ${entry.videoId}: ${err.message}`);
+      }
+    }
+
+    // Update podcast channel's lastSyncAt
+    await PodcastChannelModel.findByIdAndUpdate(podcastChannelId, { lastSyncAt: new Date() });
+
+    return { addedCount, skippedCount, errors };
+  }
+
+  /**
+   * Cron syndication engine that monitors active authorities and podcast channels for new additions,
    * runs them through the AI qualifier engine, and either publishes or skips each item.
    */
   public static async runCronSyndication(
@@ -494,16 +753,27 @@ export class LearningService {
     customAiFetch?: (url: string, init?: any) => Promise<any>
   ): Promise<{
     processedAuthorities: number;
+    processedPodcastChannels: number;
     totalAdded: number;
     totalSkipped: number;
-    details: Array<{ authority: string; added: number; skipped: number; errors: string[] }>;
+    details: Array<{
+      authority?: string;
+      channel?: string;
+      name: string;
+      type: 'authority' | 'podcast_channel';
+      added: number;
+      skipped: number;
+      errors: string[];
+    }>;
   }> {
     await dbConnect();
-    const activeAuthorities = await AuthorityModel.find({ isActive: true });
+    const activeAuthorities = (await AuthorityModel.find({ isActive: true })) || [];
+    const activePodcastChannels = (await PodcastChannelModel.find({ isActive: true })) || [];
     let totalAdded = 0;
     let totalSkipped = 0;
     const details = [];
 
+    // 1. Sync official authority YouTube feeds
     for (const auth of activeAuthorities) {
       if (auth.youtubeChannelId) {
         const res = await this.syncAuthorityYouTubeFeed(auth._id.toString(), fetchXmlFn, customAiFetch);
@@ -511,6 +781,25 @@ export class LearningService {
         totalSkipped += res.skippedCount;
         details.push({
           authority: auth.name,
+          name: auth.name,
+          type: 'authority' as const,
+          added: res.addedCount,
+          skipped: res.skippedCount,
+          errors: res.errors,
+        });
+      }
+    }
+
+    // 2. Sync official podcast channels for guest appearances
+    for (const channel of activePodcastChannels) {
+      if (channel.youtubeChannelId) {
+        const res = await this.syncPodcastChannelYouTubeFeed(channel._id.toString(), fetchXmlFn, customAiFetch);
+        totalAdded += res.addedCount;
+        totalSkipped += res.skippedCount;
+        details.push({
+          channel: channel.name,
+          name: channel.name,
+          type: 'podcast_channel' as const,
           added: res.addedCount,
           skipped: res.skippedCount,
           errors: res.errors,
@@ -520,6 +809,7 @@ export class LearningService {
 
     return {
       processedAuthorities: activeAuthorities.length,
+      processedPodcastChannels: activePodcastChannels.length,
       totalAdded,
       totalSkipped,
       details,

@@ -16,6 +16,11 @@ export async function POST(req: Request) {
       // empty body is fine
     }
 
+    if (body.podcastChannelId) {
+      const res = await LearningService.syncPodcastChannelYouTubeFeed(body.podcastChannelId);
+      return NextResponse.json({ success: true, data: res });
+    }
+
     if (body.authorityId) {
       const res = await LearningService.syncAuthorityYouTubeFeed(body.authorityId);
       return NextResponse.json({ success: true, data: res });
