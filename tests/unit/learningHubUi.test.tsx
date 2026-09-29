@@ -70,6 +70,8 @@ const mockArticle: IPost = {
   status: 'published',
 };
 
+import ReactDOMServer from 'react-dom/server';
+
 describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   describe('LearningHubClient Component', () => {
     it('instantiates cleanly with authorities, resources, and editorial articles', () => {
@@ -85,6 +87,69 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(element.props.initialAuthorities).toHaveLength(1);
       expect(element.props.initialResources).toHaveLength(1);
       expect(element.props.initialArticles).toHaveLength(1);
+    });
+
+    it('sanitizes legacy numeric WordPress tags and short tags from dynamic topics', () => {
+      const articleWithDirtyTags: IPost = {
+        ...mockArticle,
+        tags: ['Healthy Diet', '87880575', '169265974', 'ok'],
+      };
+
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[articleWithDirtyTags]}
+        />
+      );
+
+      expect(html).toContain('Healthy Diet');
+      expect(html).not.toContain('87880575');
+      expect(html).not.toContain('169265974');
+    });
+
+    it('hides Clinical Studies tab when count is 0 to prevent user confusion', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]} // has 0 studies
+          initialArticles={[mockArticle]}
+        />
+      );
+
+      expect(html).not.toContain('Clinical Studies');
+    });
+
+    it('renders elevated hero title and advocacy-oriented subtitle', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[mockArticle]}
+        />
+      );
+
+      expect(html).toContain('The Diabetes Reversal');
+      expect(html).toContain('Filipino families');
+    });
+
+    it('generates contextual fallback takeaway instead of echoing title verbatim', () => {
+      const videoWithRepetitiveTakeaway: ILearningResource = {
+        ...mockVideoResource,
+        title: 'GLP-1 Natural Activation',
+        keyTakeaways: ['Key scientific overview presented on GLP-1 Natural Activation.'],
+      };
+
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[videoWithRepetitiveTakeaway]}
+          initialArticles={[]}
+        />
+      );
+
+      expect(html).toContain('Essential lecture breakdown on insulin regulation');
+      expect(html).not.toContain('Key scientific overview presented on');
     });
   });
 

@@ -64,15 +64,35 @@ export default function LearningHubClient({
   };
 
   // Build list of distinct topics dynamically from database resources
+  const isValidTopic = (tag: string) => {
+    if (!tag || typeof tag !== 'string') return false;
+    const trimmed = tag.trim();
+    if (trimmed.length < 3) return false;
+    if (/^\d+$/.test(trimmed)) return false; // Ignore numeric WordPress IDs
+    return true;
+  };
+
   const allTopicsSet = new Set<string>();
   initialResources.forEach((res) => {
-    res.topics?.forEach((t) => allTopicsSet.add(t));
+    res.topics?.filter(isValidTopic).forEach((t) => allTopicsSet.add(t));
   });
   initialArticles.forEach((art) => {
-    if (art.category) allTopicsSet.add(art.category);
-    art.tags?.forEach((t) => allTopicsSet.add(t));
+    if (art.category && isValidTopic(art.category)) allTopicsSet.add(art.category);
+    art.tags?.filter(isValidTopic).forEach((t) => allTopicsSet.add(t));
   });
-  const dynamicTopics = ['All', ...Array.from(allTopicsSet).slice(0, 10)];
+  const dynamicTopics = ['All', ...Array.from(allTopicsSet).slice(0, 12)];
+
+  // Helper for dynamic contextual takeaway
+  const getContextualTakeaway = (item: ILearningResource): string => {
+    const rawTakeaway = item.keyTakeaways && item.keyTakeaways.length > 0 ? item.keyTakeaways[0] : '';
+    if (!rawTakeaway || rawTakeaway.toLowerCase().includes('key scientific overview presented on')) {
+      if (item.isGuestAppearance) {
+        return `Clinical discussion exploring metabolic health, insulin dynamics, and real-world nutrition on ${item.podcastChannelName || 'podcast'}.`;
+      }
+      return `Essential lecture breakdown on insulin regulation, dietary protocols, and metabolic mechanisms by ${item.authorityName}.`;
+    }
+    return rawTakeaway;
+  };
 
   // Convert editorial articles to a unified shape for filtering
   const articleItems: ILearningResource[] = initialArticles.map((art) => ({
@@ -149,14 +169,14 @@ export default function LearningHubClient({
     <div className="space-y-10">
       {/* Hero Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto pt-4">
-        <span className="bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200 inline-flex items-center gap-1.5">
-          <span>🎓</span> Learning Materials &amp; Evidence Hub
+        <span className="bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200 inline-flex items-center gap-1.5 shadow-sm">
+          <span>🌱</span> Evidence-Based Metabolic Knowledge
         </span>
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
-          Metabolic Science &amp; Health Library
+          The Diabetes Reversal &amp; Metabolic Health Hub
         </h1>
         <p className="text-lg text-slate-600 leading-relaxed">
-          Curated lectures, clinical trials, and protocols from world-renowned doctors and scientists on Low Carb, Intermittent Fasting, and Natural Healing.
+          World-class lectures, peer-reviewed clinical science, and practical lifestyle guides—curated to help Filipino families prevent and reverse insulin resistance naturally.
         </p>
 
         {/* Global Search Bar */}
@@ -190,7 +210,7 @@ export default function LearningHubClient({
 
       {/* Format Tabs (Segmented Control) */}
       <div className="flex justify-center">
-        <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex flex-wrap items-center justify-center gap-1 border border-slate-200">
+        <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex flex-wrap items-center justify-center gap-1 border border-slate-200 shadow-inner">
           <button
             type="button"
             onClick={() => setActiveFormat('all')}
@@ -243,18 +263,20 @@ export default function LearningHubClient({
             <span className="text-[11px] opacity-80">({articleCount})</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveFormat('study')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
-              activeFormat === 'study'
-                ? 'bg-teal-700 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>🔬 Clinical Studies</span>
-            <span className="text-[11px] opacity-80">({studyCount})</span>
-          </button>
+          {studyCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveFormat('study')}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+                activeFormat === 'study'
+                  ? 'bg-teal-700 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>🔬 Clinical Studies</span>
+              <span className="text-[11px] opacity-80">({studyCount})</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -342,9 +364,6 @@ export default function LearningHubClient({
         })}
       </div>
 
-      {/* Top Ad Unit */}
-      <AdUnit slotId="learning-feed-top" format="horizontal" />
-
       {/* Materials Grid */}
       {filteredItems.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 space-y-4">
@@ -368,174 +387,260 @@ export default function LearningHubClient({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredItems.map((item) => {
+          {filteredItems.map((item, index) => {
             const isSaved = item._id ? savedIds.includes(item._id) : false;
 
             // Render Video / Podcast Card
             if (item.type === 'video' || item.type === 'podcast') {
               return (
-                <article
-                  key={item._id || item.slug}
-                  className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all group"
-                >
-                  <div className="space-y-4 p-6">
-                    {/* Thumbnail with Lite Play Trigger */}
-                    <div
-                      className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 cursor-pointer group"
-                      onClick={() => handlePlayVideo(item)}
-                    >
-                      {item.thumbnailUrl ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
-                          src={item.thumbnailUrl}
-                          alt={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-slate-900 flex items-center justify-center text-4xl">
-                          🎬
+                <React.Fragment key={item._id || item.slug}>
+                  <article
+                    className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all group h-full"
+                  >
+                    <div className="space-y-4 p-6 flex-1 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        {/* Thumbnail with Lite Play Trigger */}
+                        <div
+                          className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 cursor-pointer group"
+                          onClick={() => handlePlayVideo(item)}
+                        >
+                          {item.thumbnailUrl ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={item.thumbnailUrl}
+                              alt={item.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-slate-900 flex items-center justify-center text-4xl">
+                              🎬
+                            </div>
+                          )}
+
+                          {/* Play Button Overlay */}
+                          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 flex items-center justify-center transition-colors">
+                            <div className="w-12 h-12 rounded-full bg-teal-600/90 group-hover:bg-teal-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                              ▶
+                            </div>
+                          </div>
+
+                          {/* Platform & Duration Badges */}
+                          <span className="absolute top-3 left-3 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-950/85 text-white backdrop-blur-md border border-white/20">
+                            {item.type === 'podcast' || item.isGuestAppearance ? '🎙️ Podcast' : `🎬 ${item.platform}`}
+                          </span>
+                          {item.duration && (
+                            <span className="absolute bottom-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded bg-black/80 text-white">
+                              {item.duration}
+                            </span>
+                          )}
                         </div>
-                      )}
 
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 flex items-center justify-center transition-colors">
-                        <div className="w-12 h-12 rounded-full bg-teal-600/90 group-hover:bg-teal-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                          ▶
-                        </div>
-                      </div>
+                        {/* Author & Title */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs gap-2">
+                            <span className="font-bold text-teal-800 truncate max-w-[200px] flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-teal-500 inline-block"></span>
+                              {item.authorityName}
+                            </span>
+                            {item.isGuestAppearance && item.podcastChannelName ? (
+                              <span
+                                className="bg-purple-100 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[160px]"
+                                title={`Guest on ${item.podcastChannelName}`}
+                              >
+                                🎙️ {item.podcastChannelName}
+                              </span>
+                            ) : (
+                              <span className="bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                {item.type === 'podcast' ? '🎙️ Podcast' : '🎬 Lecture'}
+                              </span>
+                            )}
+                          </div>
 
-                      {/* Platform & Duration Badges */}
-                      <span className="absolute top-3 left-3 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-950/85 text-white backdrop-blur-md border border-white/20">
-                        {item.type === 'podcast' || item.isGuestAppearance ? '🎙️ Podcast' : `🎬 ${item.platform}`}
-                      </span>
-                      {item.duration && (
-                        <span className="absolute bottom-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded bg-black/80 text-white">
-                          {item.duration}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Author & Title */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-xs gap-2">
-                        <span className="font-bold text-teal-800 truncate max-w-[200px]">
-                          {item.authorityName}
-                        </span>
-                        {item.isGuestAppearance && item.podcastChannelName ? (
-                          <span
-                            className="bg-purple-100 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[160px]"
-                            title={`Guest on ${item.podcastChannelName}`}
+                          <h2
+                            className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 cursor-pointer pt-0.5"
+                            onClick={() => handlePlayVideo(item)}
                           >
-                            🎙️ {item.podcastChannelName}
-                          </span>
-                        ) : (
-                          <span className="text-slate-400 font-medium">
-                            {item.type === 'podcast' ? 'Podcast' : 'Lecture'}
-                          </span>
-                        )}
+                            {item.title}
+                          </h2>
+                        </div>
                       </div>
 
-                      <h2
-                        className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 cursor-pointer pt-0.5"
-                        onClick={() => handlePlayVideo(item)}
-                      >
-                        {item.title}
-                      </h2>
-                    </div>
-
-                    {/* 3 Key Takeaways Card */}
-                    {item.keyTakeaways && item.keyTakeaways.length > 0 && (
-                      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs space-y-1.5">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-teal-700">
-                          💡 Key Insight:
+                      {/* 3 Key Takeaways Card */}
+                      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs space-y-1.5 mt-2">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-teal-700 flex items-center gap-1">
+                          <span>💡</span> Key Takeaway:
                         </span>
                         <p className="text-slate-600 line-clamp-2 leading-relaxed">
-                          • {item.keyTakeaways[0]}
+                          • {getContextualTakeaway(item)}
                         </p>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Actions Footer */}
-                  <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                    <button
-                      type="button"
-                      onClick={() => handlePlayVideo(item)}
-                      className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1"
-                    >
-                      ▶ Play Video
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <a
-                        href={item.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-semibold text-slate-500 hover:text-slate-800 inline-flex items-center gap-1"
-                      >
-                        Watch on YouTube ↗
-                      </a>
-
-                      {item._id && (
-                        <button
-                          type="button"
-                          onClick={() => handleToggleSave(item._id!)}
-                          title={isSaved ? 'Remove from saved' : 'Save to protocol'}
-                          className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                            isSaved
-                              ? 'bg-amber-50 text-amber-600 border-amber-300'
-                              : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                          }`}
-                        >
-                          {isSaved ? '★' : '☆'}
-                        </button>
-                      )}
                     </div>
-                  </div>
-                </article>
+
+                    {/* Actions Footer */}
+                    <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                      <button
+                        type="button"
+                        onClick={() => handlePlayVideo(item)}
+                        className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1"
+                      >
+                        ▶ Play Video
+                      </button>
+
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-semibold text-slate-500 hover:text-slate-800 inline-flex items-center gap-1"
+                        >
+                          {item.isGuestAppearance ? 'Watch Episode ↗' : 'Watch on YouTube ↗'}
+                        </a>
+
+                        {item._id && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSave(item._id!)}
+                            title={isSaved ? 'Remove from saved' : 'Save to protocol'}
+                            className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                              isSaved
+                                ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                            }`}
+                          >
+                            {isSaved ? '★' : '☆'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+
+                  {/* Inline Sponsored Placement between row 1 and row 2 */}
+                  {index === 2 && (
+                    <div className="col-span-full my-2">
+                      <AdUnit slotId="learning-feed-mid" format="horizontal" />
+                    </div>
+                  )}
+                </React.Fragment>
               );
             }
 
             // Render Study / Clinical Trial Card
             if (item.type === 'study') {
               return (
-                <article
-                  key={item._id || item.slug}
-                  className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all"
-                >
-                  <div className="space-y-4 p-6">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md font-bold uppercase tracking-wider text-[10px]">
-                        🔬 Clinical Study
-                      </span>
-                      <span className="text-slate-400 font-semibold">{item.authorityName}</span>
+                <React.Fragment key={item._id || item.slug}>
+                  <article
+                    className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all h-full"
+                  >
+                    <div className="space-y-4 p-6 flex-1 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md font-bold uppercase tracking-wider text-[10px]">
+                            🔬 Clinical Study
+                          </span>
+                          <span className="text-slate-400 font-semibold">{item.authorityName}</span>
+                        </div>
+
+                        <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 pt-1">
+                          <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
+                            {item.title}
+                          </a>
+                        </h2>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-indigo-50/50 to-teal-50/50 border border-indigo-100 rounded-2xl p-4 text-xs space-y-1.5 mt-2">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-900">
+                          📊 Clinical Takeaway:
+                        </span>
+                        <p className="text-slate-700 line-clamp-3 leading-relaxed">
+                          {item.keyTakeaways?.[0] || item.summary}
+                        </p>
+                      </div>
                     </div>
 
-                    <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 pt-1">
-                      <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
-                        {item.title}
+                    <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
+                      <a
+                        href={item.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1"
+                      >
+                        Read Study on PubMed ↗
                       </a>
-                    </h2>
 
-                    <div className="bg-gradient-to-br from-indigo-50/50 to-teal-50/50 border border-indigo-100 rounded-2xl p-4 text-xs space-y-1.5">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-900">
-                        📊 Clinical Takeaway:
-                      </span>
-                      <p className="text-slate-700 line-clamp-3 leading-relaxed">
-                        {item.keyTakeaways?.[0] || item.summary}
-                      </p>
+                      {item._id && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSave(item._id!)}
+                          className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                            isSaved
+                              ? 'bg-amber-50 text-amber-600 border-amber-300'
+                              : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                          }`}
+                        >
+                          {isSaved ? '★ Saved' : '☆ Save'}
+                        </button>
+                      )}
                     </div>
+                  </article>
+
+                  {index === 2 && (
+                    <div className="col-span-full my-2">
+                      <AdUnit slotId="learning-feed-mid" format="horizontal" />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            }
+
+            // Render Editorial Article Card
+            return (
+              <React.Fragment key={item._id || item.slug}>
+                <article
+                  className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all h-full"
+                >
+                  <div className="space-y-4 p-6 flex-1 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      {item.thumbnailUrl ? (
+                        <div className="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.thumbnailUrl}
+                            alt={item.title}
+                            className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : (
+                        <div className="aspect-video w-full rounded-2xl bg-gradient-to-br from-teal-50 to-slate-100 flex items-center justify-center text-teal-700 text-3xl font-extrabold border border-teal-100">
+                          📖 Editorial Guide
+                        </div>
+                      )}
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 text-[10px]">
+                            📖 {item.topics[0] || 'Guide'}
+                          </span>
+                          <span className="text-slate-400 font-semibold">{item.duration}</span>
+                        </div>
+
+                        <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-600 pt-1">
+                          <Link href={`/blog/${item.slug}`}>{item.title.replace(/&nbsp;/g, ' ')}</Link>
+                        </h2>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed mt-2">
+                      {item.summary}
+                    </p>
                   </div>
 
-                  <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between">
-                    <a
-                      href={item.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1"
+                  <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
+                    <Link
+                      href={`/blog/${item.slug}`}
+                      className="inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-900 group"
                     >
-                      Read Study on PubMed ↗
-                    </a>
+                      Read Full Article <span className="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
+                    </Link>
 
                     {item._id && (
                       <button
@@ -552,71 +657,13 @@ export default function LearningHubClient({
                     )}
                   </div>
                 </article>
-              );
-            }
 
-            // Render Editorial Article Card
-            return (
-              <article
-                key={item._id || item.slug}
-                className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all"
-              >
-                <div className="space-y-4 p-6">
-                  {item.thumbnailUrl ? (
-                    <div className="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 relative">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.thumbnailUrl}
-                        alt={item.title}
-                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-video w-full rounded-2xl bg-gradient-to-br from-teal-50 to-slate-100 flex items-center justify-center text-teal-700 text-3xl font-extrabold border border-teal-100">
-                      📖 Editorial Guide
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-100">
-                        {item.topics[0] || 'Guide'}
-                      </span>
-                      <span className="text-slate-400 font-semibold">{item.duration}</span>
-                    </div>
-
-                    <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-600 pt-1">
-                      <Link href={`/blog/${item.slug}`}>{item.title.replace(/&nbsp;/g, ' ')}</Link>
-                    </h2>
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                      {item.summary}
-                    </p>
+                {index === 2 && (
+                  <div className="col-span-full my-2">
+                    <AdUnit slotId="learning-feed-mid" format="horizontal" />
                   </div>
-                </div>
-
-                <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between">
-                  <Link
-                    href={`/blog/${item.slug}`}
-                    className="inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-900 group"
-                  >
-                    Read Full Article <span className="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
-                  </Link>
-
-                  {item._id && (
-                    <button
-                      type="button"
-                      onClick={() => handleToggleSave(item._id!)}
-                      className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                        isSaved
-                          ? 'bg-amber-50 text-amber-600 border-amber-300'
-                          : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                      }`}
-                    >
-                      {isSaved ? '★ Saved' : '☆ Save'}
-                    </button>
-                  )}
-                </div>
-              </article>
+                )}
+              </React.Fragment>
             );
           })}
         </div>
