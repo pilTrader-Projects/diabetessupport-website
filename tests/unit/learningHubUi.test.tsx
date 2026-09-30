@@ -143,8 +143,9 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
         />
       );
 
-      expect(html).toContain('The Diabetes Reversal');
-      expect(html).toContain('Filipino families');
+      expect(html).toContain('The Metabolic Health &amp; Diabetes Reversal Hub');
+      expect(html).toContain('reversing insulin resistance');
+      expect(html).not.toContain('Filipino families');
     });
 
     it('generates contextual fallback takeaway instead of echoing title verbatim', () => {
@@ -249,10 +250,25 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('Dr. Jason Fung');
       expect(html).not.toContain('No Learning Materials Found');
     });
+
+    it('renders Books & Protocols tab and affiliate book cards for world-class authorities', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[mockArticle]}
+        />
+      );
+
+      expect(html).toContain('Books &amp; Protocols');
+      expect(html).toContain('Why We Get Sick');
+      expect(html).toContain('The Diabetes Code');
+      expect(html).toContain('Get Book on Amazon');
+    });
   });
 
   describe('VideoPlayerModal Component', () => {
-    it('renders with youtube embed and takeaways when open', () => {
+    it('renders with youtube embed, takeaways, and contextual affiliate reading recommendations', () => {
       const element = (
         <VideoPlayerModal
           isOpen={true}
@@ -271,6 +287,12 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('absolute inset-0 w-full h-full');
       expect(html).toContain('Share');
       expect(html).toContain('Found this material valuable? Share it:');
+
+      // Verify contextual affiliate recommendation for Dr. Bikman
+      expect(html).toContain('Recommended Reading by');
+      expect(html).toContain('Dr. Benjamin Bikman');
+      expect(html).toContain('Why We Get Sick');
+      expect(html).toContain('Amazon');
     });
 
     it('returns null when isOpen is false', () => {

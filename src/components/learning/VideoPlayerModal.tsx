@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ILearningResource } from '@/types/learning';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
+import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -61,6 +62,11 @@ export default function VideoPlayerModal({
   }, [isOpen, onClose]);
 
   if (!isOpen || !resource) return null;
+
+  const recommendedBooks =
+    resource.recommendedBooks && resource.recommendedBooks.length > 0
+      ? resource.recommendedBooks
+      : getRecommendedBooksForAuthority(resource.authorityName || resource.authorityId);
 
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   const embedUrl = resource.embedId
@@ -210,6 +216,76 @@ export default function VideoPlayerModal({
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Contextual Affiliate Book & Protocol Recommendations */}
+          {recommendedBooks.length > 0 && (
+            <div className="bg-gradient-to-br from-amber-950/25 via-slate-900 to-slate-950 border border-amber-500/30 rounded-2xl p-5 space-y-4 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-lg">📖</span>
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-400">
+                    Recommended Reading by {resource.authorityName}
+                  </h3>
+                </div>
+                <span className="text-[10px] uppercase font-bold text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  Affiliate Selection
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {recommendedBooks.map((book) => (
+                  <div
+                    key={book._id || book.title}
+                    className="flex gap-3 bg-slate-950/70 border border-slate-800 rounded-xl p-3 hover:border-amber-500/40 transition-all group"
+                  >
+                    {book.coverUrl ? (
+                      <div className="w-16 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-900 shadow-md">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={book.coverUrl}
+                          alt={book.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-24 shrink-0 rounded-lg bg-amber-900/30 border border-amber-600/30 flex items-center justify-center text-xl">
+                        📚
+                      </div>
+                    )}
+                    <div className="flex-1 flex flex-col justify-between min-w-0">
+                      <div>
+                        {book.badgeText && (
+                          <span className="text-[9px] font-black uppercase text-amber-300">
+                            {book.badgeText}
+                          </span>
+                        )}
+                        <h4 className="text-xs font-bold text-white line-clamp-1 group-hover:text-amber-300 transition-colors">
+                          {book.title}
+                        </h4>
+                        <p className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
+                          {book.description}
+                        </p>
+                      </div>
+                      <div className="pt-2 flex items-center gap-2">
+                        <a
+                          href={book.affiliateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer sponsored"
+                          className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-extrabold rounded-lg transition-colors inline-flex items-center gap-1 shadow-sm"
+                        >
+                          <span>Get on {book.platformName?.split(' ')[0] || 'Amazon'} ↗</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-[10px] text-slate-500 leading-tight">
+                Purchases made through these links support our evidence-based metabolic health advocacy at no extra cost to you.
+              </p>
             </div>
           )}
 

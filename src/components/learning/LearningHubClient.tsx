@@ -8,6 +8,7 @@ import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
+import { getAllRecommendedBooks } from '@/config/affiliateBooks';
 
 interface LearningHubClientProps {
   initialAuthorities: IAuthority[];
@@ -16,7 +17,7 @@ interface LearningHubClientProps {
   initialArticles: IPost[];
   initialSearch?: string;
   initialTopic?: string;
-  initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study';
+  initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study' | 'book';
   initialAuthority?: string;
   initialPodcast?: string;
   initialResourceSlug?: string;
@@ -56,7 +57,7 @@ export default function LearningHubClient({
     return match?._id || 'all';
   };
 
-  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study'>(initialFormat);
+  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study' | 'book'>(initialFormat);
   const [selectedAuthorityId, setSelectedAuthorityId] = useState<string>(resolveInitialAuthorityId());
   const [selectedPodcastChannelId, setSelectedPodcastChannelId] = useState<string>(resolveInitialPodcastId());
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
@@ -149,8 +150,30 @@ export default function LearningHubClient({
     publishedAt: art.publishedAt || art.createdAt,
   }));
 
-  // Combine resources and articles
-  const allItems: ILearningResource[] = [...initialResources, ...articleItems];
+  // Curated affiliate books & protocols from world-class metabolic authorities
+  const affiliateBookItems: ILearningResource[] = getAllRecommendedBooks().map((book) => ({
+    _id: book._id,
+    title: book.title,
+    slug: book._id || book.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    type: 'book',
+    authorityName: book.author,
+    authorityTitle: book.subtitle,
+    summary: book.description,
+    keyTakeaways: [
+      book.description,
+      `Platform: ${book.platformName || 'Amazon'}`,
+      `Category: ${book.badgeText || 'Must-Read'}`,
+    ],
+    sourceUrl: book.affiliateUrl,
+    platform: 'amazon',
+    thumbnailUrl: book.coverUrl,
+    duration: 'Book & Protocol',
+    topics: book.topics || ['Metabolic Health', 'Insulin Resistance'],
+    status: 'published',
+  }));
+
+  // Combine resources, articles, and affiliate books
+  const allItems: ILearningResource[] = [...initialResources, ...articleItems, ...affiliateBookItems];
 
   // Auto-open specific resource if visitor navigated from a shared link (e.g. /blog?resource=...)
   useEffect(() => {
@@ -182,6 +205,7 @@ export default function LearningHubClient({
   const podcastCount = allItems.filter((i) => i.type === 'podcast' || i.isGuestAppearance).length;
   const studyCount = allItems.filter((i) => i.type === 'study').length;
   const articleCount = allItems.filter((i) => i.type === 'article').length;
+  const bookCount = allItems.filter((i) => i.type === 'book').length;
 
   // Filter items
   const filteredItems = allItems.filter((item) => {
@@ -190,12 +214,18 @@ export default function LearningHubClient({
     if (activeFormat === 'podcast' && item.type !== 'podcast' && !item.isGuestAppearance) return false;
     if (activeFormat === 'study' && item.type !== 'study') return false;
     if (activeFormat === 'article' && item.type !== 'article') return false;
+    if (activeFormat === 'book' && item.type !== 'book') return false;
 
     // Authority filter
     if (selectedAuthorityId !== 'all') {
       const selectedAuth = initialAuthorities.find((a) => a._id === selectedAuthorityId);
       if (selectedAuth) {
-        const matchesName = item.authorityName.toLowerCase().includes(selectedAuth.name.toLowerCase());
+        const authNameLower = selectedAuth.name.toLowerCase();
+        const surname = selectedAuth.name.split(' ').slice(-1)[0].toLowerCase();
+        const itemAuthLower = item.authorityName.toLowerCase();
+        const matchesName =
+          itemAuthLower.includes(authNameLower) ||
+          itemAuthLower.includes(surname);
         const matchesId = item.authorityId === selectedAuthorityId;
         if (!matchesName && !matchesId) return false;
       }
@@ -264,13 +294,13 @@ export default function LearningHubClient({
       {/* Hero Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto pt-4">
         <span className="bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200 inline-flex items-center gap-1.5 shadow-sm">
-          <span>🌱</span> Evidence-Based Metabolic Knowledge
+          <span>🌱</span> Evidence-Based Metabolic Science
         </span>
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
-          The Diabetes Reversal &amp; Metabolic Health Hub
+          The Metabolic Health &amp; Diabetes Reversal Hub
         </h1>
         <p className="text-lg text-slate-600 leading-relaxed">
-          World-class lectures, peer-reviewed clinical science, and practical lifestyle guides—curated to help Filipino families prevent and reverse insulin resistance naturally.
+          World-class lectures, peer-reviewed science, and practical guides to reversing insulin resistance—the hidden root cause of Type 2 diabetes, fatty liver, PCOS, and metabolic dysfunction.
         </p>
 
         {/* Global Search Bar */}
@@ -369,6 +399,21 @@ export default function LearningHubClient({
             >
               <span>🔬 Clinical Studies</span>
               <span className="text-[11px] opacity-80">({studyCount})</span>
+            </button>
+          )}
+
+          {bookCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveFormat('book')}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+                activeFormat === 'book'
+                  ? 'bg-amber-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>📚 Books &amp; Protocols</span>
+              <span className="text-[11px] opacity-80">({bookCount})</span>
             </button>
           )}
         </div>
@@ -744,6 +789,105 @@ export default function LearningHubClient({
                           onClick={() => handleOpenShare(item)}
                           title="Found this study valuable? Share it!"
                           className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-indigo-700 hover:bg-slate-50 transition-colors"
+                        >
+                          📤
+                        </button>
+
+                        {item._id && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSave(item._id!)}
+                            className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                              isSaved
+                                ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                            }`}
+                          >
+                            {isSaved ? '★ Saved' : '☆ Save'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+
+                  {index === 2 && (
+                    <div className="col-span-full my-2">
+                      <AdUnit slotId="learning-feed-mid" format="horizontal" />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            }
+
+            // Render Affiliate Book & Clinical Protocol Card
+            if (item.type === 'book') {
+              return (
+                <React.Fragment key={item._id || item.slug}>
+                  <article className="bg-white rounded-3xl border border-amber-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-amber-400 transition-all h-full group">
+                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-4">
+                        <div className="flex gap-4 items-start">
+                          {item.thumbnailUrl ? (
+                            <div className="w-20 h-28 shrink-0 rounded-xl overflow-hidden bg-slate-100 shadow-md border border-slate-200">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={item.thumbnailUrl}
+                                alt={item.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-20 h-28 shrink-0 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-3xl">
+                              📚
+                            </div>
+                          )}
+
+                          <div className="space-y-1.5 flex-1 min-w-0">
+                            <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[10px] inline-block">
+                              📖 Book &amp; Protocol
+                            </span>
+                            <h2 className="text-base font-bold text-slate-900 line-clamp-2 pt-1 group-hover:text-amber-800 transition-colors">
+                              <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer sponsored">
+                                {item.title}
+                              </a>
+                            </h2>
+                            <p className="text-xs font-semibold text-slate-500">
+                              By {item.authorityName}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                          {item.summary}
+                        </p>
+                      </div>
+
+                      <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 text-[11px] text-amber-900 space-y-1">
+                        <span className="font-extrabold uppercase tracking-wider text-[10px] text-amber-950 flex items-center gap-1">
+                          <span>💡</span> Why Read This:
+                        </span>
+                        <p className="text-slate-700 line-clamp-2">
+                          {item.keyTakeaways?.[0] || 'Essential clinical insights on reversing insulin resistance.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
+                      <a
+                        href={item.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer sponsored"
+                        className="inline-flex items-center text-xs font-bold text-amber-700 hover:text-amber-900 group/link"
+                      >
+                        Get Book on Amazon ↗
+                      </a>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenShare(item)}
+                          title="Found this material valuable? Share it!"
+                          className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-amber-700 hover:bg-slate-50 transition-colors"
                         >
                           📤
                         </button>

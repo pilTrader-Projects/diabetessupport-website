@@ -4,10 +4,29 @@
  * @usecase Powers the dynamic Learning Materials & Evidence Hub (/blog) and Admin Management.
  */
 
-export type ResourceType = 'video' | 'podcast' | 'study' | 'article';
-export type ResourcePlatform = 'youtube' | 'spotify' | 'pubmed' | 'web' | 'apple-podcasts';
+export type ResourceType = 'video' | 'podcast' | 'study' | 'article' | 'book';
+export type ResourcePlatform = 'youtube' | 'spotify' | 'pubmed' | 'web' | 'apple-podcasts' | 'amazon' | 'audible';
 export type ResourceStatus = 'published' | 'pending_review' | 'rejected' | 'archived' | 'broken_link';
 export type ValidationStatus = 'healthy' | 'broken' | 'redirected' | 'unverified';
+
+/**
+ * Domain entity for recommended books, paid programs, and clinical protocols.
+ * Used for affiliate monetization and deep-dive reading for learners.
+ */
+export interface IAffiliateRecommendation {
+  _id?: string;
+  title: string;
+  author: string;
+  authoritySlug?: string;
+  type: 'book' | 'program' | 'protocol';
+  subtitle?: string;
+  description: string;
+  affiliateUrl: string;
+  coverUrl?: string;
+  badgeText?: string;
+  platformName?: string;         // e.g. "Amazon", "Audible", "Direct"
+  topics?: string[];
+}
 
 /**
  * Result of AI advocacy relevance qualification.
@@ -44,6 +63,7 @@ export interface IAuthority {
   autoPublish: boolean;          // If true, new ingested items go live immediately
   isActive: boolean;             // If false, paused from automated sync
   displayOrder: number;          // Visual sorting for authority filter bar
+  recommendedBooks?: IAffiliateRecommendation[]; // Curated books & protocol affiliate links
   lastSyncAt?: Date;
 
   createdAt?: Date;
@@ -99,6 +119,7 @@ export interface ILearningResource {
 
   summary: string;
   keyTakeaways: string[];        // 3-5 bullet points for rapid 10-second consumption
+  recommendedBooks?: IAffiliateRecommendation[]; // Contextual affiliate book/program links
 
   // Media & Platform details
   sourceUrl: string;             // Direct URL on YouTube, PubMed, Spotify, etc.
