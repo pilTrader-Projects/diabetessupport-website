@@ -171,7 +171,52 @@ export class AiQualifierService {
       };
     }
 
-    // 2. Evaluate topic relevance for the identified authority
+    // 2. Evaluate topic relevance for the identified authority via LLM (Gemini or OpenAI) with heuristic fallback
+    const geminiKey = process.env.GEMINI_API_KEY;
+    const openAiKey = process.env.OPENAI_API_KEY;
+
+    if (geminiKey) {
+      try {
+        const aiResult = await this.evaluateWithGemini(
+          title,
+          cleanDescription,
+          matchedAuthority.name,
+          matchedAuthority.specialties || [],
+          geminiKey,
+          customFetch
+        );
+        if (aiResult) {
+          return {
+            ...aiResult,
+            matchedAuthority,
+            relevanceReason: `Guest appearance by ${matchedAuthority.name} on "${podcastChannelName}". ${aiResult.relevanceReason}`,
+          };
+        }
+      } catch (err: any) {
+        console.warn('Gemini podcast qualification failed, falling back to heuristic engine:', err.message);
+      }
+    } else if (openAiKey) {
+      try {
+        const aiResult = await this.evaluateWithOpenAI(
+          title,
+          cleanDescription,
+          matchedAuthority.name,
+          matchedAuthority.specialties || [],
+          openAiKey,
+          customFetch
+        );
+        if (aiResult) {
+          return {
+            ...aiResult,
+            matchedAuthority,
+            relevanceReason: `Guest appearance by ${matchedAuthority.name} on "${podcastChannelName}". ${aiResult.relevanceReason}`,
+          };
+        }
+      } catch (err: any) {
+        console.warn('OpenAI podcast qualification failed, falling back to heuristic engine:', err.message);
+      }
+    }
+
     const topicEval = this.evaluateWithHeuristicEngine(
       title,
       cleanDescription,
