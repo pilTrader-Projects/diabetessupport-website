@@ -6,6 +6,7 @@ import { IAuthority, ILearningResource, IPodcastChannel } from '@/types/learning
 import { IPost } from '@/types/blog';
 import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
+import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
 
 interface LearningHubClientProps {
@@ -18,6 +19,7 @@ interface LearningHubClientProps {
   initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study';
   initialAuthority?: string;
   initialPodcast?: string;
+  initialResourceSlug?: string;
 }
 
 export default function LearningHubClient({
@@ -30,6 +32,7 @@ export default function LearningHubClient({
   initialFormat = 'all',
   initialAuthority = 'all',
   initialPodcast = 'all',
+  initialResourceSlug = '',
 }: LearningHubClientProps): React.JSX.Element {
   const resolveInitialAuthorityId = (): string => {
     if (!initialAuthority || initialAuthority === 'all') return 'all';
@@ -148,6 +151,31 @@ export default function LearningHubClient({
 
   // Combine resources and articles
   const allItems: ILearningResource[] = [...initialResources, ...articleItems];
+
+  // Auto-open specific resource if visitor navigated from a shared link (e.g. /blog?resource=...)
+  useEffect(() => {
+    if (initialResourceSlug) {
+      const match = allItems.find(
+        (item) =>
+          item.slug === initialResourceSlug ||
+          item._id === initialResourceSlug ||
+          item.embedId === initialResourceSlug
+      );
+      if (match) {
+        if (match.type === 'video' || match.type === 'podcast' || match.embedId) {
+          handlePlayVideo(match);
+        }
+      }
+    }
+  }, [initialResourceSlug]);
+
+  const [sharingResource, setSharingResource] = useState<ILearningResource | null>(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  const handleOpenShare = (resource: ILearningResource) => {
+    setSharingResource(resource);
+    setIsShareModalOpen(true);
+  };
 
   // Counts for format tabs
   const videoCount = allItems.filter((i) => i.type === 'video' && !i.isGuestAppearance).length;
@@ -630,6 +658,15 @@ export default function LearningHubClient({
                           {item.isGuestAppearance ? 'Watch Episode ↗' : 'Watch on YouTube ↗'}
                         </a>
 
+                        <button
+                          type="button"
+                          onClick={() => handleOpenShare(item)}
+                          title="Share this material"
+                          className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
+                        >
+                          📤
+                        </button>
+
                         {item._id && (
                           <button
                             type="button"
@@ -701,19 +738,30 @@ export default function LearningHubClient({
                         Read Study on PubMed ↗
                       </a>
 
-                      {item._id && (
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
-                          onClick={() => handleToggleSave(item._id!)}
-                          className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                            isSaved
-                              ? 'bg-amber-50 text-amber-600 border-amber-300'
-                              : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                          }`}
+                          onClick={() => handleOpenShare(item)}
+                          title="Share this study"
+                          className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-indigo-700 hover:bg-slate-50 transition-colors"
                         >
-                          {isSaved ? '★ Saved' : '☆ Save'}
+                          📤
                         </button>
-                      )}
+
+                        {item._id && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSave(item._id!)}
+                            className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                              isSaved
+                                ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                            }`}
+                          >
+                            {isSaved ? '★ Saved' : '☆ Save'}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </article>
 
@@ -776,19 +824,30 @@ export default function LearningHubClient({
                       Read Full Article <span className="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
                     </Link>
 
-                    {item._id && (
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleToggleSave(item._id!)}
-                        className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                          isSaved
-                            ? 'bg-amber-50 text-amber-600 border-amber-300'
-                            : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                        }`}
+                        onClick={() => handleOpenShare(item)}
+                        title="Share this guide"
+                        className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
                       >
-                        {isSaved ? '★ Saved' : '☆ Save'}
+                        📤
                       </button>
-                    )}
+
+                      {item._id && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSave(item._id!)}
+                          className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                            isSaved
+                              ? 'bg-amber-50 text-amber-600 border-amber-300'
+                              : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                          }`}
+                        >
+                          {isSaved ? '★ Saved' : '☆ Save'}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </article>
 
@@ -826,6 +885,13 @@ export default function LearningHubClient({
         resource={playingResource}
         isSaved={playingResource?._id ? savedIds.includes(playingResource._id) : false}
         onToggleSave={handleToggleSave}
+      />
+
+      {/* Social Share Modal with Dynamic Photo Thumbnail Preview */}
+      <ResourceShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        resource={sharingResource}
       />
 
       {/* Saved Protocol Slide-Out Drawer with Lead Capture */}

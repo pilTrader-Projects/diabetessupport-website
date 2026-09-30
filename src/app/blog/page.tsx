@@ -7,33 +7,11 @@ import { getCategoryLookupMap, resolveCategoryName } from '@/lib/categoryUtils';
 import { IPost } from '@/types/blog';
 import { IAuthority, ILearningResource, IPodcastChannel } from '@/types/learning';
 import { Metadata } from 'next';
+import mongoose from 'mongoose';
 import { SITE_CONFIG } from '@/config/constants';
 import LearningHubClient from '@/components/learning/LearningHubClient';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
-
-export const metadata: Metadata = {
-  title: `Learning Materials & Evidence Hub | ${SITE_CONFIG.title}`,
-  description:
-    'Comprehensive library of reputable medical sources, videos, and clinical trials on Low Carb, Intermittent Fasting, and Natural Metabolic Healing.',
-  openGraph: {
-    title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
-    description: SITE_CONFIG.description,
-    url: `https://${SITE_CONFIG.domain}/blog`,
-    siteName: SITE_CONFIG.title,
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
-    description: SITE_CONFIG.description,
-  },
-  alternates: {
-    types: {
-      'application/rss+xml': `https://${SITE_CONFIG.domain}/feed.xml`,
-    },
-  },
-};
 
 interface BlogFeedPageProps {
   searchParams?: Promise<{
@@ -42,7 +20,109 @@ interface BlogFeedPageProps {
     format?: string;
     authority?: string;
     podcast?: string;
+    resource?: string;
   }>;
+}
+
+export async function generateMetadata({ searchParams }: BlogFeedPageProps): Promise<Metadata> {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const baseUrl = `https://${SITE_CONFIG.domain}`;
+
+  // If a specific learning resource is being shared, dynamically return its title, summary, and photo thumbnail
+  if (resolvedParams.resource) {
+    try {
+      await dbConnect();
+      const isObjectId = mongoose.Types.ObjectId.isValid(resolvedParams.resource);
+      let resource: any = await LearningResourceModel.findOne({
+        $or: [
+          { slug: resolvedParams.resource },
+          { embedId: resolvedParams.resource },
+          ...(isObjectId ? [{ _id: resolvedParams.resource }] : []),
+        ],
+      }).lean();
+
+      if (!resource) {
+        const post = await PostModel.findOne({
+          $or: [
+            { slug: resolvedParams.resource },
+            ...(isObjectId ? [{ _id: resolvedParams.resource }] : []),
+          ],
+        }).lean();
+        if (post) {
+          resource = {
+            title: post.title,
+            summary: post.excerpt,
+            slug: post.slug,
+            thumbnailUrl: post.featuredImage,
+          };
+        }
+      }
+
+      if (resource) {
+        const cleanTitle = `${(resource.title || '').replace(/&nbsp;/g, ' ')} | ${SITE_CONFIG.title}`;
+        const cleanDesc = resource.summary || 'Evidence-based metabolic health lecture and research.';
+        const shareUrl = `${baseUrl}/blog?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`;
+        let imageUrl = resource.thumbnailUrl || `${baseUrl}/icons/icon-512x512.png`;
+        if (imageUrl.startsWith('/')) {
+          imageUrl = `${baseUrl}${imageUrl}`;
+        }
+
+        return {
+          title: cleanTitle,
+          description: cleanDesc,
+          alternates: {
+            canonical: `/blog?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`,
+          },
+          openGraph: {
+            title: cleanTitle,
+            description: cleanDesc,
+            url: shareUrl,
+            siteName: SITE_CONFIG.title,
+            type: 'video.other',
+            images: [
+              {
+                url: imageUrl,
+                width: 1280,
+                height: 720,
+                alt: resource.title,
+              },
+            ],
+          },
+          twitter: {
+            card: 'summary_large_image',
+            title: cleanTitle,
+            description: cleanDesc,
+            images: [imageUrl],
+          },
+        };
+      }
+    } catch (err) {
+      console.error('Error generating dynamic metadata for resource share:', err);
+    }
+  }
+
+  return {
+    title: `Learning Materials & Evidence Hub | ${SITE_CONFIG.title}`,
+    description:
+      'Comprehensive library of reputable medical sources, videos, and clinical trials on Low Carb, Intermittent Fasting, and Natural Metabolic Healing.',
+    openGraph: {
+      title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
+      description: SITE_CONFIG.description,
+      url: `${baseUrl}/blog`,
+      siteName: SITE_CONFIG.title,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
+      description: SITE_CONFIG.description,
+    },
+    alternates: {
+      types: {
+        'application/rss+xml': `${baseUrl}/feed.xml`,
+      },
+    },
+  };
 }
 
 /**
@@ -58,6 +138,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const formatQuery = (resolvedParams.format || 'all').toLowerCase();
   const authorityQuery = (resolvedParams.authority || 'all').trim();
   const podcastQuery = (resolvedParams.podcast || 'all').trim();
+  const resourceQuery = (resolvedParams.resource || '').trim();
 
   let rawPosts: any[] = [];
   let rawAuthorities: any[] = [];
@@ -139,6 +220,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
         initialFormat={['all', 'video', 'podcast', 'article', 'study'].includes(formatQuery) ? (formatQuery as any) : 'all'}
         initialAuthority={authorityQuery}
         initialPodcast={podcastQuery}
+        initialResourceSlug={resourceQuery}
       />
 
       {/* RSS & Sitemap Links Footer Banner */}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ILearningResource } from '@/types/learning';
+import ResourceShareModal from '@/components/learning/ResourceShareModal';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ interface VideoPlayerModalProps {
  * Accessible, High-Performance Lite-Embed Video Player Modal.
  *
  * @usecase Streams YouTube videos via privacy-friendly youtube-nocookie with zero upfront tracking script bloat,
- * provides 'Watch on YouTube' external link, and highlights 3 Key Takeaways.
+ * provides 'Watch on YouTube' external link, highlights 3 Key Takeaways, and enables direct social sharing.
  * Portaled to document.body to ensure strict viewport-fixed positioning regardless of parent container transforms.
  */
 export default function VideoPlayerModal({
@@ -27,12 +28,11 @@ export default function VideoPlayerModal({
   onToggleSave,
 }: VideoPlayerModalProps): React.JSX.Element | null {
   const [mounted, setMounted] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const [copied, setCopied] = useState(false);
 
   // Lock background scroll when modal is open
   useEffect(() => {
@@ -165,11 +165,11 @@ export default function VideoPlayerModal({
 
               <button
                 type="button"
-                onClick={handleShare}
+                onClick={() => setIsShareModalOpen(true)}
                 className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750"
-                title="Copy link to clipboard"
+                title="Share to Facebook, X, WhatsApp, or copy link"
               >
-                <span>{copied ? '✓ Copied!' : '🔗 Share'}</span>
+                <span>🔗 Share</span>
               </button>
 
               {onToggleSave && resource._id && (
@@ -232,10 +232,21 @@ export default function VideoPlayerModal({
     </div>
   );
 
+  const fullContent = (
+    <>
+      {modalContent}
+      <ResourceShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        resource={resource}
+      />
+    </>
+  );
+
   // If in browser, portal to document.body; otherwise render directly (for SSR or test environments)
   if (mounted && typeof document !== 'undefined') {
-    return createPortal(modalContent, document.body);
+    return createPortal(fullContent, document.body);
   }
 
-  return modalContent;
+  return fullContent;
 }

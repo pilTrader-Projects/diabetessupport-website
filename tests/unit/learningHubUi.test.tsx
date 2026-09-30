@@ -7,7 +7,8 @@ import React from 'react';
 import LearningHubClient from '../../src/components/learning/LearningHubClient';
 import VideoPlayerModal from '../../src/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '../../src/components/learning/SavedResourcesDrawer';
-import BlogFeedPage from '../../src/app/blog/page';
+import ResourceShareModal from '../../src/components/learning/ResourceShareModal';
+import BlogFeedPage, { generateMetadata } from '../../src/app/blog/page';
 import { ILearningResource, IAuthority, IPodcastChannel } from '../../src/types/learning';
 import { IPost } from '../../src/types/blog';
 import { PostModel } from '../../src/models/Post';
@@ -328,6 +329,141 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       const page = await BlogFeedPage({});
       expect(page).toBeDefined();
+    });
+
+    it('generates dynamic metadata with photo thumbnail and OG tags when resource param is provided', async () => {
+      (LearningResourceModel.findOne as any) = jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockVideoResource),
+      });
+
+      const metadata = await generateMetadata({
+        searchParams: Promise.resolve({ resource: 'insulin-resistance-glucagon' }),
+      });
+
+      expect(metadata).toBeDefined();
+      expect(metadata.title).toContain('Insulin Resistance & Glucagon');
+      expect(metadata.openGraph?.images).toEqual([
+        {
+          url: 'https://i.ytimg.com/vi/abc123xyz/hqdefault.jpg',
+          width: 1280,
+          height: 720,
+          alt: 'Insulin Resistance & Glucagon',
+        },
+      ]);
+      expect(metadata.twitter).toEqual({
+        card: 'summary_large_image',
+        title: expect.stringContaining('Insulin Resistance & Glucagon'),
+        description: expect.any(String),
+        images: ['https://i.ytimg.com/vi/abc123xyz/hqdefault.jpg'],
+      });
+    });
+
+    it('falls back to PostModel if resource is not found in LearningResourceModel', async () => {
+      (LearningResourceModel.findOne as any) = jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue(null),
+      });
+
+      (PostModel.findOne as any) = jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          title: 'Top 10 Filipino Foods',
+          slug: 'top-10-filipino-foods',
+          excerpt: 'A practical nutrition guide.',
+          featuredImage: 'https://diabetessupport.ph/images/filipino-foods.jpg',
+        }),
+      });
+
+      const metadata = await generateMetadata({
+        searchParams: Promise.resolve({ resource: 'top-10-filipino-foods' }),
+      });
+
+      expect(metadata).toBeDefined();
+      expect(metadata.title).toContain('Top 10 Filipino Foods');
+      expect(metadata.openGraph?.images).toEqual([
+        {
+          url: 'https://diabetessupport.ph/images/filipino-foods.jpg',
+          width: 1280,
+          height: 720,
+          alt: 'Top 10 Filipino Foods',
+        },
+      ]);
+    });
+  });
+
+  describe('ResourceShareModal Component', () => {
+    it('renders dynamic photo thumbnail, title, and social sharing links when open', () => {
+      const element = (
+        <ResourceShareModal
+          isOpen={true}
+          onClose={jest.fn()}
+          resource={mockVideoResource}
+        />
+      );
+
+      expect(element).toBeDefined();
+      const html = ReactDOMServer.renderToString(element);
+
+      // Verify photo thumbnail preview
+      expect(html).toContain('https://i.ytimg.com/vi/abc123xyz/hqdefault.jpg');
+      expect(html).toContain('Shared Photo Thumbnail');
+      expect(html).toContain('Insulin Resistance &amp; Glucagon');
+
+      // Verify direct platform sharing intents
+      expect(html).toContain('facebook.com/sharer/sharer.php');
+      expect(html).toContain('twitter.com/intent/tweet');
+      expect(html).toContain('api.whatsapp.com/send');
+      expect(html).toContain('viber://forward');
+      expect(html).toContain('Share to Instagram / More Apps');
+      expect(html).toContain('Copy Link');
+    });
+
+    it('returns null when isOpen is false or resource is null', () => {
+      const closedElement = (
+        <ResourceShareModal
+          isOpen={false}
+          onClose={jest.fn()}
+          resource={mockVideoResource}
+        />
+      );
+      expect(closedElement.props.isOpen).toBe(false);
+
+      const nullResourceElement = (
+        <ResourceShareModal
+          isOpen={true}
+          onClose={jest.fn()}
+          resource={null}
+        />
+      );
+      expect(nullResourceElement.props.resource).toBeNull();
+    });
+  });
+
+  describe('LearningHubClient Share Triggers & Deep-Linking', () => {
+    it('renders share buttons (📤) on material cards for dynamic sharing', () => {
+      const element = (
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[mockArticle]}
+        />
+      );
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('title="Share this material"');
+      expect(html).toContain('title="Share this guide"');
+      expect(html).toContain('📤');
+    });
+
+    it('accepts initialResourceSlug prop to deep link and auto-open material', () => {
+      const element = (
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[]}
+          initialResourceSlug="insulin-resistance-glucagon"
+        />
+      );
+
+      expect(element.props.initialResourceSlug).toBe('insulin-resistance-glucagon');
     });
   });
 });
