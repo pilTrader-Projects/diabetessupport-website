@@ -9,6 +9,11 @@ import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
 import { getAllRecommendedBooks } from '@/config/affiliateBooks';
+import {
+  getSavedProtocolIds,
+  saveProtocolResource,
+  PROTOCOL_UPDATE_EVENT,
+} from '@/lib/savedProtocolUtils';
 
 interface LearningHubClientProps {
   initialAuthorities: IAuthority[];
@@ -17,7 +22,7 @@ interface LearningHubClientProps {
   initialArticles: IPost[];
   initialSearch?: string;
   initialTopic?: string;
-  initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study' | 'book';
+  initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study' | 'book' | 'saved';
   initialAuthority?: string;
   initialPodcast?: string;
   initialResourceSlug?: string;
@@ -57,7 +62,9 @@ export default function LearningHubClient({
     return match?._id || 'all';
   };
 
-  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study' | 'book'>(initialFormat);
+  const [activeFormat, setActiveFormat] = useState<
+    'all' | 'video' | 'podcast' | 'article' | 'study' | 'book' | 'saved'
+  >(initialFormat);
   const [selectedAuthorityId, setSelectedAuthorityId] = useState<string>(resolveInitialAuthorityId());
   const [selectedPodcastChannelId, setSelectedPodcastChannelId] = useState<string>(resolveInitialPodcastId());
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
@@ -69,28 +76,40 @@ export default function LearningHubClient({
   const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
-  // Load bookmarks from localStorage on mount
+  // Load and subscribe to saved protocol items
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('diabetes_saved_protocol');
-      if (stored) {
-        setSavedIds(JSON.parse(stored));
-      }
-    } catch {
-      // ignore storage failure
+    setSavedIds(getSavedProtocolIds());
+
+    const handleUpdate = () => {
+      setSavedIds(getSavedProtocolIds());
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener(PROTOCOL_UPDATE_EVENT, handleUpdate);
+      window.addEventListener('storage', handleUpdate);
     }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(PROTOCOL_UPDATE_EVENT, handleUpdate);
+        window.removeEventListener('storage', handleUpdate);
+      }
+    };
   }, []);
 
-  const handleToggleSave = (id: string) => {
-    setSavedIds((prev) => {
-      const updated = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
-      try {
-        localStorage.setItem('diabetes_saved_protocol', JSON.stringify(updated));
-      } catch {
-        // ignore
-      }
-      return updated;
-    });
+  const handleToggleSave = (idOrResource: string | ILearningResource) => {
+    let targetResource: any;
+    if (typeof idOrResource === 'string') {
+      targetResource = allItems.find((item) => item._id === idOrResource) || {
+        _id: idOrResource,
+        title: 'Resource',
+        type: 'video',
+      };
+    } else {
+      targetResource = idOrResource;
+    }
+    saveProtocolResource(targetResource);
+    setSavedIds(getSavedProtocolIds());
   };
 
   const handlePlayVideo = (resource: ILearningResource) => {
@@ -230,6 +249,7 @@ export default function LearningHubClient({
     if (activeFormat === 'study' && item.type !== 'study') return false;
     if (activeFormat === 'article' && item.type !== 'article') return false;
     if (activeFormat === 'book' && item.type !== 'book') return false;
+    if (activeFormat === 'saved' && (!item._id || !savedIds.includes(item._id))) return false;
 
     // Authority filter
     if (selectedAuthorityId !== 'all') {
@@ -431,6 +451,26 @@ export default function LearningHubClient({
               <span className="text-[11px] opacity-80">({bookCount})</span>
             </button>
           )}
+
+          {/* My Saved Protocol In-Page Filter Tab */}
+          <button
+            type="button"
+            onClick={() => setActiveFormat('saved')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+              activeFormat === 'saved'
+                ? 'bg-teal-700 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span>🔖 My Protocol</span>
+            {savedIds.length > 0 && (
+              <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-black ${
+                activeFormat === 'saved' ? 'bg-white text-teal-800' : 'bg-teal-100 text-teal-900'
+              }`}>
+                {savedIds.length}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
@@ -571,10 +611,14 @@ export default function LearningHubClient({
       {/* Materials Grid */}
       {filteredItems.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 space-y-4">
-          <span className="text-4xl">🔍</span>
-          <h3 className="text-lg font-bold text-slate-900">No Learning Materials Found</h3>
+          <span className="text-4xl">{activeFormat === 'saved' ? '🔖' : '🔍'}</span>
+          <h3 className="text-lg font-bold text-slate-900">
+            {activeFormat === 'saved' ? 'Your Saved Protocol is Empty' : 'No Learning Materials Found'}
+          </h3>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
-            No materials matched your filter combination. Try clearing your search query or selecting &quot;All&quot;.
+            {activeFormat === 'saved'
+              ? 'Click the "☆ Save" button on any lecture, study, or editorial guide across the hub to build your personalized metabolic protocol.'
+              : 'No materials matched your filter combination. Try clearing your search query or selecting "All".'}
           </p>
           <button
             type="button"
@@ -587,7 +631,7 @@ export default function LearningHubClient({
             }}
             className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors"
           >
-            Reset All Filters
+            {activeFormat === 'saved' ? 'Browse All Materials' : 'Reset All Filters'}
           </button>
         </div>
       ) : (
@@ -1018,22 +1062,6 @@ export default function LearningHubClient({
               </React.Fragment>
             );
           })}
-        </div>
-      )}
-
-      {/* Floating Bookmark Pill (Lead Magnet trigger) */}
-      {savedIds.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-40">
-          <button
-            type="button"
-            onClick={() => setIsSavedDrawerOpen(true)}
-            className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-5 py-3 rounded-full shadow-2xl border border-teal-400/40 flex items-center gap-2 hover:scale-105 transition-all"
-          >
-            <span>🔖 Saved Protocol</span>
-            <span className="bg-teal-500 text-slate-950 px-2 py-0.5 rounded-full text-[11px] font-black">
-              {savedIds.length}
-            </span>
-          </button>
         </div>
       )}
 

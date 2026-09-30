@@ -9,6 +9,7 @@ import VideoPlayerModal from '../../src/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '../../src/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '../../src/components/learning/ResourceShareModal';
 import SocialShareBar from '../../src/components/community/SocialShareBar';
+import Header from '../../src/components/Header';
 import AuthorityModal from '../../src/components/admin/learning/AuthorityModal';
 import ResourceModal from '../../src/components/admin/learning/ResourceModal';
 import BlogFeedPage, { generateMetadata } from '../../src/app/blog/page';
@@ -267,6 +268,26 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('The Diabetes Code');
       expect(html).toContain('Get Book on Amazon');
     });
+
+    it('renders the My Protocol in-page filter tab in format segmented control', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[mockArticle]}
+        />
+      );
+
+      expect(html).toContain('My Protocol');
+    });
+  });
+
+  describe('Header Component (Global Saved Protocol Integration)', () => {
+    it('renders header-level My Protocol notification button and trigger', () => {
+      const html = ReactDOMServer.renderToString(<Header />);
+      expect(html).toContain('My Protocol');
+      expect(html).toContain('Open My Saved Protocol');
+    });
   });
 
   describe('VideoPlayerModal Component', () => {
@@ -328,7 +349,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   });
 
   describe('SavedResourcesDrawer Component', () => {
-    it('renders saved items and email sync opt-in', () => {
+    it('renders saved items, share protocol button, and email sync opt-in', () => {
       const element = (
         <SavedResourcesDrawer
           isOpen={true}
@@ -341,6 +362,10 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       expect(element).toBeDefined();
       expect(element.props.savedResources).toHaveLength(1);
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('Share Protocol');
+      expect(html).toContain('Sync Library Across Devices');
     });
   });
 
