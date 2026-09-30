@@ -42,6 +42,14 @@ export default function AuthoritiesManagerClient({
   const [syncingAll, setSyncingAll] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Targeted Topic / Keyword Search Modal state
+  const [topicModal, setTopicModal] = useState<{ isOpen: boolean; authority: IAuthority | null }>({
+    isOpen: false,
+    authority: null,
+  });
+  const [topicInput, setTopicInput] = useState('');
+  const [isSearchingTopic, setIsSearchingTopic] = useState(false);
+
   const showNotification = (type: 'success' | 'error', text: string) => {
     setMessage({ type, text });
     setTimeout(() => setMessage(null), 6000);
@@ -199,6 +207,53 @@ export default function AuthoritiesManagerClient({
       showNotification('error', err.message || `Failed to sync feed for ${name}`);
     } finally {
       setSyncingId(null);
+    }
+  };
+
+  const handleOpenTopicSearch = (item: IAuthority) => {
+    setTopicModal({ isOpen: true, authority: item });
+    setTopicInput((item.specialties || []).slice(0, 2).join(', '));
+  };
+
+  const handleExecuteTopicSearch = async () => {
+    if (!topicModal.authority?._id) return;
+    const auth = topicModal.authority;
+    const keywords = topicInput
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (keywords.length === 0) {
+      showNotification('error', 'Please specify at least one keyword (e.g. fasting, diabetes, insulin).');
+      return;
+    }
+
+    setIsSearchingTopic(true);
+    try {
+      const res = await fetch('/api/v1/admin/learning/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ authorityId: auth._id, keywords }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to execute topic sync');
+
+      const added = data.data?.totalAdded ?? 0;
+      const skipped = data.data?.totalSkipped ?? 0;
+
+      showNotification(
+        'success',
+        `Topic sync complete for ${auth.name}! Ingested ${added} new video(s) matching "${keywords.join(', ')}", skipped ${skipped} non-relevant.`
+      );
+
+      setAuthorities((prev) =>
+        prev.map((item) => (item._id === auth._id ? { ...item, lastSyncAt: new Date() } : item))
+      );
+      setTopicModal({ isOpen: false, authority: null });
+    } catch (err: any) {
+      showNotification('error', err.message || `Failed to search topics for ${auth.name}`);
+    } finally {
+      setIsSearchingTopic(false);
     }
   };
 
@@ -618,15 +673,26 @@ export default function AuthoritiesManagerClient({
 
                 {/* Card Actions Footer */}
                 <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleSyncAuthority(item._id!, item.name)}
-                    disabled={isSyncingThis || !item.youtubeChannelId}
-                    title={!item.youtubeChannelId ? 'Set YouTube Channel ID first' : 'Sync Channel Feed Now'}
-                    className="px-3 py-1.5 bg-slate-800 hover:bg-slate-750 text-teal-300 text-xs font-bold rounded-lg border border-slate-700/80 transition-colors disabled:opacity-40 inline-flex items-center gap-1 active:scale-95"
-                  >
-                    <span>{isSyncingThis ? '⏳ Syncing...' : '⚡ Sync Feed'}</span>
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleSyncAuthority(item._id!, item.name)}
+                      disabled={isSyncingThis || !item.youtubeChannelId}
+                      title={!item.youtubeChannelId ? 'Set YouTube Channel ID first' : 'Sync Channel Feed Now'}
+                      className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-750 text-teal-300 text-xs font-bold rounded-lg border border-slate-700/80 transition-colors disabled:opacity-40 inline-flex items-center gap-1 active:scale-95"
+                    >
+                      <span>{isSyncingThis ? '⏳ Syncing...' : '⚡ Sync'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenTopicSearch(item)}
+                      title="Search & Ingest historical lectures by keyword"
+                      className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-750 text-indigo-300 text-xs font-bold rounded-lg border border-slate-700/80 transition-colors inline-flex items-center gap-1 active:scale-95"
+                    >
+                      <span>🎯 Topic</span>
+                    </button>
+                  </div>
 
                   <div className="flex items-center gap-1.5">
                     <button
@@ -768,10 +834,18 @@ export default function AuthoritiesManagerClient({
                             type="button"
                             onClick={() => handleSyncAuthority(item._id!, item.name)}
                             disabled={isSyncingThis || !item.youtubeChannelId}
-                            title="Sync Feed"
+                            title="Sync Latest Feed"
                             className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-lg border border-slate-700 transition-colors disabled:opacity-30"
                           >
                             {isSyncingThis ? '⏳' : '⚡ Sync'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenTopicSearch(item)}
+                            title="Search & Ingest historical lectures by keyword"
+                            className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg border border-slate-700 transition-colors"
+                          >
+                            🎯 Topic
                           </button>
                           <button
                             type="button"
@@ -806,6 +880,106 @@ export default function AuthoritiesManagerClient({
         initialData={editingAuthority}
         submitting={submitting}
       />
+
+      {/* 7. Targeted Topic / Keyword Search Modal */}
+      {topicModal.isOpen && topicModal.authority && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <span>🎯</span>
+                  <span>Targeted Topic Ingestion</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Search YouTube for <strong className="text-teal-400">{topicModal.authority.name}</strong>&apos;s lectures on specific metabolic topics.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTopicModal({ isOpen: false, authority: null })}
+                className="text-slate-400 hover:text-white p-1 rounded-lg text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Quick Specialty Chips */}
+            {topicModal.authority.specialties && topicModal.authority.specialties.length > 0 && (
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider">
+                  Quick Specialty Keywords (Click to add)
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {topicModal.authority.specialties.map((s, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        const current = topicInput.split(',').map((x) => x.trim()).filter(Boolean);
+                        if (!current.includes(s)) {
+                          setTopicInput(current.length > 0 ? `${topicInput}, ${s}` : s);
+                        }
+                      }}
+                      className="text-xs px-2.5 py-1 bg-slate-950 hover:bg-slate-800 text-teal-300 rounded-lg border border-slate-700/80 transition-all hover:scale-105 active:scale-95"
+                    >
+                      + {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Keyword Input */}
+            <div className="space-y-1.5">
+              <label htmlFor="topic-keywords-input" className="text-[11px] font-bold text-slate-300 block">
+                Keywords to query (comma-separated):
+              </label>
+              <input
+                id="topic-keywords-input"
+                type="text"
+                value={topicInput}
+                onChange={(e) => setTopicInput(e.target.value)}
+                placeholder="e.g. fasting, autophagy, insulin resistance, heart disease"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500"
+              />
+              <p className="text-[10px] text-slate-500">
+                Queries YouTube directly for &quot;{topicModal.authority.name}&quot; paired with each keyword, runs AI qualification, and adds verified lectures to your catalog.
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="pt-3 border-t border-slate-800 flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setTopicModal({ isOpen: false, authority: null })}
+                disabled={isSearchingTopic}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-bold rounded-xl"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExecuteTopicSearch}
+                disabled={isSearchingTopic || !topicInput.trim()}
+                className="px-5 py-2 bg-gradient-to-r from-teal-500 to-indigo-600 hover:from-teal-400 hover:to-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all inline-flex items-center gap-2 disabled:opacity-50 active:scale-95"
+              >
+                {isSearchingTopic ? (
+                  <>
+                    <span className="animate-spin">⏳</span>
+                    <span>Searching &amp; Ingesting...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🔍</span>
+                    <span>Ingest Topic Lectures</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

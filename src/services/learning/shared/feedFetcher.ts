@@ -126,6 +126,102 @@ export async function scrapeYouTubeChannelVideos(
 }
 
 /**
+ * Parses YouTube search result HTML payload into structured video entries.
+ */
+export function parseYouTubeSearchHtml(html: string): VideoEntry[] {
+  const match =
+    html.match(/var ytInitialData\s*=\s*({[\s\S]*?});<\/script>/) ||
+    html.match(/ytInitialData\s*=\s*({[\s\S]*?});/);
+  if (!match) return [];
+
+  try {
+    const data = JSON.parse(match[1]);
+    const results: VideoEntry[] = [];
+    const seenIds = new Set<string>();
+
+    function extractVideos(obj: any) {
+      if (!obj || typeof obj !== 'object') return;
+
+      if (obj.videoRenderer) {
+        const vr = obj.videoRenderer;
+        const vid = vr.videoId;
+        const title = vr.title?.runs?.[0]?.text || vr.title?.simpleText || '';
+        if (vid && title && !seenIds.has(vid)) {
+          seenIds.add(vid);
+          const desc = (vr.descriptionSnippet?.runs?.map((r: any) => r.text).join('') || '').trim();
+          results.push({
+            videoId: vid,
+            title: title.trim().replace(/&amp;/g, '&'),
+            description: desc,
+            publishedAt: new Date(),
+            duration: vr.lengthText?.simpleText,
+          });
+        }
+      } else if (obj.lockupViewModel) {
+        const lvm = obj.lockupViewModel;
+        const vid =
+          lvm.contentId ||
+          lvm.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint?.videoId;
+        const title = lvm.metadata?.lockupMetadataViewModel?.title?.content;
+        if (vid && title && !seenIds.has(vid)) {
+          seenIds.add(vid);
+          results.push({
+            videoId: vid,
+            title: title.trim().replace(/&amp;/g, '&'),
+            description: '',
+            publishedAt: new Date(),
+            duration:
+              lvm.contentImage?.thumbnailViewModel?.overlays?.[0]
+                ?.thumbnailBottomOverlayViewModel?.badges?.[0]
+                ?.thumbnailBadgeViewModel?.text,
+          });
+        }
+      }
+
+      for (const key of Object.keys(obj)) {
+        extractVideos(obj[key]);
+      }
+    }
+
+    extractVideos(data);
+    return results;
+  } catch (err: any) {
+    console.error('Error parsing YouTube search JSON:', err.message);
+    return [];
+  }
+}
+
+/**
+ * Searches YouTube directly for targeted keywords (e.g. "Dr. Pradip Jamnadas fasting"
+ * or "The Diary Of A CEO Dr. Jason Fung") to discover specific lectures and guest appearances.
+ */
+export async function scrapeYouTubeSearchVideos(
+  query: string,
+  customFetch?: FetchFn
+): Promise<VideoEntry[]> {
+  if (!query || !query.trim()) return [];
+  const targetUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query.trim())}`;
+  const fetchFn = customFetch || fetch;
+
+  try {
+    const res = await fetchFn(targetUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    });
+
+    if (!res.ok) return [];
+    const html = typeof res.text === 'function' ? await res.text() : String(res);
+    return parseYouTubeSearchHtml(html);
+  } catch (err: any) {
+    console.error(`Error searching YouTube for query "${query}":`, err.message);
+    return [];
+  }
+}
+
+/**
  * Resolves a raw UC channel ID, @handle, or channel URL to a canonical UC channel ID.
  */
 export async function resolveYouTubeChannelId(
