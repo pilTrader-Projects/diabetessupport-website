@@ -454,23 +454,23 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       {/* ========================================================================= */}
       {/* PILLAR F: CURATED LEARNING MATERIALS & EVIDENCE VAULT                     */}
       {/* ========================================================================= */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-950 to-teal-950 text-white rounded-3xl p-6 sm:p-10 border border-teal-800/40 shadow-xl space-y-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-800 pb-6">
+      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-6">
           <div className="space-y-3 max-w-2xl">
-            <span className="inline-block bg-teal-500/20 text-teal-300 text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-teal-500/30">
+            <span className="inline-block bg-teal-50 text-teal-900 text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-teal-200">
               🔬 Peer-Reviewed Science &amp; Expert Authorities
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Curated Learning Materials &amp; Evidence Hub
             </h2>
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
               Explore clinical lectures, trial breakdowns, and dietary protocols from world-leading metabolic researchers—tailored to help your family understand the root biology of healing.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link
               href="/learn"
-              className="px-6 py-3 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-sm rounded-xl transition-all shadow-md flex items-center gap-2 group cursor-pointer"
+              className="px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm rounded-xl transition-all shadow-sm flex items-center gap-2 group cursor-pointer"
             >
               <span>Open Learning Hub</span>
               <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
@@ -480,38 +480,38 @@ export default async function HomePage(): Promise<React.JSX.Element> {
 
         {/* Multi-Format Quick Filter Chips */}
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="text-xs font-bold text-slate-400 mr-1">Quick Browse:</span>
+          <span className="text-xs font-bold text-slate-500 mr-1">Quick Browse:</span>
           <Link
             href="/learn?format=video"
-            className="px-3.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-teal-200 border border-slate-700/80 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-teal-900 border border-slate-200 hover:border-teal-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
           >
             <span>🎥</span>
             <span>Video Lectures</span>
           </Link>
           <Link
             href="/learn?format=study"
-            className="px-3.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-teal-200 border border-slate-700/80 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-teal-900 border border-slate-200 hover:border-teal-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
           >
             <span>🔬</span>
             <span>Clinical Studies</span>
           </Link>
           <Link
             href="/learn?format=podcast"
-            className="px-3.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-teal-200 border border-slate-700/80 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-teal-900 border border-slate-200 hover:border-teal-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
           >
             <span>🎙️</span>
             <span>Medical Podcasts</span>
           </Link>
           <Link
             href="/learn?format=book"
-            className="px-3.5 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-teal-200 border border-slate-700/80 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-teal-900 border border-slate-200 hover:border-teal-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
           >
             <span>📚</span>
             <span>Books &amp; Protocols</span>
           </Link>
           <Link
             href="/learn?format=saved"
-            className="px-3.5 py-1.5 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/40 text-xs font-bold transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-200 text-xs font-bold transition-colors flex items-center gap-1.5"
           >
             <span>🔖</span>
             <span>My Library</span>
@@ -534,50 +534,50 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               : '🎙️ Podcast';
 
             const typeBadgeStyle = isVideo
-              ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+              ? 'bg-rose-50 text-rose-700 border-rose-200'
               : isStudy
-              ? 'bg-teal-500/20 text-teal-300 border-teal-500/30'
+              ? 'bg-teal-50 text-teal-800 border-teal-200'
               : isBook
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-              : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+              ? 'bg-amber-50 text-amber-800 border-amber-200'
+              : 'bg-indigo-50 text-indigo-800 border-indigo-200';
 
             return (
               <div
                 key={idx}
-                className="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 hover:border-teal-500/50 transition-all flex flex-col justify-between space-y-4 group"
+                className="bg-slate-50/70 hover:bg-white rounded-2xl p-6 border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all flex flex-col justify-between space-y-4 group"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${typeBadgeStyle}`}>
                       {typeLabel}
                     </span>
-                    <span className="text-[11px] text-slate-400 font-medium">
+                    <span className="text-[11px] text-slate-500 font-medium">
                       {res.duration}
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-xs text-teal-300 font-bold block">
+                    <span className="text-xs text-teal-700 font-bold block">
                       {res.authorityName}
                     </span>
-                    <span className="text-[11px] text-slate-400 block">
+                    <span className="text-[11px] text-slate-500 block">
                       {res.authorityTitle}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-white line-clamp-2 group-hover:text-teal-300 transition-colors">
+                  <h3 className="text-base font-bold text-slate-900 line-clamp-2 group-hover:text-teal-700 transition-colors">
                     {res.title}
                   </h3>
 
-                  <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
                     {res.summary}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-800/80">
+                <div className="pt-3 border-t border-slate-200">
                   <Link
                     href={`/learn?resource=${encodeURIComponent(res.slug)}`}
-                    className="text-xs font-bold text-teal-400 hover:text-teal-300 inline-flex items-center gap-1.5"
+                    className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1.5"
                   >
                     <span>{isVideo ? 'Watch Breakdown' : isStudy ? 'Read Findings' : 'Explore Protocol'}</span>
                     <span>&rarr;</span>
@@ -589,21 +589,21 @@ export default async function HomePage(): Promise<React.JSX.Element> {
         </div>
 
         {/* "My Library" Personal Protocol Banner */}
-        <div className="bg-slate-900/90 rounded-2xl p-5 border border-teal-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-2xl p-6 border border-teal-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-4 text-center sm:text-left">
-            <span className="text-3xl p-3 bg-teal-500/10 rounded-xl border border-teal-500/20">🔖</span>
+            <span className="text-2xl p-3 bg-white rounded-xl border border-teal-200 text-teal-700 shadow-xs">🔖</span>
             <div>
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold text-teal-950">
                 Build Your Personal Metabolic Protocol with &ldquo;My Library&rdquo;
               </h3>
-              <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+              <p className="text-xs text-teal-900/80 mt-0.5 leading-relaxed">
                 Bookmark any video lecture, clinical paper, or book across the hub. Access your curated favorites on any device without required passwords.
               </p>
             </div>
           </div>
           <Link
             href="/learn?format=saved"
-            className="whitespace-nowrap px-4 py-2 bg-slate-800 hover:bg-slate-700 text-teal-300 border border-teal-500/40 font-bold text-xs rounded-xl transition-all"
+            className="whitespace-nowrap px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
           >
             View My Library &rarr;
           </Link>
