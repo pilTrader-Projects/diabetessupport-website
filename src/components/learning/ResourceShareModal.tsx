@@ -129,14 +129,6 @@ export default function ResourceShareModal({
           </button>
         </div>
 
-        {/* Value Encouragement */}
-        <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-teal-950/60 border border-teal-500/30 text-teal-200 text-xs">
-          <span className="text-base shrink-0">💡</span>
-          <p className="leading-snug">
-            <strong>Found this material valuable?</strong> Share it with someone who needs it.
-          </p>
-        </div>
-
         {/* Dynamic Photo Thumbnail Preview */}
         {resource.thumbnailUrl ? (
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-800 shadow-inner group">

@@ -8,6 +8,7 @@ import LearningHubClient from '../../src/components/learning/LearningHubClient';
 import VideoPlayerModal from '../../src/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '../../src/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '../../src/components/learning/ResourceShareModal';
+import SocialShareBar from '../../src/components/community/SocialShareBar';
 import BlogFeedPage, { generateMetadata } from '../../src/app/blog/page';
 import { ILearningResource, IAuthority, IPodcastChannel } from '../../src/types/learning';
 import { IPost } from '../../src/types/blog';
@@ -269,8 +270,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('youtube.com/embed/abc123xyz');
       expect(html).toContain('absolute inset-0 w-full h-full');
       expect(html).toContain('Share');
-      expect(html).toContain('Found this material valuable?');
-      expect(html).toContain('Share it with someone who needs it.');
+      expect(html).toContain('Found this material valuable? Share it:');
     });
 
     it('returns null when isOpen is false', () => {
@@ -283,6 +283,23 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       );
 
       expect(element.props.isOpen).toBe(false);
+    });
+  });
+
+  describe('SocialShareBar Component', () => {
+    it('renders encouragement prompt before share buttons when reading material', () => {
+      const element = (
+        <SocialShareBar
+          title="Top 10 Filipino Foods"
+          url="https://diabetessupport.ph/blog/top-10-filipino-foods"
+          snippet="Evidence-based guide"
+        />
+      );
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('Found this material valuable? Share:');
+      expect(html).toContain('facebook.com/sharer/sharer.php');
+      expect(html).toContain('twitter.com/intent/tweet');
     });
   });
 
@@ -392,7 +409,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   });
 
   describe('ResourceShareModal Component', () => {
-    it('renders dynamic photo thumbnail, title, encouragement message, and social sharing links when open', () => {
+    it('renders dynamic photo thumbnail, title, and social sharing links when open', () => {
       const element = (
         <ResourceShareModal
           isOpen={true}
@@ -403,10 +420,6 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       expect(element).toBeDefined();
       const html = ReactDOMServer.renderToString(element);
-
-      // Verify encouragement message
-      expect(html).toContain('Found this material valuable?');
-      expect(html).toContain('Share it with someone who needs it.');
 
       // Verify photo thumbnail preview
       expect(html).toContain('https://i.ytimg.com/vi/abc123xyz/hqdefault.jpg');

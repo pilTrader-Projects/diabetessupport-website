@@ -152,39 +152,44 @@ export default function VideoPlayerModal({
               </h2>
             </div>
 
-            {/* Direct Platform Jump Button */}
-            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-              <a
-                href={resource.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 sm:flex-initial px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg transition-colors inline-flex items-center justify-center gap-2"
-              >
-                <span>↗ Watch on YouTube</span>
-              </a>
+            {/* Direct Platform Jump Button & Share Encouragement */}
+            <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
+              <span className="text-[11px] font-semibold text-teal-300 flex items-center gap-1.5 bg-teal-950/60 px-3 py-1 rounded-full border border-teal-500/30">
+                <span>💡</span> Found this material valuable? Share it:
+              </span>
+              <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                <a
+                  href={resource.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 sm:flex-initial px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg transition-colors inline-flex items-center justify-center gap-2"
+                >
+                  <span>↗ Watch on YouTube</span>
+                </a>
 
-              <button
-                type="button"
-                onClick={() => setIsShareModalOpen(true)}
-                className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750"
-                title="Found this material valuable? Share it!"
-              >
-                <span>🔗 Share</span>
-              </button>
-
-              {onToggleSave && resource._id && (
                 <button
                   type="button"
-                  onClick={() => onToggleSave(resource._id!)}
-                  className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 ${
-                    isSaved
-                      ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
-                      : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750'
-                  }`}
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-teal-600 hover:bg-teal-500 text-white border-teal-500 shadow-md hover:scale-[1.02]"
+                  title="Found this material valuable? Share it!"
                 >
-                  <span>{isSaved ? '★ Saved' : '☆ Save'}</span>
+                  <span>🔗 Share</span>
                 </button>
-              )}
+
+                {onToggleSave && resource._id && (
+                  <button
+                    type="button"
+                    onClick={() => onToggleSave(resource._id!)}
+                    className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 ${
+                      isSaved
+                        ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750'
+                    }`}
+                  >
+                    <span>{isSaved ? '★ Saved' : '☆ Save'}</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -207,23 +212,6 @@ export default function VideoPlayerModal({
               </ul>
             </div>
           )}
-
-          {/* Share Encouragement Banner */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-teal-950/60 to-slate-900 border border-teal-500/30 text-xs">
-            <div className="flex items-center gap-2.5 text-teal-200">
-              <span className="text-base shrink-0">🤝</span>
-              <p className="leading-snug">
-                <strong>Found this material valuable?</strong> Share it with someone who needs it.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsShareModalOpen(true)}
-              className="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs shrink-0 transition-colors inline-flex items-center gap-1.5 shadow-md"
-            >
-              <span>📤 Share</span>
-            </button>
-          </div>
 
           {/* Overview / Bio */}
           <div className="space-y-2 text-xs text-slate-400 leading-relaxed">

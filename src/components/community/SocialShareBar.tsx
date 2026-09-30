@@ -94,8 +94,10 @@ export default function SocialShareBar({
       </div>
 
       {/* Right: Social Share Buttons */}
-      <div className="flex items-center flex-wrap gap-1.5">
-        <span className="text-slate-400 font-semibold mr-1">Share:</span>
+      <div className="flex items-center flex-wrap gap-2">
+        <span className="text-slate-600 font-semibold mr-1 flex items-center gap-1.5 text-xs">
+          <span>💡</span> Found this material valuable? Share:
+        </span>
 
         {/* Copy Quote Button */}
         <button
