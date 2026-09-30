@@ -171,6 +171,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       const html = ReactDOMServer.renderToString(element);
       expect(html).toContain('youtube.com/embed/abc123xyz');
       expect(html).toContain('absolute inset-0 w-full h-full');
+      expect(html).toContain('Share');
     });
 
     it('returns null when isOpen is false', () => {

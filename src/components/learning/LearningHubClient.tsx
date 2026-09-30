@@ -706,7 +706,7 @@ export default function LearningHubClient({
         onRemoveSaved={handleToggleSave}
         onSelectResource={(res) => {
           setIsSavedDrawerOpen(false);
-          if (res.type === 'video') {
+          if (res.type === 'video' || res.type === 'podcast' || res.embedId) {
             handlePlayVideo(res);
           } else if (res.sourceUrl) {
             window.open(res.sourceUrl, '_blank');

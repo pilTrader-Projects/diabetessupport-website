@@ -32,6 +32,8 @@ export default function VideoPlayerModal({
     setMounted(true);
   }, []);
 
+  const [copied, setCopied] = useState(false);
+
   // Lock background scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -43,12 +45,40 @@ export default function VideoPlayerModal({
     }
   }, [isOpen]);
 
+  // Handle Escape key to dismiss modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || !resource) return null;
 
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   const embedUrl = resource.embedId
     ? `https://www.youtube.com/embed/${resource.embedId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&modestbranding=1${originParam}`
     : null;
+
+  const handleShare = async () => {
+    const shareUrl = resource.sourceUrl || (typeof window !== 'undefined' ? window.location.href : '');
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      }
+    } catch {
+      // fallback if clipboard not permitted
+    }
+  };
 
   const modalContent = (
     <div
@@ -123,7 +153,7 @@ export default function VideoPlayerModal({
             </div>
 
             {/* Direct Platform Jump Button */}
-            <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
               <a
                 href={resource.sourceUrl}
                 target="_blank"
@@ -132,6 +162,15 @@ export default function VideoPlayerModal({
               >
                 <span>↗ Watch on YouTube</span>
               </a>
+
+              <button
+                type="button"
+                onClick={handleShare}
+                className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750"
+                title="Copy link to clipboard"
+              >
+                <span>{copied ? '✓ Copied!' : '🔗 Share'}</span>
+              </button>
 
               {onToggleSave && resource._id && (
                 <button
