@@ -55,7 +55,7 @@ export class AuthorityService {
       if (canonicalId) resolvedChannelId = canonicalId;
     }
 
-    const cleanedBooks = (data.recommendedBooks || []).map((b) => ({
+    const cleanedBooks = (data.recommendedBooks || []).map(({ _id: _stripped, ...b }: any) => ({
       ...b,
       affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
     }));
@@ -94,7 +94,7 @@ export class AuthorityService {
       if (canonicalId) updatePayload.youtubeChannelId = canonicalId;
     }
     if (data.recommendedBooks) {
-      updatePayload.recommendedBooks = data.recommendedBooks.map((b) => ({
+      updatePayload.recommendedBooks = data.recommendedBooks.map(({ _id: _stripped, ...b }: any) => ({
         ...b,
         affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
       }));
