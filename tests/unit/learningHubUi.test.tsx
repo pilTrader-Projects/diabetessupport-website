@@ -269,7 +269,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('Get Book on Amazon');
     });
 
-    it('renders the My Protocol in-page filter tab in format segmented control', () => {
+    it('renders the My Library in-page filter tab in format segmented control', () => {
       const html = ReactDOMServer.renderToString(
         <LearningHubClient
           initialAuthorities={[mockAuthority]}
@@ -278,15 +278,15 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
         />
       );
 
-      expect(html).toContain('My Protocol');
+      expect(html).toContain('My Library');
     });
   });
 
-  describe('Header Component (Global Saved Protocol Integration)', () => {
-    it('renders header-level My Protocol notification button and trigger', () => {
+  describe('Header Component (Global Saved Library Integration)', () => {
+    it('renders header-level My Library notification button and trigger', () => {
       const html = ReactDOMServer.renderToString(<Header />);
-      expect(html).toContain('My Protocol');
-      expect(html).toContain('Open My Saved Protocol');
+      expect(html).toContain('My Library');
+      expect(html).toContain('Open My Saved Library');
     });
   });
 
@@ -349,7 +349,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   });
 
   describe('SavedResourcesDrawer Component', () => {
-    it('renders saved items, share protocol button, and email sync opt-in', () => {
+    it('renders saved items, share library button, and email sync opt-in', () => {
       const element = (
         <SavedResourcesDrawer
           isOpen={true}
@@ -364,7 +364,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(element.props.savedResources).toHaveLength(1);
 
       const html = ReactDOMServer.renderToString(element);
-      expect(html).toContain('Share Protocol');
+      expect(html).toContain('Share Library');
       expect(html).toContain('Sync Library Across Devices');
     });
   });

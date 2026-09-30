@@ -111,11 +111,11 @@ export default function Header() {
             Learning Materials
           </Link>
 
-          {/* Header-Level Saved Protocol Notification Pill */}
+          {/* Header-Level Saved Library Notification Pill */}
           <button
             type="button"
             onClick={() => setIsSavedDrawerOpen(true)}
-            aria-label="Open My Saved Protocol"
+            aria-label="Open My Saved Library"
             className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
               savedItems.length > 0
                 ? 'bg-teal-500/20 hover:bg-teal-500/35 border-teal-400/50 text-teal-200 shadow-sm hover:scale-105'
@@ -123,7 +123,7 @@ export default function Header() {
             }`}
           >
             <span>🔖</span>
-            <span className="hidden lg:inline">My Protocol</span>
+            <span className="hidden lg:inline">My Library</span>
             {savedItems.length > 0 && (
               <span className="bg-teal-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full">
                 {savedItems.length}
@@ -141,11 +141,11 @@ export default function Header() {
 
         {/* Mobile Action Controls */}
         <div className="flex items-center gap-2 md:hidden">
-          {/* Mobile Header Protocol Badge */}
+          {/* Mobile Header Library Badge */}
           <button
             type="button"
             onClick={() => setIsSavedDrawerOpen(true)}
-            aria-label="Open My Saved Protocol"
+            aria-label="Open My Saved Library"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-teal-500/20 border border-teal-400/40 text-teal-200 text-xs font-bold"
           >
             <span>🔖</span>
@@ -192,7 +192,7 @@ export default function Header() {
             <span className="text-xl">✨</span>
             <div>
               <p className="font-bold text-white flex items-center gap-1.5">
-                <span>Saved to My Protocol!</span>
+                <span>Saved to My Library!</span>
                 <span className="bg-teal-400 text-slate-950 font-black text-[10px] px-1.5 py-0.5 rounded-full">
                   {toastNotification.count}
                 </span>
@@ -255,7 +255,7 @@ export default function Header() {
             className="w-full text-left flex items-center justify-between py-2.5 px-3 rounded-xl text-base font-semibold text-teal-200 hover:text-white hover:bg-teal-900/30 transition-colors"
           >
             <span className="flex items-center gap-2">
-              <span>🔖</span> My Saved Protocol
+              <span>🔖</span> My Saved Library
             </span>
             {savedItems.length > 0 && (
               <span className="bg-teal-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full">

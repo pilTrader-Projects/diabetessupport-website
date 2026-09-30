@@ -452,7 +452,7 @@ export default function LearningHubClient({
             </button>
           )}
 
-          {/* My Saved Protocol In-Page Filter Tab */}
+          {/* My Saved Library In-Page Filter Tab */}
           <button
             type="button"
             onClick={() => setActiveFormat('saved')}
@@ -462,7 +462,7 @@ export default function LearningHubClient({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <span>🔖 My Protocol</span>
+            <span>🔖 My Library</span>
             {savedIds.length > 0 && (
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-black ${
                 activeFormat === 'saved' ? 'bg-white text-teal-800' : 'bg-teal-100 text-teal-900'
@@ -613,11 +613,11 @@ export default function LearningHubClient({
         <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 p-8 space-y-4">
           <span className="text-4xl">{activeFormat === 'saved' ? '🔖' : '🔍'}</span>
           <h3 className="text-lg font-bold text-slate-900">
-            {activeFormat === 'saved' ? 'Your Saved Protocol is Empty' : 'No Learning Materials Found'}
+            {activeFormat === 'saved' ? 'Your Saved Library is Empty' : 'No Learning Materials Found'}
           </h3>
           <p className="text-sm text-slate-500 max-w-md mx-auto">
             {activeFormat === 'saved'
-              ? 'Click the "☆ Save" button on any lecture, study, or editorial guide across the hub to build your personalized metabolic protocol.'
+              ? 'Click the "☆ Save" button on any video, lecture, study, or resource across the hub to build your personal library.'
               : 'No materials matched your filter combination. Try clearing your search query or selecting "All".'}
           </p>
           <button
@@ -775,7 +775,7 @@ export default function LearningHubClient({
                           <button
                             type="button"
                             onClick={() => handleToggleSave(item._id!)}
-                            title={isSaved ? 'Remove from saved' : 'Save to protocol'}
+                            title={isSaved ? 'Remove from library' : 'Save to library'}
                             className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
                               isSaved
                                 ? 'bg-amber-50 text-amber-600 border-amber-300'

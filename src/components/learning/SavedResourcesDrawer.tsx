@@ -153,7 +153,7 @@ export default function SavedResourcesDrawer({
               <span className="text-2xl">🔖</span>
               <div>
                 <h3 id="saved-drawer-title" className="text-lg font-bold text-white flex items-center gap-2">
-                  <span>My Saved Protocol</span>
+                  <span>My Saved Library</span>
                   <span className="bg-teal-500/20 text-teal-300 border border-teal-500/30 text-xs px-2 py-0.5 rounded-full font-black">
                     {activeItems.length}
                   </span>
@@ -170,7 +170,7 @@ export default function SavedResourcesDrawer({
             </button>
           </div>
 
-          {/* Quick Actions (Share Protocol) */}
+          {/* Quick Actions (Share Library) */}
           {activeItems.length > 0 && (
             <div className="flex items-center justify-between gap-2 p-3 bg-slate-950/60 border border-slate-800 rounded-xl">
               <span className="text-[11px] text-slate-400">
@@ -181,7 +181,7 @@ export default function SavedResourcesDrawer({
                 onClick={handleShareProtocol}
                 className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-teal-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
               >
-                <span>{copiedLink ? '✓ Copied Link!' : '🔗 Share Protocol'}</span>
+                <span>{copiedLink ? '✓ Copied Link!' : '🔗 Share Library'}</span>
               </button>
             </div>
           )}
@@ -195,12 +195,12 @@ export default function SavedResourcesDrawer({
               </h4>
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed">
-              Save your curated protocol to your email and receive our weekly 3-minute research recap on reversing insulin resistance.
+              Save your curated library to your email and receive our weekly 3-minute research recap on reversing insulin resistance.
             </p>
 
             {isSuccess ? (
               <div className="p-3 bg-emerald-950 border border-emerald-500 rounded-xl text-xs text-emerald-200 font-bold">
-                ✓ Protocol synced! Check your inbox for your confirmation and research digest.
+                ✓ Library synced! Check your inbox for your confirmation and research digest.
               </div>
             ) : (
               <form onSubmit={handleSyncSubmit} className="space-y-2">
