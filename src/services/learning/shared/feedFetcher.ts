@@ -205,22 +205,29 @@ export async function scrapeYouTubeSearchVideos(
   const targetUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query.trim())}`;
   const fetchFn = customFetch || fetch;
 
-  try {
-    const res = await fetchFn(targetUrl, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
-    });
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const res = await fetchFn(targetUrl, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+      });
 
-    if (!res.ok) return [];
-    const html = typeof res.text === 'function' ? await res.text() : String(res);
-    return parseYouTubeSearchHtml(html);
-  } catch (err: any) {
-    console.error(`Error searching YouTube for query "${query}":`, err.message);
-    return [];
+      if (!res.ok) return [];
+      const html = typeof res.text === 'function' ? await res.text() : String(res);
+      return parseYouTubeSearchHtml(html);
+    } catch (err: any) {
+      if (attempt === 1) {
+        await new Promise((r) => setTimeout(r, 1000));
+        continue;
+      }
+      console.error(`Error searching YouTube for query "${query}":`, err.message);
+      return [];
+    }
   }
+  return [];
 }
 
 /**
