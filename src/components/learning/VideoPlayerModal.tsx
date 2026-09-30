@@ -45,8 +45,9 @@ export default function VideoPlayerModal({
 
   if (!isOpen || !resource) return null;
 
+  const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   const embedUrl = resource.embedId
-    ? `https://www.youtube-nocookie.com/embed/${resource.embedId}?autoplay=1&rel=0`
+    ? `https://www.youtube.com/embed/${resource.embedId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&modestbranding=1${originParam}`
     : null;
 
   const modalContent = (
@@ -54,19 +55,23 @@ export default function VideoPlayerModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="video-modal-title"
-      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
       onClick={onClose}
     >
       <div
         className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl text-slate-100 my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Video Player Frame Area (Full 16:9 responsive frame) */}
-        <div className="relative w-full aspect-video bg-black shrink-0 overflow-hidden">
+        {/* Video Player Frame Area (Full 16:9 responsive frame with GPU isolation) */}
+        <div
+          className="relative w-full aspect-video bg-black shrink-0 overflow-hidden"
+          style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', contain: 'layout paint' }}
+        >
           {embedUrl ? (
             <iframe
               src={embedUrl}
               title={resource.title}
+              loading="eager"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="absolute inset-0 w-full h-full border-0 block"
