@@ -43,7 +43,7 @@ export async function GET(): Promise<NextResponse> {
 
   const itemsXml = posts
     .map((post) => {
-      const postUrl = `${baseUrl}/blog/${post.slug}`;
+      const postUrl = `${baseUrl}/learn/${post.slug}`;
       const pubDate = post.publishedAt
         ? new Date(post.publishedAt).toUTCString()
         : new Date().toUTCString();

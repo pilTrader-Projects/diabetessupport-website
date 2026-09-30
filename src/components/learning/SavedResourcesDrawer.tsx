@@ -78,14 +78,14 @@ export default function SavedResourcesDrawer({
     if (onSelectResource) {
       onSelectResource(item);
     } else if (typeof window !== 'undefined') {
-      window.location.href = `/blog?play=${item._id}`;
+      window.location.href = `/learn?play=${item._id}`;
     }
   };
 
   const handleShareProtocol = () => {
     if (typeof window === 'undefined') return;
     const ids = activeItems.map((r) => r._id).filter(Boolean);
-    const shareUrl = `${window.location.origin}/blog?saved=${ids.join(',')}`;
+    const shareUrl = `${window.location.origin}/learn?saved=${ids.join(',')}`;
     navigator.clipboard.writeText(shareUrl).then(() => {
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 3000);

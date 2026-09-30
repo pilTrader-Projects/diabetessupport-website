@@ -33,7 +33,7 @@ describe('SEO & AdSense Compliance Architecture', () => {
       expect(webSiteSchema['@type']).toBe('WebSite');
       expect(webSiteSchema.name).toBe('DiabetesCare PH');
       expect(webSiteSchema.potentialAction['@type']).toBe('SearchAction');
-      expect(webSiteSchema.potentialAction.target.urlTemplate).toContain('/blog?search=');
+      expect(webSiteSchema.potentialAction.target.urlTemplate).toContain('/learn?search=');
     });
 
     it('should generate valid Article & MedicalWebPage Schema for blog posts', () => {
@@ -52,15 +52,15 @@ describe('SEO & AdSense Compliance Architecture', () => {
       expect(articleSchema['@type']).toContain('MedicalWebPage');
       expect(articleSchema.headline).toBe(mockPost.title);
       expect(articleSchema.description).toBe(mockPost.excerpt);
-      expect(articleSchema.mainEntityOfPage['@id']).toContain('/blog/mastering-blood-glucose');
+      expect(articleSchema.mainEntityOfPage['@id']).toContain('/learn/mastering-blood-glucose');
       expect(articleSchema.about['@type']).toBe('MedicalCondition');
     });
 
     it('should generate valid BreadcrumbList Schema', () => {
       const breadcrumbs = [
         { name: 'Home', url: 'https://diabetescareph.com/' },
-        { name: 'Articles', url: 'https://diabetescareph.com/blog' },
-        { name: 'HbA1c Guide', url: 'https://diabetescareph.com/blog/hba1c-guide' },
+        { name: 'Learning Materials', url: 'https://diabetescareph.com/learn' },
+        { name: 'HbA1c Guide', url: 'https://diabetescareph.com/learn/hba1c-guide' },
       ];
 
       const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbs);

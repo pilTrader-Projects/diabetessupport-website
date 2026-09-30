@@ -147,7 +147,7 @@ async function runSanityCheck() {
         'src/components/learning/VideoPlayerModal.tsx',
         'src/components/learning/SavedResourcesDrawer.tsx',
         'src/components/learning/LearningHubClient.tsx',
-        'src/app/blog/page.tsx',
+        'src/app/learn/page.tsx',
         'src/app/manifest.ts',
         'src/app/offline/page.tsx',
         'src/components/pwa/PwaRegister.tsx',

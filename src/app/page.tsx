@@ -366,7 +366,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               </p>
             </div>
             <Link
-              href="/blog"
+              href="/learn"
               className="text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors"
             >
               View all guides &rarr;
@@ -381,7 +381,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               >
                 <div className="space-y-2">
                   <h3 className="text-base font-bold text-slate-900 line-clamp-2">
-                    <Link href={`/blog/${article.slug}`} className="hover:text-teal-700">
+                    <Link href={`/learn/${article.slug}`} className="hover:text-teal-700">
                       {article.title}
                     </Link>
                   </h3>
@@ -391,7 +391,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 </div>
                 <div className="pt-2 border-t border-slate-100">
                   <Link
-                    href={`/blog/${article.slug}`}
+                    href={`/learn/${article.slug}`}
                     className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1"
                   >
                     <span>Read guide</span>

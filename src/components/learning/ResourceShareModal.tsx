@@ -59,8 +59,8 @@ export default function ResourceShareModal({
   // Direct canonical deep-link that serves the dynamic OG photo thumbnail to Facebook/X/WhatsApp crawlers
   const shareUrl =
     resource.type === 'article'
-      ? `${origin}/blog/${resource.slug}`
-      : `${origin}/blog?resource=${encodeURIComponent(resource.slug || resource._id || '')}`;
+      ? `${origin}/learn/${resource.slug}`
+      : `${origin}/learn?resource=${encodeURIComponent(resource.slug || resource._id || '')}`;
 
   const shareTitle = resource.title;
   const shareText = `${resource.title} — Evidence-based metabolic health lecture by ${resource.authorityName}`;

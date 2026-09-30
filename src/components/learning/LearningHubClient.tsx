@@ -160,7 +160,7 @@ export default function LearningHubClient({
     keyTakeaways: [
       art.excerpt ? art.excerpt.slice(0, 120) + '...' : 'Evidence-based editorial health guide.',
     ],
-    sourceUrl: `/blog/${art.slug}`,
+    sourceUrl: `/learn/${art.slug}`,
     platform: 'web',
     thumbnailUrl: art.featuredImage,
     duration: '5 min read',
@@ -1009,7 +1009,7 @@ export default function LearningHubClient({
                         </div>
 
                         <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-600 pt-1">
-                          <Link href={`/blog/${item.slug}`}>{item.title.replace(/&nbsp;/g, ' ')}</Link>
+                          <Link href={`/learn/${item.slug}`}>{item.title.replace(/&nbsp;/g, ' ')}</Link>
                         </h2>
                       </div>
                     </div>
@@ -1021,7 +1021,7 @@ export default function LearningHubClient({
 
                   <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
                     <Link
-                      href={`/blog/${item.slug}`}
+                      href={`/learn/${item.slug}`}
                       className="inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-900 group"
                     >
                       Read Full Article <span className="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>

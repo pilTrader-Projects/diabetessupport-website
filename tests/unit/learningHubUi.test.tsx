@@ -12,7 +12,7 @@ import SocialShareBar from '../../src/components/community/SocialShareBar';
 import Header from '../../src/components/Header';
 import AuthorityModal from '../../src/components/admin/learning/AuthorityModal';
 import ResourceModal from '../../src/components/admin/learning/ResourceModal';
-import BlogFeedPage, { generateMetadata } from '../../src/app/blog/page';
+import LearnFeedPage, { generateMetadata } from '../../src/app/learn/page';
 import { ILearningResource, IAuthority, IPodcastChannel } from '../../src/types/learning';
 import { IPost } from '../../src/types/blog';
 import { PostModel } from '../../src/models/Post';
@@ -369,7 +369,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
     });
   });
 
-  describe('BlogFeedPage Server Component', () => {
+  describe('LearnFeedPage Server Component', () => {
     it('fetches published posts, authorities, podcast channels, and resources and renders page', async () => {
       (PostModel.find as any) = jest.fn().mockReturnValue({
         sort: jest.fn().mockReturnValue({
@@ -395,7 +395,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
         }),
       });
 
-      const page = await BlogFeedPage({});
+      const page = await LearnFeedPage({});
       expect(page).toBeDefined();
     });
 

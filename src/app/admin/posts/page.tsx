@@ -234,7 +234,7 @@ export default function AdminPostsPage() {
                 <tr key={post._id} className="hover:bg-slate-850/50 transition-colors">
                   <td className="px-6 py-4">
                     <a
-                      href={`/blog/${post.slug}`}
+                      href={`/learn/${post.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-bold text-white hover:text-teal-400 flex items-center gap-1.5"

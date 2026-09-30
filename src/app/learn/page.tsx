@@ -62,7 +62,7 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
       if (resource) {
         const cleanTitle = `${(resource.title || '').replace(/&nbsp;/g, ' ')} | ${SITE_CONFIG.title}`;
         const cleanDesc = resource.summary || 'Evidence-based metabolic health lecture and research.';
-        const shareUrl = `${baseUrl}/blog?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`;
+        const shareUrl = `${baseUrl}/learn?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`;
         let imageUrl = resource.thumbnailUrl || `${baseUrl}/icons/icon-512x512.png`;
         if (imageUrl.startsWith('/')) {
           imageUrl = `${baseUrl}${imageUrl}`;
@@ -72,7 +72,7 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
           title: cleanTitle,
           description: cleanDesc,
           alternates: {
-            canonical: `/blog?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`,
+            canonical: `/learn?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`,
           },
           openGraph: {
             title: cleanTitle,
@@ -109,7 +109,7 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
     openGraph: {
       title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
       description: SITE_CONFIG.description,
-      url: `${baseUrl}/blog`,
+      url: `${baseUrl}/learn`,
       siteName: SITE_CONFIG.title,
       type: 'website',
     },

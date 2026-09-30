@@ -37,7 +37,7 @@ export default async function AdminAuthoritiesPage() {
             &larr; Admin Overview
           </Link>
           <Link
-            href="/blog"
+            href="/learn"
             target="_blank"
             className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-xl transition-colors"
           >
