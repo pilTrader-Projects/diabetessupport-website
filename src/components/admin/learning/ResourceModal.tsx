@@ -103,11 +103,14 @@ export default function ResourceModal({
     setEditingBookIndex(null);
     setIsBookModalOpen(true);
   };
+  // Backward compatibility alias for HMR / fast refresh
+  const handleAddBook = handleOpenAddBook;
 
   const handleOpenEditBook = (index: number) => {
     setEditingBookIndex(index);
     setIsBookModalOpen(true);
   };
+  const handleEditBook = handleOpenEditBook;
 
   const handleSaveBook = (savedBook: IAffiliateRecommendation) => {
     if (editingBookIndex !== null && editingBookIndex >= 0) {
