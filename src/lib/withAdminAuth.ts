@@ -13,11 +13,11 @@
 import { NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 
-type RouteHandler = (req: Request, ctx?: any) => Promise<Response>;
+type RouteHandler = (req?: any, ctx?: any) => Promise<Response>;
 
-export function withAdminAuth(handler: RouteHandler): RouteHandler {
-  return async (req: Request, ctx?: any) => {
-    const isAuth = await isAdminAuthenticated();
+export function withAdminAuth(handler: RouteHandler): (req?: any, ctx?: any) => Promise<Response> {
+  return async (req?: any, ctx?: any) => {
+    const isAuth = await isAdminAuthenticated(req);
     if (!isAuth) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }

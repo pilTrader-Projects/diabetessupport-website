@@ -244,7 +244,7 @@ export class YouTubeSyncService {
     // Also search any custom keywords for this channel (e.g. "diabetes", "fasting", "metabolism")
     const customKeywords = [
       ...(options?.keywords || []),
-      ...(channel.podcastKeywords ? channel.podcastKeywords.split(',').map((k) => k.trim()) : []),
+      ...(channel.podcastKeywords ? channel.podcastKeywords.split(',').map((k: string) => k.trim()) : []),
     ];
     for (const kw of customKeywords) {
       if (!kw) continue;
@@ -305,7 +305,7 @@ export class YouTubeSyncService {
           const topics =
             qualification.matchedTopics.length > 0
               ? qualification.matchedTopics
-              : matchedAuth.specialties?.length > 0
+              : (matchedAuth.specialties && matchedAuth.specialties.length > 0)
               ? matchedAuth.specialties
               : ['Metabolic Health', 'Podcast'];
 

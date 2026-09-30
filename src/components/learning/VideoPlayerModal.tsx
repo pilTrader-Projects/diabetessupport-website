@@ -30,6 +30,7 @@ export default function VideoPlayerModal({
 }: VideoPlayerModalProps): React.JSX.Element | null {
   const [mounted, setMounted] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setMounted(true);

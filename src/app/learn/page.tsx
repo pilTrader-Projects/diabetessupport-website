@@ -23,6 +23,7 @@ interface BlogFeedPageProps {
     authority?: string;
     podcast?: string;
     resource?: string;
+    play?: string;
   }>;
 }
 

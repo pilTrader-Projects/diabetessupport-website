@@ -94,7 +94,7 @@ describe('savedProtocolUtils (TDD Unit Tests)', () => {
     saveProtocolResource(mockResource);
 
     expect(dispatchSpy).toHaveBeenCalled();
-    const event = dispatchSpy.mock.calls[0][0];
+    const event = dispatchSpy.mock.calls[0][0] as any;
     expect(event.type).toBe(PROTOCOL_UPDATE_EVENT);
     expect(event.detail.action).toBe('saved');
     expect(event.detail.resourceId).toBe('res-test-1');

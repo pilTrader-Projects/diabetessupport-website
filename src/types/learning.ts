@@ -86,6 +86,7 @@ export interface IPodcastChannel {
   spotifyShowId?: string;
   applePodcastsUrl?: string;
   websiteUrl?: string;
+  podcastKeywords?: string;
 
   // Automation controls
   isActive: boolean;             // If false, paused from automated syndication
