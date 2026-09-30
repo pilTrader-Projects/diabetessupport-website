@@ -187,6 +187,31 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('Filter by Podcast Show:');
       expect(html).toContain('All Shows');
     });
+
+    it('initializes activeFormat and selectedPodcast from deep link props', () => {
+      const podcastEpisode: ILearningResource = {
+        ...mockVideoResource,
+        _id: 'res_pod_1',
+        type: 'podcast',
+        podcastChannelId: 'pod_1',
+        podcastChannelName: 'The Diary Of A CEO',
+        isGuestAppearance: true,
+      };
+
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialPodcastChannels={[mockPodcastChannel]}
+          initialResources={[podcastEpisode]}
+          initialArticles={[]}
+          initialFormat="podcast"
+          initialPodcast="the-diary-of-a-ceo"
+        />
+      );
+
+      expect(html).toContain('Reset Show');
+      expect(html).toContain('The Diary Of A CEO');
+    });
   });
 
   describe('VideoPlayerModal Component', () => {

@@ -36,7 +36,13 @@ export const metadata: Metadata = {
 };
 
 interface BlogFeedPageProps {
-  searchParams?: Promise<{ category?: string; search?: string }>;
+  searchParams?: Promise<{
+    category?: string;
+    search?: string;
+    format?: string;
+    authority?: string;
+    podcast?: string;
+  }>;
 }
 
 /**
@@ -49,6 +55,9 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const resolvedParams = searchParams ? await searchParams : {};
   const activeCategory = resolvedParams.category || 'All';
   const searchQuery = (resolvedParams.search || '').trim();
+  const formatQuery = (resolvedParams.format || 'all').toLowerCase();
+  const authorityQuery = (resolvedParams.authority || 'all').trim();
+  const podcastQuery = (resolvedParams.podcast || 'all').trim();
 
   let rawPosts: any[] = [];
   let rawAuthorities: any[] = [];
@@ -127,6 +136,9 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
         initialArticles={allPosts}
         initialSearch={searchQuery}
         initialTopic={activeCategory}
+        initialFormat={['all', 'video', 'podcast', 'article', 'study'].includes(formatQuery) ? (formatQuery as any) : 'all'}
+        initialAuthority={authorityQuery}
+        initialPodcast={podcastQuery}
       />
 
       {/* RSS & Sitemap Links Footer Banner */}

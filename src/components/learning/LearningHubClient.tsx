@@ -15,6 +15,9 @@ interface LearningHubClientProps {
   initialArticles: IPost[];
   initialSearch?: string;
   initialTopic?: string;
+  initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study';
+  initialAuthority?: string;
+  initialPodcast?: string;
 }
 
 export default function LearningHubClient({
@@ -24,10 +27,35 @@ export default function LearningHubClient({
   initialArticles,
   initialSearch = '',
   initialTopic = 'All',
+  initialFormat = 'all',
+  initialAuthority = 'all',
+  initialPodcast = 'all',
 }: LearningHubClientProps): React.JSX.Element {
-  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study'>('all');
-  const [selectedAuthorityId, setSelectedAuthorityId] = useState<string>('all');
-  const [selectedPodcastChannelId, setSelectedPodcastChannelId] = useState<string>('all');
+  const resolveInitialAuthorityId = (): string => {
+    if (!initialAuthority || initialAuthority === 'all') return 'all';
+    const match = initialAuthorities.find(
+      (a) =>
+        a._id === initialAuthority ||
+        a.slug === initialAuthority ||
+        a.name.toLowerCase().includes(initialAuthority.toLowerCase())
+    );
+    return match?._id || 'all';
+  };
+
+  const resolveInitialPodcastId = (): string => {
+    if (!initialPodcast || initialPodcast === 'all') return 'all';
+    const match = initialPodcastChannels.find(
+      (p) =>
+        p._id === initialPodcast ||
+        p.slug === initialPodcast ||
+        p.name.toLowerCase().includes(initialPodcast.toLowerCase())
+    );
+    return match?._id || 'all';
+  };
+
+  const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study'>(initialFormat);
+  const [selectedAuthorityId, setSelectedAuthorityId] = useState<string>(resolveInitialAuthorityId());
+  const [selectedPodcastChannelId, setSelectedPodcastChannelId] = useState<string>(resolveInitialPodcastId());
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
 
