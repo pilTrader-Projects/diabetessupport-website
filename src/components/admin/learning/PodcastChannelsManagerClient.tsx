@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { IPodcastChannel } from '@/types/learning';
 import PodcastChannelModal, { PodcastChannelFormData } from '@/components/admin/learning/PodcastChannelModal';
+import LearningAdminNav from '@/components/admin/learning/LearningAdminNav';
 
 interface PodcastChannelsManagerProps {
   initialChannels: IPodcastChannel[];
@@ -153,9 +154,16 @@ export default function PodcastChannelsManagerClient({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* 1. Hub Section Sub-Navigation Bar */}
+      <LearningAdminNav
+        counts={{ podcasts: channels.length }}
+        onRunGlobalSync={handleSyncAll}
+        isSyncingGlobal={syncingAll}
+      />
+
       {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 p-6 rounded-3xl shadow-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
         <div>
           <h2 className="text-xl font-bold text-white">Monitored Podcast Shows</h2>
           <p className="text-xs text-slate-400 mt-1">
@@ -163,38 +171,13 @@ export default function PodcastChannelsManagerClient({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/admin/learning/authorities"
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-colors inline-flex items-center gap-1.5"
-          >
-            🩺 Medical Authorities
-          </Link>
-
-          <Link
-            href="/admin/learning/resources"
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-colors inline-flex items-center gap-1.5"
-          >
-            📚 View Library &rarr;
-          </Link>
-
-          <button
-            type="button"
-            onClick={handleSyncAll}
-            disabled={syncingAll}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-lg transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
-          >
-            <span>{syncingAll ? '⏳ Running Syndication Cron...' : '⚡ Run Full Syndication'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleOpenAdd}
-            className="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-extrabold rounded-xl shadow-lg transition-colors inline-flex items-center gap-1.5"
-          >
-            <span>➕ Register Podcast Show</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleOpenAdd}
+          className="px-4 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white text-xs font-extrabold rounded-xl shadow-md shadow-teal-500/20 transition-all inline-flex items-center gap-1.5 shrink-0 active:scale-95"
+        >
+          <span>➕ Register Podcast Show</span>
+        </button>
       </div>
 
       {/* Information Box */}
