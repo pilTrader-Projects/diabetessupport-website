@@ -234,6 +234,123 @@ describe('LearningService (TDD Unit Tests)', () => {
       );
     });
 
+    it('should use resilient scrape fallback when YouTube RSS feed returns 404', async () => {
+      const mockAuthority = {
+        _id: 'auth_fallback',
+        name: 'Dr. Pradip Jamnadas, MD',
+        title: 'Cardiologist',
+        youtubeChannelId: 'UCjamnadas',
+        autoPublish: true,
+        specialties: ['Fasting', 'Heart Health'],
+      };
+
+      (AuthorityModel.findById as jest.Mock).mockResolvedValue(mockAuthority);
+      (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
+      (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_fallback' });
+      (AuthorityModel.findByIdAndUpdate as jest.Mock).mockResolvedValue(true);
+
+      const mockScrapeFn = jest.fn().mockResolvedValue([
+        {
+          videoId: 'vid_scraped_1',
+          title: 'The Health Benefits of Fasting for Longevity',
+          description: 'Dr. Jamnadas breaks down fasting physiology.',
+          publishedAt: new Date('2026-03-01T00:00:00Z'),
+          duration: '24:38',
+        },
+      ]);
+
+      // When fetchXmlFn is undefined, it tries fetch(feedUrl). We mock global.fetch to return 404 for feed
+      const originalFetch = global.fetch;
+      global.fetch = jest.fn().mockImplementation((url: string) => {
+        if (url.includes('feeds/videos.xml')) {
+          return Promise.resolve({ ok: false, status: 404 } as Response);
+        }
+        return Promise.resolve({ ok: true } as Response);
+      });
+
+      try {
+        const syncResult = await LearningService.syncAuthorityYouTubeFeed(
+          'auth_fallback',
+          undefined,
+          undefined,
+          mockScrapeFn
+        );
+
+        expect(mockScrapeFn).toHaveBeenCalledWith('UCjamnadas');
+        expect(syncResult.addedCount).toBe(1);
+        expect(LearningResourceModel.create).toHaveBeenCalledWith(
+          expect.objectContaining({
+            embedId: 'vid_scraped_1',
+            authorityName: 'Dr. Pradip Jamnadas, MD',
+            status: 'published',
+          })
+        );
+      } finally {
+        global.fetch = originalFetch;
+      }
+    });
+
+    it('should parse ytInitialData correctly in scrapeYouTubeChannelVideos', async () => {
+      const mockHtml = `
+        <html>
+          <head>
+            <script>
+              var ytInitialData = {
+                "contents": {
+                  "twoColumnBrowseResultsRenderer": {
+                    "tabs": [{
+                      "tabRenderer": {
+                        "content": {
+                          "richGridRenderer": {
+                            "contents": [{
+                              "richItemRenderer": {
+                                "content": {
+                                  "lockupViewModel": {
+                                    "contentId": "Ng0nEmpPG74",
+                                    "metadata": {
+                                      "lockupMetadataViewModel": {
+                                        "title": { "content": "The Health Benefits of Olive Oil Most People Don’t Know" }
+                                      }
+                                    },
+                                    "contentImage": {
+                                      "thumbnailViewModel": {
+                                        "overlays": [{
+                                          "thumbnailBottomOverlayViewModel": {
+                                            "badges": [{
+                                              "thumbnailBadgeViewModel": { "text": "24:38" }
+                                            }]
+                                          }
+                                        }]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }]
+                          }
+                        }
+                      }
+                    }]
+                  }
+                }
+              };
+            </script>
+          </head>
+        </html>
+      `;
+
+      const mockFetch = jest.fn().mockResolvedValue({
+        ok: true,
+        text: () => Promise.resolve(mockHtml),
+      });
+
+      const videos = await LearningService.scrapeYouTubeChannelVideos('UCtest123', mockFetch);
+      expect(videos.length).toBe(1);
+      expect(videos[0].videoId).toBe('Ng0nEmpPG74');
+      expect(videos[0].title).toBe('The Health Benefits of Olive Oil Most People Don’t Know');
+      expect(videos[0].duration).toBe('24:38');
+    });
+
     it('should run cron syndication across all active authorities', async () => {
       const mockAuthorities = [
         {

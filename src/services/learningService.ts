@@ -497,12 +497,102 @@ export class LearningService {
   }
 
   /**
+   * Scrapes recent videos directly from a YouTube channel's /videos page.
+   * Resilient fallback when YouTube's Atom RSS feed (videos.xml) returns 404 or is unavailable.
+   */
+  public static async scrapeYouTubeChannelVideos(
+    channelId: string,
+    customFetch?: (url: string, init?: any) => Promise<any>
+  ): Promise<{ videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[]> {
+    const targetUrl = `https://www.youtube.com/channel/${channelId}/videos`;
+    const fetchFn = customFetch || fetch;
+
+    try {
+      const res = await fetchFn(targetUrl, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept-Language': 'en-US,en;q=0.9',
+        },
+      });
+
+      if (!res.ok) {
+        return [];
+      }
+
+      const html = typeof res.text === 'function' ? await res.text() : String(res);
+      const match =
+        html.match(/var ytInitialData\s*=\s*({[\s\S]*?});<\/script>/) ||
+        html.match(/ytInitialData\s*=\s*({[\s\S]*?});/);
+      if (!match) {
+        return [];
+      }
+
+      const data = JSON.parse(match[1]);
+      const results: { videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[] = [];
+      const seenIds = new Set<string>();
+
+      function extractVideos(obj: any) {
+        if (!obj || typeof obj !== 'object') return;
+
+        if (obj.videoRenderer) {
+          const vr = obj.videoRenderer;
+          const vid = vr.videoId;
+          const title = vr.title?.runs?.[0]?.text || vr.title?.simpleText || '';
+          if (vid && title && !seenIds.has(vid)) {
+            seenIds.add(vid);
+            const desc = vr.descriptionSnippet?.runs?.map((r: any) => r.text).join('') || '';
+            const duration = vr.lengthText?.simpleText;
+            results.push({
+              videoId: vid,
+              title: title.trim(),
+              description: desc.trim(),
+              publishedAt: new Date(),
+              duration,
+            });
+          }
+        } else if (obj.lockupViewModel) {
+          const lvm = obj.lockupViewModel;
+          const vid =
+            lvm.contentId ||
+            lvm.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint?.videoId;
+          const title = lvm.metadata?.lockupMetadataViewModel?.title?.content;
+          if (vid && title && !seenIds.has(vid)) {
+            seenIds.add(vid);
+            const duration =
+              lvm.contentImage?.thumbnailViewModel?.overlays?.[0]?.thumbnailBottomOverlayViewModel?.badges?.[0]
+                ?.thumbnailBadgeViewModel?.text;
+            results.push({
+              videoId: vid,
+              title: title.trim(),
+              description: '',
+              publishedAt: new Date(),
+              duration,
+            });
+          }
+        }
+
+        for (const key of Object.keys(obj)) {
+          extractVideos(obj[key]);
+        }
+      }
+
+      extractVideos(data);
+      return results;
+    } catch (err: any) {
+      console.error('Error scraping YouTube channel videos:', err.message);
+      return [];
+    }
+  }
+
+  /**
    * Syncs YouTube feed for a specific authority with AI advocacy qualification.
    */
   public static async syncAuthorityYouTubeFeed(
     authorityId: string,
     fetchXmlFn?: (url: string) => Promise<string>,
-    customAiFetch?: (url: string, init?: any) => Promise<any>
+    customAiFetch?: (url: string, init?: any) => Promise<any>,
+    customScrapeFn?: (channelId: string) => Promise<{ videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[]>
   ): Promise<{ addedCount: number; skippedCount: number; errors: string[] }> {
     await dbConnect();
     const authority = await AuthorityModel.findById(authorityId);
@@ -533,22 +623,46 @@ export class LearningService {
 
     const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
-    let xmlText = '';
-    try {
-      if (fetchXmlFn) {
-        xmlText = await fetchXmlFn(feedUrl);
-      } else {
-        const res = await fetch(feedUrl, { headers: { 'User-Agent': 'DiabetesSupport-Harvester/1.0' } });
-        if (!res.ok) {
-          return { addedCount: 0, skippedCount: 0, errors: [`Failed to fetch channel feed (HTTP ${res.status})`] };
-        }
-        xmlText = await res.text();
+    let entries: { videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[] = [];
+
+    if (fetchXmlFn) {
+      try {
+        const xmlText = await fetchXmlFn(feedUrl);
+        entries = this.parseYouTubeFeed(xmlText);
+      } catch (err: any) {
+        return { addedCount: 0, skippedCount: 0, errors: [err.message || 'Network error fetching YouTube feed'] };
       }
-    } catch (err: any) {
-      return { addedCount: 0, skippedCount: 0, errors: [err.message || 'Network error fetching YouTube feed'] };
+    } else {
+      let feedStatus = 0;
+      try {
+        const res = await fetch(feedUrl, { headers: { 'User-Agent': 'DiabetesSupport-Harvester/1.0' } });
+        if (res.ok) {
+          const xmlText = await res.text();
+          entries = this.parseYouTubeFeed(xmlText);
+        } else {
+          feedStatus = res.status;
+        }
+      } catch (err: any) {
+        // Fall back to channel scraping below
+      }
+
+      // Resilient fallback: If YouTube's Atom feed endpoint (videos.xml) returns 404 or fails, scrape channel /videos page
+      if (entries.length === 0) {
+        const scraped = await (customScrapeFn
+          ? customScrapeFn(channelId)
+          : this.scrapeYouTubeChannelVideos(channelId, customAiFetch));
+        if (scraped.length > 0) {
+          entries = scraped;
+        } else {
+          return {
+            addedCount: 0,
+            skippedCount: 0,
+            errors: [`Failed to fetch channel feed (HTTP ${feedStatus || 404}) and channel scraper returned no videos.`],
+          };
+        }
+      }
     }
 
-    const entries = this.parseYouTubeFeed(xmlText);
     let addedCount = 0;
     let skippedCount = 0;
     const errors: string[] = [];
@@ -652,7 +766,8 @@ export class LearningService {
   public static async syncPodcastChannelYouTubeFeed(
     podcastChannelId: string,
     fetchXmlFn?: (url: string) => Promise<string>,
-    customAiFetch?: (url: string, init?: any) => Promise<any>
+    customAiFetch?: (url: string, init?: any) => Promise<any>,
+    customScrapeFn?: (channelId: string) => Promise<{ videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[]>
   ): Promise<{ addedCount: number; skippedCount: number; errors: string[] }> {
     await dbConnect();
     const channel = await PodcastChannelModel.findById(podcastChannelId);
@@ -681,22 +796,46 @@ export class LearningService {
 
     const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
-    let xmlText = '';
-    try {
-      if (fetchXmlFn) {
-        xmlText = await fetchXmlFn(feedUrl);
-      } else {
-        const res = await fetch(feedUrl, { headers: { 'User-Agent': 'DiabetesSupport-Harvester/1.0' } });
-        if (!res.ok) {
-          return { addedCount: 0, skippedCount: 0, errors: [`Failed to fetch channel feed (HTTP ${res.status})`] };
-        }
-        xmlText = await res.text();
+    let entries: { videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[] = [];
+
+    if (fetchXmlFn) {
+      try {
+        const xmlText = await fetchXmlFn(feedUrl);
+        entries = this.parseYouTubeFeed(xmlText);
+      } catch (err: any) {
+        return { addedCount: 0, skippedCount: 0, errors: [err.message || 'Network error fetching podcast feed'] };
       }
-    } catch (err: any) {
-      return { addedCount: 0, skippedCount: 0, errors: [err.message || 'Network error fetching podcast feed'] };
+    } else {
+      let feedStatus = 0;
+      try {
+        const res = await fetch(feedUrl, { headers: { 'User-Agent': 'DiabetesSupport-Harvester/1.0' } });
+        if (res.ok) {
+          const xmlText = await res.text();
+          entries = this.parseYouTubeFeed(xmlText);
+        } else {
+          feedStatus = res.status;
+        }
+      } catch (err: any) {
+        // Fall back to channel scraping below
+      }
+
+      // Resilient fallback: If YouTube's Atom feed endpoint (videos.xml) returns 404 or fails, scrape channel /videos page
+      if (entries.length === 0) {
+        const scraped = await (customScrapeFn
+          ? customScrapeFn(channelId)
+          : this.scrapeYouTubeChannelVideos(channelId, customAiFetch));
+        if (scraped.length > 0) {
+          entries = scraped;
+        } else {
+          return {
+            addedCount: 0,
+            skippedCount: 0,
+            errors: [`Failed to fetch channel feed (HTTP ${feedStatus || 404}) and channel scraper returned no videos.`],
+          };
+        }
+      }
     }
 
-    const entries = this.parseYouTubeFeed(xmlText);
     let addedCount = 0;
     let skippedCount = 0;
     const errors: string[] = [];
@@ -807,7 +946,8 @@ export class LearningService {
    */
   public static async runCronSyndication(
     fetchXmlFn?: (url: string) => Promise<string>,
-    customAiFetch?: (url: string, init?: any) => Promise<any>
+    customAiFetch?: (url: string, init?: any) => Promise<any>,
+    customScrapeFn?: (channelId: string) => Promise<{ videoId: string; title: string; description: string; publishedAt: Date; duration?: string }[]>
   ): Promise<{
     processedAuthorities: number;
     processedPodcastChannels: number;
@@ -833,7 +973,7 @@ export class LearningService {
     // 1. Sync official authority YouTube feeds
     for (const auth of activeAuthorities) {
       if (auth.youtubeChannelId) {
-        const res = await this.syncAuthorityYouTubeFeed(auth._id.toString(), fetchXmlFn, customAiFetch);
+        const res = await this.syncAuthorityYouTubeFeed(auth._id.toString(), fetchXmlFn, customAiFetch, customScrapeFn);
         totalAdded += res.addedCount;
         totalSkipped += res.skippedCount;
         details.push({
@@ -850,7 +990,7 @@ export class LearningService {
     // 2. Sync official podcast channels for guest appearances
     for (const channel of activePodcastChannels) {
       if (channel.youtubeChannelId) {
-        const res = await this.syncPodcastChannelYouTubeFeed(channel._id.toString(), fetchXmlFn, customAiFetch);
+        const res = await this.syncPodcastChannelYouTubeFeed(channel._id.toString(), fetchXmlFn, customAiFetch, customScrapeFn);
         totalAdded += res.addedCount;
         totalSkipped += res.skippedCount;
         details.push({
