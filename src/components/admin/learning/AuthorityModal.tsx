@@ -318,68 +318,78 @@ export default function AuthorityModal({
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="flex flex-col space-y-2.5">
                 {books.map((book, index) => (
                   <div
                     key={index}
-                    className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between gap-3 hover:border-slate-700 transition-all group"
+                    className="p-3 sm:p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between gap-4 hover:border-slate-700 transition-all group"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
                       {book.coverUrl ? (
-                        <div className="w-11 h-16 shrink-0 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 shadow-sm">
+                        <div className="w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-sm relative">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={book.coverUrl}
                             alt={book.title}
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) {
+                                parent.innerHTML = '<div class="w-full h-full bg-amber-950/40 flex items-center justify-center text-xl text-amber-400 font-bold">📖</div>';
+                              }
+                            }}
                           />
                         </div>
                       ) : (
-                        <div className="w-11 h-16 shrink-0 rounded-lg bg-amber-950/30 border border-amber-800/40 flex items-center justify-center text-lg text-amber-400">
+                        <div className="w-12 h-16 sm:w-14 sm:h-20 shrink-0 rounded-xl bg-amber-950/30 border border-amber-800/40 flex items-center justify-center text-xl text-amber-400">
                           📖
                         </div>
                       )}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[9px] font-black uppercase text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/20">
+                      <div className="min-w-0 flex-1 space-y-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] font-black uppercase text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
                             {book.badgeText || 'Book'}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-mono">
+                          <span className="text-[11px] text-slate-400 font-medium">
                             {book.platformName || 'Amazon'}
                           </span>
                         </div>
-                        <h4 className="text-xs font-bold text-white truncate mt-1 group-hover:text-amber-300 transition-colors">
+                        <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
                           {book.title || 'Untitled Book'}
                         </h4>
-                        <p className="text-[11px] text-slate-400 truncate">
+                        <p className="text-xs text-slate-400 line-clamp-1">
                           {book.author ? `By ${book.author}` : ''}
+                          {book.subtitle ? ` — ${book.subtitle}` : ''}
                         </p>
                         {book.affiliateUrl && (
-                          <a
-                            href={book.affiliateUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-[10px] text-amber-400/90 hover:underline inline-flex items-center gap-0.5 mt-0.5"
-                          >
-                            ↗ Test Link
-                          </a>
+                          <div className="pt-0.5">
+                            <a
+                              href={book.affiliateUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-[11px] text-amber-400/90 hover:underline inline-flex items-center gap-1"
+                            >
+                              <span>↗ Test Link</span>
+                            </a>
+                          </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-1.5 shrink-0">
+                    <div className="flex items-center sm:flex-row flex-col gap-2 shrink-0">
                       <button
                         type="button"
                         onClick={() => handleOpenEditBook(index)}
-                        className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold rounded-lg border border-slate-750 transition-colors flex items-center gap-1 shadow-sm"
+                        className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-semibold rounded-xl border border-slate-750 transition-colors flex items-center gap-1.5 shadow-sm"
                       >
                         <span>✏️</span> Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => handleRemoveBook(index)}
-                        className="px-2.5 py-1 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 text-[11px] font-medium rounded-lg transition-colors flex items-center gap-1"
+                        className="px-3 py-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 text-xs font-medium rounded-xl transition-colors flex items-center gap-1"
                         title="Remove book"
                       >
                         <span>🗑️</span> Remove
