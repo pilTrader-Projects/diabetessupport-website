@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { IAffiliateRecommendation } from '@/types/learning';
-import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
+import { ensureAffiliateUrl, getAmazonCoverUrl } from '@/lib/affiliateUtils';
 
 interface AffiliateBookModalProps {
   isOpen: boolean;
@@ -48,10 +48,23 @@ export default function AffiliateBookModal({
   if (!isOpen) return null;
 
   const handleUrlChange = (val: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      affiliateUrl: ensureAffiliateUrl(val),
-    }));
+    const formattedUrl = ensureAffiliateUrl(val);
+    setFormData((prev) => {
+      // Auto-extract and set official Amazon ASIN cover if coverUrl is empty
+      const autoCover = !prev.coverUrl ? getAmazonCoverUrl(val) : null;
+      return {
+        ...prev,
+        affiliateUrl: formattedUrl,
+        coverUrl: autoCover || prev.coverUrl,
+      };
+    });
+  };
+
+  const handleAutoDetectCover = () => {
+    const detected = getAmazonCoverUrl(formData.affiliateUrl || '') || getAmazonCoverUrl(formData.coverUrl || '');
+    if (detected) {
+      setFormData((prev) => ({ ...prev, coverUrl: detected }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -94,7 +107,15 @@ export default function AffiliateBookModal({
                 <img
                   src={formData.coverUrl}
                   alt={formData.title || 'Book Preview'}
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const parent = e.currentTarget.parentElement;
+                    if (parent) {
+                      parent.innerHTML = '<div class="w-full h-full bg-amber-950/40 flex items-center justify-center text-xl text-amber-400 font-bold">📖</div>';
+                    }
+                  }}
                 />
               </div>
             ) : (
@@ -241,16 +262,31 @@ export default function AffiliateBookModal({
 
           {/* Cover Image URL */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-300 mb-1">
-              Cover Image URL
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] font-semibold text-slate-300">
+                Cover Image URL
+              </label>
+              {(formData.affiliateUrl || formData.coverUrl) && (
+                <button
+                  type="button"
+                  onClick={handleAutoDetectCover}
+                  className="text-[11px] text-amber-400 hover:text-amber-300 hover:underline flex items-center gap-1 font-semibold"
+                  title="Generate official permanent Amazon ASIN cover link"
+                >
+                  <span>🪄 Auto-detect Amazon Cover</span>
+                </button>
+              )}
+            </div>
             <input
               type="url"
               value={formData.coverUrl || ''}
               onChange={(e) => setFormData({ ...formData, coverUrl: e.target.value })}
-              placeholder="https://images-na.ssl-images-amazon.com/..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 text-xs"
+              placeholder="https://images-na.ssl-images-amazon.com/images/P/{ASIN}.01.LZZZZZZZ.jpg"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 text-xs font-mono"
             />
+            <p className="text-[10px] text-slate-500 mt-1">
+              Tip: Amazon product links (e.g. dp/ASIN) automatically resolve to perpetual CDN covers (<code className="text-amber-400/80 font-mono">/images/P/&#123;ASIN&#125;.01.LZZZZZZZ.jpg</code>).
+            </p>
           </div>
 
           {/* Description */}

@@ -2,6 +2,7 @@ import {
   ensureAffiliateUrl,
   extractAmazonAsin,
   buildAmazonProductUrl,
+  getAmazonCoverUrl,
 } from '../../src/lib/affiliateUtils';
 
 describe('affiliateUtils Unit Tests (TDD)', () => {
@@ -57,6 +58,28 @@ describe('affiliateUtils Unit Tests (TDD)', () => {
     it('builds canonical Amazon product URL with affiliate tag', () => {
       const url = buildAmazonProductUrl('1771642658', 'diabetes-code');
       expect(url).toBe('https://www.amazon.com/dp/1771642658?tag=diabetes-code');
+    });
+  });
+
+  describe('getAmazonCoverUrl', () => {
+    it('generates permanent product image URL from a raw ASIN', () => {
+      expect(getAmazonCoverUrl('1771641258')).toBe(
+        'https://images-na.ssl-images-amazon.com/images/P/1771641258.01.LZZZZZZZ.jpg'
+      );
+    });
+
+    it('generates permanent product image URL from full Amazon URL', () => {
+      expect(getAmazonCoverUrl('https://www.amazon.com/dp/1771641258?tag=diabetes-code')).toBe(
+        'https://images-na.ssl-images-amazon.com/images/P/1771641258.01.LZZZZZZZ.jpg'
+      );
+      expect(getAmazonCoverUrl('https://www.amazon.com/Why-We-Get-Sick/dp/194883698X/')).toBe(
+        'https://images-na.ssl-images-amazon.com/images/P/194883698X.01.LZZZZZZZ.jpg'
+      );
+    });
+
+    it('returns null for invalid or non-Amazon URLs', () => {
+      expect(getAmazonCoverUrl('')).toBeNull();
+      expect(getAmazonCoverUrl('https://external-site.com/book')).toBeNull();
     });
   });
 });

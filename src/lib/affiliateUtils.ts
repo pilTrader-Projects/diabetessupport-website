@@ -71,3 +71,16 @@ export function buildAmazonProductUrl(asin: string, tag?: string): string {
   const affiliateTag = (tag || DEFAULT_AMAZON_AFFILIATE_TAG || 'diabetes-code').trim();
   return `https://www.amazon.com/dp/${cleanAsin}?tag=${encodeURIComponent(affiliateTag)}`;
 }
+
+/**
+ * Generates the permanent high-resolution Amazon product image URL from an ASIN or Amazon product URL.
+ * Uses Amazon's official permanent Product Image API CDN (`/images/P/{ASIN}.01.LZZZZZZZ.jpg`),
+ * which is stable, perpetual, and does not expire or rot like temporary `/images/I/` hashes.
+ */
+export function getAmazonCoverUrl(asinOrUrl: string): string | null {
+  if (!asinOrUrl || typeof asinOrUrl !== 'string') return null;
+  const trimmed = asinOrUrl.trim();
+  const asin = /^[A-Z0-9]{10}$/i.test(trimmed) ? trimmed.toUpperCase() : extractAmazonAsin(trimmed);
+  if (!asin) return null;
+  return `https://images-na.ssl-images-amazon.com/images/P/${asin}.01.LZZZZZZZ.jpg`;
+}

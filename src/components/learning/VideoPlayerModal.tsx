@@ -246,7 +246,15 @@ export default function VideoPlayerModal({
                         <img
                           src={book.coverUrl}
                           alt={book.title}
+                          referrerPolicy="no-referrer"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const parent = e.currentTarget.parentElement;
+                            if (parent) {
+                              parent.innerHTML = '<div class="w-full h-full bg-amber-950/40 flex items-center justify-center text-xl text-amber-400 font-bold">📖</div>';
+                            }
+                          }}
                         />
                       </div>
                     ) : (

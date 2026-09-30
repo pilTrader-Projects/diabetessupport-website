@@ -20,7 +20,7 @@ export const CURATED_AFFILIATE_BOOKS: IAffiliateRecommendation[] = [
     description:
       'The foundational scientific masterwork explaining why insulin resistance is the silent root driver behind Type 2 diabetes, fatty liver, obesity, cancer, and heart disease.',
     affiliateUrl: 'https://www.amazon.com/dp/194883698X?tag=diabetessup01-20',
-    coverUrl: 'https://images-na.ssl-images-amazon.com/images/I/71YFkn7jECL._AC_UL600_SR600,600_.jpg',
+    coverUrl: 'https://images-na.ssl-images-amazon.com/images/P/194883698X.01.LZZZZZZZ.jpg',
     platformName: 'Amazon / Kindle / Audible',
     badgeText: 'Foundational Science',
     topics: ['Insulin Resistance', 'Metabolic Health', 'Low Carb'],
@@ -35,7 +35,7 @@ export const CURATED_AFFILIATE_BOOKS: IAffiliateRecommendation[] = [
     description:
       'The landmark clinical reversal guide revealing how therapeutic fasting and dietary carbohydrate restriction can relieve beta-cell stress and reverse Type 2 diabetes naturally.',
     affiliateUrl: 'https://www.amazon.com/dp/1771642653?tag=diabetessup01-20',
-    coverUrl: 'https://images-na.ssl-images-amazon.com/images/I/71Xm+9q+3JL._AC_UL600_SR600,600_.jpg',
+    coverUrl: 'https://images-na.ssl-images-amazon.com/images/P/1771642653.01.LZZZZZZZ.jpg',
     platformName: 'Amazon / Audible',
     badgeText: 'Clinical Reversal Protocol',
     topics: ['Intermittent Fasting', 'Type 2 Diabetes', 'Insulin Resistance'],
@@ -50,7 +50,7 @@ export const CURATED_AFFILIATE_BOOKS: IAffiliateRecommendation[] = [
     description:
       'A revolutionary exploration of the hormonal theory of obesity—showing why calories in vs. calories out fails and how managing insulin unlocks sustainable metabolic healing.',
     affiliateUrl: 'https://www.amazon.com/dp/1771641258?tag=diabetessup01-20',
-    coverUrl: 'https://images-na.ssl-images-amazon.com/images/I/71nI6P3F2yL._AC_UL600_SR600,600_.jpg',
+    coverUrl: 'https://images-na.ssl-images-amazon.com/images/P/1771641258.01.LZZZZZZZ.jpg',
     platformName: 'Amazon / Audible',
     badgeText: 'Hormonal Obesity Theory',
     topics: ['Insulin Resistance', 'Weight Loss', 'Fasting'],
@@ -65,7 +65,7 @@ export const CURATED_AFFILIATE_BOOKS: IAffiliateRecommendation[] = [
     description:
       'An explosive pediatric neuroendocrinologist breakdown of how ultra-processed food and fructose overwhelm the liver, drive NAFLD, and fuel the global chronic disease epidemic.',
     affiliateUrl: 'https://www.amazon.com/dp/0063027712?tag=diabetessup01-20',
-    coverUrl: 'https://images-na.ssl-images-amazon.com/images/I/81xU9-x+2xL._AC_UL600_SR600,600_.jpg',
+    coverUrl: 'https://images-na.ssl-images-amazon.com/images/P/0063027712.01.LZZZZZZZ.jpg',
     platformName: 'Amazon / Audible',
     badgeText: 'Liver & Food Processing',
     topics: ['Fatty Liver', 'Fructose', 'Ultra-Processed Food'],
@@ -80,7 +80,7 @@ export const CURATED_AFFILIATE_BOOKS: IAffiliateRecommendation[] = [
     description:
       'A tactical operating manual for metabolic resilience, cardiorespiratory fitness, and nutritional biochemistry to extend both healthspan and lifespan.',
     affiliateUrl: 'https://www.amazon.com/dp/0593236599?tag=diabetessup01-20',
-    coverUrl: 'https://images-na.ssl-images-amazon.com/images/I/71R37E0QpNL._AC_UL600_SR600,600_.jpg',
+    coverUrl: 'https://images-na.ssl-images-amazon.com/images/P/0593236599.01.LZZZZZZZ.jpg',
     platformName: 'Amazon / Audible',
     badgeText: 'Longevity Blueprint',
     topics: ['Longevity', 'Cardiovascular Health', 'Metabolic Health'],

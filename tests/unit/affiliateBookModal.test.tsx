@@ -34,6 +34,7 @@ describe('AffiliateBookModal Component (TDD Unit Tests)', () => {
     expect(html).toContain('Clinical Reversal Protocol');
     expect(html).toContain('Save Book Details');
     expect(html).toContain('↗ Test Link');
+    expect(html).toContain('Auto-detect Amazon Cover');
   });
 
   it('renders in create mode when initialData is null', () => {
