@@ -167,7 +167,7 @@ export default function VideoPlayerModal({
                 type="button"
                 onClick={() => setIsShareModalOpen(true)}
                 className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750"
-                title="Share to Facebook, X, WhatsApp, or copy link"
+                title="Found this material valuable? Share it!"
               >
                 <span>🔗 Share</span>
               </button>
@@ -207,6 +207,23 @@ export default function VideoPlayerModal({
               </ul>
             </div>
           )}
+
+          {/* Share Encouragement Banner */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-teal-950/60 to-slate-900 border border-teal-500/30 text-xs">
+            <div className="flex items-center gap-2.5 text-teal-200">
+              <span className="text-base shrink-0">🤝</span>
+              <p className="leading-snug">
+                <strong>Found this material valuable?</strong> Share it with someone who needs it.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsShareModalOpen(true)}
+              className="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs shrink-0 transition-colors inline-flex items-center gap-1.5 shadow-md"
+            >
+              <span>📤 Share</span>
+            </button>
+          </div>
 
           {/* Overview / Bio */}
           <div className="space-y-2 text-xs text-slate-400 leading-relaxed">

@@ -661,7 +661,7 @@ export default function LearningHubClient({
                         <button
                           type="button"
                           onClick={() => handleOpenShare(item)}
-                          title="Share this material"
+                          title="Found this material valuable? Share it!"
                           className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
                         >
                           📤
@@ -742,7 +742,7 @@ export default function LearningHubClient({
                         <button
                           type="button"
                           onClick={() => handleOpenShare(item)}
-                          title="Share this study"
+                          title="Found this study valuable? Share it!"
                           className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-indigo-700 hover:bg-slate-50 transition-colors"
                         >
                           📤
@@ -828,7 +828,7 @@ export default function LearningHubClient({
                       <button
                         type="button"
                         onClick={() => handleOpenShare(item)}
-                        title="Share this guide"
+                        title="Found this guide valuable? Share it!"
                         className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
                       >
                         📤

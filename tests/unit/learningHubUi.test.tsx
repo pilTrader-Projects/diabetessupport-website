@@ -269,6 +269,8 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('youtube.com/embed/abc123xyz');
       expect(html).toContain('absolute inset-0 w-full h-full');
       expect(html).toContain('Share');
+      expect(html).toContain('Found this material valuable?');
+      expect(html).toContain('Share it with someone who needs it.');
     });
 
     it('returns null when isOpen is false', () => {
@@ -390,7 +392,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   });
 
   describe('ResourceShareModal Component', () => {
-    it('renders dynamic photo thumbnail, title, and social sharing links when open', () => {
+    it('renders dynamic photo thumbnail, title, encouragement message, and social sharing links when open', () => {
       const element = (
         <ResourceShareModal
           isOpen={true}
@@ -401,6 +403,10 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       expect(element).toBeDefined();
       const html = ReactDOMServer.renderToString(element);
+
+      // Verify encouragement message
+      expect(html).toContain('Found this material valuable?');
+      expect(html).toContain('Share it with someone who needs it.');
 
       // Verify photo thumbnail preview
       expect(html).toContain('https://i.ytimg.com/vi/abc123xyz/hqdefault.jpg');
@@ -438,7 +444,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   });
 
   describe('LearningHubClient Share Triggers & Deep-Linking', () => {
-    it('renders share buttons (📤) on material cards for dynamic sharing', () => {
+    it('renders share buttons (📤) on material cards for dynamic sharing with encouragement', () => {
       const element = (
         <LearningHubClient
           initialAuthorities={[mockAuthority]}
@@ -448,8 +454,8 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       );
 
       const html = ReactDOMServer.renderToString(element);
-      expect(html).toContain('title="Share this material"');
-      expect(html).toContain('title="Share this guide"');
+      expect(html).toContain('title="Found this material valuable? Share it!"');
+      expect(html).toContain('title="Found this guide valuable? Share it!"');
       expect(html).toContain('📤');
     });
 
