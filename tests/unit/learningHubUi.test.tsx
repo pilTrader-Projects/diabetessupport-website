@@ -167,6 +167,10 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       expect(element).toBeDefined();
       expect(element.props.resource?.embedId).toBe('abc123xyz');
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('youtube-nocookie.com/embed/abc123xyz');
+      expect(html).toContain('absolute inset-0 w-full h-full');
     });
 
     it('returns null when isOpen is false', () => {

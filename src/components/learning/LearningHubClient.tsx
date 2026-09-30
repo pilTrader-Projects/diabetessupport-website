@@ -401,6 +401,8 @@ export default function LearningHubClient({
                       <div className="space-y-4">
                         {/* Thumbnail with Lite Play Trigger */}
                         <div
+                          id={`play-thumb-${index}`}
+                          data-testid="play-thumb-trigger"
                           className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 cursor-pointer group"
                           onClick={() => handlePlayVideo(item)}
                         >
@@ -480,6 +482,8 @@ export default function LearningHubClient({
                     <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
                       <button
                         type="button"
+                        id={`play-video-btn-${index}`}
+                        data-testid="play-video-btn"
                         onClick={() => handlePlayVideo(item)}
                         className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1"
                       >

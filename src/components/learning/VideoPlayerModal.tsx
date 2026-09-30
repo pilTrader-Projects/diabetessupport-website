@@ -35,22 +35,23 @@ export default function VideoPlayerModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="video-modal-title"
-      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl space-y-6 text-slate-100"
+        className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl text-slate-100 my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Video Player Frame Area */}
-        <div className="relative aspect-video w-full bg-black rounded-t-3xl overflow-hidden">
+        {/* Video Player Frame Area (Full 16:9 responsive frame) */}
+        <div className="relative w-full aspect-video bg-black shrink-0 overflow-hidden">
           {embedUrl ? (
             <iframe
               src={embedUrl}
               title={resource.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
-              className="w-full h-full border-0"
+              className="absolute inset-0 w-full h-full border-0 block"
+              style={{ width: '100%', height: '100%' }}
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center space-y-3 p-6 text-center">
@@ -72,14 +73,14 @@ export default function VideoPlayerModal({
             type="button"
             onClick={onClose}
             aria-label="Close video player"
-            className="absolute top-3 right-3 bg-black/70 hover:bg-black text-white p-2 rounded-full border border-white/20 backdrop-blur-md transition-all z-10"
+            className="absolute top-3 right-3 w-9 h-9 bg-black/80 hover:bg-black text-white rounded-full border border-white/20 backdrop-blur-md flex items-center justify-center transition-all z-10 shadow-lg text-sm font-bold"
           >
             ✕
           </button>
         </div>
 
-        {/* Video Content & Takeaways */}
-        <div className="p-6 sm:p-8 pt-0 space-y-6">
+        {/* Video Content & Takeaways (Scrollable body) */}
+        <div className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
           {/* Header & Source Jump Actions */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
             <div className="space-y-1">
