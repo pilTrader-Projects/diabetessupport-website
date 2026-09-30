@@ -212,6 +212,41 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('Reset Show');
       expect(html).toContain('The Diary Of A CEO');
     });
+
+    it('matches non-contiguous search queries with punctuation like "Dr. Fung" to "Dr. Jason Fung"', () => {
+      const fungAuthority: IAuthority = {
+        _id: 'auth_fung',
+        name: 'Dr. Jason Fung',
+        slug: 'dr-jason-fung',
+        title: 'Nephrologist & Author',
+        specialties: ['Intermittent Fasting', 'Therapeutic Fasting'],
+        autoPublish: true,
+        isActive: true,
+        displayOrder: 2,
+      };
+
+      const fungVideo: ILearningResource = {
+        ...mockVideoResource,
+        _id: 'res_fung_1',
+        title: 'Therapeutic Fasting & Insulin Resistance',
+        authorityId: 'auth_fung',
+        authorityName: 'Dr. Jason Fung',
+        topics: ['Intermittent Fasting'],
+      };
+
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[fungAuthority]}
+          initialResources={[fungVideo]}
+          initialArticles={[]}
+          initialSearch="Dr. Fung"
+        />
+      );
+
+      expect(html).toContain('Therapeutic Fasting &amp; Insulin Resistance');
+      expect(html).toContain('Dr. Jason Fung');
+      expect(html).not.toContain('No Learning Materials Found');
+    });
   });
 
   describe('VideoPlayerModal Component', () => {

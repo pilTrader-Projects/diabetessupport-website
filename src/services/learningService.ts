@@ -298,14 +298,28 @@ export class LearningService {
       query.topics = { $regex: new RegExp(`^${filter.topic}$`, 'i') };
     }
     if (filter?.search) {
-      const searchRegex = new RegExp(filter.search.trim(), 'i');
-      query.$or = [
-        { title: searchRegex },
-        { summary: searchRegex },
-        { authorityName: searchRegex },
-        { podcastChannelName: searchRegex },
-        { topics: searchRegex },
-      ];
+      const tokens = filter.search
+        .trim()
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean);
+
+      if (tokens.length > 0) {
+        query.$and = tokens.map((token) => {
+          const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const regex = new RegExp(escaped, 'i');
+          return {
+            $or: [
+              { title: regex },
+              { summary: regex },
+              { authorityName: regex },
+              { podcastChannelName: regex },
+              { topics: regex },
+              { keyTakeaways: regex },
+            ],
+          };
+        });
+      }
     }
 
     const total = await LearningResourceModel.countDocuments(query);

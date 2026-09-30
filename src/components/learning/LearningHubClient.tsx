@@ -191,16 +191,38 @@ export default function LearningHubClient({
       if (!matchesTopic) return false;
     }
 
-    // Search query (matches title, authority, podcast show, summary, topics)
+    // Search query (tokenized multi-term matching across title, authority, podcast show, summary, takeaways, and topics)
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      const matchesText =
-        item.title.toLowerCase().includes(query) ||
-        item.authorityName.toLowerCase().includes(query) ||
-        (item.podcastChannelName && item.podcastChannelName.toLowerCase().includes(query)) ||
-        item.summary.toLowerCase().includes(query) ||
-        item.topics.some((t) => t.toLowerCase().includes(query));
-      if (!matchesText) return false;
+      const searchTokens = searchQuery
+        .toLowerCase()
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ' ')
+        .split(/\s+/)
+        .filter(Boolean);
+
+      if (searchTokens.length > 0) {
+        const matchedAuthority = initialAuthorities.find(
+          (a) =>
+            a._id === item.authorityId ||
+            a.name.toLowerCase() === item.authorityName.toLowerCase()
+        );
+        const authorityAliases = matchedAuthority?.aliases || [];
+
+        const corpus = [
+          item.title,
+          item.authorityName,
+          item.authorityTitle || '',
+          ...authorityAliases,
+          item.podcastChannelName || '',
+          item.summary,
+          ...(item.keyTakeaways || []),
+          ...(item.topics || []),
+        ]
+          .join(' ')
+          .toLowerCase();
+
+        const matchesAllTokens = searchTokens.every((token) => corpus.includes(token));
+        if (!matchesAllTokens) return false;
+      }
     }
 
     return true;
