@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ILearningResource } from '@/types/learning';
 
 interface SavedResourcesDrawerProps {
@@ -18,10 +19,25 @@ export default function SavedResourcesDrawer({
   onRemoveSaved,
   onSelectResource,
 }: SavedResourcesDrawerProps): React.JSX.Element | null {
+  const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -53,7 +69,7 @@ export default function SavedResourcesDrawer({
     }
   };
 
-  return (
+  const drawerContent = (
     <div
       role="dialog"
       aria-modal="true"
@@ -188,4 +204,10 @@ export default function SavedResourcesDrawer({
       </div>
     </div>
   );
+
+  if (mounted && typeof document !== 'undefined') {
+    return createPortal(drawerContent, document.body);
+  }
+
+  return drawerContent;
 }

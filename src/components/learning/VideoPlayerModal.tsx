@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ILearningResource } from '@/types/learning';
 
 interface VideoPlayerModalProps {
@@ -16,6 +17,7 @@ interface VideoPlayerModalProps {
  *
  * @usecase Streams YouTube videos via privacy-friendly youtube-nocookie with zero upfront tracking script bloat,
  * provides 'Watch on YouTube' external link, and highlights 3 Key Takeaways.
+ * Portaled to document.body to ensure strict viewport-fixed positioning regardless of parent container transforms.
  */
 export default function VideoPlayerModal({
   isOpen,
@@ -24,13 +26,30 @@ export default function VideoPlayerModal({
   isSaved = false,
   onToggleSave,
 }: VideoPlayerModalProps): React.JSX.Element | null {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Lock background scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
   if (!isOpen || !resource) return null;
 
   const embedUrl = resource.embedId
     ? `https://www.youtube-nocookie.com/embed/${resource.embedId}?autoplay=1&rel=0`
     : null;
 
-  return (
+  const modalContent = (
     <div
       role="dialog"
       aria-modal="true"
@@ -168,4 +187,11 @@ export default function VideoPlayerModal({
       </div>
     </div>
   );
+
+  // If in browser, portal to document.body; otherwise render directly (for SSR or test environments)
+  if (mounted && typeof document !== 'undefined') {
+    return createPortal(modalContent, document.body);
+  }
+
+  return modalContent;
 }
