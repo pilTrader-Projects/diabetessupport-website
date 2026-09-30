@@ -137,6 +137,7 @@ async function runSanityCheck() {
         'src/components/admin/AssetsManagerClient.tsx',
         'src/components/admin/AppSettingsManagerClient.tsx',
         'src/components/admin/learning/AuthorityModal.tsx',
+        'src/components/admin/learning/AffiliateBookModal.tsx',
         'src/components/admin/learning/AuthoritiesManagerClient.tsx',
         'src/components/admin/learning/PodcastChannelModal.tsx',
         'src/components/admin/learning/PodcastChannelsManagerClient.tsx',

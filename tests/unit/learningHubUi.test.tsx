@@ -522,9 +522,10 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
         />
       );
 
-      expect(html).toContain('Curated Books &amp; Protocols (Affiliate Monetization)');
+      expect(html).toContain('Curated Books &amp; Protocols');
       expect(html).toContain('Why We Get Sick');
       expect(html).toContain('Add Book / Protocol');
+      expect(html).toContain('Edit');
       expect(html).toContain('Test Link');
     });
   });
@@ -541,7 +542,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
         />
       );
 
-      expect(html).toContain('Contextual Books &amp; Protocols (Affiliate Monetization)');
+      expect(html).toContain('Contextual Books &amp; Protocols');
       expect(html).toContain('Add Book / Protocol');
     });
   });
