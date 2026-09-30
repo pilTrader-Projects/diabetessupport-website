@@ -322,6 +322,20 @@ export default function AuthoritiesManagerClient({
                       </div>
                     )}
                   </div>
+
+                  {/* Curated Books Badge / List */}
+                  {item.recommendedBooks && item.recommendedBooks.length > 0 && (
+                    <div className="p-2.5 bg-amber-950/20 border border-amber-900/30 rounded-xl space-y-1">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-bold text-amber-400 flex items-center gap-1">
+                          <span>📚</span> Books &amp; Protocols ({item.recommendedBooks.length})
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 line-clamp-1">
+                        {item.recommendedBooks.map((b) => b.title).join(' • ')}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Card Action Buttons */}

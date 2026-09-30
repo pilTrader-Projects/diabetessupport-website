@@ -4,6 +4,8 @@ import { LearningResourceModel } from '@/models/LearningResource';
 import { PodcastChannelModel } from '@/models/PodcastChannel';
 import { IAuthority, ILearningResource, IPodcastChannel, ResourceStatus, ValidationStatus } from '@/types/learning';
 import { AiQualifierService } from './aiQualifierService';
+import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
+import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 
 /**
  * Service orchestrating Learning Authorities, Curated Materials, Ingestion & Link Health.
@@ -89,19 +91,33 @@ export class LearningService {
       query.isActive = true;
     }
     const authorities = await AuthorityModel.find(query).sort({ displayOrder: 1, name: 1 }).lean();
-    return authorities.map((doc: any) => ({
-      ...doc,
-      _id: doc._id?.toString(),
-    })) as IAuthority[];
+    return authorities.map((doc: any) => {
+      const books =
+        doc.recommendedBooks && doc.recommendedBooks.length > 0
+          ? doc.recommendedBooks
+          : getRecommendedBooksForAuthority(doc.slug || doc.name);
+
+      return {
+        ...doc,
+        _id: doc._id?.toString(),
+        recommendedBooks: books,
+      };
+    }) as IAuthority[];
   }
 
   public static async getAuthorityById(id: string): Promise<IAuthority | null> {
     await dbConnect();
     const authority = await AuthorityModel.findById(id).lean();
     if (!authority) return null;
+    const books =
+      (authority as any).recommendedBooks && (authority as any).recommendedBooks.length > 0
+        ? (authority as any).recommendedBooks
+        : getRecommendedBooksForAuthority((authority as any).slug || (authority as any).name);
+
     return {
       ...(authority as any),
       _id: (authority as any)._id?.toString(),
+      recommendedBooks: books,
     };
   }
 
@@ -116,6 +132,11 @@ export class LearningService {
       }
     }
 
+    const cleanedBooks = (data.recommendedBooks || []).map((b) => ({
+      ...b,
+      affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
+    }));
+
     const created = await AuthorityModel.create({
       ...data,
       slug,
@@ -123,6 +144,7 @@ export class LearningService {
       isActive: data.isActive ?? true,
       autoPublish: data.autoPublish ?? true,
       specialties: data.specialties || [],
+      recommendedBooks: cleanedBooks,
     });
 
     const authorityId = (created as any)._id?.toString();
@@ -150,6 +172,13 @@ export class LearningService {
       if (canonicalId) {
         updatePayload.youtubeChannelId = canonicalId;
       }
+    }
+
+    if (data.recommendedBooks) {
+      updatePayload.recommendedBooks = data.recommendedBooks.map((b) => ({
+        ...b,
+        affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
+      }));
     }
 
     const updated = await AuthorityModel.findByIdAndUpdate(
@@ -353,6 +382,11 @@ export class LearningService {
   public static async createResource(data: Partial<ILearningResource>): Promise<ILearningResource> {
     await dbConnect();
     const slug = data.slug || this.generateSlug(data.title || 'resource') + '-' + Date.now().toString(36);
+    const cleanedBooks = (data.recommendedBooks || []).map((b) => ({
+      ...b,
+      affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
+    }));
+
     const created = await LearningResourceModel.create({
       ...data,
       slug,
@@ -360,6 +394,7 @@ export class LearningService {
       topics: data.topics || [],
       status: data.status || 'published',
       validationStatus: data.validationStatus || 'unverified',
+      recommendedBooks: cleanedBooks,
     });
     return {
       ...(created.toObject ? created.toObject() : created),
@@ -369,9 +404,17 @@ export class LearningService {
 
   public static async updateResource(id: string, data: Partial<ILearningResource>): Promise<ILearningResource | null> {
     await dbConnect();
+    const updatePayload = { ...data };
+    if (data.recommendedBooks) {
+      updatePayload.recommendedBooks = data.recommendedBooks.map((b) => ({
+        ...b,
+        affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
+      }));
+    }
+
     const updated = await LearningResourceModel.findByIdAndUpdate(
       id,
-      { $set: data },
+      { $set: updatePayload },
       { returnDocument: 'after', runValidators: true }
     ).lean();
     if (!updated) return null;

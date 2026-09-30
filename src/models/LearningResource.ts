@@ -134,16 +134,38 @@ const LearningResourceSchema = new Schema<ILearningResource>(
       default: Date.now,
       index: true,
     },
+    recommendedBooks: {
+      type: [
+        new Schema(
+          {
+            title: { type: String, required: true, trim: true },
+            author: { type: String, required: true, trim: true },
+            authoritySlug: { type: String, trim: true },
+            type: { type: String, enum: ['book', 'program', 'protocol'], default: 'book' },
+            subtitle: { type: String, trim: true },
+            description: { type: String, trim: true },
+            affiliateUrl: { type: String, required: true, trim: true },
+            coverUrl: { type: String, trim: true },
+            badgeText: { type: String, trim: true },
+            platformName: { type: String, default: 'Amazon', trim: true },
+            topics: { type: [String], default: [] },
+          },
+          { _id: true }
+        ),
+      ],
+      default: [],
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Hot-reload guard: if an older model was cached in-memory without the 'rejected' status enum, invalidate it
+// Hot-reload guard: if an older model was cached in-memory without the 'rejected' status enum or 'recommendedBooks', invalidate it
 if (
   mongoose.models.LearningResource &&
-  !(mongoose.models.LearningResource.schema.path('status') as any)?.enumValues?.includes('rejected')
+  (!(mongoose.models.LearningResource.schema.path('status') as any)?.enumValues?.includes('rejected') ||
+   !mongoose.models.LearningResource.schema.path('recommendedBooks'))
 ) {
   delete (mongoose.models as any).LearningResource;
 }

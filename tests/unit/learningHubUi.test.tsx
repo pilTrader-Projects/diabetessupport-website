@@ -9,6 +9,8 @@ import VideoPlayerModal from '../../src/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '../../src/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '../../src/components/learning/ResourceShareModal';
 import SocialShareBar from '../../src/components/community/SocialShareBar';
+import AuthorityModal from '../../src/components/admin/learning/AuthorityModal';
+import ResourceModal from '../../src/components/admin/learning/ResourceModal';
 import BlogFeedPage, { generateMetadata } from '../../src/app/blog/page';
 import { ILearningResource, IAuthority, IPodcastChannel } from '../../src/types/learning';
 import { IPost } from '../../src/types/blog';
@@ -505,6 +507,42 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       );
 
       expect(element.props.initialResourceSlug).toBe('insulin-resistance-glucagon');
+    });
+  });
+
+  describe('AuthorityModal Component (Affiliate Books Management)', () => {
+    it('renders with Curated Books & Protocols section and pre-populates authority books', () => {
+      const html = ReactDOMServer.renderToString(
+        <AuthorityModal
+          isOpen={true}
+          onClose={jest.fn()}
+          onSubmit={jest.fn()}
+          initialData={mockAuthority}
+          submitting={false}
+        />
+      );
+
+      expect(html).toContain('Curated Books &amp; Protocols (Affiliate Monetization)');
+      expect(html).toContain('Why We Get Sick');
+      expect(html).toContain('Add Book / Protocol');
+      expect(html).toContain('Test Link');
+    });
+  });
+
+  describe('ResourceModal Component (Affiliate Books Management)', () => {
+    it('renders with contextual books & protocols section', () => {
+      const html = ReactDOMServer.renderToString(
+        <ResourceModal
+          isOpen={true}
+          onClose={jest.fn()}
+          onSubmit={jest.fn()}
+          initialData={mockVideoResource}
+          submitting={false}
+        />
+      );
+
+      expect(html).toContain('Contextual Books &amp; Protocols (Affiliate Monetization)');
+      expect(html).toContain('Add Book / Protocol');
     });
   });
 });

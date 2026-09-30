@@ -78,11 +78,37 @@ const AuthoritySchema = new Schema<IAuthority>(
     lastSyncAt: {
       type: Date,
     },
+    recommendedBooks: {
+      type: [
+        new Schema(
+          {
+            title: { type: String, required: true, trim: true },
+            author: { type: String, required: true, trim: true },
+            authoritySlug: { type: String, trim: true },
+            type: { type: String, enum: ['book', 'program', 'protocol'], default: 'book' },
+            subtitle: { type: String, trim: true },
+            description: { type: String, trim: true },
+            affiliateUrl: { type: String, required: true, trim: true },
+            coverUrl: { type: String, trim: true },
+            badgeText: { type: String, trim: true },
+            platformName: { type: String, default: 'Amazon', trim: true },
+            topics: { type: [String], default: [] },
+          },
+          { _id: true }
+        ),
+      ],
+      default: [],
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Hot-reload guard: if an older model was cached without recommendedBooks, invalidate it
+if (mongoose.models.Authority && !(mongoose.models.Authority.schema.path('recommendedBooks'))) {
+  delete (mongoose.models as any).Authority;
+}
 
 export const AuthorityModel: Model<IAuthority> =
   mongoose.models.Authority || mongoose.model<IAuthority>('Authority', AuthoritySchema);

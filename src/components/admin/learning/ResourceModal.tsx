@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ILearningResource, ResourceType, ResourceStatus } from '@/types/learning';
+import { ILearningResource, ResourceType, ResourceStatus, IAffiliateRecommendation } from '@/types/learning';
+import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 
 export interface ResourceFormData {
   title: string;
@@ -16,6 +17,7 @@ export interface ResourceFormData {
   keyTakeaways: string; // newline separated
   topics: string; // comma separated
   status: ResourceStatus;
+  recommendedBooks?: IAffiliateRecommendation[];
 }
 
 interface ResourceModalProps {
@@ -48,7 +50,27 @@ export default function ResourceModal({
   initialData,
   submitting,
 }: ResourceModalProps): React.JSX.Element | null {
-  const [formData, setFormData] = useState<ResourceFormData>(DEFAULT_FORM);
+  const [formData, setFormData] = useState<ResourceFormData>(() => {
+    if (!initialData) return DEFAULT_FORM;
+    return {
+      title: initialData.title || '',
+      type: initialData.type || 'video',
+      authorityName: initialData.authorityName || '',
+      authorityTitle: initialData.authorityTitle || '',
+      sourceUrl: initialData.sourceUrl || '',
+      embedId: initialData.embedId || '',
+      thumbnailUrl: initialData.thumbnailUrl || '',
+      duration: initialData.duration || '',
+      summary: initialData.summary || '',
+      keyTakeaways: (initialData.keyTakeaways || []).join('\n'),
+      topics: (initialData.topics || []).join(', '),
+      status: initialData.status || 'published',
+    };
+  });
+
+  const [books, setBooks] = useState<IAffiliateRecommendation[]>(() => {
+    return initialData?.recommendedBooks || [];
+  });
 
   useEffect(() => {
     if (initialData) {
@@ -66,10 +88,47 @@ export default function ResourceModal({
         topics: (initialData.topics || []).join(', '),
         status: initialData.status || 'published',
       });
+      setBooks(initialData.recommendedBooks || []);
     } else {
       setFormData(DEFAULT_FORM);
+      setBooks([]);
     }
   }, [initialData, isOpen]);
+
+  const handleAddBook = () => {
+    setBooks([
+      ...books,
+      {
+        title: '',
+        author: formData.authorityName || 'Author',
+        type: 'book',
+        subtitle: '',
+        description: '',
+        affiliateUrl: '',
+        coverUrl: '',
+        badgeText: 'Recommended',
+        platformName: 'Amazon',
+        topics: ['Metabolic Health'],
+      },
+    ]);
+  };
+
+  const handleUpdateBook = (index: number, field: keyof IAffiliateRecommendation, value: any) => {
+    setBooks((prev) =>
+      prev.map((b, i) => {
+        if (i !== index) return b;
+        let finalVal = value;
+        if (field === 'affiliateUrl' && typeof value === 'string') {
+          finalVal = ensureAffiliateUrl(value);
+        }
+        return { ...b, [field]: finalVal };
+      })
+    );
+  };
+
+  const handleRemoveBook = (index: number) => {
+    setBooks((prev) => prev.filter((_, i) => i !== index));
+  };
 
   if (!isOpen) return null;
 
@@ -90,7 +149,10 @@ export default function ResourceModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit(formData);
+    await onSubmit({
+      ...formData,
+      recommendedBooks: books,
+    });
   };
 
   return (
@@ -270,6 +332,140 @@ export default function ResourceModal({
               placeholder="Elevated insulin locks adipose stores from lipolysis.&#10;Intermittent fasting enables deep glycogen depletion and activates autophagy.&#10;Ketone production provides steady non-glucose energy to cerebral neurons."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 text-xs font-mono"
             />
+          </div>
+
+          {/* Curated Books & Protocol Affiliates */}
+          <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span className="text-amber-400 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <span>📚</span> Contextual Books &amp; Protocols (Affiliate Monetization)
+                </span>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Optional: Attach specific books or protocols for this resource. Overrides default authority reading.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddBook}
+                className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold rounded-xl border border-amber-500/30 transition-colors self-start sm:self-auto flex items-center gap-1"
+              >
+                <span>+</span> Add Book / Protocol
+              </button>
+            </div>
+
+            {books.length === 0 ? (
+              <div className="p-3 bg-slate-900/60 border border-dashed border-slate-800 rounded-xl text-center">
+                <p className="text-xs text-slate-500">
+                  No resource-specific books attached. Will inherit default reading from {formData.authorityName || 'authority'}.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {books.map((book, index) => (
+                  <div
+                    key={index}
+                    className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-3 relative group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-amber-400/90">
+                        Item #{index + 1}: {book.title || 'Untitled Book/Protocol'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveBook(index)}
+                        className="text-[11px] text-rose-400 hover:text-rose-300 px-2 py-0.5 rounded hover:bg-rose-950/40 transition-colors"
+                      >
+                        🗑️ Remove
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                          Book / Program Title <span className="text-rose-400">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={book.title}
+                          onChange={(e) => handleUpdateBook(index, 'title', e.target.value)}
+                          placeholder="e.g. The Diabetes Code"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                          Author Name
+                        </label>
+                        <input
+                          type="text"
+                          value={book.author}
+                          onChange={(e) => handleUpdateBook(index, 'author', e.target.value)}
+                          placeholder="e.g. Dr. Jason Fung"
+                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-[11px] font-semibold text-slate-400">
+                          Affiliate Link (SiteStripe or Product URL) <span className="text-rose-400">*</span>
+                        </label>
+                        {book.affiliateUrl && (
+                          <a
+                            href={book.affiliateUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] text-amber-400 hover:underline flex items-center gap-0.5"
+                          >
+                            ↗ Test Link
+                          </a>
+                        )}
+                      </div>
+                      <input
+                        type="url"
+                        required
+                        value={book.affiliateUrl}
+                        onChange={(e) => handleUpdateBook(index, 'affiliateUrl', e.target.value)}
+                        placeholder="https://amzn.to/3xyz or https://www.amazon.com/dp/..."
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs font-mono text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                          Cover Image URL
+                        </label>
+                        <input
+                          type="url"
+                          value={book.coverUrl || ''}
+                          onChange={(e) => handleUpdateBook(index, 'coverUrl', e.target.value)}
+                          placeholder="https://..."
+                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                          Short Clinical Synopsis / Why Read This
+                        </label>
+                        <input
+                          type="text"
+                          value={book.description || ''}
+                          onChange={(e) => handleUpdateBook(index, 'description', e.target.value)}
+                          placeholder="Clinical protocol for reversing insulin resistance..."
+                          className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">

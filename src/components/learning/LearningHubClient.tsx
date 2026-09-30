@@ -150,8 +150,23 @@ export default function LearningHubClient({
     publishedAt: art.publishedAt || art.createdAt,
   }));
 
-  // Curated affiliate books & protocols from world-class metabolic authorities
-  const affiliateBookItems: ILearningResource[] = getAllRecommendedBooks().map((book) => ({
+  // Curated affiliate books & protocols from world-class metabolic authorities (DB-first, static fallback)
+  const authorityBooks = initialAuthorities.flatMap((a) => a.recommendedBooks || []);
+  const resourceBooks = initialResources.flatMap((r) => r.recommendedBooks || []);
+  const combinedRawBooks = [...authorityBooks, ...resourceBooks];
+
+  // Deduplicate by title
+  const seenBookTitles = new Set<string>();
+  const uniqueDynamicBooks = combinedRawBooks.filter((b) => {
+    const key = (b.title || '').trim().toLowerCase();
+    if (!key || seenBookTitles.has(key)) return false;
+    seenBookTitles.add(key);
+    return true;
+  });
+
+  const booksToRender = uniqueDynamicBooks.length > 0 ? uniqueDynamicBooks : getAllRecommendedBooks();
+
+  const affiliateBookItems: ILearningResource[] = booksToRender.map((book) => ({
     _id: book._id,
     title: book.title,
     slug: book._id || book.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
