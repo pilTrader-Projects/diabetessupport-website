@@ -81,7 +81,8 @@ export async function scrapeYouTubeChannelVideos(
         const vr = obj.videoRenderer;
         const vid = vr.videoId;
         const title = vr.title?.runs?.[0]?.text || vr.title?.simpleText || '';
-        if (vid && title && !seenIds.has(vid)) {
+        const isPlaylist = typeof vid === 'string' && (vid.startsWith('PL') || vid.startsWith('UU') || vid.startsWith('RD') || vid.startsWith('FL') || vid.length > 25);
+        if (vid && !isPlaylist && title && !seenIds.has(vid)) {
           seenIds.add(vid);
           results.push({
             videoId: vid,
@@ -97,7 +98,7 @@ export async function scrapeYouTubeChannelVideos(
           lvm.contentId ||
           lvm.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint?.videoId;
         const title = lvm.metadata?.lockupMetadataViewModel?.title?.content;
-        if (vid && title && !seenIds.has(vid)) {
+        if (vid && /^[a-zA-Z0-9_-]{11}$/.test(vid) && title && !seenIds.has(vid)) {
           seenIds.add(vid);
           results.push({
             videoId: vid,
@@ -146,7 +147,8 @@ export function parseYouTubeSearchHtml(html: string): VideoEntry[] {
         const vr = obj.videoRenderer;
         const vid = vr.videoId;
         const title = vr.title?.runs?.[0]?.text || vr.title?.simpleText || '';
-        if (vid && title && !seenIds.has(vid)) {
+        const isPlaylist = typeof vid === 'string' && (vid.startsWith('PL') || vid.startsWith('UU') || vid.startsWith('RD') || vid.startsWith('FL') || vid.length > 25);
+        if (vid && !isPlaylist && title && !seenIds.has(vid)) {
           seenIds.add(vid);
           const desc = (vr.descriptionSnippet?.runs?.map((r: any) => r.text).join('') || '').trim();
           results.push({
@@ -163,7 +165,7 @@ export function parseYouTubeSearchHtml(html: string): VideoEntry[] {
           lvm.contentId ||
           lvm.rendererContext?.commandContext?.onTap?.innertubeCommand?.watchEndpoint?.videoId;
         const title = lvm.metadata?.lockupMetadataViewModel?.title?.content;
-        if (vid && title && !seenIds.has(vid)) {
+        if (vid && /^[a-zA-Z0-9_-]{11}$/.test(vid) && title && !seenIds.has(vid)) {
           seenIds.add(vid);
           results.push({
             videoId: vid,

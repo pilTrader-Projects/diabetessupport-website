@@ -34,8 +34,8 @@ const LearningResourceSchema = new Schema<ILearningResource>(
     },
     authorityName: {
       type: String,
-      required: [true, 'Authority name is required'],
       trim: true,
+      default: '',
     },
     authorityTitle: {
       type: String,

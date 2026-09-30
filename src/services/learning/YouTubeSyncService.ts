@@ -44,6 +44,10 @@ export class YouTubeSyncService {
       keywords?: string[];
     }
   ): Promise<SyncResult> {
+    if (typeof fetchXmlFn === 'object' && fetchXmlFn !== null) {
+      options = fetchXmlFn as any;
+      fetchXmlFn = undefined;
+    }
     await dbConnect();
     const authority = await AuthorityModel.findById(authorityId);
     if (!authority?.youtubeChannelId) {
@@ -183,6 +187,10 @@ export class YouTubeSyncService {
       searchGuestAuthorities?: boolean;
     }
   ): Promise<SyncResult> {
+    if (typeof fetchXmlFn === 'object' && fetchXmlFn !== null) {
+      options = fetchXmlFn as any;
+      fetchXmlFn = undefined;
+    }
     await dbConnect();
     const channel = await PodcastChannelModel.findById(podcastChannelId);
     if (!channel?.youtubeChannelId) {
@@ -320,7 +328,7 @@ export class YouTubeSyncService {
           await LearningResourceModel.create({
             ...commonFields,
             authorityId: qualification.matchedAuthority?._id,
-            authorityName: qualification.matchedAuthority?.name,
+            authorityName: qualification.matchedAuthority?.name || channel.host || channel.name || 'Podcast Guest',
             isGuestAppearance: !!qualification.matchedAuthority,
             status: 'rejected' as const,
           });
