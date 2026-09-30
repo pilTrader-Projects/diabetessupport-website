@@ -6,11 +6,33 @@
  */
 import { dbConnect } from '@/lib/dbConnect';
 import { AuthorityModel } from '@/models/Authority';
-import { IAuthority } from '@/types/learning';
+import { IAuthority, IAffiliateRecommendation } from '@/types/learning';
 import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 import { generateSlug } from './shared/slugUtils';
 import { resolveYouTubeChannelId } from './shared/feedFetcher';
+
+/**
+ * Sanitizes recommended book items so they are safe plain objects for Client Components.
+ * Converts any BSON ObjectId into a plain string and prevents Next.js RSC toJSON errors.
+ */
+export function serializeRecommendedBooks(books: any[] = []): IAffiliateRecommendation[] {
+  if (!Array.isArray(books)) return [];
+  return books.map((b: any) => ({
+    _id: b._id ? b._id.toString() : (b.affiliateUrl || b.title),
+    title: b.title || '',
+    author: b.author || '',
+    authoritySlug: b.authoritySlug || '',
+    type: b.type || 'book',
+    subtitle: b.subtitle || '',
+    description: b.description || '',
+    affiliateUrl: b.affiliateUrl || '',
+    coverUrl: b.coverUrl || '',
+    badgeText: b.badgeText || '',
+    platformName: b.platformName || 'Amazon',
+    topics: Array.isArray(b.topics) ? b.topics.map((t: any) => String(t)) : [],
+  }));
+}
 
 export class AuthorityService {
   public static async listAuthorities(filter?: { activeOnly?: boolean }): Promise<IAuthority[]> {
@@ -21,10 +43,11 @@ export class AuthorityService {
     return authorities.map((doc: any) => ({
       ...doc,
       _id: doc._id?.toString(),
-      recommendedBooks:
+      recommendedBooks: serializeRecommendedBooks(
         doc.recommendedBooks?.length > 0
           ? doc.recommendedBooks
-          : getRecommendedBooksForAuthority(doc.slug || doc.name),
+          : getRecommendedBooksForAuthority(doc.slug || doc.name)
+      ),
     })) as IAuthority[];
   }
 
@@ -36,10 +59,11 @@ export class AuthorityService {
     return {
       ...doc,
       _id: doc._id?.toString(),
-      recommendedBooks:
+      recommendedBooks: serializeRecommendedBooks(
         doc.recommendedBooks?.length > 0
           ? doc.recommendedBooks
-          : getRecommendedBooksForAuthority(doc.slug || doc.name),
+          : getRecommendedBooksForAuthority(doc.slug || doc.name)
+      ),
     };
   }
 

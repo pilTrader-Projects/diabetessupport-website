@@ -150,7 +150,7 @@ const LearningResourceSchema = new Schema<ILearningResource>(
             platformName: { type: String, default: 'Amazon', trim: true },
             topics: { type: [String], default: [] },
           },
-          { _id: true }
+          { _id: false }
         ),
       ],
       default: [],

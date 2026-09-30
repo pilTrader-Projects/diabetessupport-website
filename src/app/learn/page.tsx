@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import { SITE_CONFIG } from '@/config/constants';
 import LearningHubClient from '@/components/learning/LearningHubClient';
 import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
+import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -186,10 +187,11 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const allAuthorities: IAuthority[] = rawAuthorities.map((doc: any) => ({
     ...doc,
     _id: doc._id ? doc._id.toString() : '',
-    recommendedBooks:
+    recommendedBooks: serializeRecommendedBooks(
       doc.recommendedBooks && doc.recommendedBooks.length > 0
         ? doc.recommendedBooks
-        : getRecommendedBooksForAuthority(doc.slug || doc.name),
+        : getRecommendedBooksForAuthority(doc.slug || doc.name)
+    ),
     lastSyncAt: doc.lastSyncAt ? new Date(doc.lastSyncAt) : undefined,
     createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
@@ -208,7 +210,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     _id: doc._id ? doc._id.toString() : '',
     authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
     podcastChannelId: doc.podcastChannelId ? doc.podcastChannelId.toString() : undefined,
-    recommendedBooks: doc.recommendedBooks || [],
+    recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
     createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,

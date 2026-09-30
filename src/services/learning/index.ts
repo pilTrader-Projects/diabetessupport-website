@@ -20,6 +20,7 @@ export { LearningResourceService };
 export { YouTubeSyncService };
 export { SyndicationOrchestrator };
 export { LinkHealthService };
+export { serializeRecommendedBooks } from './AuthorityService';
 export { generateSlug } from './shared/slugUtils';
 export { extractTakeaways } from './shared/textUtils';
 export {

@@ -8,6 +8,7 @@ import { LearningResourceModel } from '@/models/LearningResource';
 import { ILearningResource } from '@/types/learning';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 import { generateSlug } from './shared/slugUtils';
+import { serializeRecommendedBooks } from './AuthorityService';
 
 export class LearningResourceService {
   public static async listResources(filter?: {
@@ -67,6 +68,7 @@ export class LearningResourceService {
       _id: doc._id?.toString(),
       authorityId: doc.authorityId?.toString(),
       podcastChannelId: doc.podcastChannelId?.toString(),
+      recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
     })) as ILearningResource[];
 
     return { resources, total };
@@ -80,13 +82,14 @@ export class LearningResourceService {
       ...(doc as any),
       _id: (doc as any)._id?.toString(),
       authorityId: (doc as any).authorityId?.toString(),
+      recommendedBooks: serializeRecommendedBooks((doc as any).recommendedBooks || []),
     };
   }
 
   public static async createResource(data: Partial<ILearningResource>): Promise<ILearningResource> {
     await dbConnect();
     const slug = data.slug || generateSlug(data.title || 'resource') + '-' + Date.now().toString(36);
-    const cleanedBooks = (data.recommendedBooks || []).map((b) => ({
+    const cleanedBooks = (data.recommendedBooks || []).map(({ _id: _stripped, ...b }: any) => ({
       ...b,
       affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
     }));
@@ -110,7 +113,7 @@ export class LearningResourceService {
     await dbConnect();
     const updatePayload = { ...data };
     if (data.recommendedBooks) {
-      updatePayload.recommendedBooks = data.recommendedBooks.map((b) => ({
+      updatePayload.recommendedBooks = data.recommendedBooks.map(({ _id: _stripped, ...b }: any) => ({
         ...b,
         affiliateUrl: ensureAffiliateUrl(b.affiliateUrl),
       }));
@@ -122,7 +125,11 @@ export class LearningResourceService {
       { returnDocument: 'after', runValidators: true }
     ).lean();
     if (!updated) return null;
-    return { ...(updated as any), _id: (updated as any)._id?.toString() };
+    return {
+      ...(updated as any),
+      _id: (updated as any)._id?.toString(),
+      recommendedBooks: serializeRecommendedBooks((updated as any).recommendedBooks || []),
+    };
   }
 
   public static async deleteResource(id: string): Promise<boolean> {
