@@ -139,7 +139,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const formatQuery = (resolvedParams.format || 'all').toLowerCase();
   const authorityQuery = (resolvedParams.authority || 'all').trim();
   const podcastQuery = (resolvedParams.podcast || 'all').trim();
-  const resourceQuery = (resolvedParams.resource || '').trim();
+  const resourceQuery = (resolvedParams.resource || resolvedParams.play || '').trim();
 
   let rawPosts: any[] = [];
   let rawAuthorities: any[] = [];

@@ -118,14 +118,14 @@ export default function Header() {
             aria-label="Open My Saved Library"
             className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
               savedItems.length > 0
-                ? 'bg-teal-500/20 hover:bg-teal-500/35 border-teal-400/50 text-teal-200 shadow-sm hover:scale-105'
-                : 'bg-white/5 hover:bg-white/10 border-white/15 text-slate-300'
+                ? 'bg-amber-400/25 hover:bg-amber-400/35 border-amber-300/40 text-amber-200 shadow-sm hover:scale-105'
+                : 'bg-white/10 hover:bg-white/20 border-white/20 text-purple-100'
             }`}
           >
             <span>🔖</span>
             <span className="hidden lg:inline">My Library</span>
             {savedItems.length > 0 && (
-              <span className="bg-teal-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full">
+              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full shadow-sm">
                 {savedItems.length}
               </span>
             )}
@@ -146,11 +146,11 @@ export default function Header() {
             type="button"
             onClick={() => setIsSavedDrawerOpen(true)}
             aria-label="Open My Saved Library"
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-teal-500/20 border border-teal-400/40 text-teal-200 text-xs font-bold"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-400/25 border border-amber-300/40 text-amber-200 text-xs font-bold cursor-pointer"
           >
             <span>🔖</span>
             {savedItems.length > 0 && (
-              <span className="bg-teal-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full">
+              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full">
                 {savedItems.length}
               </span>
             )}
@@ -187,17 +187,17 @@ export default function Header() {
               setToastNotification(null);
               setIsSavedDrawerOpen(true);
             }}
-            className="bg-slate-900/95 border border-teal-400/70 shadow-2xl rounded-2xl px-4 py-3 flex items-center gap-3 backdrop-blur-md cursor-pointer hover:border-teal-300 transition-all text-xs text-white"
+            className="bg-gradient-to-r from-blue-900 via-purple-900 to-pink-600 border border-white/30 shadow-2xl rounded-2xl px-4 py-3 flex items-center gap-3 backdrop-blur-md cursor-pointer hover:border-white/50 transition-all text-xs text-white"
           >
             <span className="text-xl">✨</span>
             <div>
               <p className="font-bold text-white flex items-center gap-1.5">
                 <span>Saved to My Library!</span>
-                <span className="bg-teal-400 text-slate-950 font-black text-[10px] px-1.5 py-0.5 rounded-full">
+                <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-1.5 py-0.5 rounded-full shadow-sm">
                   {toastNotification.count}
                 </span>
               </p>
-              <p className="text-[11px] text-teal-300 underline font-medium">
+              <p className="text-[11px] text-amber-200 underline font-medium">
                 Tap to open your curated library →
               </p>
             </div>
@@ -207,7 +207,7 @@ export default function Header() {
                 e.stopPropagation();
                 setToastNotification(null);
               }}
-              className="text-slate-400 hover:text-white p-1 ml-1"
+              className="text-purple-200 hover:text-white p-1 ml-1 cursor-pointer"
             >
               ✕
             </button>
@@ -252,13 +252,13 @@ export default function Header() {
               closeMenu();
               setIsSavedDrawerOpen(true);
             }}
-            className="w-full text-left flex items-center justify-between py-2.5 px-3 rounded-xl text-base font-semibold text-teal-200 hover:text-white hover:bg-teal-900/30 transition-colors"
+            className="w-full text-left flex items-center justify-between py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
           >
             <span className="flex items-center gap-2">
               <span>🔖</span> My Saved Library
             </span>
             {savedItems.length > 0 && (
-              <span className="bg-teal-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full">
+              <span className="bg-amber-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full shadow-sm">
                 {savedItems.length}
               </span>
             )}

@@ -69,8 +69,16 @@ export default function VideoPlayerModal({
       : getRecommendedBooksForAuthority(resource.authorityName || resource.authorityId);
 
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
-  const embedUrl = resource.embedId
-    ? `https://www.youtube.com/embed/${resource.embedId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&modestbranding=1${originParam}`
+  
+  // Resilient embedId resolution: fallback to regex extraction if embedId is omitted but sourceUrl is YouTube
+  let resolvedEmbedId = resource.embedId;
+  if (!resolvedEmbedId && resource.sourceUrl && (resource.sourceUrl.includes('youtube.com') || resource.sourceUrl.includes('youtu.be'))) {
+    const match = resource.sourceUrl.match(/(?:v=|\/embed\/|youtu\.be\/)([\w-]{11})/);
+    if (match) resolvedEmbedId = match[1];
+  }
+
+  const embedUrl = resolvedEmbedId
+    ? `https://www.youtube.com/embed/${resolvedEmbedId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&modestbranding=1${originParam}`
     : null;
 
   const handleShare = async () => {
@@ -91,11 +99,11 @@ export default function VideoPlayerModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="video-modal-title"
-      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
+      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl text-slate-100 my-auto"
+        className="bg-gradient-to-b from-slate-950 via-purple-950 to-blue-950 border border-white/20 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl text-white my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Video Player Frame Area (Full 16:9 responsive frame with GPU isolation) */}
@@ -116,12 +124,12 @@ export default function VideoPlayerModal({
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center space-y-3 p-6 text-center">
               <span className="text-4xl">🎬</span>
-              <p className="text-slate-400 text-sm">Direct embed player not available for this source.</p>
+              <p className="text-purple-200 text-sm">Direct embed player not available for this source.</p>
               <a
                 href={resource.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-xl transition-colors"
+                className="px-5 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-xs font-bold rounded-xl transition-all shadow-lg"
               >
                 Watch Directly at Source &rarr;
               </a>
@@ -133,7 +141,7 @@ export default function VideoPlayerModal({
             type="button"
             onClick={onClose}
             aria-label="Close video player"
-            className="absolute top-3 right-3 w-9 h-9 bg-black/80 hover:bg-black text-white rounded-full border border-white/20 backdrop-blur-md flex items-center justify-center transition-all z-10 shadow-lg text-sm font-bold"
+            className="absolute top-3 right-3 w-9 h-9 bg-black/80 hover:bg-black text-white rounded-full border border-white/20 backdrop-blur-md flex items-center justify-center transition-all z-10 shadow-lg text-sm font-bold cursor-pointer"
           >
             ✕
           </button>
@@ -142,15 +150,15 @@ export default function VideoPlayerModal({
         {/* Video Content & Takeaways (Scrollable body) */}
         <div className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
           {/* Header & Source Jump Actions */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/15 pb-5">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-teal-950 text-teal-400 border border-teal-800">
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-400/25 text-amber-200 border border-amber-300/40">
                   {resource.type}
                 </span>
-                <span className="text-xs text-slate-400 font-semibold">{resource.authorityName}</span>
+                <span className="text-xs text-purple-200 font-semibold">{resource.authorityName}</span>
                 {resource.duration && (
-                  <span className="text-xs text-slate-500">• {resource.duration}</span>
+                  <span className="text-xs text-purple-300/80">• {resource.duration}</span>
                 )}
               </div>
               <h2 id="video-modal-title" className="text-xl sm:text-2xl font-black text-white leading-tight">
@@ -160,7 +168,7 @@ export default function VideoPlayerModal({
 
             {/* Direct Platform Jump Button & Share Encouragement */}
             <div className="flex flex-col items-start sm:items-end gap-2 shrink-0">
-              <span className="text-[11px] font-semibold text-teal-300 flex items-center gap-1.5 bg-teal-950/60 px-3 py-1 rounded-full border border-teal-500/30">
+              <span className="text-[11px] font-semibold text-purple-200 flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/15">
                 <span>💡</span> Found this material valuable? Share it:
               </span>
               <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
@@ -176,7 +184,7 @@ export default function VideoPlayerModal({
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(true)}
-                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-teal-600 hover:bg-teal-500 text-white border-teal-500 shadow-md hover:scale-[1.02]"
+                  className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-white/20 shadow-md hover:scale-[1.02] cursor-pointer"
                   title="Found this material valuable? Share it!"
                 >
                   <span>🔗 Share</span>
@@ -186,10 +194,10 @@ export default function VideoPlayerModal({
                   <button
                     type="button"
                     onClick={() => onToggleSave(resource._id!)}
-                    className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 ${
+                    className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 cursor-pointer ${
                       isSaved
-                        ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
-                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-750'
+                        ? 'bg-amber-400/25 border-amber-300/40 text-amber-200 shadow-sm'
+                        : 'bg-white/10 border-white/20 text-white hover:bg-white/20'
                     }`}
                   >
                     <span>{isSaved ? '★ Saved' : '☆ Save'}</span>
@@ -201,17 +209,17 @@ export default function VideoPlayerModal({
 
           {/* 3 Key Takeaways Card */}
           {resource.keyTakeaways && resource.keyTakeaways.length > 0 && (
-            <div className="bg-gradient-to-br from-slate-950 to-slate-900 border border-teal-500/30 rounded-2xl p-5 space-y-3 shadow-inner">
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 space-y-3 shadow-inner">
               <div className="flex items-center space-x-2">
                 <span className="text-lg">💡</span>
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-teal-400">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
                   Key Scientific Takeaways (10-Second Summary)
                 </h3>
               </div>
               <ul className="space-y-2">
                 {resource.keyTakeaways.map((point, idx) => (
-                  <li key={idx} className="flex items-start space-x-2.5 text-xs text-slate-300 leading-relaxed">
-                    <span className="text-teal-400 font-bold">•</span>
+                  <li key={idx} className="flex items-start space-x-2.5 text-xs text-purple-100 leading-relaxed">
+                    <span className="text-amber-300 font-bold">•</span>
                     <span>{point}</span>
                   </li>
                 ))}
@@ -221,11 +229,11 @@ export default function VideoPlayerModal({
 
           {/* Contextual Affiliate Book & Protocol Recommendations */}
           {recommendedBooks.length > 0 && (
-            <div className="bg-gradient-to-br from-amber-950/25 via-slate-900 to-slate-950 border border-amber-500/30 rounded-2xl p-5 space-y-4 shadow-lg">
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 space-y-4 shadow-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">📖</span>
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-400">
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
                     Recommended Reading by {resource.authorityName}
                   </h3>
                 </div>
@@ -238,10 +246,10 @@ export default function VideoPlayerModal({
                 {recommendedBooks.map((book) => (
                   <div
                     key={book._id || book.title}
-                    className="flex gap-3 bg-slate-950/70 border border-slate-800 rounded-xl p-3 hover:border-amber-500/40 transition-all group"
+                    className="flex gap-3 bg-white/10 border border-white/15 rounded-xl p-3 hover:border-amber-400/40 transition-all group backdrop-blur-sm"
                   >
                     {book.coverUrl ? (
-                      <div className="w-16 h-24 shrink-0 rounded-lg overflow-hidden bg-slate-900 shadow-md">
+                      <div className="w-16 h-24 shrink-0 rounded-lg overflow-hidden bg-purple-950/60 shadow-md border border-white/10">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={book.coverUrl}
@@ -272,7 +280,7 @@ export default function VideoPlayerModal({
                         <h4 className="text-xs font-bold text-white line-clamp-1 group-hover:text-amber-300 transition-colors">
                           {book.title}
                         </h4>
-                        <p className="text-[11px] text-slate-400 line-clamp-2 mt-0.5">
+                        <p className="text-[11px] text-purple-200 line-clamp-2 mt-0.5">
                           {book.description}
                         </p>
                       </div>

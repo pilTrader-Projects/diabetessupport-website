@@ -366,6 +366,54 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       const html = ReactDOMServer.renderToString(element);
       expect(html).toContain('Share Library');
       expect(html).toContain('Sync Library Across Devices');
+      expect(html).toContain('bg-amber-400/25');
+    });
+
+    it('displays distinct interactive play action for videos and read guide action for articles', () => {
+      const savedItems = [
+        mockVideoResource,
+        {
+          _id: 'art-saved-1',
+          title: 'Understanding Insulin Resistance Guide',
+          slug: 'understanding-insulin-resistance',
+          type: 'article',
+          authorityName: 'Editorial Board',
+        },
+      ];
+
+      const element = (
+        <SavedResourcesDrawer
+          isOpen={true}
+          onClose={jest.fn()}
+          savedResources={savedItems as any}
+        />
+      );
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('▶ Play Video');
+      expect(html).toContain('📖 Read Guide →');
+    });
+  });
+
+  describe('VideoPlayerModal Component Fallbacks', () => {
+    it('resolves YouTube embedId from sourceUrl if embedId is omitted', () => {
+      const resourceWithoutEmbed = {
+        _id: 'vid-no-embed',
+        title: 'Insulin Resistance Lecture',
+        type: 'video' as const,
+        sourceUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      };
+
+      const element = (
+        <VideoPlayerModal
+          isOpen={true}
+          onClose={jest.fn()}
+          resource={resourceWithoutEmbed as any}
+        />
+      );
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('https://www.youtube.com/embed/dQw4w9WgXcQ');
     });
   });
 

@@ -221,6 +221,8 @@ export default function LearningHubClient({
       if (match) {
         if (match.type === 'video' || match.type === 'podcast' || match.embedId) {
           handlePlayVideo(match);
+        } else if (match.type === 'article' && match.slug) {
+          window.location.href = `/learn/${encodeURIComponent(match.slug)}`;
         }
       }
     }
@@ -328,7 +330,7 @@ export default function LearningHubClient({
     <div className="space-y-10">
       {/* Hero Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto pt-4">
-        <span className="bg-teal-100 text-teal-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-teal-200 inline-flex items-center gap-1.5 shadow-sm">
+        <span className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-purple-200 inline-flex items-center gap-1.5 shadow-sm">
           <span>🌱</span> Evidence-Based Metabolic Science
         </span>
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
@@ -345,7 +347,7 @@ export default function LearningHubClient({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by doctor, condition, or keyword (e.g. Bikman, Autophagy, A1C)..."
-            className="w-full pl-11 pr-10 py-3.5 bg-white border border-slate-300 rounded-2xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm"
+            className="w-full pl-11 pr-10 py-3.5 bg-white border border-slate-300 rounded-2xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
           />
           <svg
             className="w-5 h-5 text-slate-400 absolute left-3.5 top-5.5"
@@ -373,9 +375,9 @@ export default function LearningHubClient({
           <button
             type="button"
             onClick={() => setActiveFormat('all')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
               activeFormat === 'all'
-                ? 'bg-teal-700 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -386,9 +388,9 @@ export default function LearningHubClient({
           <button
             type="button"
             onClick={() => setActiveFormat('video')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
               activeFormat === 'video'
-                ? 'bg-teal-700 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -399,9 +401,9 @@ export default function LearningHubClient({
           <button
             type="button"
             onClick={() => setActiveFormat('podcast')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
               activeFormat === 'podcast'
-                ? 'bg-teal-700 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -412,9 +414,9 @@ export default function LearningHubClient({
           <button
             type="button"
             onClick={() => setActiveFormat('article')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
               activeFormat === 'article'
-                ? 'bg-teal-700 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -426,9 +428,9 @@ export default function LearningHubClient({
             <button
               type="button"
               onClick={() => setActiveFormat('study')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
                 activeFormat === 'study'
-                  ? 'bg-teal-700 text-white shadow-sm'
+                  ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -441,9 +443,9 @@ export default function LearningHubClient({
             <button
               type="button"
               onClick={() => setActiveFormat('book')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
                 activeFormat === 'book'
-                  ? 'bg-amber-600 text-white shadow-sm'
+                  ? 'bg-amber-600 text-white shadow-md'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -456,16 +458,16 @@ export default function LearningHubClient({
           <button
             type="button"
             onClick={() => setActiveFormat('saved')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
               activeFormat === 'saved'
-                ? 'bg-teal-700 text-white shadow-sm'
+                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <span>🔖 My Library</span>
             {savedIds.length > 0 && (
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-black ${
-                activeFormat === 'saved' ? 'bg-white text-teal-800' : 'bg-teal-100 text-teal-900'
+                activeFormat === 'saved' ? 'bg-amber-400 text-slate-950' : 'bg-amber-400/25 text-amber-900 border border-amber-300/40'
               }`}>
                 {savedIds.length}
               </span>
@@ -1091,8 +1093,12 @@ export default function LearningHubClient({
           setIsSavedDrawerOpen(false);
           if (res.type === 'video' || res.type === 'podcast' || res.embedId) {
             handlePlayVideo(res);
+          } else if (res.type === 'article' || (!res.sourceUrl && res.slug)) {
+            window.location.href = `/learn/${encodeURIComponent(res.slug || res._id)}`;
           } else if (res.sourceUrl) {
-            window.open(res.sourceUrl, '_blank');
+            window.open(res.sourceUrl, '_blank', 'noopener,noreferrer');
+          } else {
+            window.location.href = `/learn?resource=${encodeURIComponent(res.slug || res._id)}`;
           }
         }}
       />

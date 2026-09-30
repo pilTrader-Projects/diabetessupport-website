@@ -31,6 +31,30 @@ jest.mock('@/models/Post', () => ({
   },
 }));
 
+jest.mock('@/models/Thread', () => ({
+  ThreadModel: {
+    find: jest.fn().mockReturnValue({
+      sort: jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+      }),
+    }),
+  },
+}));
+
+jest.mock('@/models/LearningResource', () => ({
+  LearningResourceModel: {
+    find: jest.fn().mockReturnValue({
+      sort: jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+      }),
+    }),
+  },
+}));
+
 describe('Organic Community Root Page & Schemas (Milestone 10)', () => {
   describe('HomePage Component & Metadata', () => {
     it('exports fully-qualified SEO/AEO metadata', () => {
