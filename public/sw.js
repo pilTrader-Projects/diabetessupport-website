@@ -1,7 +1,7 @@
 // Service Worker for DiabetesCare PH & GlycoSense PWA
 // Compliant with Android WebAPK installability and offline support standards.
 
-const CACHE_NAME = 'diabetescare-pwa-v1';
+const CACHE_NAME = 'diabetescare-pwa-v2';
 
 // Essential offline fallback assets and core icons to cache immediately on install
 const PRECACHE_ASSETS = [
@@ -48,6 +48,12 @@ self.addEventListener('fetch', (event) => {
 
   // Skip browser extensions, chrome-extension://, or non-http protocols
   if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Bypass service worker caching on localhost / dev environment to eliminate SSR hydration mismatches
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+    event.respondWith(fetch(request));
     return;
   }
 

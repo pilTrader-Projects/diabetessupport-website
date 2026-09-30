@@ -55,7 +55,7 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
               </p>
             </div>
             <Link
-              href="/blog/reverse-insulin-resistance-naturally"
+              href="/learn/reverse-insulin-resistance-naturally"
               className="inline-flex items-center justify-between w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-5 py-3.5 rounded-xl transition-all shadow-md text-sm group"
             >
               <span>Read: How to Reverse Insulin Resistance Naturally</span>
@@ -88,7 +88,7 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
               </button>
               <div className="text-center">
                 <Link
-                  href="/blog/top-10-filipino-foods-for-managing-diabetes-with-a-free-meal-plan"
+                  href="/learn/top-10-filipino-foods-for-managing-diabetes-with-a-free-meal-plan"
                   className="text-xs text-indigo-300 hover:text-white transition-colors underline decoration-indigo-500"
                 >
                   or read full article online &rarr;
@@ -109,7 +109,7 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
             </h2>
           </div>
           <Link
-            href="/blog"
+            href="/learn"
             className="text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors"
           >
             View All Articles ({articles.length}) &rarr;
@@ -143,7 +143,7 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
                       {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Article'}
                     </span>
                     <h3 className="text-lg font-bold text-slate-900 line-clamp-2">
-                      <Link href={`/blog/${article.slug}`} className="hover:text-teal-600">
+                      <Link href={`/learn/${article.slug}`} className="hover:text-teal-600">
                         {article.title.replace(/&nbsp;/g, ' ')}
                       </Link>
                     </h3>
@@ -155,7 +155,7 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
 
                 <div className="p-6 pt-0">
                   <Link
-                    href={`/blog/${article.slug}`}
+                    href={`/learn/${article.slug}`}
                     className="text-xs font-bold text-teal-700 hover:text-teal-900"
                   >
                     Read Full Article &rarr;

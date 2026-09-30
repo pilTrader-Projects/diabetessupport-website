@@ -82,7 +82,7 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<?xml version="1.0" encoding="UTF-8"?>');
       expect(xmlText).toContain('<urlset');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/blog</loc>');
+      expect(xmlText).toContain('<loc>https://diabetescareph.com/learn</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/community</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/glycosense</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/guides/cheatsheet</loc>');
@@ -90,8 +90,8 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<loc>https://diabetescareph.com/terms-of-service</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/about</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/contact</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/blog/understanding-insulin-resistance-early</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/blog/warning-signs-of-high-blood-sugar</loc>');
+      expect(xmlText).toContain('<loc>https://diabetescareph.com/learn/understanding-insulin-resistance-early</loc>');
+      expect(xmlText).toContain('<loc>https://diabetescareph.com/learn/warning-signs-of-high-blood-sugar</loc>');
       expect(xmlText).toContain('<loc>https://diabetescareph.com/community/fasting-glucose-tips</loc>');
     });
   });
@@ -113,7 +113,7 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<rss version="2.0"');
       expect(xmlText).toContain('<title>DiabetesCare PH - Educational &amp; Awareness Campaign for Diabetes Care</title>');
       expect(xmlText).toContain('<title>Understanding Insulin Resistance Early</title>');
-      expect(xmlText).toContain('<link>https://diabetescareph.com/blog/understanding-insulin-resistance-early</link>');
+      expect(xmlText).toContain('<link>https://diabetescareph.com/learn/understanding-insulin-resistance-early</link>');
     });
   });
 });

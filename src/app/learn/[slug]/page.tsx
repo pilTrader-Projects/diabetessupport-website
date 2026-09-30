@@ -31,13 +31,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = (post.title || '').replace(/&nbsp;/g, ' ');
   const description = post.excerpt || post.metaDescription || 'Educational guide on diabetes care.';
-  const pageUrl = `https://${SITE_CONFIG.domain}/blog/${slug}`;
+  const pageUrl = `https://${SITE_CONFIG.domain}/learn/${slug}`;
 
   return {
     title: `${title} | DiabetesCare PH`,
     description,
     alternates: {
-      canonical: `/blog/${slug}`,
+      canonical: `/learn/${slug}`,
     },
     openGraph: {
       title,
@@ -93,8 +93,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   const articleJsonLd = buildArticleSchema(post, slug);
   const breadcrumbJsonLd = buildBreadcrumbSchema([
     { name: 'Home', url: `${baseUrl}/` },
-    { name: 'Articles', url: `${baseUrl}/blog` },
-    { name: cleanTitle, url: `${baseUrl}/blog/${slug}` },
+    { name: 'Learning Materials', url: `${baseUrl}/learn` },
+    { name: cleanTitle, url: `${baseUrl}/learn/${slug}` },
   ]);
 
   return (
@@ -112,7 +112,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="flex items-center space-x-2 text-sm text-slate-500">
           <Link href="/" className="hover:text-teal-600">Home</Link>
           <span>/</span>
-          <Link href="/blog" className="hover:text-teal-600">Articles</Link>
+          <Link href="/learn" className="hover:text-teal-600">Learning Materials</Link>
           <span>/</span>
           <span className="text-slate-900 font-medium truncate max-w-xs">{cleanTitle}</span>
         </div>
@@ -150,7 +150,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Social Share Bar */}
         <SocialShareBar
           title={cleanTitle}
-          url={`https://${SITE_CONFIG.domain}/blog/${slug}`}
+          url={`https://${SITE_CONFIG.domain}/learn/${slug}`}
           snippet={post.excerpt || cleanTitle}
         />
 
@@ -171,10 +171,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Footer Navigation */}
         <div className="pt-8 border-t border-slate-200 flex justify-between items-center">
           <Link
-            href="/blog"
+            href="/learn"
             className="bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition-colors"
           >
-            &larr; Back to All Articles
+            &larr; Back to Learning Materials
           </Link>
         </div>
       </article>

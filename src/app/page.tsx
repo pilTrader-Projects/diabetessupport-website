@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { dbConnect } from '@/lib/dbConnect';
 import { PostModel } from '@/models/Post';
+import { LearningResourceModel } from '@/models/LearningResource';
 import { IPost } from '@/types/blog';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema } from '@/lib/schema';
@@ -51,14 +52,21 @@ export default async function HomePage(): Promise<React.JSX.Element> {
   const faqSchema = buildCommunityHomeFaqSchema();
 
   let rawPosts: any[] = [];
+  let rawResources: any[] = [];
   try {
     await dbConnect();
-    rawPosts = await PostModel.find({ status: 'published' })
-      .sort({ publishedAt: -1 })
-      .limit(3)
-      .lean();
+    [rawPosts, rawResources] = await Promise.all([
+      PostModel.find({ status: 'published' })
+        .sort({ publishedAt: -1 })
+        .limit(3)
+        .lean(),
+      LearningResourceModel.find({ status: 'published' })
+        .sort({ publishedAt: -1 })
+        .limit(3)
+        .lean(),
+    ]);
   } catch (err) {
-    console.error('Error retrieving posts for community root page:', err);
+    console.error('Error retrieving documents for community root page:', err);
   }
 
   const articles: IPost[] = rawPosts.map((doc: any) => ({
@@ -67,6 +75,48 @@ export default async function HomePage(): Promise<React.JSX.Element> {
     category: doc.category?.toString(),
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
   }));
+
+  const fallbackFeaturedResources = [
+    {
+      title: 'The Root Cause of Insulin Resistance & Hyperinsulinemia',
+      slug: 'the-root-cause-of-insulin-resistance',
+      type: 'video',
+      authorityName: 'Dr. Jason Fung',
+      authorityTitle: 'Nephrologist & Author',
+      duration: '18 min',
+      summary: 'Clinical breakdown explaining why standard fasting blood sugar tests miss the first 10-15 years of pancreatic hypersecretion.',
+    },
+    {
+      title: 'Reversing Type 2 Diabetes with Dietary Carbohydrate Restriction',
+      slug: 'virta-health-clinical-trial-2-year',
+      type: 'study',
+      authorityName: 'Dr. Sarah Hallberg',
+      authorityTitle: 'Clinical Trial Lead (Virta Health)',
+      duration: 'Clinical Study',
+      summary: 'Longitudinal clinical evidence demonstrating significant diabetes remission, HbA1c normalization, and medication de-prescription.',
+    },
+    {
+      title: 'The Diabetes Code: Prevent and Reverse Type 2 Naturally',
+      slug: 'the-diabetes-code-jason-fung',
+      type: 'book',
+      authorityName: 'Dr. Jason Fung',
+      authorityTitle: 'Bestselling Medical Author',
+      duration: 'Book & Protocol',
+      summary: 'Essential lifestyle blueprint explaining intermittent fasting protocols and low-glycemic dietary interventions.',
+    },
+  ];
+
+  const featuredResources = rawResources.length > 0
+    ? rawResources.map((r: any) => ({
+        title: r.title,
+        slug: r.slug,
+        type: r.type || 'video',
+        authorityName: r.authorityName || 'Medical Authority',
+        authorityTitle: r.authorityTitle || 'Clinical Specialist',
+        duration: r.duration || 'Evidence Guide',
+        summary: r.summary || 'Evidence-based metabolic health lecture and research.',
+      }))
+    : fallbackFeaturedResources;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-20">
@@ -84,6 +134,17 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       {/* PILLAR A: THE MISSION-DRIVEN HERO SECTION                                 */}
       {/* ========================================================================= */}
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-8">
+        <div>
+          <Link
+            href="/learn"
+            className="inline-flex items-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-900 text-xs font-bold px-3.5 py-1.5 rounded-full border border-teal-200 transition-all hover:scale-105 shadow-xs group mb-2"
+          >
+            <span className="bg-teal-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full">New Hub</span>
+            <span>Evidence-Based Lectures, Clinical Studies &amp; Books</span>
+            <span className="text-teal-700 group-hover:translate-x-1 transition-transform">&rarr;</span>
+          </Link>
+        </div>
+
         <div className="inline-flex items-center gap-2 bg-teal-100 text-teal-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-teal-300 shadow-xs">
           <span>🇵🇭</span>
           <span>Grassroots Filipino Health Movement</span>
@@ -182,31 +243,31 @@ export default async function HomePage(): Promise<React.JSX.Element> {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Card 1: The Biomarker Focus -> /insulin-reset */}
-          <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
+          <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="inline-block bg-purple-50 text-purple-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-purple-200">
                 🧬 The Biomarker Focus
               </span>
-              <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
                 The 21-Day Insulin Reset Blueprint
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 Struggling with sudden 3 PM energy crashes, stubborn midsection fat, or persistent brain fog? Download our free, jargon-free metabolic checklist based on modern cell biology.
               </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-600">
+              <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Identifies 4 silent hyperinsulinemia warning alarms</span>
+                  <span>Identifies 4 silent hyperinsulinemia alarms</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Explains why normal fasting sugar tests can deceive</span>
+                  <span>Explains why normal fasting sugar tests deceive</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Provides 4 immediate nutritional shifts to apply tonight</span>
+                  <span>Provides 4 immediate nutritional shifts</span>
                 </li>
               </ul>
             </div>
@@ -214,38 +275,38 @@ export default async function HomePage(): Promise<React.JSX.Element> {
             <div>
               <Link
                 href="/insulin-reset"
-                className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm sm:text-base rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
               >
-                <span>Read the Insulin Reset Protocol</span>
-                <span className="text-lg">➔</span>
+                <span>Read Protocol</span>
+                <span className="text-base">➔</span>
               </Link>
             </div>
           </div>
 
           {/* Card 2: The Software Focus -> /glycosense */}
-          <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
+          <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="inline-block bg-teal-50 text-teal-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-teal-200">
                 📱 The Software Focus
               </span>
-              <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
                 The GlycoSense Health Dashboard
               </h3>
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 Securely turn your manual blood sugar logs into clean, automated digital trend lines. Instantly pinpoint local Filipino food triggers and export structured reports for your doctor.
               </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-600">
+              <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Automates trend lines from affordable finger-prick logs</span>
+                  <span>Automates trend lines from finger-prick logs</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Isolates specific Pinoy staple food triggers (kanin, pancit)</span>
+                  <span>Isolates specific Pinoy staple food triggers</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>One-click export of doctor-ready PDF clinical summaries</span>
+                  <span>One-click export of doctor-ready PDF summaries</span>
                 </li>
               </ul>
             </div>
@@ -253,10 +314,49 @@ export default async function HomePage(): Promise<React.JSX.Element> {
             <div>
               <Link
                 href="/glycosense"
-                className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 bg-teal-700 hover:bg-teal-800 text-white font-black text-sm sm:text-base rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-teal-600"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-teal-700 hover:bg-teal-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-teal-600"
               >
-                <span>Explore GlycoSense Dashboard</span>
-                <span className="text-lg">➔</span>
+                <span>Explore GlycoSense</span>
+                <span className="text-base">➔</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: The Evidence Focus -> /learn */}
+          <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <span className="inline-block bg-amber-50 text-amber-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-amber-200">
+                🎓 The Evidence Focus
+              </span>
+              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                Learning Materials &amp; Evidence Hub
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Explore curated lectures, clinical trials, and dietary protocols from world-leading metabolic researchers like Dr. Fung, Dr. Berry, and Dr. Attia.
+              </p>
+              <ul className="space-y-2 text-xs text-slate-600">
+                <li className="flex items-center gap-2">
+                  <span className="text-teal-600 font-bold">✓</span>
+                  <span>50+ Curated video breakdowns &amp; medical lectures</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-teal-600 font-bold">✓</span>
+                  <span>Peer-reviewed clinical trial evidence &amp; books</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-teal-600 font-bold">✓</span>
+                  <span>Personal &ldquo;My Library&rdquo; to save &amp; sync favorites</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <Link
+                href="/learn"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
+              >
+                <span>Browse Learning Hub</span>
+                <span className="text-base">➔</span>
               </Link>
             </div>
           </div>
@@ -352,6 +452,169 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       </section>
 
       {/* ========================================================================= */}
+      {/* PILLAR F: CURATED LEARNING MATERIALS & EVIDENCE VAULT                     */}
+      {/* ========================================================================= */}
+      <section className="bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 text-white rounded-3xl p-6 sm:p-10 overflow-hidden shadow-2xl border border-white/20 space-y-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/15 pb-6">
+          <div className="space-y-3 max-w-2xl">
+            <span className="inline-block bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-white/30 backdrop-blur-md shadow-sm">
+              🔬 PEER-REVIEWED SCIENCE &amp; EXPERT AUTHORITIES
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-sm">
+              Curated Learning Materials &amp; Evidence Hub
+            </h2>
+            <p className="text-sm sm:text-base text-purple-100/90 leading-relaxed">
+              Explore clinical lectures, trial breakdowns, and dietary protocols from world-leading metabolic researchers—tailored to help your family understand the root biology of healing.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/learn"
+              className="px-6 py-3 bg-white hover:bg-slate-100 text-slate-950 font-black text-sm rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 group cursor-pointer border border-white/40"
+            >
+              <span>Open Learning Hub</span>
+              <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Multi-Format Quick Filter Chips */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="text-xs font-bold text-purple-200 mr-1">Quick Browse:</span>
+          <Link
+            href="/learn?format=video"
+            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5"
+          >
+            <span>🎥</span>
+            <span>Video Lectures</span>
+          </Link>
+          <Link
+            href="/learn?format=study"
+            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5"
+          >
+            <span>🔬</span>
+            <span>Clinical Studies</span>
+          </Link>
+          <Link
+            href="/learn?format=podcast"
+            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5"
+          >
+            <span>🎙️</span>
+            <span>Medical Podcasts</span>
+          </Link>
+          <Link
+            href="/learn?format=book"
+            className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-semibold backdrop-blur-md transition-all flex items-center gap-1.5"
+          >
+            <span>📚</span>
+            <span>Books &amp; Protocols</span>
+          </Link>
+          <Link
+            href="/learn?format=saved"
+            className="px-3.5 py-1.5 rounded-xl bg-amber-400/25 hover:bg-amber-400/35 text-amber-200 border border-amber-300/40 text-xs font-black backdrop-blur-md transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <span>🔖</span>
+            <span>My Library</span>
+          </Link>
+        </div>
+
+        {/* Featured 3-Column Resource Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {featuredResources.map((res: any, idx: number) => {
+            const isVideo = res.type === 'video';
+            const isStudy = res.type === 'study';
+            const isBook = res.type === 'book';
+
+            const typeLabel = isVideo
+              ? '🎥 Video Lecture'
+              : isStudy
+              ? '🔬 Clinical Study'
+              : isBook
+              ? '📖 Book & Protocol'
+              : '🎙️ Podcast';
+
+            const typeBadgeStyle = isVideo
+              ? 'bg-pink-500/25 text-pink-200 border-pink-400/30'
+              : isStudy
+              ? 'bg-cyan-500/25 text-cyan-200 border-cyan-400/30'
+              : isBook
+              ? 'bg-amber-400/25 text-amber-200 border-amber-300/40'
+              : 'bg-purple-400/25 text-purple-200 border-purple-300/40';
+
+            return (
+              <div
+                key={idx}
+                className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:border-white/40 hover:bg-white/15 transition-all flex flex-col justify-between space-y-4 group shadow-xl"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border backdrop-blur-sm ${typeBadgeStyle}`}>
+                      {typeLabel}
+                    </span>
+                    <span className="text-[11px] text-purple-200 font-medium">
+                      {res.duration}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="text-xs text-amber-300 font-bold block">
+                      {res.authorityName}
+                    </span>
+                    <span className="text-[11px] text-purple-200/80 block">
+                      {res.authorityTitle}
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-white line-clamp-2 group-hover:text-amber-200 transition-colors">
+                    {res.title}
+                  </h3>
+
+                  <p className="text-xs text-purple-100/90 line-clamp-3 leading-relaxed">
+                    {res.summary}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-white/15">
+                  <Link
+                    href={`/learn?resource=${encodeURIComponent(res.slug)}`}
+                    className="text-xs font-bold text-amber-300 hover:text-amber-200 inline-flex items-center gap-1.5"
+                  >
+                    <span>{isVideo ? 'Watch Breakdown' : isStudy ? 'Read Findings' : 'Explore Protocol'}</span>
+                    <span>&rarr;</span>
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* "My Library" Personal Protocol Banner */}
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+          <div className="flex items-center gap-4 text-center sm:text-left">
+            <span className="text-2xl p-3 bg-white/20 backdrop-blur-md rounded-xl border border-white/30 text-amber-300 shadow-sm">🔖</span>
+            <div>
+              <span className="inline-block bg-amber-400/25 text-amber-200 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border border-amber-300/40 mb-1">
+                PERSONALIZED PROTOCOL
+              </span>
+              <h3 className="text-base font-bold text-white">
+                Build Your Personal Metabolic Protocol with &ldquo;My Library&rdquo;
+              </h3>
+              <p className="text-xs text-purple-100/90 mt-0.5 leading-relaxed">
+                Bookmark any video lecture, clinical paper, or book across the hub. Access your curated favorites on any device without required passwords.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/learn?format=saved"
+            className="whitespace-nowrap px-5 py-2.5 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-200 hover:to-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-lg hover:scale-105 transition-all flex items-center gap-1.5"
+          >
+            <span>View My Library</span>
+            <span>&rarr;</span>
+          </Link>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
       {/* RECENT EDUCATIONAL ARTICLES                                               */}
       {/* ========================================================================= */}
       {articles.length > 0 && (
@@ -359,14 +622,14 @@ export default async function HomePage(): Promise<React.JSX.Element> {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div>
               <h2 className="text-2xl font-extrabold text-slate-900">
-                Latest Peer Guides &amp; Educational Articles
+                Latest Learning Materials &amp; Evidence Guides
               </h2>
               <p className="text-sm text-slate-600">
                 Practical, evidence-based guides written for Filipino households.
               </p>
             </div>
             <Link
-              href="/blog"
+              href="/learn"
               className="text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors"
             >
               View all guides &rarr;
@@ -381,7 +644,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               >
                 <div className="space-y-2">
                   <h3 className="text-base font-bold text-slate-900 line-clamp-2">
-                    <Link href={`/blog/${article.slug}`} className="hover:text-teal-700">
+                    <Link href={`/learn/${article.slug}`} className="hover:text-teal-700">
                       {article.title}
                     </Link>
                   </h3>
@@ -391,7 +654,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 </div>
                 <div className="pt-2 border-t border-slate-100">
                   <Link
-                    href={`/blog/${article.slug}`}
+                    href={`/learn/${article.slug}`}
                     className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1"
                   >
                     <span>Read guide</span>

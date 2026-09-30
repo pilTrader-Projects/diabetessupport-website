@@ -96,6 +96,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Preconnect to YouTube CDN edge servers for zero-stutter instant video streaming */}
+        <link rel="preconnect" href="https://www.youtube.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://i.ytimg.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://googlevideo.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.youtube.com" />
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        <link rel="dns-prefetch" href="https://googlevideo.com" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -118,7 +126,7 @@ export default function RootLayout({
             {/* Quick Links Navigation */}
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/blog" className="hover:text-white transition-colors">Educational Articles</Link>
+              <Link href="/learn" className="hover:text-white transition-colors">Learning Materials</Link>
               <Link href="/guides/cheatsheet" className="hover:text-white transition-colors">7-Day Plan PDF</Link>
               <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>

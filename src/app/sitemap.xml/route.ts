@@ -40,7 +40,7 @@ export async function GET(): Promise<NextResponse> {
 
   const staticRoutes = [
     { url: `${baseUrl}/`, priority: '1.0', changefreq: 'daily', lastmod: now },
-    { url: `${baseUrl}/blog`, priority: '0.9', changefreq: 'daily', lastmod: now },
+    { url: `${baseUrl}/learn`, priority: '0.9', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/community`, priority: '0.85', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/glycosense`, priority: '0.9', changefreq: 'weekly', lastmod: now },
     { url: `${baseUrl}/guides/cheatsheet`, priority: '0.85', changefreq: 'weekly', lastmod: now },
@@ -55,7 +55,7 @@ export async function GET(): Promise<NextResponse> {
   ];
 
   const postRoutes = posts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
+    url: `${baseUrl}/learn/${post.slug}`,
     priority: '0.8',
     changefreq: 'weekly',
     lastmod: post.updatedAt ? new Date(post.updatedAt).toISOString() : now,

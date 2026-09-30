@@ -1,7 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
+import {
+  getSavedProtocolItems,
+  PROTOCOL_UPDATE_EVENT,
+  ISavedProtocolSummary,
+} from '@/lib/savedProtocolUtils';
 
 /**
  * Mobile-Responsive Header Component with Animated Hamburger Navigation Drawer.
@@ -12,6 +18,60 @@ import Link from 'next/link';
  */
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [savedItems, setSavedItems] = useState<ISavedProtocolSummary[]>([]);
+  const [isSavedDrawerOpen, setIsSavedDrawerOpen] = useState(false);
+  const [toastNotification, setToastNotification] = useState<{
+    title: string;
+    count: number;
+  } | null>(null);
+
+  useEffect(() => {
+    // Initial load of saved protocol items
+    const items = getSavedProtocolItems();
+    setSavedItems(items);
+
+    const handleProtocolUpdate = (e: any) => {
+      const detail = e.detail;
+      if (detail && detail.items) {
+        setSavedItems(detail.items);
+      } else {
+        setSavedItems(getSavedProtocolItems());
+      }
+
+      if (detail && detail.action === 'saved') {
+        setToastNotification({
+          title: detail.resourceTitle || 'Resource',
+          count: detail.count || 1,
+        });
+      }
+    };
+
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'metabolic_saved_resources' || e.key === 'metabolic_saved_items_cache') {
+        setSavedItems(getSavedProtocolItems());
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener(PROTOCOL_UPDATE_EVENT, handleProtocolUpdate);
+      window.addEventListener('storage', handleStorage);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(PROTOCOL_UPDATE_EVENT, handleProtocolUpdate);
+        window.removeEventListener('storage', handleStorage);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!toastNotification) return;
+    const timer = setTimeout(() => {
+      setToastNotification(null);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [toastNotification]);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -37,7 +97,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold">
+        <nav className="hidden md:flex items-center space-x-5 text-sm font-semibold">
           <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
             Community Forum
           </Link>
@@ -47,9 +107,30 @@ export default function Header() {
           <Link href="/glycosense" className="text-purple-100 hover:text-white transition-colors">
             GlycoSense App
           </Link>
-          <Link href="/blog" className="text-purple-100 hover:text-white transition-colors">
-            Educational Articles
+          <Link href="/learn" className="text-purple-100 hover:text-white transition-colors">
+            Learning Materials
           </Link>
+
+          {/* Header-Level Saved Library Notification Pill */}
+          <button
+            type="button"
+            onClick={() => setIsSavedDrawerOpen(true)}
+            aria-label="Open My Saved Library"
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold transition-all cursor-pointer ${
+              savedItems.length > 0
+                ? 'bg-amber-400/25 hover:bg-amber-400/35 border-amber-300/40 text-amber-200 shadow-sm hover:scale-105'
+                : 'bg-white/10 hover:bg-white/20 border-white/20 text-purple-100'
+            }`}
+          >
+            <span>🔖</span>
+            <span className="hidden lg:inline">My Library</span>
+            {savedItems.length > 0 && (
+              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full shadow-sm">
+                {savedItems.length}
+              </span>
+            )}
+          </button>
+
           <Link
             href="/#resources"
             className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm"
@@ -58,25 +139,81 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Mobile Hamburger Toggle Button */}
-        <button
-          type="button"
-          onClick={toggleMenu}
-          aria-label="Toggle navigation menu"
-          aria-expanded={isMenuOpen}
-          className="md:hidden flex items-center justify-center p-2 rounded-xl text-purple-100 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-purple-400/50 transition-all cursor-pointer"
-        >
-          {isMenuOpen ? (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
+        {/* Mobile Action Controls */}
+        <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile Header Library Badge */}
+          <button
+            type="button"
+            onClick={() => setIsSavedDrawerOpen(true)}
+            aria-label="Open My Saved Library"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-400/25 border border-amber-300/40 text-amber-200 text-xs font-bold cursor-pointer"
+          >
+            <span>🔖</span>
+            {savedItems.length > 0 && (
+              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded-full">
+                {savedItems.length}
+              </span>
+            )}
+          </button>
+
+          {/* Mobile Hamburger Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleMenu}
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
+            className="flex items-center justify-center p-2 rounded-xl text-purple-100 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-purple-400/50 transition-all cursor-pointer"
+          >
+            {isMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Floating Notification Balloon on Save */}
+      {toastNotification && (
+        <div className="absolute top-16 right-4 sm:right-8 z-50 animate-bounce-short">
+          <div
+            role="status"
+            aria-live="polite"
+            onClick={() => {
+              setToastNotification(null);
+              setIsSavedDrawerOpen(true);
+            }}
+            className="bg-gradient-to-r from-blue-900 via-purple-900 to-pink-600 border border-white/30 shadow-2xl rounded-2xl px-4 py-3 flex items-center gap-3 backdrop-blur-md cursor-pointer hover:border-white/50 transition-all text-xs text-white"
+          >
+            <span className="text-xl">✨</span>
+            <div>
+              <p className="font-bold text-white flex items-center gap-1.5">
+                <span>Saved to My Library!</span>
+                <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-1.5 py-0.5 rounded-full shadow-sm">
+                  {toastNotification.count}
+                </span>
+              </p>
+              <p className="text-[11px] text-amber-200 underline font-medium">
+                Tap to open your curated library →
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setToastNotification(null);
+              }}
+              className="text-purple-200 hover:text-white p-1 ml-1 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Drawer Dropdown Menu */}
       {isMenuOpen && (
@@ -103,12 +240,29 @@ export default function Header() {
             📱 GlycoSense Tracker
           </Link>
           <Link
-            href="/blog"
+            href="/learn"
             onClick={closeMenu}
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
           >
-            📖 Educational Articles
+            🎓 Learning Materials
           </Link>
+          <button
+            type="button"
+            onClick={() => {
+              closeMenu();
+              setIsSavedDrawerOpen(true);
+            }}
+            className="w-full text-left flex items-center justify-between py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <span>🔖</span> My Saved Library
+            </span>
+            {savedItems.length > 0 && (
+              <span className="bg-amber-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full shadow-sm">
+                {savedItems.length}
+              </span>
+            )}
+          </button>
           <div className="pt-2">
             <Link
               href="/#resources"
@@ -121,6 +275,12 @@ export default function Header() {
         </nav>
       )}
 
+      {/* Global Saved Protocol Drawer */}
+      <SavedResourcesDrawer
+        isOpen={isSavedDrawerOpen}
+        onClose={() => setIsSavedDrawerOpen(false)}
+        savedResources={savedItems}
+      />
     </header>
   );
 }

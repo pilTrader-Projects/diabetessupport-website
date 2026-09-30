@@ -45,7 +45,7 @@ export function buildWebSiteSchema(): Record<string, any> {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `https://${SITE_CONFIG.domain}/blog?search={search_term_string}`,
+        urlTemplate: `https://${SITE_CONFIG.domain}/learn?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -62,7 +62,7 @@ export function buildWebSiteSchema(): Record<string, any> {
  * @returns {Record<string, any>} Schema.org compliant Article JSON-LD object.
  */
 export function buildArticleSchema(post: IPost, slug: string): Record<string, any> {
-  const pageUrl = `https://${SITE_CONFIG.domain}/blog/${slug}`;
+  const pageUrl = `https://${SITE_CONFIG.domain}/learn/${slug}`;
   const publishDate = post.publishedAt
     ? new Date(post.publishedAt).toISOString()
     : new Date().toISOString();

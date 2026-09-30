@@ -26,10 +26,10 @@ export default function NotFound() {
         <h2 className="text-lg font-bold text-slate-900">Explore Key Diabetes Resources Instead:</h2>
         <div className="flex flex-col gap-3 text-left">
           <Link
-            href="/blog"
+            href="/learn"
             className="p-3 rounded-xl bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-teal-300 transition-colors flex items-center justify-between font-bold text-sm text-slate-800 hover:text-teal-900"
           >
-            <span>📚 Browse All Educational Articles</span>
+            <span>🎓 Browse All Learning Materials</span>
             <span>&rarr;</span>
           </Link>
           <Link
