@@ -36,7 +36,7 @@ export class LinkHealthService {
   ): Promise<{ checked: number; broken: number; updated: string[] }> {
     await dbConnect();
     const resources = await LearningResourceModel.find({
-      type: 'video',
+      type: { $in: ['video', 'podcast'] },
       platform: 'youtube',
       status: { $in: ['published', 'pending_review'] },
     }).lean();
@@ -48,7 +48,8 @@ export class LinkHealthService {
     for (const res of resources as any[]) {
       if (res.embedId) {
         checked++;
-        const health = await this.validateYouTubeVideo(res.embedId, customFetch);
+        const isInvalidId = res.embedId.startsWith('PL') || res.embedId.length > 25;
+        const health = isInvalidId ? 'broken' : await this.validateYouTubeVideo(res.embedId, customFetch);
         if (health === 'broken') {
           broken++;
           updated.push(res._id.toString());
