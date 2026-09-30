@@ -8,10 +8,11 @@ import LearningHubClient from '../../src/components/learning/LearningHubClient';
 import VideoPlayerModal from '../../src/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '../../src/components/learning/SavedResourcesDrawer';
 import BlogFeedPage from '../../src/app/blog/page';
-import { ILearningResource, IAuthority } from '../../src/types/learning';
+import { ILearningResource, IAuthority, IPodcastChannel } from '../../src/types/learning';
 import { IPost } from '../../src/types/blog';
 import { PostModel } from '../../src/models/Post';
 import { AuthorityModel } from '../../src/models/Authority';
+import { PodcastChannelModel } from '../../src/models/PodcastChannel';
 import { LearningResourceModel } from '../../src/models/LearningResource';
 
 jest.mock('../../src/lib/dbConnect', () => ({
@@ -36,6 +37,17 @@ const mockAuthority: IAuthority = {
   title: 'Professor of Cell Biology',
   specialties: ['Insulin Resistance', 'Low Carb'],
   youtubeChannelId: 'UCbikman',
+  autoPublish: true,
+  isActive: true,
+  displayOrder: 1,
+};
+
+const mockPodcastChannel: IPodcastChannel = {
+  _id: 'pod_1',
+  name: 'The Diary Of A CEO',
+  slug: 'the-diary-of-a-ceo',
+  host: 'Steven Bartlett',
+  youtubeChannelId: 'UCTheDiaryOfACEO',
   autoPublish: true,
   isActive: true,
   displayOrder: 1,
@@ -151,6 +163,30 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).toContain('Essential lecture breakdown on insulin regulation');
       expect(html).not.toContain('Key scientific overview presented on');
     });
+
+    it('renders podcast shows filter bar when podcast channels are provided', () => {
+      const podcastEpisode: ILearningResource = {
+        ...mockVideoResource,
+        _id: 'res_pod_1',
+        type: 'podcast',
+        podcastChannelId: 'pod_1',
+        podcastChannelName: 'The Diary Of A CEO',
+        isGuestAppearance: true,
+      };
+
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialPodcastChannels={[mockPodcastChannel]}
+          initialResources={[podcastEpisode]}
+          initialArticles={[]}
+        />
+      );
+
+      expect(html).toContain('The Diary Of A CEO');
+      expect(html).toContain('Filter by Podcast Show:');
+      expect(html).toContain('All Shows');
+    });
   });
 
   describe('VideoPlayerModal Component', () => {
@@ -205,7 +241,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
   });
 
   describe('BlogFeedPage Server Component', () => {
-    it('fetches published posts, authorities, and resources and renders page', async () => {
+    it('fetches published posts, authorities, podcast channels, and resources and renders page', async () => {
       (PostModel.find as any) = jest.fn().mockReturnValue({
         sort: jest.fn().mockReturnValue({
           lean: jest.fn().mockResolvedValue([mockArticle]),
@@ -215,6 +251,12 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       (AuthorityModel.find as any) = jest.fn().mockReturnValue({
         sort: jest.fn().mockReturnValue({
           lean: jest.fn().mockResolvedValue([mockAuthority]),
+        }),
+      });
+
+      (PodcastChannelModel.find as any) = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([mockPodcastChannel]),
         }),
       });
 

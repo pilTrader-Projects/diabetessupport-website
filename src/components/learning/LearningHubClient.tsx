@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { IAuthority, ILearningResource } from '@/types/learning';
+import { IAuthority, ILearningResource, IPodcastChannel } from '@/types/learning';
 import { IPost } from '@/types/blog';
 import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
@@ -10,6 +10,7 @@ import AdUnit from '@/components/ads/AdUnit';
 
 interface LearningHubClientProps {
   initialAuthorities: IAuthority[];
+  initialPodcastChannels?: IPodcastChannel[];
   initialResources: ILearningResource[];
   initialArticles: IPost[];
   initialSearch?: string;
@@ -18,6 +19,7 @@ interface LearningHubClientProps {
 
 export default function LearningHubClient({
   initialAuthorities,
+  initialPodcastChannels = [],
   initialResources,
   initialArticles,
   initialSearch = '',
@@ -25,6 +27,7 @@ export default function LearningHubClient({
 }: LearningHubClientProps): React.JSX.Element {
   const [activeFormat, setActiveFormat] = useState<'all' | 'video' | 'podcast' | 'article' | 'study'>('all');
   const [selectedAuthorityId, setSelectedAuthorityId] = useState<string>('all');
+  const [selectedPodcastChannelId, setSelectedPodcastChannelId] = useState<string>('all');
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
 
@@ -142,18 +145,31 @@ export default function LearningHubClient({
       }
     }
 
+    // Podcast Channel filter
+    if (selectedPodcastChannelId !== 'all') {
+      const selectedChannel = initialPodcastChannels.find((c) => c._id === selectedPodcastChannelId);
+      if (selectedChannel) {
+        const matchesChannelName =
+          item.podcastChannelName &&
+          item.podcastChannelName.toLowerCase().includes(selectedChannel.name.toLowerCase());
+        const matchesChannelId = item.podcastChannelId === selectedPodcastChannelId;
+        if (!matchesChannelName && !matchesChannelId) return false;
+      }
+    }
+
     // Topic filter
     if (selectedTopic !== 'All') {
       const matchesTopic = item.topics.some((t) => t.toLowerCase() === selectedTopic.toLowerCase());
       if (!matchesTopic) return false;
     }
 
-    // Search query
+    // Search query (matches title, authority, podcast show, summary, topics)
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       const matchesText =
         item.title.toLowerCase().includes(query) ||
         item.authorityName.toLowerCase().includes(query) ||
+        (item.podcastChannelName && item.podcastChannelName.toLowerCase().includes(query)) ||
         item.summary.toLowerCase().includes(query) ||
         item.topics.some((t) => t.toLowerCase().includes(query));
       if (!matchesText) return false;
@@ -342,6 +358,56 @@ export default function LearningHubClient({
         </div>
       )}
 
+      {/* Podcast Shows Filter Bar (Displayed when initialPodcastChannels exist) */}
+      {initialPodcastChannels && initialPodcastChannels.length > 0 && (activeFormat === 'all' || activeFormat === 'podcast') && (
+        <div className="space-y-2 pt-1">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
+            <span>Filter by Podcast Show:</span>
+            {selectedPodcastChannelId !== 'all' && (
+              <button
+                type="button"
+                onClick={() => setSelectedPodcastChannelId('all')}
+                className="text-purple-700 hover:underline font-bold"
+              >
+                Reset Show
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
+            <button
+              type="button"
+              onClick={() => setSelectedPodcastChannelId('all')}
+              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
+                selectedPodcastChannelId === 'all'
+                  ? 'bg-purple-900 text-white border-purple-900'
+                  : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              All Shows
+            </button>
+
+            {initialPodcastChannels.map((channel) => {
+              const isSelected = selectedPodcastChannelId === channel._id;
+              return (
+                <button
+                  key={channel._id}
+                  type="button"
+                  onClick={() => setSelectedPodcastChannelId(isSelected ? 'all' : channel._id!)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
+                    isSelected
+                      ? 'bg-purple-700 text-white border-purple-700 shadow-sm'
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
+                  }`}
+                >
+                  <span>🎙️ {channel.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Dynamic Topic Chips Filter */}
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-5">
         <span className="text-xs font-bold text-slate-400 mr-1">Topics:</span>
@@ -377,6 +443,7 @@ export default function LearningHubClient({
             onClick={() => {
               setActiveFormat('all');
               setSelectedAuthorityId('all');
+              setSelectedPodcastChannelId('all');
               setSelectedTopic('All');
               setSearchQuery('');
             }}
@@ -445,12 +512,25 @@ export default function LearningHubClient({
                               {item.authorityName}
                             </span>
                             {item.isGuestAppearance && item.podcastChannelName ? (
-                              <span
-                                className="bg-purple-100 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[160px]"
-                                title={`Guest on ${item.podcastChannelName}`}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const match = initialPodcastChannels.find(
+                                    (c) => c.name.toLowerCase() === item.podcastChannelName?.toLowerCase()
+                                  );
+                                  if (match?._id) {
+                                    setSelectedPodcastChannelId(match._id);
+                                    setActiveFormat('podcast');
+                                  } else {
+                                    setSearchQuery(item.podcastChannelName || '');
+                                  }
+                                }}
+                                className="bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[160px] transition-colors cursor-pointer text-left"
+                                title={`Filter by ${item.podcastChannelName}`}
                               >
                                 🎙️ {item.podcastChannelName}
-                              </span>
+                              </button>
                             ) : (
                               <span className="bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full text-[10px] font-bold">
                                 {item.type === 'podcast' ? '🎙️ Podcast' : '🎬 Lecture'}

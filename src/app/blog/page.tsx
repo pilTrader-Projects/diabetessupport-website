@@ -1,10 +1,11 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { PostModel } from '@/models/Post';
 import { AuthorityModel } from '@/models/Authority';
+import { PodcastChannelModel } from '@/models/PodcastChannel';
 import { LearningResourceModel } from '@/models/LearningResource';
 import { getCategoryLookupMap, resolveCategoryName } from '@/lib/categoryUtils';
 import { IPost } from '@/types/blog';
-import { IAuthority, ILearningResource } from '@/types/learning';
+import { IAuthority, ILearningResource, IPodcastChannel } from '@/types/learning';
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/config/constants';
 import LearningHubClient from '@/components/learning/LearningHubClient';
@@ -42,7 +43,7 @@ interface BlogFeedPageProps {
  * Learning Materials & Evidence Hub Directory Index Page.
  *
  * @usecase Unified repository of curated videos, clinical trials, and editorial articles on metabolic health.
- * @dependencies dbConnect, PostModel, AuthorityModel, LearningResourceModel.
+ * @dependencies dbConnect, PostModel, AuthorityModel, PodcastChannelModel, LearningResourceModel.
  */
 export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) {
   const resolvedParams = searchParams ? await searchParams : {};
@@ -51,6 +52,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
 
   let rawPosts: any[] = [];
   let rawAuthorities: any[] = [];
+  let rawPodcastChannels: any[] = [];
   let rawResources: any[] = [];
   let categoryMap: Map<string, string> = new Map();
 
@@ -65,6 +67,11 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
 
     // Fetch active authorities
     rawAuthorities = await AuthorityModel.find({ isActive: true })
+      .sort({ displayOrder: 1, name: 1 })
+      .lean();
+
+    // Fetch active monitored podcast channels
+    rawPodcastChannels = await PodcastChannelModel.find({ isActive: true })
       .sort({ displayOrder: 1, name: 1 })
       .lean();
 
@@ -93,10 +100,19 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
   }));
 
+  const allPodcastChannels: IPodcastChannel[] = rawPodcastChannels.map((doc: any) => ({
+    ...doc,
+    _id: doc._id ? doc._id.toString() : '',
+    lastSyncAt: doc.lastSyncAt ? new Date(doc.lastSyncAt) : undefined,
+    createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
+    updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
+  }));
+
   const allResources: ILearningResource[] = rawResources.map((doc: any) => ({
     ...doc,
     _id: doc._id ? doc._id.toString() : '',
     authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
+    podcastChannelId: doc.podcastChannelId ? doc.podcastChannelId.toString() : undefined,
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
     createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
@@ -106,6 +122,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       <LearningHubClient
         initialAuthorities={allAuthorities}
+        initialPodcastChannels={allPodcastChannels}
         initialResources={allResources}
         initialArticles={allPosts}
         initialSearch={searchQuery}
