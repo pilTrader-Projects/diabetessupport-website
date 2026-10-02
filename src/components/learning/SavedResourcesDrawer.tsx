@@ -14,6 +14,7 @@ interface SavedResourcesDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   savedResources?: (ILearningResource | ISavedProtocolSummary)[];
+  authorities?: import('@/types/learning').IAuthority[];
   onRemoveSaved?: (id: string) => void;
   onSelectResource?: (resource: any) => void;
 }
@@ -22,6 +23,7 @@ export default function SavedResourcesDrawer({
   isOpen,
   onClose,
   savedResources: propResources,
+  authorities,
   onRemoveSaved,
   onSelectResource,
 }: SavedResourcesDrawerProps): React.JSX.Element | null {
@@ -382,6 +384,7 @@ export default function SavedResourcesDrawer({
           isOpen={Boolean(playingResource)}
           onClose={() => setPlayingResource(null)}
           resource={playingResource}
+          authorities={authorities}
           isSaved={true}
           onToggleSave={(id) => handleRemove(id)}
         />

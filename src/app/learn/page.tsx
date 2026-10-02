@@ -206,16 +206,35 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
   }));
 
-  const allResources: ILearningResource[] = rawResources.map((doc: any) => ({
-    ...doc,
-    _id: doc._id ? doc._id.toString() : '',
-    authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
-    podcastChannelId: doc.podcastChannelId ? doc.podcastChannelId.toString() : undefined,
-    recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
-    publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
-    createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
-    updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
-  }));
+  const authorityBooksMap = new Map<string, any[]>();
+  for (const auth of allAuthorities) {
+    if (auth.recommendedBooks && auth.recommendedBooks.length > 0) {
+      if (auth._id) authorityBooksMap.set(auth._id, auth.recommendedBooks);
+      if (auth.name) authorityBooksMap.set(auth.name.trim().toLowerCase(), auth.recommendedBooks);
+      if (auth.slug) authorityBooksMap.set(auth.slug.trim().toLowerCase(), auth.recommendedBooks);
+    }
+  }
+
+  const allResources: ILearningResource[] = rawResources.map((doc: any) => {
+    const directBooks = serializeRecommendedBooks(doc.recommendedBooks || []);
+    const inheritedBooks =
+      directBooks.length > 0
+        ? directBooks
+        : (doc.authorityId && authorityBooksMap.get(doc.authorityId.toString())) ||
+          (doc.authorityName && authorityBooksMap.get(doc.authorityName.trim().toLowerCase())) ||
+          getRecommendedBooksForAuthority(doc.authorityName || doc.authorityId?.toString());
+
+    return {
+      ...doc,
+      _id: doc._id ? doc._id.toString() : '',
+      authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
+      podcastChannelId: doc.podcastChannelId ? doc.podcastChannelId.toString() : undefined,
+      recommendedBooks: inheritedBooks || [],
+      publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
+      createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
+      updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
+    };
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">

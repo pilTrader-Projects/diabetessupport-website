@@ -1072,6 +1072,7 @@ export default function LearningHubClient({
         isOpen={isPlayerOpen}
         onClose={() => setIsPlayerOpen(false)}
         resource={playingResource}
+        authorities={initialAuthorities}
         isSaved={playingResource?._id ? savedIds.includes(playingResource._id) : false}
         onToggleSave={handleToggleSave}
       />
@@ -1088,6 +1089,7 @@ export default function LearningHubClient({
         isOpen={isSavedDrawerOpen}
         onClose={() => setIsSavedDrawerOpen(false)}
         savedResources={savedResources}
+        authorities={initialAuthorities}
         onRemoveSaved={handleToggleSave}
         onSelectResource={(res) => {
           setIsSavedDrawerOpen(false);

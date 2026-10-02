@@ -329,6 +329,38 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       expect(element.props.isOpen).toBe(false);
     });
+
+    it('automatically cascades dynamic books from authorities prop (e.g. 1 initial + 3 newly added books)', () => {
+      const dynamicBooks = [
+        { _id: 'b1', title: 'Why We Get Sick (Original)', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/1', platformName: 'Amazon' },
+        { _id: 'b2', title: 'Insulin Code Book 2', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/2', platformName: 'Amazon' },
+        { _id: 'b3', title: 'Metabolic Power Book 3', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/3', platformName: 'Amazon' },
+        { _id: 'b4', title: 'Mitochondrial Health Book 4', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/4', platformName: 'Amazon' },
+      ];
+
+      const authorityWithUpdatedBooks: IAuthority = {
+        ...mockAuthority,
+        recommendedBooks: dynamicBooks,
+      };
+
+      const element = (
+        <VideoPlayerModal
+          isOpen={true}
+          onClose={jest.fn()}
+          resource={{ ...mockVideoResource, recommendedBooks: [] }}
+          authorities={[authorityWithUpdatedBooks]}
+          isSaved={false}
+          onToggleSave={jest.fn()}
+        />
+      );
+
+      const html = ReactDOMServer.renderToString(element);
+      expect(html).toContain('Recommended Reading by Dr. Benjamin Bikman');
+      expect(html).toContain('Why We Get Sick (Original)');
+      expect(html).toContain('Insulin Code Book 2');
+      expect(html).toContain('Metabolic Power Book 3');
+      expect(html).toContain('Mitochondrial Health Book 4');
+    });
   });
 
   describe('SocialShareBar Component', () => {
@@ -445,6 +477,51 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       const page = await LearnFeedPage({});
       expect(page).toBeDefined();
+    });
+
+    it('cascades dynamic authority books to resources when rendering LearnFeedPage', async () => {
+      const dynamicBooks = [
+        { _id: 'b1', title: 'Why We Get Sick (Original)', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/1' },
+        { _id: 'b2', title: 'Insulin Code Book 2', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/2' },
+        { _id: 'b3', title: 'Metabolic Power Book 3', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/3' },
+        { _id: 'b4', title: 'Mitochondrial Health Book 4', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/4' },
+      ];
+
+      (PostModel.find as any) = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+      });
+
+      (AuthorityModel.find as any) = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([{ ...mockAuthority, recommendedBooks: dynamicBooks }]),
+        }),
+      });
+
+      (PodcastChannelModel.find as any) = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+      });
+
+      (LearningResourceModel.find as any) = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([{ ...mockVideoResource, recommendedBooks: [] }]),
+        }),
+      });
+
+      const page = await LearnFeedPage({});
+      expect(page).toBeDefined();
+      const clientProps = (page as any).props.children[0].props;
+      const inheritedResource = clientProps.initialResources[0];
+      expect(inheritedResource.recommendedBooks).toHaveLength(4);
+      expect(inheritedResource.recommendedBooks.map((b: any) => b.title)).toEqual([
+        'Why We Get Sick (Original)',
+        'Insulin Code Book 2',
+        'Metabolic Power Book 3',
+        'Mitochondrial Health Book 4',
+      ]);
     });
 
     it('generates dynamic metadata with photo thumbnail and OG tags when resource param is provided', async () => {

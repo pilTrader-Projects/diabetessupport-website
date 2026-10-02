@@ -5,8 +5,10 @@
  */
 import { dbConnect } from '@/lib/dbConnect';
 import { LearningResourceModel } from '@/models/LearningResource';
-import { ILearningResource } from '@/types/learning';
+import { AuthorityModel } from '@/models/Authority';
+import { ILearningResource, IAffiliateRecommendation } from '@/types/learning';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
+import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { generateSlug } from './shared/slugUtils';
 import { serializeRecommendedBooks } from './AuthorityService';
 
@@ -63,13 +65,49 @@ export class LearningResourceService {
     if (filter?.limit) q = q.limit(filter.limit);
 
     const docs = await q.lean();
-    const resources = docs.map((doc: any) => ({
-      ...doc,
-      _id: doc._id?.toString(),
-      authorityId: doc.authorityId?.toString(),
-      podcastChannelId: doc.podcastChannelId?.toString(),
-      recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
-    })) as ILearningResource[];
+
+    // Cascading Books Resolution:
+    // Identify authorityIds for resources with empty recommendedBooks
+    const authorityIdsToFetch = Array.from(
+      new Set(
+        docs
+          .filter((d: any) => !d.recommendedBooks || d.recommendedBooks.length === 0)
+          .map((d: any) => d.authorityId?.toString())
+          .filter(Boolean)
+      )
+    );
+
+    const authorityBooksById = new Map<string, IAffiliateRecommendation[]>();
+    if (authorityIdsToFetch.length > 0) {
+      const authDocs = await AuthorityModel.find({ _id: { $in: authorityIdsToFetch } }).lean();
+      for (const a of authDocs) {
+        const books = serializeRecommendedBooks(
+          a.recommendedBooks && a.recommendedBooks.length > 0
+            ? a.recommendedBooks
+            : getRecommendedBooksForAuthority(a.slug || a.name)
+        );
+        if (books.length > 0) {
+          authorityBooksById.set(a._id.toString(), books);
+        }
+      }
+    }
+
+    const resources = docs.map((doc: any) => {
+      const explicitBooks = serializeRecommendedBooks(doc.recommendedBooks || []);
+      const inheritedBooks =
+        explicitBooks.length > 0
+          ? explicitBooks
+          : (doc.authorityId && authorityBooksById.get(doc.authorityId.toString())) ||
+            getRecommendedBooksForAuthority(doc.authorityName || doc.slug);
+
+      return {
+        ...doc,
+        _id: doc._id?.toString(),
+        authorityId: doc.authorityId?.toString(),
+        podcastChannelId: doc.podcastChannelId?.toString(),
+        recommendedBooks: inheritedBooks || [],
+      };
+    }) as ILearningResource[];
 
     return { resources, total };
   }
@@ -78,11 +116,28 @@ export class LearningResourceService {
     await dbConnect();
     const doc = await LearningResourceModel.findById(id).lean();
     if (!doc) return null;
+
+    let books = serializeRecommendedBooks((doc as any).recommendedBooks || []);
+    if (books.length === 0 && (doc as any).authorityId) {
+      const auth = await AuthorityModel.findById((doc as any).authorityId).lean();
+      if (auth) {
+        books = serializeRecommendedBooks(
+          (auth as any).recommendedBooks && (auth as any).recommendedBooks.length > 0
+            ? (auth as any).recommendedBooks
+            : getRecommendedBooksForAuthority((auth as any).slug || (auth as any).name)
+        );
+      }
+    }
+
+    if (books.length === 0) {
+      books = getRecommendedBooksForAuthority((doc as any).authorityName || (doc as any).slug);
+    }
+
     return {
       ...(doc as any),
       _id: (doc as any)._id?.toString(),
       authorityId: (doc as any).authorityId?.toString(),
-      recommendedBooks: serializeRecommendedBooks((doc as any).recommendedBooks || []),
+      recommendedBooks: books,
     };
   }
 
