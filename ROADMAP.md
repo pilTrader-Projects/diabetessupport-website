@@ -63,7 +63,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ### Milestone 16: Dynamic Learning Materials Hub & Automated Resource Library
 - [x] **[PR #36](https://github.com/pilTrader-Projects/diabetessupport-website/pull/36)** `[COMPLETED / MERGED]`: Rebrand and elevate Educational Articles (`/blog` -> `/learn`) into a comprehensive Learning Materials & Evidence Hub. Features zero-hardcoding Admin Management for Authorities & Personalities (`/admin/learning/authorities`) and Podcasts (`/admin/learning/podcasts`), keyword & guest syndication, automated YouTube & PubMed ingestion, link-rot health verification (`/admin/learning/resources`), lite video player modal with "Watch on YouTube" handoff, multi-dimensional filtering, and "My Library" bookmark lead capture drawer synced with Brevo (Closes Issue #35).
-- [ ] **[Issue #37](https://github.com/pilTrader-Projects/diabetessupport-website/issues/37)** `[IN PROGRESS]`: Fix dynamic cascading of authority recommended books to video player modal so that adding books to an authority in Admin automatically cascades across all their videos.
+- [x] **[PR #38](https://github.com/pilTrader-Projects/diabetessupport-website/pull/38)** `[COMPLETED]`: Fix dynamic cascading of authority recommended books to video player modal so that adding books to an authority in Admin automatically cascades across all their videos (Closes Issue #37).
 
 ---
 
