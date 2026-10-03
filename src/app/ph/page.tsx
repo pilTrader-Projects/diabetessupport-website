@@ -169,7 +169,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
         </div>
 
         <p className="text-xs text-slate-500 pt-1">
-          Philippines Edition • 100% Free Forever • Global Movement: <Link href="/" className="underline text-teal-700 font-semibold hover:text-teal-900">Before the Numbers Home</Link>
+          Philippines Edition • 100% Free Forever • Global Movement: <Link href="/?edition=global" className="underline text-teal-700 font-semibold hover:text-teal-900">Before the Numbers Home (Global)</Link>
         </p>
       </section>
 
