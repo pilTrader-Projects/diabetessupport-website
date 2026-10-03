@@ -13,7 +13,7 @@ import Header from '../../src/components/Header';
 import AuthorityModal from '../../src/components/admin/learning/AuthorityModal';
 import ResourceModal from '../../src/components/admin/learning/ResourceModal';
 import LearnFeedPage, { generateMetadata } from '../../src/app/learn/page';
-import { ILearningResource, IAuthority, IPodcastChannel } from '../../src/types/learning';
+import { ILearningResource, IAuthority, IPodcastChannel, IAffiliateRecommendation } from '../../src/types/learning';
 import { IPost } from '../../src/types/blog';
 import { PostModel } from '../../src/models/Post';
 import { AuthorityModel } from '../../src/models/Authority';
@@ -331,11 +331,11 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
     });
 
     it('automatically cascades dynamic books from authorities prop (e.g. 1 initial + 3 newly added books)', () => {
-      const dynamicBooks = [
-        { _id: 'b1', title: 'Why We Get Sick (Original)', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/1', platformName: 'Amazon' },
-        { _id: 'b2', title: 'Insulin Code Book 2', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/2', platformName: 'Amazon' },
-        { _id: 'b3', title: 'Metabolic Power Book 3', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/3', platformName: 'Amazon' },
-        { _id: 'b4', title: 'Mitochondrial Health Book 4', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/4', platformName: 'Amazon' },
+      const dynamicBooks: IAffiliateRecommendation[] = [
+        { _id: 'b1', title: 'Why We Get Sick (Original)', description: 'Root causes of insulin resistance', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/1', type: 'book', platformName: 'Amazon' },
+        { _id: 'b2', title: 'Insulin Code Book 2', description: 'Reversing hyperinsulinemia', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/2', type: 'book', platformName: 'Amazon' },
+        { _id: 'b3', title: 'Metabolic Power Book 3', description: 'Metabolic adaptation protocols', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/3', type: 'book', platformName: 'Amazon' },
+        { _id: 'b4', title: 'Mitochondrial Health Book 4', description: 'Cellular energy and longevity', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/4', type: 'book', platformName: 'Amazon' },
       ];
 
       const authorityWithUpdatedBooks: IAuthority = {
@@ -480,11 +480,11 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
     });
 
     it('cascades dynamic authority books to resources when rendering LearnFeedPage', async () => {
-      const dynamicBooks = [
-        { _id: 'b1', title: 'Why We Get Sick (Original)', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/1' },
-        { _id: 'b2', title: 'Insulin Code Book 2', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/2' },
-        { _id: 'b3', title: 'Metabolic Power Book 3', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/3' },
-        { _id: 'b4', title: 'Mitochondrial Health Book 4', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/4' },
+      const dynamicBooks: IAffiliateRecommendation[] = [
+        { _id: 'b1', title: 'Why We Get Sick (Original)', description: 'Root causes of insulin resistance', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/1', type: 'book' },
+        { _id: 'b2', title: 'Insulin Code Book 2', description: 'Reversing hyperinsulinemia', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/2', type: 'book' },
+        { _id: 'b3', title: 'Metabolic Power Book 3', description: 'Metabolic adaptation protocols', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/3', type: 'book' },
+        { _id: 'b4', title: 'Mitochondrial Health Book 4', description: 'Cellular energy and longevity', author: 'Dr. Benjamin Bikman', affiliateUrl: 'https://amzn.to/4', type: 'book' },
       ];
 
       (PostModel.find as any) = jest.fn().mockReturnValue({

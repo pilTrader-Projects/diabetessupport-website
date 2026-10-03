@@ -6,7 +6,7 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { LearningResourceModel } from '@/models/LearningResource';
 import { AuthorityModel } from '@/models/Authority';
-import { ILearningResource, IAffiliateRecommendation } from '@/types/learning';
+import { ILearningResource, IAffiliateRecommendation, IAuthority } from '@/types/learning';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { generateSlug } from './shared/slugUtils';

@@ -17,6 +17,7 @@ describe('LearningResourceService — Authority Books Cascading', () => {
     {
       _id: 'book-1',
       title: 'Initial Book From Last Week',
+      description: 'Foundational clinical reversal protocols.',
       author: 'Dr. Jason Fung, MD',
       authoritySlug: 'dr-jason-fung',
       affiliateUrl: 'https://amazon.com/book1',
@@ -26,6 +27,7 @@ describe('LearningResourceService — Authority Books Cascading', () => {
     {
       _id: 'book-2',
       title: 'Newly Added Book 1 Today',
+      description: 'Understanding hormonal drives.',
       author: 'Dr. Jason Fung, MD',
       authoritySlug: 'dr-jason-fung',
       affiliateUrl: 'https://amazon.com/book2',
@@ -35,6 +37,7 @@ describe('LearningResourceService — Authority Books Cascading', () => {
     {
       _id: 'book-3',
       title: 'Newly Added Book 2 Today',
+      description: 'The complete guide to therapeutic fasting.',
       author: 'Dr. Jason Fung, MD',
       authoritySlug: 'dr-jason-fung',
       affiliateUrl: 'https://amazon.com/book3',
@@ -44,6 +47,7 @@ describe('LearningResourceService — Authority Books Cascading', () => {
     {
       _id: 'book-4',
       title: 'Newly Added Book 3 Today',
+      description: 'Cancer code metabolic foundations.',
       author: 'Dr. Jason Fung, MD',
       authoritySlug: 'dr-jason-fung',
       affiliateUrl: 'https://amazon.com/book4',
@@ -90,8 +94,9 @@ describe('LearningResourceService — Authority Books Cascading', () => {
 
     expect(result.resources).toHaveLength(1);
     const video = result.resources[0];
+    expect(video.recommendedBooks).toBeDefined();
     expect(video.recommendedBooks).toHaveLength(4);
-    expect(video.recommendedBooks.map((b) => b.title)).toEqual([
+    expect(video.recommendedBooks!.map((b) => b.title)).toEqual([
       'Initial Book From Last Week',
       'Newly Added Book 1 Today',
       'Newly Added Book 2 Today',
@@ -114,26 +119,30 @@ describe('LearningResourceService — Authority Books Cascading', () => {
       lean: jest.fn().mockResolvedValue(mockResourceDoc),
     });
 
-    (AuthorityModel.findById as jest.Mock).mockReturnValue({
-      lean: jest.fn().mockResolvedValue({
-        _id: 'auth_fung_123',
-        name: 'Dr. Jason Fung',
-        slug: 'dr-jason-fung',
-        recommendedBooks: dynamicAuthorityBooks,
-      }),
+    (AuthorityModel.find as jest.Mock).mockReturnValue({
+      lean: jest.fn().mockResolvedValue([
+        {
+          _id: 'auth_fung_123',
+          name: 'Dr. Jason Fung',
+          slug: 'dr-jason-fung',
+          recommendedBooks: dynamicAuthorityBooks,
+        },
+      ]),
     });
 
     const video = await LearningResourceService.getResourceById('res_fung_1');
 
     expect(video).not.toBeNull();
+    expect(video?.recommendedBooks).toBeDefined();
     expect(video?.recommendedBooks).toHaveLength(4);
-    expect(video?.recommendedBooks[1].title).toBe('Newly Added Book 1 Today');
+    expect(video?.recommendedBooks![1].title).toBe('Newly Added Book 1 Today');
   });
 
   it('preserves explicit resource-level recommendedBooks when already defined on the video', async () => {
     const customBook: IAffiliateRecommendation = {
       _id: 'book-custom',
       title: 'Custom Featured Guide For This Video Only',
+      description: 'Exclusive companion material.',
       author: 'Dr. Jason Fung',
       affiliateUrl: 'https://amazon.com/custom',
       type: 'book',
@@ -157,10 +166,11 @@ describe('LearningResourceService — Authority Books Cascading', () => {
     const video = await LearningResourceService.getResourceById('res_fung_2');
 
     expect(video).not.toBeNull();
+    expect(video?.recommendedBooks).toBeDefined();
     expect(video?.recommendedBooks).toHaveLength(1);
-    expect(video?.recommendedBooks[0].title).toBe('Custom Featured Guide For This Video Only');
+    expect(video?.recommendedBooks![0].title).toBe('Custom Featured Guide For This Video Only');
     // AuthorityModel should not even need to be fetched when resource has explicit books
-    expect(AuthorityModel.findById).not.toHaveBeenCalled();
+    expect(AuthorityModel.find).not.toHaveBeenCalled();
   });
 
   it('cascades books when resource only has authorityName without authorityId (syndicated / RSS feed)', async () => {
@@ -196,7 +206,8 @@ describe('LearningResourceService — Authority Books Cascading', () => {
 
     expect(result.resources).toHaveLength(1);
     const video = result.resources[0];
+    expect(video.recommendedBooks).toBeDefined();
     expect(video.recommendedBooks).toHaveLength(4);
-    expect(video.recommendedBooks[0].title).toBe('Initial Book From Last Week');
+    expect(video.recommendedBooks![0].title).toBe('Initial Book From Last Week');
   });
 });

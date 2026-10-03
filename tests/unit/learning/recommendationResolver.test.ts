@@ -12,6 +12,7 @@ describe('recommendationResolver', () => {
     {
       _id: 'b-1',
       title: 'The Diabetes Code',
+      description: 'Reversing Type 2 Diabetes.',
       author: 'Dr. Jason Fung, MD',
       affiliateUrl: 'https://amazon.com/fung-diabetes',
       type: 'book',
@@ -19,6 +20,7 @@ describe('recommendationResolver', () => {
     {
       _id: 'b-2',
       title: 'The Obesity Code',
+      description: 'The science of insulin.',
       author: 'Dr. Jason Fung, MD',
       affiliateUrl: 'https://amazon.com/fung-obesity',
       type: 'book',
@@ -70,6 +72,7 @@ describe('recommendationResolver', () => {
       const customBook: IAffiliateRecommendation = {
         _id: 'custom-1',
         title: 'Specific Episode Guide',
+        description: 'Episode specific protocol notes.',
         author: 'Guest Speaker',
         affiliateUrl: 'https://amazon.com/guide',
         type: 'book',
