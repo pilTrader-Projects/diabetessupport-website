@@ -25,6 +25,11 @@ jest.mock('../../../src/services/learning/shared/feedFetcher', () => {
 });
 
 describe('Keyword-Targeted Syndication', () => {
+  beforeEach(() => {
+    const { fetchChannelEntries } = require('../../../src/services/learning/shared/feedFetcher');
+    (fetchChannelEntries as jest.Mock).mockResolvedValue({ entries: [] });
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -71,8 +76,8 @@ describe('Keyword-Targeted Syndication', () => {
     });
   });
 
-  describe('Authority Keyword Sync', () => {
-    it('syncAuthorityYouTubeFeed queries keywords when provided and ingests matching videos', async () => {
+  describe('Authority Channel-Bound Sync', () => {
+    it('confines ingestion strictly to authority channel entries, filters by keywords, and NEVER calls global search', async () => {
       const mockAuthority = {
         _id: 'auth_jamnadas',
         name: 'Dr. Pradip Jamnadas, MD',
@@ -86,17 +91,33 @@ describe('Keyword-Targeted Syndication', () => {
       (LearningResourceModel.findOne as jest.Mock).mockResolvedValue(null);
       (LearningResourceModel.create as jest.Mock).mockResolvedValue({ _id: 'res_new' });
 
-      // Mock search videos returning a lecture for "fasting"
-      const { scrapeYouTubeSearchVideos } = require('../../../src/services/learning/shared/feedFetcher');
-      (scrapeYouTubeSearchVideos as jest.Mock).mockResolvedValue([
-        {
-          videoId: 'vid_jamnadas_fasting',
-          title: 'Fasting for Survival by Dr. Pradip Jamnadas',
-          description: 'A deep dive into autophagy, lipolysis, and reversing insulin resistance.',
-          publishedAt: new Date('2026-01-01'),
-          duration: '1:02:15',
-        },
-      ]);
+      const { fetchChannelEntries, scrapeYouTubeSearchVideos } = require('../../../src/services/learning/shared/feedFetcher');
+      (fetchChannelEntries as jest.Mock).mockResolvedValue({
+        entries: [
+          {
+            videoId: 'vid_jamnadas_fasting',
+            title: 'Fasting for Survival by Dr. Pradip Jamnadas',
+            description: 'A deep dive into autophagy, lipolysis, and reversing insulin resistance.',
+            publishedAt: new Date('2026-01-01'),
+            duration: '1:02:15',
+            channelId: 'UC0tQHehGWtb1Mp1gZC87y8A',
+          },
+          {
+            videoId: 'vid_other_topic',
+            title: 'Office Tour & Greeting',
+            description: 'Walking around the clinic.',
+            publishedAt: new Date('2026-01-02'),
+            channelId: 'UC0tQHehGWtb1Mp1gZC87y8A',
+          },
+          {
+            videoId: 'vid_foreign_channel',
+            title: 'Foreign Fasting Video',
+            description: 'Fasting video from another creator channel.',
+            publishedAt: new Date('2026-01-03'),
+            channelId: 'UC_DIFFERENT_CREATOR_CHANNEL',
+          },
+        ],
+      });
 
       (AiQualifierService.qualifyResource as jest.Mock).mockResolvedValue({
         isRelevant: true,
@@ -114,15 +135,22 @@ describe('Keyword-Targeted Syndication', () => {
         { keywords: ['fasting'] }
       );
 
-      expect(scrapeYouTubeSearchVideos).toHaveBeenCalledWith(
-        expect.stringContaining('Dr. Pradip Jamnadas'),
-        undefined
+      // Verify that global YouTube search is NEVER called during authority channel sync
+      expect(scrapeYouTubeSearchVideos).not.toHaveBeenCalled();
+
+      // Verify fetchChannelEntries was called with the authority channel
+      expect(fetchChannelEntries).toHaveBeenCalledWith(
+        'UC0tQHehGWtb1Mp1gZC87y8A',
+        expect.any(Object)
       );
+
+      // Only the genuine, matching channel video was ingested (foreign channel video was dropped)
       expect(result.addedCount).toBe(1);
       expect(LearningResourceModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
           embedId: 'vid_jamnadas_fasting',
           title: 'Fasting for Survival by Dr. Pradip Jamnadas',
+          authorityName: 'Dr. Pradip Jamnadas, MD',
           status: 'published',
         })
       );

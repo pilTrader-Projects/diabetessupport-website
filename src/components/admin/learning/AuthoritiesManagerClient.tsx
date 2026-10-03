@@ -687,10 +687,10 @@ export default function AuthoritiesManagerClient({
                     <button
                       type="button"
                       onClick={() => handleOpenTopicSearch(item)}
-                      title="Search & Ingest historical lectures by keyword"
+                      title="Sync Channel Videos by Focus Topic"
                       className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-750 text-indigo-300 text-xs font-bold rounded-lg border border-slate-700/80 transition-colors inline-flex items-center gap-1 active:scale-95"
                     >
-                      <span>🎯 Topic</span>
+                      <span>🎯 Topics</span>
                     </button>
                   </div>
 
@@ -842,10 +842,10 @@ export default function AuthoritiesManagerClient({
                           <button
                             type="button"
                             onClick={() => handleOpenTopicSearch(item)}
-                            title="Search & Ingest historical lectures by keyword"
-                            className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg border border-slate-700 transition-colors"
+                            title="Sync Channel Videos by Focus Topic"
+                            className="px-2 py-1 bg-slate-800 hover:bg-slate-750 text-indigo-300 rounded-lg border border-slate-700 transition-colors"
                           >
-                            🎯 Topic
+                            🎯 Topics
                           </button>
                           <button
                             type="button"
@@ -881,7 +881,7 @@ export default function AuthoritiesManagerClient({
         submitting={submitting}
       />
 
-      {/* 7. Targeted Topic / Keyword Search Modal */}
+      {/* 7. Channel Topic Sync Modal */}
       {topicModal.isOpen && topicModal.authority && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
@@ -889,10 +889,10 @@ export default function AuthoritiesManagerClient({
               <div>
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
                   <span>🎯</span>
-                  <span>Targeted Topic Ingestion</span>
+                  <span>Channel Topic Sync</span>
                 </h3>
                 <p className="text-xs text-slate-400 mt-1">
-                  Search YouTube for <strong className="text-teal-400">{topicModal.authority.name}</strong>&apos;s lectures on specific metabolic topics.
+                  Sync lectures from <strong className="text-teal-400">{topicModal.authority.name}</strong>&apos;s registered YouTube channel on specific metabolic topics.
                 </p>
               </div>
               <button
@@ -933,7 +933,7 @@ export default function AuthoritiesManagerClient({
             {/* Keyword Input */}
             <div className="space-y-1.5">
               <label htmlFor="topic-keywords-input" className="text-[11px] font-bold text-slate-300 block">
-                Keywords to query (comma-separated):
+                Focus topics / keywords (comma-separated):
               </label>
               <input
                 id="topic-keywords-input"
@@ -944,7 +944,7 @@ export default function AuthoritiesManagerClient({
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500"
               />
               <p className="text-[10px] text-slate-500">
-                Queries YouTube directly for &quot;{topicModal.authority.name}&quot; paired with each keyword, runs AI qualification, and adds verified lectures to your catalog.
+                Filters &amp; qualifies {topicModal.authority.name}&apos;s channel uploads matching these topics through the AI Relevance Engine, strictly preserving authority attribution.
               </p>
             </div>
 
@@ -967,12 +967,12 @@ export default function AuthoritiesManagerClient({
                 {isSearchingTopic ? (
                   <>
                     <span className="animate-spin">⏳</span>
-                    <span>Searching &amp; Ingesting...</span>
+                    <span>Syncing Channel Topics...</span>
                   </>
                 ) : (
                   <>
-                    <span>🔍</span>
-                    <span>Ingest Topic Lectures</span>
+                    <span>🎯</span>
+                    <span>Sync Channel Topics</span>
                   </>
                 )}
               </button>

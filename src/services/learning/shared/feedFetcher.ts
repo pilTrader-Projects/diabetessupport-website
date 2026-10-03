@@ -9,6 +9,8 @@ export type VideoEntry = {
   description: string;
   publishedAt: Date;
   duration?: string;
+  channelId?: string;
+  channelTitle?: string;
 };
 
 type FetchFn = (url: string, init?: any) => Promise<any>;
@@ -19,6 +21,9 @@ type ScrapeFn = (channelId: string) => Promise<VideoEntry[]>;
  */
 export function parseYouTubeFeed(xmlContent: string): VideoEntry[] {
   const items: VideoEntry[] = [];
+  const feedChannelId = xmlContent.match(/<yt:channelId>(.*?)<\/yt:channelId>/)?.[1]?.trim();
+  const feedAuthorName = xmlContent.match(/<author>[\s\S]*?<name>(.*?)<\/name>/)?.[1]?.trim();
+
   const entryRegex = /<entry>([\s\S]*?)<\/entry>/g;
   let match: RegExpExecArray | null;
 
@@ -28,6 +33,8 @@ export function parseYouTubeFeed(xmlContent: string): VideoEntry[] {
     const titleMatch = entryXml.match(/<title>(.*?)<\/title>/);
     const publishedMatch = entryXml.match(/<published>(.*?)<\/published>/);
     const descMatch = entryXml.match(/<media:description>([\s\S]*?)<\/media:description>/);
+    const entryChannelIdMatch = entryXml.match(/<yt:channelId>(.*?)<\/yt:channelId>/);
+    const entryAuthorMatch = entryXml.match(/<author>[\s\S]*?<name>(.*?)<\/name>/);
 
     if (videoIdMatch && titleMatch) {
       items.push({
@@ -35,6 +42,8 @@ export function parseYouTubeFeed(xmlContent: string): VideoEntry[] {
         title: titleMatch[1].trim().replace(/&amp;/g, '&'),
         description: descMatch ? descMatch[1].trim() : '',
         publishedAt: publishedMatch ? new Date(publishedMatch[1].trim()) : new Date(),
+        channelId: entryChannelIdMatch?.[1]?.trim() || feedChannelId,
+        channelTitle: entryAuthorMatch?.[1]?.trim() || feedAuthorName,
       });
     }
   }
@@ -90,6 +99,7 @@ export async function scrapeYouTubeChannelVideos(
             description: (vr.descriptionSnippet?.runs?.map((r: any) => r.text).join('') || '').trim(),
             publishedAt: new Date(),
             duration: vr.lengthText?.simpleText,
+            channelId,
           });
         }
       } else if (obj.lockupViewModel) {
@@ -109,6 +119,7 @@ export async function scrapeYouTubeChannelVideos(
               lvm.contentImage?.thumbnailViewModel?.overlays?.[0]
                 ?.thumbnailBottomOverlayViewModel?.badges?.[0]
                 ?.thumbnailBadgeViewModel?.text,
+            channelId,
           });
         }
       }
@@ -151,12 +162,21 @@ export function parseYouTubeSearchHtml(html: string): VideoEntry[] {
         if (vid && !isPlaylist && title && !seenIds.has(vid)) {
           seenIds.add(vid);
           const desc = (vr.descriptionSnippet?.runs?.map((r: any) => r.text).join('') || '').trim();
+          const channelTitle =
+            vr.ownerText?.runs?.[0]?.text ||
+            vr.shortBylineText?.runs?.[0]?.text ||
+            '';
+          const videoChannelId =
+            vr.ownerText?.runs?.[0]?.navigationEndpoint?.browseEndpoint?.browseId ||
+            vr.shortBylineText?.runs?.[0]?.navigationEndpoint?.browseEndpoint?.browseId;
           results.push({
             videoId: vid,
             title: title.trim().replace(/&amp;/g, '&'),
             description: desc,
             publishedAt: new Date(),
             duration: vr.lengthText?.simpleText,
+            channelId: videoChannelId,
+            channelTitle: channelTitle ? channelTitle.trim() : undefined,
           });
         }
       } else if (obj.lockupViewModel) {
