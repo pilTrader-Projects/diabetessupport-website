@@ -10,7 +10,7 @@ import { ADSENSE_CONFIG } from '@/config/constants';
  */
 export async function GET(): Promise<NextResponse> {
   const publisherId = ADSENSE_CONFIG.publisherId.replace(/^ca-/, '');
-  const adsTxtContent = `# Authorized Digital Sellers for DiabetesCare PH\ngoogle.com, ${publisherId}, DIRECT, f08c47fec0942fa0\n`;
+  const adsTxtContent = `# Authorized Digital Sellers for Before the Numbers\ngoogle.com, ${publisherId}, DIRECT, f08c47fec0942fa0\n`;
 
   return new NextResponse(adsTxtContent, {
     status: 200,

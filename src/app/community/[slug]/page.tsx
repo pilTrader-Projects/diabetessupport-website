@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: ThreadPageProps): Promise<Met
 
   if (!thread || thread.status === 'archived') {
     return {
-      title: `Discussion Not Found | DiabetesCare PH`,
+      title: `Discussion Not Found | Before the Numbers`,
       description: 'The requested community discussion could not be found.',
     };
   }
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: ThreadPageProps): Promise<Met
   const threadUrl = `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
 
   return {
-    title: `${thread.title} | DiabetesCare PH Community`,
+    title: `${thread.title} | Before the Numbers Community`,
     description: thread.content.slice(0, 155),
     alternates: {
       canonical: threadUrl,
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: ThreadPageProps): Promise<Met
       title: thread.title,
       description: thread.content.slice(0, 155),
       url: threadUrl,
-      siteName: 'DiabetesCare PH Community',
+      siteName: 'Before the Numbers Community',
       type: 'article',
     },
   };
@@ -119,7 +119,7 @@ export default async function ThreadPage({ params }: ThreadPageProps) {
       {/* Peer Support Disclaimer */}
       <div className="max-w-4xl mx-auto mt-12 text-center text-xs text-slate-400 border-t border-slate-200 pt-6">
         <p>
-          Medical Disclaimer: DiabetesCare PH Community is a peer-to-peer experiential discussion board.
+          Medical Disclaimer: Before the Numbers Community is a peer-to-peer experiential discussion board.
           Information shared here is for mutual emotional support and lifestyle sharing only, and must never replace direct consultation with licensed medical doctors or endocrinologists.
         </p>
       </div>

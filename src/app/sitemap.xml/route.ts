@@ -40,6 +40,7 @@ export async function GET(): Promise<NextResponse> {
 
   const staticRoutes = [
     { url: `${baseUrl}/`, priority: '1.0', changefreq: 'daily', lastmod: now },
+    { url: `${baseUrl}/ph`, priority: '0.9', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/learn`, priority: '0.9', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/community`, priority: '0.85', changefreq: 'daily', lastmod: now },
     { url: `${baseUrl}/glycosense`, priority: '0.9', changefreq: 'weekly', lastmod: now },

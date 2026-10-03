@@ -35,7 +35,7 @@ export default function InsulinResetClient(): React.JSX.Element {
       {/* Above-The-Fold Hero Section */}
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-6">
         <span className="inline-block bg-amber-100 text-amber-900 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-amber-300 shadow-xs">
-          🧬 Metabolic Health Education &bull; Filipino Context
+          ⏱️ The Hidden Metabolic Clock &bull; Before the Numbers
         </span>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
@@ -46,7 +46,7 @@ export default function InsulinResetClient(): React.JSX.Element {
         </h1>
 
         <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal">
-          Your body can spend years compensating for insulin resistance before fasting blood sugar reaches a diabetic threshold. Learn how your energy management system works, recognize early physical warning clues, and get the practical framework designed for the Filipino context.
+          Your body can spend years compensating for insulin resistance before fasting blood sugar reaches a diagnostic threshold. Learn how your energy management system works, recognize early physical warning clues, and get the practical framework to take informed action.
         </p>
 
         {/* Above-the-fold Primary CTA Button */}
@@ -62,7 +62,7 @@ export default function InsulinResetClient(): React.JSX.Element {
         </div>
 
         <p className="text-xs text-slate-500">
-          ⚡ 100% Free 8-Page PDF &bull; Instant Download &bull; Filipino Context
+          ⚡ 100% Free 8-Page PDF &bull; Instant Download &bull; Educational Movement
         </p>
       </section>
 

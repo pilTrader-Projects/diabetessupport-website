@@ -5,51 +5,57 @@ import { PostModel } from '@/models/Post';
 import { LearningResourceModel } from '@/models/LearningResource';
 import { IPost } from '@/types/blog';
 import { SITE_CONFIG } from '@/config/constants';
-import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema } from '@/lib/schema';
+import { buildOrganizationSchema, buildGlobalHomeFaqSchema } from '@/lib/schema';
 
 export const revalidate = 60; // Refresh static page every 60 seconds
 
 export const metadata: Metadata = {
-  title: 'DiabetesCare PH | Free Metabolic Health & Blood Sugar Tools for Filipino Families',
+  title: "Before the Numbers | Don't Wait for the Diagnosis",
   description:
-    'A mission-driven community hub providing free metabolic health resources, ancestral nutrition blueprints, and the GlycoSense blood sugar tracking application tailored for Filipino breadwinners.',
+    'Before the Numbers is a health-awareness and metabolic-health education movement helping you understand early signals and trajectories before a diagnosis forces you to.',
   keywords: [
-    'diabetes support philippines',
-    'reverse insulin resistance pinoy',
-    'tracking blood sugar free app',
-    'filipino low carb guide',
-    'chronic disease prevention',
-    'RA 10173 medical privacy',
+    'before the numbers',
+    'metabolic health education',
+    'the hidden metabolic clock',
+    'insulin resistance warning signs',
+    'hyperinsulinemia early detection',
+    'preventative health education',
+    'glucose trajectory vs snapshot',
+    'cardiometabolic awareness',
   ],
   alternates: {
     canonical: `https://${SITE_CONFIG.domain}`,
   },
   openGraph: {
-    title: 'DiabetesCare PH | Free Metabolic Health & Blood Sugar Tools for Filipino Families',
+    title: "Before the Numbers | Don't Wait for the Diagnosis",
     description:
-      'Empowering Filipino breadwinners with free ancestral nutrition guides, community support, and zero-cost blood sugar tracking.',
+      'Understand your health before a diagnosis forces you to. Learn the early signals, know your trajectory, and make informed changes.',
     url: `https://${SITE_CONFIG.domain}`,
-    siteName: SITE_CONFIG.title,
-    locale: 'en_PH',
+    siteName: SITE_CONFIG.author,
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DiabetesCare PH | Free Metabolic Health & Blood Sugar Tools for Filipino Families',
+    title: "Before the Numbers | Don't Wait for the Diagnosis",
     description:
-      'Join our mission-driven grassroots community protecting Filipino family wealth through preventative metabolic health.',
+      'Learn the early metabolic signals, understand the numbers, and take informed action before a diagnosis becomes your first wake-up call.',
   },
 };
 
 /**
- * Organic Community Root Page & Mission-Driven Educational Hub (/).
+ * Global Master Brand Homepage (/).
  *
- * @usecase Serves as the authoritative, educational, non-commercial front door for DiabetesCare PH, passively guiding organic traffic to /insulin-reset and /glycosense.
- * @returns {Promise<JSX.Element>} Rendered organic community homepage.
+ * @usecase Serves as the primary public-facing advocacy and educational front door for Before the Numbers.
+ * Follows the Before the Numbers Redesign Brief:
+ * Master Brand: BEFORE THE NUMBERS
+ * Tagline: Don't wait for the diagnosis.
+ * Core Hierarchy: Understand your health before a diagnosis forces you to.
+ * @returns {Promise<JSX.Element>} Rendered global homepage.
  */
 export default async function HomePage(): Promise<React.JSX.Element> {
-  const orgSchema = buildHomeMedicalOrgSchema();
-  const faqSchema = buildCommunityHomeFaqSchema();
+  const orgSchema = buildOrganizationSchema();
+  const faqSchema = buildGlobalHomeFaqSchema();
 
   let rawPosts: any[] = [];
   let rawResources: any[] = [];
@@ -66,7 +72,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
         .lean(),
     ]);
   } catch (err) {
-    console.error('Error retrieving documents for community root page:', err);
+    console.error('Error retrieving documents for master brand homepage:', err);
   }
 
   const articles: IPost[] = rawPosts.map((doc: any) => ({
@@ -131,182 +137,285 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       />
 
       {/* ========================================================================= */}
-      {/* PILLAR A: THE MISSION-DRIVEN HERO SECTION                                 */}
+      {/* PHILIPPINE PILOT NOTICE BANNER                                            */}
       {/* ========================================================================= */}
-      <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-8">
-        <div>
-          <Link
-            href="/learn"
-            className="inline-flex items-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-900 text-xs font-bold px-3.5 py-1.5 rounded-full border border-teal-200 transition-all hover:scale-105 shadow-xs group mb-2"
-          >
-            <span className="bg-teal-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-full">New Hub</span>
-            <span>Evidence-Based Lectures, Clinical Studies &amp; Books</span>
-            <span className="text-teal-700 group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </Link>
+      <div className="bg-gradient-to-r from-amber-500/10 via-amber-400/20 to-orange-500/10 border border-amber-300/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3 text-center sm:text-left">
+          <span className="text-2xl p-2 bg-amber-400/20 rounded-xl border border-amber-300/40">🇵🇭</span>
+          <div>
+            <p className="text-xs font-black text-amber-950 uppercase tracking-wider">
+              Currently Piloting in the Philippines
+            </p>
+            <p className="text-xs sm:text-sm text-slate-700 leading-snug">
+              Looking for Philippine metabolic statistics, regional food triggers, and family wealth protection guides?
+            </p>
+          </div>
         </div>
+        <Link
+          href="/ph"
+          className="whitespace-nowrap px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-all hover:scale-105 flex items-center gap-1.5 cursor-pointer border border-amber-500/30"
+        >
+          <span>Explore Philippine Pilot</span>
+          <span>&rarr;</span>
+        </Link>
+      </div>
 
-        <div className="inline-flex items-center gap-2 bg-teal-100 text-teal-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-teal-300 shadow-xs">
-          <span>🇵🇭</span>
-          <span>Grassroots Filipino Health Movement</span>
+      {/* ========================================================================= */}
+      {/* SECTION 1: MASTER BRAND HERO                                              */}
+      {/* ========================================================================= */}
+      <section className="text-center space-y-6 max-w-4xl mx-auto pt-2 sm:pt-4">
+        <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-indigo-200 shadow-xs">
+          <span>⏳</span>
+          <span>BEFORE THE NUMBERS &bull; HEALTH AWARENESS MOVEMENT</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight sm:leading-none">
-          Protecting Filipino Family Wealth Through{' '}
-          <span className="text-teal-700 underline decoration-teal-300">
-            Preventative Metabolic Health.
+          Don&apos;t Wait for the{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600">
+            Diagnosis.
           </span>
         </h1>
 
-        <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal">
-          We are a grass-roots community of providers, breadwinners, and advocates dedicated to exposing the hidden lifestyle roots of chronic illness. We offer zero-cost tools, ancestral nutrition guides, and peer blueprints to help your household live a vibrant, medicine-free life.
+        <p className="text-xl sm:text-2xl font-bold text-slate-800 max-w-3xl mx-auto tracking-tight">
+          Understand your health before a diagnosis forces you to.
         </p>
 
-        {/* Symmetrical Secondary-Styled CTA Buttons */}
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto">
+        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          Learn the signals. Understand the numbers. Know your trajectory. Make informed changes. We help you recognize what may be happening in your metabolic health years before diagnostic numbers become a serious wake-up call.
+        </p>
+
+        {/* Primary and Secondary CTA Hierarchy */}
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto" id="start-here">
           <a
-            href="#resources"
+            href="#framework"
             className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-700 cursor-pointer"
           >
-            <span>Explore Free Resources</span>
-            <span className="text-lg">↓</span>
+            <span>Start Here: The Approach</span>
+            <span className="text-lg">&darr;</span>
           </a>
           <Link
-            href="/community"
-            className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 text-slate-900 font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-300 cursor-pointer"
+            href="/hidden-clock"
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 hover:from-indigo-800 hover:via-purple-800 hover:to-pink-700 text-white font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-white/20 cursor-pointer"
           >
-            <span>Join the Community</span>
-            <span className="text-lg">👥</span>
+            <span>The Hidden Metabolic Clock</span>
+            <span className="text-lg">&rarr;</span>
           </Link>
         </div>
 
         <p className="text-xs text-slate-500 pt-1">
-          Open-access community initiative • 100% Free Forever • Zero commercial barrier
+          Open-access health education movement &bull; 100% Free Forever &bull; Non-commercial advocacy
         </p>
       </section>
 
       {/* ========================================================================= */}
-      {/* PILLAR C: TRANSPARENT PHILIPPINE METABOLIC STATISTICS                     */}
+      {/* SECTION 2: THE CORE ADVOCACY & ACTION FRAMEWORK                           */}
       {/* ========================================================================= */}
-      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6">
+      <section id="framework" className="scroll-mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-8">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
-            📊 The Philippine Reality
+          <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+            🧭 The Advocacy Movement
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Why Metabolic Health is a Wealth Preservation Priority
+            Warning &rarr; Awareness &rarr; Understanding &rarr; Action &rarr; Hope
           </h2>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            In our culture, when a breadwinner falls chronically ill, the entire household bears the emotional and financial burden.
+            The brand challenges the common habit of waiting for a formal medical diagnosis, offering a constructive, disciplined alternative to reclaim agency over your health.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
-          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2 text-center sm:text-left">
-            <div className="text-3xl font-black text-rose-600">4.2M+</div>
-            <h3 className="text-base font-bold text-slate-900">Diagnosed Filipinos</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Over 4.2 million Filipinos live with diabetes, while an estimated <strong>46% remain completely undiagnosed</strong> due to relying solely on painless, lagging tests.
+        {/* 5-Step Action Framework */}
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2">
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
+            <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">01</span>
+            <h3 className="text-sm font-bold text-slate-900">MEASURE</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Track what is relevant: glucose response, waist, pressure, and fasting markers.
             </p>
           </div>
-
-          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2 text-center sm:text-left">
-            <div className="text-3xl font-black text-amber-600">10-15 Years</div>
-            <h3 className="text-base font-bold text-slate-900">Silent Compensation Window</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong>Hyperinsulinemia</strong> develops a decade before fasting blood sugar rises, giving families a crucial window to reverse resistance naturally.
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
+            <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">02</span>
+            <h3 className="text-sm font-bold text-slate-900">UNDERSTAND</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Interpret signals in full metabolic context, not single isolated lab numbers.
             </p>
           </div>
-
-          <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2 text-center sm:text-left">
-            <div className="text-3xl font-black text-teal-600">₱350,000+</div>
-            <h3 className="text-base font-bold text-slate-900">Annual Dialysis Cost</h3>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              End-stage complications quickly bankrupt working families. Daily manual monitoring and ancestral food choices cost pennies compared to tertiary clinical care.
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
+            <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">03</span>
+            <h3 className="text-sm font-bold text-slate-900">INTERVENE</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Make sustainable shifts in meal composition, timing, movement, and sleep.
+            </p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
+            <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">04</span>
+            <h3 className="text-sm font-bold text-slate-900">MONITOR</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Observe trends over weeks and months rather than stressing single-day swings.
+            </p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
+            <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">05</span>
+            <h3 className="text-sm font-bold text-slate-900">ADJUST</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Refine your habits based on objective biological feedback and clinical advice.
             </p>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* PILLAR B: THE RESOURCE & TOOL HUB (PASSIVE CONVERSION GATEWAY)            */}
+      {/* SECTION 3: THE 5 MESSAGING PILLARS                                        */}
       {/* ========================================================================= */}
-      <section id="resources" className="scroll-mt-12 space-y-8">
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="inline-block bg-indigo-50 text-indigo-900 text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-indigo-200">
-            🛠️ Community Blueprints &amp; Tools
+      <section className="space-y-6">
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <span className="text-xs font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+            💡 Core Principles
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Free Community Tools &amp; Actionable Blueprints
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            How We View Metabolic Health
           </h2>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            Choose the path tailored to where you are today. Both resources are open-access and designed for immediate household adoption.
+            Grounded in scientific balance, human agency, and respectful education.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Pillar 1 */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <div className="text-2xl">⏳</div>
+            <h3 className="text-base font-bold text-slate-900">Before Diagnosis</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              A clinical diagnosis should not be the first time people become serious about their health. Understanding early signals preserves options and health agency.
+            </p>
+          </div>
+
+          {/* Pillar 2 */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <div className="text-2xl">📈</div>
+            <h3 className="text-base font-bold text-slate-900">Look Beyond One Number</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              A glucose number matters, but it is one component of a broader metabolic picture including insulin dynamics, triglycerides, visceral fat, and blood pressure.
+            </p>
+          </div>
+
+          {/* Pillar 3 */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <div className="text-2xl">🔎</div>
+            <h3 className="text-base font-bold text-slate-900">Recognize Early Signals</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Mid-afternoon energy crashes, stubborn midsection gain, and sleep disruptions are clues worth discussing with your doctor—not self-diagnostic checklists.
+            </p>
+          </div>
+
+          {/* Pillar 4 */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <div className="text-2xl">🧭</div>
+            <h3 className="text-base font-bold text-slate-900">Trajectory Matters</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              The question is not only where a number sits today, but whether your markers and risk factors are stable, improving, or drifting over multi-year windows.
+            </p>
+          </div>
+
+          {/* Pillar 5 */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <div className="text-2xl">🥗</div>
+            <h3 className="text-base font-bold text-slate-900">Action Without Extremism</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              We do not demonize carbohydrates, rice, or individual foods. The focus is total metabolic context: meal composition, physical activity, and sustainable lifestyle.
+            </p>
+          </div>
+
+          {/* Pillar 6 */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+            <div className="text-2xl">🌱</div>
+            <h3 className="text-base font-bold text-slate-900">Hope and Agency</h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Earlier understanding creates more opportunities to positively influence your trajectory. Our voice empowers through clarity rather than paralyzing with fear.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* SECTION 4: ECOSYSTEM ARCHITECTURE & TOOLS                                 */}
+      {/* ========================================================================= */}
+      <section className="space-y-8">
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <span className="inline-block bg-teal-50 text-teal-900 text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-teal-200">
+            🛠️ Frameworks &amp; Companion Tools
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Explore the Movement Ecosystem
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+            Free educational models, evidence hubs, and practical companion trackers to navigate your journey.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: The Biomarker Focus -> /insulin-reset */}
+          {/* Card 1: The Hidden Metabolic Clock */}
           <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="inline-block bg-purple-50 text-purple-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-purple-200">
-                🧬 The Biomarker Focus
+                ⏱️ Flagship Educational Series
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                The 21-Day Insulin Reset Blueprint
+                The Hidden Metabolic Clock
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Struggling with sudden 3 PM energy crashes, stubborn midsection fat, or persistent brain fog? Download our free, jargon-free metabolic checklist based on modern cell biology.
+                What may be happening before conventional glucose numbers change. Download the free 8-page educational framework explaining insulin resistance and the progression toward prediabetes.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Identifies 4 silent hyperinsulinemia alarms</span>
+                  <span className="text-indigo-600 font-bold">✓</span>
+                  <span>Conceptual progression of insulin resistance</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Explains why normal fasting sugar tests deceive</span>
+                  <span className="text-indigo-600 font-bold">✓</span>
+                  <span>Why fasting glucose numbers lag behind</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Provides 4 immediate nutritional shifts</span>
+                  <span className="text-indigo-600 font-bold">✓</span>
+                  <span>Early physical warning clues to discuss</span>
                 </li>
               </ul>
             </div>
 
             <div>
               <Link
-                href="/insulin-reset"
+                href="/hidden-clock"
                 className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
               >
-                <span>Read Protocol</span>
-                <span className="text-base">➔</span>
+                <span>Read The Framework</span>
+                <span className="text-base">&rarr;</span>
               </Link>
             </div>
           </div>
 
-          {/* Card 2: The Software Focus -> /glycosense */}
+          {/* Card 2: Companion Tracking -> /glycosense */}
           <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="inline-block bg-teal-50 text-teal-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-teal-200">
-                📱 The Software Focus
+                📱 Monitoring &amp; Tools
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                The GlycoSense Health Dashboard
+                GlycoSense Companion
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Securely turn your manual blood sugar logs into clean, automated digital trend lines. Instantly pinpoint local Filipino food triggers and export structured reports for your doctor.
+                A free, lightweight lifestyle tracking companion. Turn manual finger-prick glucose logs and blood pressure checks into clear visual trend lines and doctor-ready summaries.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Automates trend lines from finger-prick logs</span>
+                  <span>Visual 7, 14, and 30-day glycemic trajectories</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Isolates specific Pinoy staple food triggers</span>
+                  <span>Logs food triggers and lifestyle notes</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>One-click export of doctor-ready PDF summaries</span>
+                  <span>100% private, user-owned, zero ads or sales</span>
                 </li>
               </ul>
             </div>
@@ -316,36 +425,36 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 href="/glycosense"
                 className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-teal-700 hover:bg-teal-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-teal-600"
               >
-                <span>Explore GlycoSense</span>
-                <span className="text-base">➔</span>
+                <span>Explore Companion Tool</span>
+                <span className="text-base">&rarr;</span>
               </Link>
             </div>
           </div>
 
-          {/* Card 3: The Evidence Focus -> /learn */}
+          {/* Card 3: Evidence & Learning Hub -> /learn */}
           <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="inline-block bg-amber-50 text-amber-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-amber-200">
-                🎓 The Evidence Focus
+                🎓 Global Evidence Hub
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                Learning Materials &amp; Evidence Hub
+                Learning Materials &amp; Evidence
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Explore curated lectures, clinical trials, and dietary protocols from world-leading metabolic researchers like Dr. Fung, Dr. Berry, and Dr. Attia.
+                Explore curated medical lectures, peer-reviewed clinical studies, and metabolic science from leading clinicians including Dr. Fung, Dr. Bikman, and Dr. Attia.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>50+ Curated video breakdowns &amp; medical lectures</span>
+                  <span>Curated video lectures &amp; podcast breakdowns</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Peer-reviewed clinical trial evidence &amp; books</span>
+                  <span>Longitudinal clinical trial evidence &amp; books</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Personal &ldquo;My Library&rdquo; to save &amp; sync favorites</span>
+                  <span>Save resources to your personalized &ldquo;My Library&rdquo;</span>
                 </li>
               </ul>
             </div>
@@ -356,7 +465,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
               >
                 <span>Browse Learning Hub</span>
-                <span className="text-base">➔</span>
+                <span className="text-base">&rarr;</span>
               </Link>
             </div>
           </div>
@@ -364,7 +473,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       </section>
 
       {/* ========================================================================= */}
-      {/* PILLAR D: ADVANCED GEO / AEO DIRECT ANSWER KNOWLEDGE PARADIGM             */}
+      {/* SECTION 5: CLINICAL DEFINITIONS & DIRECT SCIENTIFIC ANSWERS               */}
       {/* ========================================================================= */}
       <section className="bg-slate-100 border border-slate-200 rounded-3xl p-6 sm:p-10 space-y-6">
         <div className="space-y-2 text-center sm:text-left">
@@ -372,89 +481,56 @@ export default async function HomePage(): Promise<React.JSX.Element> {
             📖 Direct Clinical Definitions &amp; Science
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Metabolic Health Essentials for Filipino Families
+            Understanding What Happens Before the Numbers
           </h2>
           <p className="text-sm text-slate-600">
-            Clear, authoritative answers structured for patients, carers, and AI answer engines.
+            Disciplined, evidence-based answers structured for patients, families, and AI answer engines.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 text-sm text-slate-700 leading-relaxed">
           <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
             <h3 className="font-bold text-slate-900 text-base">
-              What is the root cause of metabolic decline in the Philippines?
+              Why do conventional fasting glucose tests miss early metabolic dysfunction?
             </h3>
             <p>
-              <strong>Insulin resistance</strong> is the primary driver behind chronic metabolic decline in the Philippines. It occurs when muscle and liver cells stop responding efficiently to insulin, compelling the pancreas to secrete escalating amounts of insulin (<strong>hyperinsulinemia</strong>) to store dietary glucose.
+              Fasting blood sugar is often the <strong>last biomarker to cross diagnostic thresholds</strong>. For 10 to 15 years prior, the pancreas works in overdrive producing elevated insulin (<strong>hyperinsulinemia</strong>) to force glucose into resistant cells. Looking only at glucose ignores this underlying hormonal strain.
             </p>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
             <h3 className="font-bold text-slate-900 text-base">
-              Why do standard fasting glucose tests fail to catch early damage?
+              What is the difference between a single glucose reading and a metabolic trajectory?
             </h3>
             <p>
-              Fasting blood sugar is the <strong>last biomarker to deteriorate</strong>. For 10 to 15 years, excessive insulin levels hold fasting glucose in a seemingly &ldquo;normal&rdquo; range while silently driving <strong>visceral adiposity</strong>, vascular stiffness, and fatty liver infiltration.
+              A single blood glucose snapshot only records where your blood sugar is at one instant. <strong>Metabolic trajectory</strong> assesses whether multiple interrelated markers—such as triglycerides, HDL, waist circumference, blood pressure, and post-meal glucose spikes—are drifting favorably or unfavorably over time.
             </p>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
             <h3 className="font-bold text-slate-900 text-base">
-              How does functional skeletal muscle clearance blunt post-meal surges?
+              How does post-meal muscular movement clear glucose without demanding extra insulin?
             </h3>
             <p>
-              Engaging in 10 to 15 minutes of low-intensity movement (such as a casual walk) immediately following carbohydrate-dense meals recruits <strong>functional skeletal muscle clearance</strong> via GLUT4 translocation, blunting postprandial glycemic excursions without demanding excess pancreatic insulin.
+              Engaging in 10 to 15 minutes of gentle walking or functional movement after eating recruits <strong>GLUT4 glucose transporters</strong> directly through muscle contraction. This clears circulating carbohydrates directly into muscle tissue without requiring the pancreas to spike additional insulin.
             </p>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
             <h3 className="font-bold text-slate-900 text-base">
-              How do ancestral Pinoy food principles restore insulin sensitivity?
+              Why does Before the Numbers emphasize sustainable change over food extremism?
             </h3>
             <p>
-              Ancestral Filipino cuisine prioritized whole fish, pasture-raised meats, leafy vegetables (malunggay, kangkong), and unadulterated coconut fats. Returning to these nutrient-dense staples while curbing modern refined seed oils and ultra-processed sugars naturally halts metabolic dysfunction.
+              Extremist diets demonizing entire cultural food groups frequently cause high friction, rebound binges, and social isolation. Sustainable metabolic restoration focuses on total context: pairing carbohydrates with protein and fiber, managing portion density, and prioritizing restful sleep and regular physical movement.
             </p>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* PILLAR E: FREQUENTLY ASKED QUESTIONS (FAQ SCHEMA EMBEDDED)                */}
+      {/* SECTION 6: CURATED LEARNING HUB PREVIEW & EVIDENCE VAULT                   */}
       {/* ========================================================================= */}
-      <section className="space-y-6">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
-            ❓ Common Questions
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-sm text-slate-600">
-            Answers to common questions asked by Filipino patients, family breadwinners, and caregivers.
-          </p>
-        </div>
-
-        <div className="space-y-4 max-w-3xl mx-auto">
-          {faqSchema.mainEntity.map((item: any, idx: number) => (
-            <div
-              key={idx}
-              className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2"
-            >
-              <h3 className="text-base font-bold text-slate-900">
-                {item.name}
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                {item.acceptedAnswer.text}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* PILLAR F: CURATED LEARNING MATERIALS & EVIDENCE VAULT                     */}
-      {/* ========================================================================= */}
-      <section className="bg-gradient-to-br from-blue-800 via-purple-900 to-pink-600 text-white rounded-3xl p-6 sm:p-10 overflow-hidden shadow-2xl border border-white/20 space-y-8">
+      <section className="bg-gradient-to-br from-blue-900 via-purple-950 to-pink-950 text-white rounded-3xl p-6 sm:p-10 overflow-hidden shadow-2xl border border-white/20 space-y-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/15 pb-6">
           <div className="space-y-3 max-w-2xl">
             <span className="inline-block bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-white/30 backdrop-blur-md shadow-sm">
@@ -464,7 +540,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               Curated Learning Materials &amp; Evidence Hub
             </h2>
             <p className="text-sm sm:text-base text-purple-100/90 leading-relaxed">
-              Explore clinical lectures, trial breakdowns, and dietary protocols from world-leading metabolic researchers—tailored to help your family understand the root biology of healing.
+              Explore clinical lectures, trial breakdowns, and dietary protocols from world-leading metabolic researchers—tailored to help you understand the root biology of healing.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -478,7 +554,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
           </div>
         </div>
 
-        {/* Multi-Format Quick Filter Chips */}
+        {/* Quick Filter Chips */}
         <div className="flex flex-wrap items-center gap-2.5">
           <span className="text-xs font-bold text-purple-200 mr-1">Quick Browse:</span>
           <Link
@@ -615,6 +691,39 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       </section>
 
       {/* ========================================================================= */}
+      {/* SECTION 7: FREQUENTLY ASKED QUESTIONS                                     */}
+      {/* ========================================================================= */}
+      <section className="space-y-6">
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-800 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
+            ❓ Common Questions
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-sm text-slate-600">
+            Clear, authoritative answers about our movement and educational approach.
+          </p>
+        </div>
+
+        <div className="space-y-4 max-w-3xl mx-auto">
+          {faqSchema.mainEntity.map((item: any, idx: number) => (
+            <div
+              key={idx}
+              className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs space-y-2"
+            >
+              <h3 className="text-base font-bold text-slate-900">
+                {item.name}
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {item.acceptedAnswer.text}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
       {/* RECENT EDUCATIONAL ARTICLES                                               */}
       {/* ========================================================================= */}
       {articles.length > 0 && (
@@ -625,7 +734,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 Latest Learning Materials &amp; Evidence Guides
               </h2>
               <p className="text-sm text-slate-600">
-                Practical, evidence-based guides written for Filipino households.
+                Practical, evidence-based guides to support your metabolic journey.
               </p>
             </div>
             <Link
@@ -668,15 +777,15 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       )}
 
       {/* ========================================================================= */}
-      {/* TRUST & INSTITUTIONAL COMPLIANCE FOOTER MARKER                            */}
+      {/* TRUST & DISCLAIMER FOOTER CARD                                            */}
       {/* ========================================================================= */}
       <section className="p-6 bg-slate-100 rounded-2xl border border-slate-200 text-center space-y-2">
         <p className="text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5">
           <span>🔒</span>
-          <span>Secure processing fully compliant with the Philippine Data Privacy Act of 2012 (RA 10173).</span>
+          <span>Zero-commercial barrier • User-owned data • Non-promotional educational movement.</span>
         </p>
         <p className="text-[11px] text-slate-500 max-w-2xl mx-auto leading-relaxed">
-          DiabetesCare PH is an independent community advocacy and health literacy initiative. Data entered across our ecosystem is user-owned, encrypted, and never sold to third parties or insurance providers.
+          Before the Numbers is an independent health awareness and metabolic literacy initiative. Educational content is provided for informational purposes and does not substitute for individualized medical care.
         </p>
       </section>
     </div>

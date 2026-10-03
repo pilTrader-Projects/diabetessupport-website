@@ -8,16 +8,16 @@ import { SITE_CONFIG } from '@/config/constants';
 export const revalidate = 30; // Revalidate dynamic forum feed every 30s
 
 export const metadata: Metadata = {
-  title: 'Diabetes Community Board & Peer Discussions | DiabetesCare PH',
+  title: 'Community Board & Peer Discussions | Before the Numbers',
   description:
-    'Join Filipino family providers and patients sharing practical blood sugar tracking experiences, low-GI Filipino recipes, and daily lifestyle tips.',
+    'Join family providers, caregivers, and peers sharing practical metabolic tracking experiences, lifestyle tips, and everyday meal ideas.',
   alternates: {
     canonical: '/community',
   },
   openGraph: {
-    title: 'Diabetes Community Board & Peer Discussions | DiabetesCare PH',
+    title: 'Community Board & Peer Discussions | Before the Numbers',
     description:
-      'Join Filipino family providers and patients sharing practical blood sugar tracking experiences, low-GI Filipino recipes, and daily lifestyle tips.',
+      'Join family providers, caregivers, and peers sharing practical metabolic tracking experiences, lifestyle tips, and everyday meal ideas.',
     url: `https://${SITE_CONFIG.domain}/community`,
     type: 'website',
   },

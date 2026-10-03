@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
 
 export const metadata: Metadata = {
-  title: 'Why We Started This Mission: The Founder\'s Story | DiabetesCare PH',
+  title: 'Why We Started This Mission: The Founder\'s Story | Before the Numbers',
   description:
-    'The personal story behind DiabetesCare PH: how family loss, lived experience with diabetes, and Filipino culture sparked an urgent advocacy for early metabolic awareness.',
+    'The personal story behind Before the Numbers: how family loss, lived experience with diabetes, and cultural realities sparked an urgent advocacy for early metabolic awareness.',
   alternates: {
     canonical: '/about/story',
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
  * @usecase Unabridged personal narrative of the founder detailing the loss of Chris,
  * family lived experience with diabetes, cultural dietary realities, the advocacy mission,
  * and clear action pathways for readers.
- * Styled with DiabetesCare PH signature brand theme (blue-800 to purple-900 to pink-600 gradient-kit-panel).
+ * Styled with Before the Numbers signature brand theme (blue-800 to purple-900 to pink-600 gradient-kit-panel).
  */
 export default function FounderStoryPage() {
   const storySchema = {
@@ -25,7 +25,7 @@ export default function FounderStoryPage() {
     '@type': 'Article',
     headline: 'Why We Started This Mission: We Don\'t Want Families to Discover Diabetes Too Late',
     description:
-      'The personal story behind DiabetesCare PH: how family loss, lived experience with diabetes, and Filipino culture sparked an urgent advocacy for early metabolic awareness.',
+      'The personal story behind Before the Numbers: how family loss, lived experience with diabetes, and cultural realities sparked an urgent advocacy for early metabolic awareness.',
     author: {
       '@type': 'Person',
       name: 'Bong Bungalan Jr.',
@@ -34,7 +34,7 @@ export default function FounderStoryPage() {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'DiabetesCare PH',
+      name: 'Before the Numbers',
       url: `https://${SITE_CONFIG.domain}`,
       logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
     },

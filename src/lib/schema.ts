@@ -11,23 +11,24 @@ import { IPost } from '@/types/blog';
 export function buildOrganizationSchema(): Record<string, any> {
   return {
     '@context': 'https://schema.org',
-    '@type': 'MedicalOrganization',
-    name: 'DiabetesCare PH',
+    '@type': 'EducationalOrganization',
+    name: 'Before the Numbers',
+    alternateName: 'Before The Numbers',
     url: `https://${SITE_CONFIG.domain}`,
     logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
     description: SITE_CONFIG.description,
     sameAs: [SITE_CONFIG.social.facebook, SITE_CONFIG.social.twitter],
     contactPoint: {
       '@type': 'ContactPoint',
-      contactType: 'Customer Support & Educational Inquiries',
+      contactType: 'Community Support & Educational Inquiries',
       url: `https://${SITE_CONFIG.domain}/contact`,
     },
     knowsAbout: [
-      'Type 2 Diabetes Mellitus',
-      'Prediabetes and Insulin Resistance',
+      'Metabolic Health and Insulin Resistance',
+      'The Hidden Metabolic Clock',
       'Blood Glucose Self-Monitoring',
-      'Glycemic Index and Diet Management',
-      'HbA1c Blood Testing',
+      'Cardiometabolic Health and Trajectory',
+      'Early Metabolic Warning Signals',
     ],
   };
 }
@@ -39,7 +40,7 @@ export function buildWebSiteSchema(): Record<string, any> {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'DiabetesCare PH',
+    name: 'Before the Numbers',
     url: `https://${SITE_CONFIG.domain}`,
     potentialAction: {
       '@type': 'SearchAction',
@@ -89,7 +90,7 @@ export function buildArticleSchema(post: IPost, slug: string): Record<string, an
     },
     publisher: {
       '@type': 'Organization',
-      name: 'DiabetesCare PH',
+      name: 'Before the Numbers',
       logo: {
         '@type': 'ImageObject',
         url: `https://${SITE_CONFIG.domain}/images/logo.png`,
@@ -238,8 +239,8 @@ export function buildInsulinResetSchema(): Record<string, any> {
       description: 'An 8-page practical guide to insulin resistance, metabolic health, and early warning signals in the Filipino context.',
     },
     publisher: {
-      '@type': 'MedicalOrganization',
-      name: 'DiabetesCare PH',
+      '@type': 'Organization',
+      name: 'Before the Numbers',
       url: `https://${SITE_CONFIG.domain}`,
       logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
     },
@@ -257,11 +258,12 @@ export function buildHomeMedicalOrgSchema(): Record<string, any> {
   return {
     '@context': 'https://schema.org',
     '@type': 'MedicalOrganization',
-    name: 'DiabetesCare PH',
-    url: `https://${SITE_CONFIG.domain}`,
+    name: 'Before the Numbers (Philippine Pilot)',
+    alternateName: 'Before the Numbers PH',
+    url: `https://${SITE_CONFIG.domain}/ph`,
     logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
     description:
-      'An advocacy community providing complimentary lifestyle tools and predictive metabolic frameworks to counter chronic disease vectors within the Philippines.',
+      'The Philippine pilot hub of Before the Numbers, providing complimentary lifestyle tools and predictive metabolic frameworks to counter chronic disease vectors within the Philippines.',
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'PH',
@@ -315,5 +317,53 @@ export function buildCommunityHomeFaqSchema(): Record<string, any> {
     ],
   };
 }
+
+/**
+ * Builds FAQPage JSON-LD Schema for Before the Numbers global master brand homepage.
+ *
+ * @usecase Answers core questions on metabolic warning signals, trajectory, and why waiting for diagnosis is costly.
+ * @returns {Record<string, any>} Schema.org compliant FAQPage JSON-LD object.
+ */
+export function buildGlobalHomeFaqSchema(): Record<string, any> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What does "Before the Numbers" mean?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Before the Numbers represents the critical multi-year period before conventional measurements, symptoms, or a formal clinical diagnosis force a person to confront a health problem. It focuses on early awareness, insulin dynamics, and metabolic trajectory.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Why is fasting blood glucose not enough on its own?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Fasting blood glucose is often the last biomarker to deteriorate. For 10 to 15 years, the pancreas can compensate for insulin resistance by overproducing insulin (hyperinsulinemia), holding fasting blood sugar within normal lab ranges while metabolic stress silently progresses.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is The Hidden Metabolic Clock?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The Hidden Metabolic Clock is an educational framework explaining what may happen in your body before conventional numbers cross diagnostic thresholds. It maps out insulin resistance, pancreatic compensation, metabolic clues, and actionable lifestyle interventions.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the Measure → Understand → Intervene → Monitor → Adjust framework?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'It is Before the Numbers\' core constructive cycle: measure relevant markers, understand the personal context without fear, intervene with sustainable nutrition and movement, monitor objective trends, and adjust based on individual response.',
+        },
+      },
+    ],
+  };
+}
+
 
 

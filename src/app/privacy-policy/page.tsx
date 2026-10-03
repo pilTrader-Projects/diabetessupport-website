@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy & Data Security Notice | DiabetesCare PH',
+  title: 'Privacy Policy & Data Security Notice | Before the Numbers',
   description:
-    'Comprehensive data privacy notice detailing compliance with RA 10173 (Philippine Data Privacy Act), Google AdSense cookie policies, and sensitive health metric encryption.',
+    'Comprehensive data privacy notice detailing compliance with RA 10173 (Philippine Data Privacy Act), international data privacy standards, and health metric protection.',
   alternates: {
     canonical: '/privacy-policy',
   },
@@ -23,23 +23,23 @@ export default function PrivacyPolicyPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-10 text-slate-800">
       <header className="space-y-3 text-center sm:text-left border-b border-slate-200 pb-6">
         <span className="bg-indigo-100 text-indigo-900 text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full border border-indigo-200 inline-block">
-          Legal & Regulatory Compliance
+          Legal &amp; Regulatory Compliance
         </span>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
-          Privacy Policy & Data Protection
+          Privacy Policy &amp; Data Protection
         </h1>
         <p className="text-sm font-semibold text-slate-500">
-          Last Updated: September 2026 • Governed by Republic Act No. 10173 & Global Standards
+          Last Updated: October 2026 • Governed by Global Standards &amp; Republic Act No. 10173 (PH Operations)
         </p>
       </header>
 
       <section className="space-y-4 text-sm sm:text-base leading-relaxed">
         <h2 className="text-xl font-bold text-slate-900">1. Commitment to Health Data Confidentiality</h2>
         <p>
-          At <strong>DiabetesCare PH</strong> ({SITE_CONFIG.domain}), we understand that personal glucose levels,
-          blood pressure logs, and medical histories represent <em>Sensitive Personal Information</em>. In strict
-          adherence to the <strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173)</strong>, GDPR, and
-          international healthcare privacy frameworks, we guarantee that your personal logs are encrypted, strictly
+          At <strong>Before the Numbers</strong> ({SITE_CONFIG.domain}), we understand that personal glucose levels,
+          blood pressure logs, and medical histories represent <em>Sensitive Personal Information</em>. In our Philippine
+          pilot operations, we adhere strictly to the <strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173)</strong>,
+          as well as international data protection principles. We guarantee that your personal logs are encrypted, strictly
           owned by you, and never sold, rented, or leased to third-party insurers, advertisers, or brokers.
         </p>
       </section>

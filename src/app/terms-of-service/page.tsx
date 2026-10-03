@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service & Medical Safe Harbor | DiabetesCare PH',
+  title: 'Terms of Service & Medical Safe Harbor | Before the Numbers',
   description:
-    'Terms of service, medical disclaimer, and Software as a Medical Device (SaMD) regulatory safe harbor policies for DiabetesCare PH and GlycoSense.',
+    'Terms of service, medical disclaimer, and Software as a Medical Device (SaMD) regulatory safe harbor policies for Before the Numbers and its companion tools.',
   alternates: {
     canonical: '/terms-of-service',
   },
@@ -26,19 +26,19 @@ export default function TermsOfServicePage() {
           Legal Agreement
         </span>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
-          Terms of Service & Clinical Disclaimer
+          Terms of Service &amp; Clinical Disclaimer
         </h1>
         <p className="text-sm font-semibold text-slate-500">
-          Last Updated: September 2026 • Platform: {SITE_CONFIG.domain}
+          Last Updated: October 2026 • Platform: {SITE_CONFIG.domain}
         </p>
       </header>
 
       <section className="space-y-4 text-sm sm:text-base leading-relaxed bg-amber-50 p-6 rounded-2xl border border-amber-200">
         <h2 className="text-xl font-black text-amber-950">
-          ⚠️ Mandatory Medical & Non-Diagnostic Disclaimer
+          ⚠️ Mandatory Medical &amp; Non-Diagnostic Disclaimer
         </h2>
         <p className="text-amber-900">
-          <strong>DiabetesCare PH</strong> and its companion digital tools (including GlycoSense) provide general
+          <strong>Before the Numbers</strong> and its companion digital tools (including GlycoSense) provide general
           health awareness, educational resources, and personal record-keeping utilities.
           <strong> Content published on this platform is NOT medical advice, clinical diagnosis, or a treatment plan.</strong>
         </p>
@@ -59,7 +59,7 @@ export default function TermsOfServicePage() {
       </section>
 
       <section className="space-y-4 text-sm sm:text-base leading-relaxed">
-        <h2 className="text-xl font-bold text-slate-900">2. Intellectual Property & Fair Use</h2>
+        <h2 className="text-xl font-bold text-slate-900">2. Intellectual Property &amp; Fair Use</h2>
         <p>
           All educational articles, infographics, calculators, and brand elements on {SITE_CONFIG.domain} are owned by{' '}
           {SITE_CONFIG.author}. You may download printable cheat sheets for personal, non-commercial use.
@@ -70,7 +70,7 @@ export default function TermsOfServicePage() {
       <section className="space-y-4 text-sm sm:text-base leading-relaxed">
         <h2 className="text-xl font-bold text-slate-900">3. Limitation of Liability</h2>
         <p>
-          To the fullest extent permitted by law, DiabetesCare PH and its contributors shall not be liable for any direct,
+          To the fullest extent permitted by law, Before the Numbers and its contributors shall not be liable for any direct,
           indirect, incidental, or consequential damages resulting from the use or inability to use the site&apos;s materials.
         </p>
       </section>

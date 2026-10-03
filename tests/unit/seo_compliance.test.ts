@@ -17,11 +17,11 @@ import { SITE_CONFIG } from '../../src/config/constants';
 
 describe('SEO & AdSense Compliance Architecture', () => {
   describe('JSON-LD Schema Generators (src/lib/schema.ts)', () => {
-    it('should generate valid MedicalOrganization Schema', () => {
+    it('should generate valid EducationalOrganization Schema', () => {
       const orgSchema = buildOrganizationSchema();
       expect(orgSchema['@context']).toBe('https://schema.org');
-      expect(orgSchema['@type']).toBe('MedicalOrganization');
-      expect(orgSchema.name).toBe('DiabetesCare PH');
+      expect(orgSchema['@type']).toBe('EducationalOrganization');
+      expect(orgSchema.name).toBe('Before the Numbers');
       expect(orgSchema.url).toContain(SITE_CONFIG.domain);
       expect(orgSchema.knowsAbout).toBeInstanceOf(Array);
       expect(orgSchema.knowsAbout.length).toBeGreaterThan(0);
@@ -31,7 +31,7 @@ describe('SEO & AdSense Compliance Architecture', () => {
       const webSiteSchema = buildWebSiteSchema();
       expect(webSiteSchema['@context']).toBe('https://schema.org');
       expect(webSiteSchema['@type']).toBe('WebSite');
-      expect(webSiteSchema.name).toBe('DiabetesCare PH');
+      expect(webSiteSchema.name).toBe('Before the Numbers');
       expect(webSiteSchema.potentialAction['@type']).toBe('SearchAction');
       expect(webSiteSchema.potentialAction.target.urlTemplate).toContain('/learn?search=');
     });

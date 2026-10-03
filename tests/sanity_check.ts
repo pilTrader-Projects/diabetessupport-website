@@ -114,6 +114,7 @@ async function runSanityCheck() {
         'src/components/funnel/InsulinResetClient.tsx',
         'src/app/insulin-reset/page.tsx',
         'src/app/hidden-clock/page.tsx',
+        'src/app/ph/page.tsx',
         'src/app/reset-success/page.tsx',
         'src/app/glycosense/page.tsx',
         'src/app/subscribe/page.tsx',

@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { buildOrganizationSchema } from '@/lib/schema';
 
 export const metadata: Metadata = {
-  title: 'About Us & Mission | DiabetesCare PH',
+  title: 'About Us & Mission | Before the Numbers',
   description:
-    'Learn about DiabetesCare PH, our mission to protect Filipino families from the silent killer of diabetes, our founder story, and our educational standards.',
+    'Learn about Before the Numbers, our mission to help people understand early metabolic signals before diagnosis forces them to, our founder story, and our educational standards.',
   alternates: {
     canonical: '/about',
   },
@@ -67,17 +67,17 @@ export default function AboutPage() {
         </p>
       </header>
 
-      {/* Why DiabetesCare PH Exists */}
+      {/* Why Before the Numbers Exists */}
       <section className="space-y-4 text-sm sm:text-base leading-relaxed">
-        <h2 className="text-2xl font-bold text-slate-900">Why DiabetesCare PH Exists</h2>
+        <h2 className="text-2xl font-bold text-slate-900">Why Before the Numbers Exists</h2>
         <p>
           Diabetes is rarely an immediate health crisis—it is a <strong>silent financial and emotional catastrophe</strong>.
           When a family member or breadwinner develops preventable kidney failure, diabetic retinopathy, or cardiovascular
           complications, the economic and emotional burden destabilizes entire households for generations.
         </p>
         <p>
-          <strong>DiabetesCare PH</strong> was established to bridge the awareness gap by offering free, evidence-based,
-          and practical education tailored to the Philippine context—addressing staple Filipino dietary habits (like white rice,
+          <strong>Before the Numbers</strong> (founded from our grassroots Philippine advocacy, DiabetesCare PH) was established to bridge the awareness gap by offering free, evidence-based,
+          and practical education. While piloted in the Philippine context—addressing staple dietary habits (like white rice,
           pancit, and merienda)
           <a
             href="#ref-fnri"
@@ -86,7 +86,7 @@ export default function AboutPage() {
           >
             [4]
           </a>
-          {' '}and advocating early detection, accessible tracking, and metabolic literacy before an emergency occurs.
+          {' '}—the movement advocates early detection, accessible tracking, and metabolic literacy before an emergency occurs.
         </p>
       </section>
 
@@ -184,7 +184,7 @@ export default function AboutPage() {
           <h2 className="text-base sm:text-lg font-bold text-slate-900">Data Sources &amp; Statistical References</h2>
         </div>
         <p className="text-slate-500 text-xs">
-          DiabetesCare PH adheres to strict fact-checking and public health data verification. All epidemiological estimates and mortality statistics cited on this platform are derived from official health registries and peer-reviewed international surveys:
+          Before the Numbers adheres to strict fact-checking and public health data verification. All epidemiological estimates and mortality statistics cited on this platform are derived from official health registries and peer-reviewed international surveys:
         </p>
         <ol className="space-y-3.5 list-decimal list-inside text-slate-600 pt-1">
           <li id="ref-idf" className="pl-1">

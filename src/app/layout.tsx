@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(`https://${SITE_CONFIG.domain}`),
   title: {
     default: SITE_CONFIG.title,
-    template: `%s | DiabetesCare PH`,
+    template: `%s | Before the Numbers`,
   },
   description: SITE_CONFIG.description,
   manifest: '/manifest.webmanifest',
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'DiabetesCare PH',
+    title: 'Before the Numbers',
   },
   alternates: {
     canonical: './',
@@ -55,8 +55,8 @@ export const metadata: Metadata = {
     title: SITE_CONFIG.title,
     description: SITE_CONFIG.description,
     url: `https://${SITE_CONFIG.domain}`,
-    siteName: SITE_CONFIG.title,
-    locale: 'en_PH',
+    siteName: SITE_CONFIG.author,
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
@@ -126,8 +126,10 @@ export default function RootLayout({
             {/* Quick Links Navigation */}
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
               <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/learn" className="hover:text-white transition-colors">Learning Materials</Link>
-              <Link href="/guides/cheatsheet" className="hover:text-white transition-colors">7-Day Plan PDF</Link>
+              <Link href="/hidden-clock" className="hover:text-white transition-colors">The Hidden Clock</Link>
+              <Link href="/learn" className="hover:text-white transition-colors">Learning Hub</Link>
+              <Link href="/glycosense" className="hover:text-white transition-colors">Tools</Link>
+              <Link href="/ph" className="hover:text-white text-amber-300 font-black transition-colors">🇵🇭 Philippine Pilot</Link>
               <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
               <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
@@ -138,10 +140,10 @@ export default function RootLayout({
               © {new Date().getFullYear()} {SITE_CONFIG.author}. All rights reserved.
             </p>
             <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
-              <strong className="text-white">Medical Disclaimer:</strong> DiabetesCare PH is an independent health awareness and educational campaign platform. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your health conditions.
+              <strong className="text-white">Medical Disclaimer:</strong> Before the Numbers is an independent health awareness and educational movement. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your individual health conditions.
             </p>
             <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
-              <strong className="text-white">Data Privacy & Security Notice:</strong> Health metrics and logs entered into GlycoSense are treated as Sensitive Personal Information under Republic Act No. 10173 (Philippine Data Privacy Act of 2012). Data is encrypted, strictly owned by you, and utilized exclusively for generating your personal summaries and doctor-ready reports. We never sell, rent, or disclose your health data to third parties, advertisers, or insurers.
+              <strong className="text-white">Data Privacy &amp; Security Notice:</strong> Health metrics and logs entered across our companion tools are encrypted, strictly owned by you, and utilized exclusively for generating your personal summaries and doctor-ready reports. In our Philippine pilot operations, data handling adheres to Republic Act No. 10173 (Philippine Data Privacy Act of 2012). We never sell, rent, or disclose your health data to third parties, advertisers, or insurers.
             </p>
           </div>
         </footer>

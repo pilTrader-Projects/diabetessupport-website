@@ -43,7 +43,7 @@ export default function NotFound() {
             href="/"
             className="p-3 rounded-xl bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-300 transition-colors flex items-center justify-between font-bold text-sm text-slate-800 hover:text-purple-900"
           >
-            <span>🏠 Return to DiabetesCare PH Homepage</span>
+            <span>🏠 Return to Before the Numbers Homepage</span>
             <span>&rarr;</span>
           </Link>
         </div>

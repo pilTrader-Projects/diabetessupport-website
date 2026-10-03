@@ -88,27 +88,41 @@ export default function Header() {
         <Link
           href="/"
           onClick={closeMenu}
-          className="flex items-center space-x-2 font-black text-xl text-white tracking-tight hover:opacity-90 transition-opacity flex-shrink-0"
+          className="flex items-center space-x-2.5 font-black text-xl text-white tracking-tight hover:opacity-90 transition-opacity flex-shrink-0"
         >
-          <span className="text-2xl">🩸</span>
-          <span className="bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent">
-            DiabetesCare PH
+          <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 text-slate-950 text-sm font-black shadow-md border border-white/30">
+            ⏳
           </span>
+          <div className="flex flex-col">
+            <span className="bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent font-black leading-none text-lg">
+              Before the Numbers
+            </span>
+            <span className="text-[10px] text-purple-200/80 font-semibold tracking-wider uppercase leading-tight">
+              Don&apos;t wait for the diagnosis
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-5 text-sm font-semibold">
-          <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
-            Community Forum
-          </Link>
-          <Link href="/insulin-reset" className="text-purple-100 hover:text-white transition-colors">
-            Insulin Reset
-          </Link>
-          <Link href="/glycosense" className="text-purple-100 hover:text-white transition-colors">
-            GlycoSense App
+        <nav className="hidden md:flex items-center space-x-4 lg:space-x-5 text-sm font-semibold">
+          <Link href="/hidden-clock" className="text-purple-100 hover:text-white transition-colors">
+            The Hidden Clock
           </Link>
           <Link href="/learn" className="text-purple-100 hover:text-white transition-colors">
-            Learning Materials
+            Learning Hub
+          </Link>
+          <Link href="/glycosense" className="text-purple-100 hover:text-white transition-colors">
+            Tools
+          </Link>
+          <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
+            Community
+          </Link>
+          <Link
+            href="/ph"
+            className="flex items-center gap-1 text-xs font-bold text-amber-200 hover:text-amber-100 bg-amber-400/15 hover:bg-amber-400/25 px-2.5 py-1 rounded-full border border-amber-300/30 transition-all"
+          >
+            <span>🇵🇭</span>
+            <span>Pilot (PH)</span>
           </Link>
 
           {/* Header-Level Saved Library Notification Pill */}
@@ -132,10 +146,10 @@ export default function Header() {
           </button>
 
           <Link
-            href="/#resources"
+            href="/#start-here"
             className="bg-white/15 hover:bg-white text-white hover:text-indigo-900 font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-md transition-all shadow-sm"
           >
-            Free Resources
+            Start Here
           </Link>
         </nav>
 
@@ -219,6 +233,27 @@ export default function Header() {
       {isMenuOpen && (
         <nav className="md:hidden bg-slate-950/95 backdrop-blur-xl border-t border-white/10 px-4 pt-3 pb-6 space-y-3 shadow-2xl animate-fadeIn w-full">
           <Link
+            href="/hidden-clock"
+            onClick={closeMenu}
+            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            ⏱️ The Hidden Clock
+          </Link>
+          <Link
+            href="/learn"
+            onClick={closeMenu}
+            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            🎓 Learning Hub
+          </Link>
+          <Link
+            href="/glycosense"
+            onClick={closeMenu}
+            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            📱 Tools (GlycoSense)
+          </Link>
+          <Link
             href="/community"
             onClick={closeMenu}
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
@@ -226,25 +261,11 @@ export default function Header() {
             💬 Community Forum
           </Link>
           <Link
-            href="/insulin-reset"
+            href="/ph"
             onClick={closeMenu}
-            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
+            className="block py-2.5 px-3 rounded-xl text-base font-bold text-amber-200 bg-amber-400/15 border border-amber-300/30 hover:bg-amber-400/25 transition-colors"
           >
-            🧬 Insulin Reset Protocol
-          </Link>
-          <Link
-            href="/glycosense"
-            onClick={closeMenu}
-            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            📱 GlycoSense Tracker
-          </Link>
-          <Link
-            href="/learn"
-            onClick={closeMenu}
-            className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            🎓 Learning Materials
+            🇵🇭 Philippine Pilot Hub
           </Link>
           <button
             type="button"
@@ -265,11 +286,11 @@ export default function Header() {
           </button>
           <div className="pt-2">
             <Link
-              href="/#resources"
+              href="/#start-here"
               onClick={closeMenu}
               className="block text-center py-3 px-4 rounded-xl text-base font-bold bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white shadow-lg border border-white/20 active:scale-98 transition-all"
             >
-              🛠️ Free Tools &amp; Blueprints
+              Start Here
             </Link>
           </div>
         </nav>

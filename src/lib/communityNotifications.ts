@@ -56,7 +56,7 @@ export async function sendReplyNotification(
         Authorization: `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: `DiabetesCare PH Community <notifications@${SITE_CONFIG.domain}>`,
+        from: `Before the Numbers Community <notifications@${SITE_CONFIG.domain}>`,
         to: [authorEmail],
         subject: `💬 ${replierName} replied to your thread: "${threadTitle}"`,
         html: `
@@ -73,7 +73,7 @@ export async function sendReplyNotification(
             </p>
             <hr style="margin: 32px 0 16px; border: none; border-top: 1px solid #e2e8f0;" />
             <p style="font-size: 11px; color: #64748b;">
-              You received this because you opted in to reply alerts on DiabetesCare PH Community.
+              You received this because you opted in to reply alerts on Before the Numbers Community.
             </p>
           </div>
         `,

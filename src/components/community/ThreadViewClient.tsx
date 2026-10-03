@@ -7,6 +7,7 @@ import ReplyCard from './ReplyCard';
 import ReplyForm from './ReplyForm';
 import SocialShareBar from './SocialShareBar';
 import { IThread, IReply } from '@/types/community';
+import { SITE_CONFIG } from '@/config/constants';
 
 interface ThreadViewClientProps {
   thread: IThread;
@@ -72,7 +73,7 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
   const formattedDate = thread.createdAt
     ? new Date(thread.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : 'Recently';
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://diabetescareph.com/community/${thread.slug}`;
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
