@@ -10,7 +10,6 @@ import { Metadata } from 'next';
 import mongoose from 'mongoose';
 import { SITE_CONFIG } from '@/config/constants';
 import LearningHubClient from '@/components/learning/LearningHubClient';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 
@@ -189,11 +188,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const allAuthorities: IAuthority[] = rawAuthorities.map((doc: any) => ({
     ...doc,
     _id: doc._id ? doc._id.toString() : '',
-    recommendedBooks: serializeRecommendedBooks(
-      doc.recommendedBooks && doc.recommendedBooks.length > 0
-        ? doc.recommendedBooks
-        : getRecommendedBooksForAuthority(doc.slug || doc.name)
-    ),
+    recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
     lastSyncAt: doc.lastSyncAt ? new Date(doc.lastSyncAt) : undefined,
     createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,

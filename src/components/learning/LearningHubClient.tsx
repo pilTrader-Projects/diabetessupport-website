@@ -8,7 +8,6 @@ import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
-import { getAllRecommendedBooks } from '@/config/affiliateBooks';
 import {
   getSavedProtocolIds,
   saveProtocolResource,
@@ -46,7 +45,7 @@ export default function LearningHubClient({
       (a) =>
         a._id === initialAuthority ||
         a.slug === initialAuthority ||
-        a.name.toLowerCase().includes(initialAuthority.toLowerCase())
+        a.name.toLowerCase() === initialAuthority.toLowerCase()
     );
     return match?._id || 'all';
   };
@@ -57,7 +56,7 @@ export default function LearningHubClient({
       (p) =>
         p._id === initialPodcast ||
         p.slug === initialPodcast ||
-        p.name.toLowerCase().includes(initialPodcast.toLowerCase())
+        p.name.toLowerCase() === initialPodcast.toLowerCase()
     );
     return match?._id || 'all';
   };
@@ -169,9 +168,21 @@ export default function LearningHubClient({
     publishedAt: art.publishedAt || art.createdAt,
   }));
 
-  // Curated affiliate books & protocols from world-class metabolic authorities (DB-first, static fallback)
-  const authorityBooks = initialAuthorities.flatMap((a) => a.recommendedBooks || []);
-  const resourceBooks = initialResources.flatMap((r) => r.recommendedBooks || []);
+  // Curated affiliate books & protocols from world-class metabolic authorities (strictly sourced from database)
+  const authorityBooks = initialAuthorities.flatMap((a) =>
+    (a.recommendedBooks || []).map((book) => ({
+      ...book,
+      authorityId: a._id,
+      author: book.author || a.name,
+    }))
+  );
+  const resourceBooks = initialResources.flatMap((r) =>
+    (r.recommendedBooks || []).map((book) => ({
+      ...book,
+      authorityId: r.authorityId,
+      author: book.author || r.authorityName,
+    }))
+  );
   const combinedRawBooks = [...authorityBooks, ...resourceBooks];
 
   // Deduplicate by title
@@ -183,13 +194,14 @@ export default function LearningHubClient({
     return true;
   });
 
-  const booksToRender = uniqueDynamicBooks.length > 0 ? uniqueDynamicBooks : getAllRecommendedBooks();
+  const booksToRender = uniqueDynamicBooks;
 
   const affiliateBookItems: ILearningResource[] = booksToRender.map((book) => ({
     _id: book._id,
     title: book.title,
     slug: book._id || book.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     type: 'book',
+    authorityId: (book as any).authorityId,
     authorityName: book.author,
     authorityTitle: book.subtitle,
     summary: book.description,
@@ -256,27 +268,49 @@ export default function LearningHubClient({
     // Authority filter
     if (selectedAuthorityId !== 'all') {
       const selectedAuth = initialAuthorities.find((a) => a._id === selectedAuthorityId);
-      if (selectedAuth) {
-        const authNameLower = selectedAuth.name.toLowerCase();
-        const surname = selectedAuth.name.split(' ').slice(-1)[0].toLowerCase();
-        const itemAuthLower = item.authorityName.toLowerCase();
-        const matchesName =
-          itemAuthLower.includes(authNameLower) ||
-          itemAuthLower.includes(surname);
-        const matchesId = item.authorityId === selectedAuthorityId;
-        if (!matchesName && !matchesId) return false;
+      if (!selectedAuth) return false;
+
+      // If the item has an authorityId, it MUST strictly match the selected authority.
+      // This prevents cross-authority leakage (e.g. Dr. Jamnadas videos showing when Dr. Berry is selected).
+      if (item.authorityId) {
+        if (item.authorityId !== selectedAuthorityId) return false;
+      } else {
+        // Fallback name matching only when authorityId is absent (e.g. standalone articles or untagged items)
+        const cleanName = (str?: string) =>
+          (str || '')
+            .toLowerCase()
+            .replace(/\b(dr\.?|md|phd|dc|facs|prof\.?|professor|do)\b/gi, '')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        const targetClean = cleanName(selectedAuth.name);
+        const itemClean = cleanName(item.authorityName);
+
+        const matches =
+          (targetClean.length > 2 && itemClean === targetClean) ||
+          (targetClean.length > 2 && itemClean.includes(targetClean)) ||
+          (selectedAuth.aliases &&
+            selectedAuth.aliases.some((alias) => {
+              const cleanAlias = cleanName(alias);
+              return cleanAlias.length > 2 && itemClean.includes(cleanAlias);
+            }));
+
+        if (!matches) return false;
       }
     }
 
     // Podcast Channel filter
     if (selectedPodcastChannelId !== 'all') {
-      const selectedChannel = initialPodcastChannels.find((c) => c._id === selectedPodcastChannelId);
-      if (selectedChannel) {
-        const matchesChannelName =
-          item.podcastChannelName &&
-          item.podcastChannelName.toLowerCase().includes(selectedChannel.name.toLowerCase());
-        const matchesChannelId = item.podcastChannelId === selectedPodcastChannelId;
-        if (!matchesChannelName && !matchesChannelId) return false;
+      if (item.podcastChannelId) {
+        if (item.podcastChannelId !== selectedPodcastChannelId) return false;
+      } else {
+        const selectedChannel = initialPodcastChannels.find((c) => c._id === selectedPodcastChannelId);
+        if (!selectedChannel) return false;
+        const channelNameLower = selectedChannel.name.toLowerCase();
+        if (!item.podcastChannelName || !item.podcastChannelName.toLowerCase().includes(channelNameLower)) {
+          return false;
+        }
       }
     }
 

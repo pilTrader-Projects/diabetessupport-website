@@ -107,7 +107,7 @@ describe('recommendationResolver', () => {
       expect(books[0].title).toBe('The Diabetes Code');
     });
 
-    it('falls back to static registry for known author when authority has no books', () => {
+    it('returns empty array when authority has no books in database (no hardcoded fallback)', () => {
       const emptyAuthority: IAuthority = {
         ...mockAuthority,
         recommendedBooks: [],
@@ -118,9 +118,8 @@ describe('recommendationResolver', () => {
         [emptyAuthority]
       );
 
-      // Falls back to static CURATED_AFFILIATE_BOOKS which contains Bikman's "Why We Get Sick"
-      expect(books.length).toBeGreaterThan(0);
-      expect(books[0].title).toBe('Why We Get Sick');
+      // Sourced strictly from database — returns empty array if DB has no books
+      expect(books).toEqual([]);
     });
 
     it('returns empty array when neither authority nor static registry matches', () => {

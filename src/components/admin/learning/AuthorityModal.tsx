@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { IAuthority, IAffiliateRecommendation } from '@/types/learning';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 import AffiliateBookModal from './AffiliateBookModal';
 
@@ -76,10 +75,7 @@ export default function AuthorityModal({
   });
 
   const [books, setBooks] = useState<IAffiliateRecommendation[]>(() => {
-    if (!initialData) return [];
-    return (initialData.recommendedBooks && initialData.recommendedBooks.length > 0)
-      ? initialData.recommendedBooks
-      : getRecommendedBooksForAuthority(initialData.slug || initialData.name);
+    return initialData?.recommendedBooks || [];
   });
 
   useEffect(() => {
@@ -101,11 +97,8 @@ export default function AuthorityModal({
         displayOrder: initialData.displayOrder ?? 0,
       });
 
-      const existingBooks =
-        initialData.recommendedBooks && initialData.recommendedBooks.length > 0
-          ? initialData.recommendedBooks
-          : getRecommendedBooksForAuthority(initialData.slug || initialData.name);
-      setBooks(existingBooks || []);
+      const existingBooks = initialData.recommendedBooks || [];
+      setBooks(existingBooks);
     } else {
       setFormData(DEFAULT_FORM);
       setBooks([]);

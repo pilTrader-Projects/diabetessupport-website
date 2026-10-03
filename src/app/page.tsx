@@ -82,47 +82,15 @@ export default async function HomePage(): Promise<React.JSX.Element> {
     publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
   }));
 
-  const fallbackFeaturedResources = [
-    {
-      title: 'The Root Cause of Insulin Resistance & Hyperinsulinemia',
-      slug: 'the-root-cause-of-insulin-resistance',
-      type: 'video',
-      authorityName: 'Dr. Jason Fung',
-      authorityTitle: 'Nephrologist & Author',
-      duration: '18 min',
-      summary: 'Clinical breakdown explaining why standard fasting blood sugar tests miss the first 10-15 years of pancreatic hypersecretion.',
-    },
-    {
-      title: 'Reversing Type 2 Diabetes with Dietary Carbohydrate Restriction',
-      slug: 'virta-health-clinical-trial-2-year',
-      type: 'study',
-      authorityName: 'Dr. Sarah Hallberg',
-      authorityTitle: 'Clinical Trial Lead (Virta Health)',
-      duration: 'Clinical Study',
-      summary: 'Longitudinal clinical evidence demonstrating significant diabetes remission, HbA1c normalization, and medication de-prescription.',
-    },
-    {
-      title: 'The Diabetes Code: Prevent and Reverse Type 2 Naturally',
-      slug: 'the-diabetes-code-jason-fung',
-      type: 'book',
-      authorityName: 'Dr. Jason Fung',
-      authorityTitle: 'Bestselling Medical Author',
-      duration: 'Book & Protocol',
-      summary: 'Essential lifestyle blueprint explaining intermittent fasting protocols and low-glycemic dietary interventions.',
-    },
-  ];
-
-  const featuredResources = rawResources.length > 0
-    ? rawResources.map((r: any) => ({
-        title: r.title,
-        slug: r.slug,
-        type: r.type || 'video',
-        authorityName: r.authorityName || 'Medical Authority',
-        authorityTitle: r.authorityTitle || 'Clinical Specialist',
-        duration: r.duration || 'Evidence Guide',
-        summary: r.summary || 'Evidence-based metabolic health lecture and research.',
-      }))
-    : fallbackFeaturedResources;
+  const featuredResources = rawResources.map((r: any) => ({
+    title: r.title,
+    slug: r.slug,
+    type: r.type || 'video',
+    authorityName: r.authorityName || 'Medical Authority',
+    authorityTitle: r.authorityTitle || 'Clinical Specialist',
+    duration: r.duration || 'Evidence Guide',
+    summary: r.summary || 'Evidence-based metabolic health lecture and research.',
+  }));
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-20">

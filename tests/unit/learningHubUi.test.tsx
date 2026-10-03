@@ -45,6 +45,30 @@ const mockAuthority: IAuthority = {
   autoPublish: true,
   isActive: true,
   displayOrder: 1,
+  recommendedBooks: [
+    {
+      _id: 'book_bikman_1',
+      title: 'Why We Get Sick',
+      author: 'Dr. Benjamin Bikman',
+      type: 'book',
+      affiliateUrl: 'https://amazon.com/dp/bikman',
+      coverUrl: 'https://m.media-amazon.com/images/bikman.jpg',
+      badgeText: 'Essential Read',
+      platformName: 'Amazon',
+      description: 'The hidden epidemic at the root of most chronic disease.',
+    },
+    {
+      _id: 'book_fung_1',
+      title: 'The Diabetes Code',
+      author: 'Dr. Jason Fung',
+      type: 'book',
+      affiliateUrl: 'https://amazon.com/dp/fung',
+      coverUrl: 'https://m.media-amazon.com/images/fung.jpg',
+      badgeText: 'Core Protocol',
+      platformName: 'Amazon',
+      description: 'Prevent and reverse type 2 diabetes.',
+    },
+  ],
 };
 
 const mockPodcastChannel: IPodcastChannel = {
@@ -297,6 +321,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
           isOpen={true}
           onClose={jest.fn()}
           resource={mockVideoResource}
+          authorities={[mockAuthority]}
           isSaved={false}
           onToggleSave={jest.fn()}
         />
@@ -662,12 +687,29 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
   describe('AuthorityModal Component (Affiliate Books Management)', () => {
     it('renders with Curated Books & Protocols section and pre-populates authority books', () => {
+      const mockAuthorityWithBooks: IAuthority = {
+        ...mockAuthority,
+        recommendedBooks: [
+          {
+            _id: 'book_bikman_1',
+            title: 'Why We Get Sick',
+            author: 'Dr. Benjamin Bikman',
+            type: 'book',
+            affiliateUrl: 'https://amazon.com/dp/bikman',
+            coverUrl: 'https://m.media-amazon.com/images/bikman.jpg',
+            badgeText: 'Essential Read',
+            platformName: 'Amazon',
+            description: 'The hidden epidemic at the root of most chronic disease.',
+          },
+        ],
+      };
+
       const html = ReactDOMServer.renderToString(
         <AuthorityModal
           isOpen={true}
           onClose={jest.fn()}
           onSubmit={jest.fn()}
-          initialData={mockAuthority}
+          initialData={mockAuthorityWithBooks}
           submitting={false}
         />
       );
