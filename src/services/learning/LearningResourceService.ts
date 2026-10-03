@@ -11,6 +11,7 @@ import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { generateSlug } from './shared/slugUtils';
 import { serializeRecommendedBooks } from './AuthorityService';
+import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 
 export class LearningResourceService {
   public static async listResources(filter?: {
@@ -67,45 +68,59 @@ export class LearningResourceService {
     const docs = await q.lean();
 
     // Cascading Books Resolution:
-    // Identify authorityIds for resources with empty recommendedBooks
-    const authorityIdsToFetch = Array.from(
-      new Set(
-        docs
-          .filter((d: any) => !d.recommendedBooks || d.recommendedBooks.length === 0)
-          .map((d: any) => d.authorityId?.toString())
-          .filter(Boolean)
-      )
+    // Gather distinct authorityIds and authorityNames for resources without explicit books
+    const unassignedDocs = docs.filter(
+      (d: any) => !d.recommendedBooks || d.recommendedBooks.length === 0
     );
 
-    const authorityBooksById = new Map<string, IAffiliateRecommendation[]>();
-    if (authorityIdsToFetch.length > 0) {
-      const authDocs = await AuthorityModel.find({ _id: { $in: authorityIdsToFetch } }).lean();
-      for (const a of authDocs) {
-        const books = serializeRecommendedBooks(
+    const authorityIds = Array.from(
+      new Set(unassignedDocs.map((d: any) => d.authorityId?.toString()).filter(Boolean))
+    );
+    const authorityNames = Array.from(
+      new Set(unassignedDocs.map((d: any) => d.authorityName?.trim()).filter(Boolean))
+    );
+
+    let fetchedAuthorities: IAuthority[] = [];
+    if (authorityIds.length > 0 || authorityNames.length > 0) {
+      const orClauses: any[] = [];
+      if (authorityIds.length > 0) orClauses.push({ _id: { $in: authorityIds } });
+      if (authorityNames.length > 0) {
+        orClauses.push({ name: { $in: authorityNames } });
+        orClauses.push({
+          slug: { $in: authorityNames.map((n) => n.toLowerCase().replace(/\s+/g, '-')) },
+        });
+      }
+
+      const authDocs = await AuthorityModel.find({ $or: orClauses }).lean();
+      fetchedAuthorities = authDocs.map((a: any) => ({
+        ...a,
+        _id: a._id?.toString(),
+        recommendedBooks: serializeRecommendedBooks(
           a.recommendedBooks && a.recommendedBooks.length > 0
             ? a.recommendedBooks
             : getRecommendedBooksForAuthority(a.slug || a.name)
-        );
-        if (books.length > 0) {
-          authorityBooksById.set(a._id.toString(), books);
-        }
-      }
+        ),
+      })) as IAuthority[];
     }
 
     const resources = docs.map((doc: any) => {
       const explicitBooks = serializeRecommendedBooks(doc.recommendedBooks || []);
-      const inheritedBooks =
-        explicitBooks.length > 0
-          ? explicitBooks
-          : (doc.authorityId && authorityBooksById.get(doc.authorityId.toString())) ||
-            getRecommendedBooksForAuthority(doc.authorityName || doc.slug);
+      const inheritedBooks = resolveRecommendedBooks(
+        {
+          recommendedBooks: explicitBooks,
+          authorityId: doc.authorityId?.toString(),
+          authorityName: doc.authorityName,
+          slug: doc.slug,
+        },
+        fetchedAuthorities
+      );
 
       return {
         ...doc,
         _id: doc._id?.toString(),
         authorityId: doc.authorityId?.toString(),
         podcastChannelId: doc.podcastChannelId?.toString(),
-        recommendedBooks: inheritedBooks || [],
+        recommendedBooks: inheritedBooks,
       };
     }) as ILearningResource[];
 
@@ -117,21 +132,41 @@ export class LearningResourceService {
     const doc = await LearningResourceModel.findById(id).lean();
     if (!doc) return null;
 
-    let books = serializeRecommendedBooks((doc as any).recommendedBooks || []);
-    if (books.length === 0 && (doc as any).authorityId) {
-      const auth = await AuthorityModel.findById((doc as any).authorityId).lean();
-      if (auth) {
-        books = serializeRecommendedBooks(
-          (auth as any).recommendedBooks && (auth as any).recommendedBooks.length > 0
-            ? (auth as any).recommendedBooks
-            : getRecommendedBooksForAuthority((auth as any).slug || (auth as any).name)
-        );
+    const explicitBooks = serializeRecommendedBooks((doc as any).recommendedBooks || []);
+    let fetchedAuthorities: IAuthority[] = [];
+    if (explicitBooks.length === 0) {
+      const authId = (doc as any).authorityId?.toString();
+      const authName = (doc as any).authorityName;
+      const orClauses: any[] = [];
+      if (authId) orClauses.push({ _id: authId });
+      if (authName) {
+        orClauses.push({ name: authName });
+        orClauses.push({ slug: authName.toLowerCase().replace(/\s+/g, '-') });
+      }
+
+      if (orClauses.length > 0) {
+        const authDocs = await AuthorityModel.find({ $or: orClauses }).lean();
+        fetchedAuthorities = authDocs.map((a: any) => ({
+          ...a,
+          _id: a._id?.toString(),
+          recommendedBooks: serializeRecommendedBooks(
+            a.recommendedBooks && a.recommendedBooks.length > 0
+              ? a.recommendedBooks
+              : getRecommendedBooksForAuthority(a.slug || a.name)
+          ),
+        })) as IAuthority[];
       }
     }
 
-    if (books.length === 0) {
-      books = getRecommendedBooksForAuthority((doc as any).authorityName || (doc as any).slug);
-    }
+    const books = resolveRecommendedBooks(
+      {
+        recommendedBooks: explicitBooks,
+        authorityId: (doc as any).authorityId?.toString(),
+        authorityName: (doc as any).authorityName,
+        slug: (doc as any).slug,
+      },
+      fetchedAuthorities
+    );
 
     return {
       ...(doc as any),

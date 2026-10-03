@@ -162,4 +162,41 @@ describe('LearningResourceService — Authority Books Cascading', () => {
     // AuthorityModel should not even need to be fetched when resource has explicit books
     expect(AuthorityModel.findById).not.toHaveBeenCalled();
   });
+
+  it('cascades books when resource only has authorityName without authorityId (syndicated / RSS feed)', async () => {
+    const syndicatedVideo = {
+      _id: 'res_fung_syndicated',
+      title: 'YouTube RSS Syndicated Video',
+      slug: 'youtube-rss-syndicated-video',
+      type: 'video',
+      authorityId: undefined, // No foreign key
+      authorityName: 'Dr. Jason Fung',
+      recommendedBooks: [],
+    };
+
+    (LearningResourceModel.countDocuments as jest.Mock).mockResolvedValue(1);
+    (LearningResourceModel.find as jest.Mock).mockReturnValue({
+      sort: jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue([syndicatedVideo]),
+      }),
+    });
+
+    (AuthorityModel.find as jest.Mock).mockReturnValue({
+      lean: jest.fn().mockResolvedValue([
+        {
+          _id: 'auth_fung_123',
+          name: 'Dr. Jason Fung',
+          slug: 'dr-jason-fung',
+          recommendedBooks: dynamicAuthorityBooks,
+        },
+      ]),
+    });
+
+    const result = await LearningResourceService.listResources({});
+
+    expect(result.resources).toHaveLength(1);
+    const video = result.resources[0];
+    expect(video.recommendedBooks).toHaveLength(4);
+    expect(video.recommendedBooks[0].title).toBe('Initial Book From Last Week');
+  });
 });

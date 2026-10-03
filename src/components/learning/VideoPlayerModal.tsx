@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ILearningResource, IAuthority, IAffiliateRecommendation } from '@/types/learning';
+import { ILearningResource, IAuthority } from '@/types/learning';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
+import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -66,35 +66,16 @@ export default function VideoPlayerModal({
 
   if (!isOpen || !resource) return null;
 
-  // Resolve recommended books dynamically:
-  // 1. If resource has explicit recommendedBooks directly assigned, use those.
-  // 2. Otherwise, check passed authorities roster for matching authorityId or authorityName/slug.
-  // 3. Fallback to getRecommendedBooksForAuthority (curated defaults).
-  let resolvedBooks: IAffiliateRecommendation[] =
-    resource.recommendedBooks && resource.recommendedBooks.length > 0
-      ? resource.recommendedBooks
-      : [];
-
-  if (resolvedBooks.length === 0 && authorities && authorities.length > 0) {
-    const resAuthId = resource.authorityId ? String(resource.authorityId) : '';
-    const resAuthName = resource.authorityName ? resource.authorityName.trim().toLowerCase() : '';
-    const matchedAuth = authorities.find((a) => {
-      if (resAuthId && a._id && String(a._id) === resAuthId) return true;
-      if (resAuthName && a.name && a.name.trim().toLowerCase() === resAuthName) return true;
-      if (resAuthName && a.slug && a.slug.trim().toLowerCase() === resAuthName) return true;
-      if (resAuthId && a.slug && a.slug.trim().toLowerCase() === resAuthId.toLowerCase()) return true;
-      return false;
-    });
-    if (matchedAuth && matchedAuth.recommendedBooks && matchedAuth.recommendedBooks.length > 0) {
-      resolvedBooks = matchedAuth.recommendedBooks;
-    }
-  }
-
-  if (resolvedBooks.length === 0) {
-    resolvedBooks = getRecommendedBooksForAuthority(resource.authorityName || resource.authorityId);
-  }
-
-  const recommendedBooks = resolvedBooks;
+  // Single Source of Truth: Resolve recommended books via pure domain utility
+  const recommendedBooks = resolveRecommendedBooks(
+    {
+      recommendedBooks: resource.recommendedBooks,
+      authorityId: resource.authorityId,
+      authorityName: resource.authorityName,
+      slug: resource.slug,
+    },
+    authorities
+  );
 
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   
