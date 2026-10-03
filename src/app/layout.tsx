@@ -5,6 +5,7 @@ import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';
 import Header from '@/components/Header';
 import AdSenseScript from '@/components/ads/AdSenseScript';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import PwaRegister from '@/components/pwa/PwaRegister';
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/schema';
 
@@ -117,6 +118,7 @@ export default function RootLayout({
         <PwaRegister />
         <ExtensionGuard />
         <AdSenseScript />
+        <GoogleAnalytics />
         <Header />
 
         <main className="flex-grow w-full max-w-full overflow-x-clip">{children}</main>

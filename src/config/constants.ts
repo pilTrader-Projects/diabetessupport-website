@@ -88,6 +88,16 @@ export const ADSENSE_CONFIG = {
 };
 
 /**
+ * Google Analytics (gtag.js) configuration settings.
+ *
+ * @usecase Controls Google tag initialization and measurement ID across site layouts.
+ * @dependencies process.env.NEXT_PUBLIC_GA_ID.
+ */
+export const GA_CONFIG = {
+  measurementId: process.env.NEXT_PUBLIC_GA_ID || 'G-Z3316RT5Z7',
+};
+
+/**
  * Community Discussion Board & Guardrails Configuration.
  *
  * @usecase Configures forum category taxonomy, impersonation blocklists, rate limiting, and safe conditional email alerts.

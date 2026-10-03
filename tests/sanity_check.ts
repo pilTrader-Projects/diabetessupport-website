@@ -92,6 +92,7 @@ async function runSanityCheck() {
         'src/components/KitOptInForm.tsx',
         'src/components/LeadMagnetCard.tsx',
         'src/components/ads/AdSenseScript.tsx',
+        'src/components/analytics/GoogleAnalytics.tsx',
         'src/components/ads/AdUnit.tsx',
         'src/components/community/CommunityHeader.tsx',
         'src/components/community/ThreadCard.tsx',
