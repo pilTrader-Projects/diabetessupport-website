@@ -12,6 +12,7 @@ import { SITE_CONFIG } from '@/config/constants';
 import LearningHubClient from '@/components/learning/LearningHubClient';
 import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
+import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -206,16 +207,29 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
   }));
 
-  const allResources: ILearningResource[] = rawResources.map((doc: any) => ({
-    ...doc,
-    _id: doc._id ? doc._id.toString() : '',
-    authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
-    podcastChannelId: doc.podcastChannelId ? doc.podcastChannelId.toString() : undefined,
-    recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
-    publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
-    createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
-    updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
-  }));
+  const allResources: ILearningResource[] = rawResources.map((doc: any) => {
+    const directBooks = serializeRecommendedBooks(doc.recommendedBooks || []);
+    const inheritedBooks = resolveRecommendedBooks(
+      {
+        recommendedBooks: directBooks,
+        authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
+        authorityName: doc.authorityName,
+        slug: doc.slug,
+      },
+      allAuthorities
+    );
+
+    return {
+      ...doc,
+      _id: doc._id ? doc._id.toString() : '',
+      authorityId: doc.authorityId ? doc.authorityId.toString() : undefined,
+      podcastChannelId: doc.podcastChannelId ? doc.podcastChannelId.toString() : undefined,
+      recommendedBooks: inheritedBooks,
+      publishedAt: doc.publishedAt ? new Date(doc.publishedAt) : undefined,
+      createdAt: doc.createdAt ? new Date(doc.createdAt) : undefined,
+      updatedAt: doc.updatedAt ? new Date(doc.updatedAt) : undefined,
+    };
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">

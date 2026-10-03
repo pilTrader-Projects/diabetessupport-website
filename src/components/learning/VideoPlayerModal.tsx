@@ -2,14 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ILearningResource } from '@/types/learning';
+import { ILearningResource, IAuthority } from '@/types/learning';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
+import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
   onClose: () => void;
   resource: ILearningResource | null;
+  authorities?: IAuthority[];
   isSaved?: boolean;
   onToggleSave?: (id: string) => void;
 }
@@ -25,6 +26,7 @@ export default function VideoPlayerModal({
   isOpen,
   onClose,
   resource,
+  authorities,
   isSaved = false,
   onToggleSave,
 }: VideoPlayerModalProps): React.JSX.Element | null {
@@ -64,10 +66,16 @@ export default function VideoPlayerModal({
 
   if (!isOpen || !resource) return null;
 
-  const recommendedBooks =
-    resource.recommendedBooks && resource.recommendedBooks.length > 0
-      ? resource.recommendedBooks
-      : getRecommendedBooksForAuthority(resource.authorityName || resource.authorityId);
+  // Single Source of Truth: Resolve recommended books via pure domain utility
+  const recommendedBooks = resolveRecommendedBooks(
+    {
+      recommendedBooks: resource.recommendedBooks,
+      authorityId: resource.authorityId,
+      authorityName: resource.authorityName,
+      slug: resource.slug,
+    },
+    authorities
+  );
 
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   
@@ -235,7 +243,7 @@ export default function VideoPlayerModal({
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">📖</span>
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
-                    Recommended Reading by {resource.authorityName}
+                    {`Recommended Reading by ${resource.authorityName || 'Author'}`}
                   </h3>
                 </div>
                 <span className="text-[10px] uppercase font-bold text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
