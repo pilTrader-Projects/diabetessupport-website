@@ -78,33 +78,39 @@ export class YouTubeSyncService {
       context: 'authority',
     });
 
-    const allEntries: VideoEntry[] = [...entries];
-    const seenVideoIds = new Set<string>(entries.map((e) => e.videoId));
-
-    // If keywords are provided, search YouTube for specific lectures by this doctor
-    if (options?.keywords && options.keywords.length > 0) {
-      for (const kw of options.keywords) {
-        const searchQuery = `"${authority.name}" ${kw.trim()}`;
-        const searchFetch = customAiFetch || (fetchXmlFn as any);
-        const searchResults = await scrapeYouTubeSearchVideos(searchQuery, searchFetch);
-        for (const item of searchResults) {
-          if (!seenVideoIds.has(item.videoId)) {
-            seenVideoIds.add(item.videoId);
-            allEntries.push(item);
-          }
-        }
-      }
+    if (error && entries.length === 0) {
+      return { addedCount: 0, skippedCount: 0, errors: [error] };
     }
 
-    if (error && allEntries.length === 0) {
-      return { addedCount: 0, skippedCount: 0, errors: [error] };
+    // Strictly enforce channel-bound candidate selection:
+    // All candidates must originate from the authority's own channel.
+    let candidateEntries: VideoEntry[] = entries.filter((e) => {
+      // Hard boundary check: discard if channelId is specified and does not match the authority channel
+      if (e.channelId && e.channelId !== channelId) {
+        return false;
+      }
+      return true;
+    });
+
+    // If keywords/topics are specified, filter or prioritize the channel's uploads
+    if (options?.keywords && options.keywords.length > 0) {
+      const kwList = options.keywords.map((k) => k.toLowerCase().trim()).filter(Boolean);
+      if (kwList.length > 0) {
+        const filtered = candidateEntries.filter((e) => {
+          const text = `${e.title} ${e.description}`.toLowerCase();
+          return kwList.some((kw) => text.includes(kw));
+        });
+        if (filtered.length > 0) {
+          candidateEntries = filtered;
+        }
+      }
     }
 
     let addedCount = 0;
     let skippedCount = 0;
     const errors: string[] = [];
 
-    for (const entry of allEntries) {
+    for (const entry of candidateEntries) {
       try {
         const existing = await LearningResourceModel.findOne({ embedId: entry.videoId });
         if (existing) continue;
