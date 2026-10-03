@@ -9,10 +9,10 @@ import type { MetadataRoute } from 'next';
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'DiabetesCare PH — Blood Sugar Tracking & Care Portal',
-    short_name: 'DiabetesCare',
+    name: "Before the Numbers — Don't Wait for the Diagnosis",
+    short_name: 'BeforeTheNumbers',
     description:
-      'Protect your health and family income. Track blood glucose trends, food intake, and reverse insulin resistance with GlycoSense.',
+      'A health-awareness and metabolic-health education movement helping you understand early signals and trajectories before a diagnosis forces you to.',
     start_url: '/',
     id: '/',
     scope: '/',

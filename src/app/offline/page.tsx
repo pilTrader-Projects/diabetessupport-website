@@ -2,12 +2,12 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Offline Mode | DiabetesCare PH',
-  description: 'You are currently offline. Review emergency diabetes safety tips and reconnect when signal returns.',
+  title: 'Offline Mode | Before the Numbers',
+  description: 'You are currently offline. Review emergency metabolic safety tips and reconnect when signal returns.',
 };
 
 /**
- * Offline Fallback Page for DiabetesCare PH PWA.
+ * Offline Fallback Page for Before the Numbers PWA.
  *
  * @usecase Displayed by the Service Worker when a user is offline and navigates to an uncached page.
  * Provides vital offline diabetes guidance (e.g. 15-15 hypoglycemia rule).

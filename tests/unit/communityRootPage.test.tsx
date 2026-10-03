@@ -5,8 +5,9 @@
  */
 import React from 'react';
 import HomePage, { metadata as homeMetadata } from '@/app/page';
+import PhilippinePilotPage, { metadata as phMetadata } from '@/app/ph/page';
 import GlycoSensePage, { metadata as glycoSenseMetadata } from '@/app/glycosense/page';
-import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema } from '@/lib/schema';
+import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema, buildOrganizationSchema } from '@/lib/schema';
 
 jest.mock('@/lib/dbConnect', () => ({
   dbConnect: jest.fn().mockResolvedValue(true),
@@ -57,28 +58,43 @@ jest.mock('@/models/LearningResource', () => ({
 
 describe('Organic Community Root Page & Schemas (Milestone 10)', () => {
   describe('HomePage Component & Metadata', () => {
-    it('exports fully-qualified SEO/AEO metadata', () => {
-      expect(homeMetadata.title).toContain('DiabetesCare PH');
-      expect(homeMetadata.title).toContain('Free Metabolic Health');
-      expect(homeMetadata.description).toContain('mission-driven community hub');
-      expect(homeMetadata.keywords).toContain('diabetes support philippines');
-      expect(homeMetadata.keywords).toContain('RA 10173 medical privacy');
+    it('exports fully-qualified SEO/AEO metadata for Before the Numbers', () => {
+      expect(homeMetadata.title).toContain('Before the Numbers');
+      expect(homeMetadata.title).toContain("Don't Wait for the Diagnosis");
+      expect(homeMetadata.description).toContain('Before the Numbers');
+      expect(homeMetadata.keywords).toContain('before the numbers');
+      expect(homeMetadata.keywords).toContain('the hidden metabolic clock');
     });
 
-    it('renders the organic community hub JSX structure', async () => {
+    it('renders the organic master brand homepage JSX structure', async () => {
       const element = await HomePage();
       expect(element).toBeDefined();
       expect(element.type).toBe('div');
     });
   });
 
+  describe('PhilippinePilotPage Component & Metadata (/ph)', () => {
+    it('exports fully-qualified Philippine metadata', () => {
+      expect(phMetadata.title).toContain('Before the Numbers — Philippines');
+      expect(phMetadata.description).toContain('Philippine edition of Before the Numbers');
+      expect(phMetadata.keywords).toContain('diabetes support philippines');
+      expect(phMetadata.keywords).toContain('RA 10173 medical privacy');
+    });
+
+    it('renders the Philippine pilot JSX structure', async () => {
+      const element = await PhilippinePilotPage();
+      expect(element).toBeDefined();
+      expect(element.type).toBe('div');
+    });
+  });
+
   describe('MedicalOrganization & FAQPage Structured Data (GEO/AEO)', () => {
-    it('generates institutional MedicalOrganization schema with Philippine address', () => {
+    it('generates institutional MedicalOrganization schema with Philippine address for pilot', () => {
       const orgSchema = buildHomeMedicalOrgSchema();
 
       expect(orgSchema['@context']).toBe('https://schema.org');
       expect(orgSchema['@type']).toBe('MedicalOrganization');
-      expect(orgSchema.name).toBe('DiabetesCare PH');
+      expect(orgSchema.name).toContain('Before the Numbers');
       expect(orgSchema.address?.addressCountry).toBe('PH');
     });
 

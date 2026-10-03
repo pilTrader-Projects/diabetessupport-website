@@ -13,12 +13,13 @@ import { buildSoftwareAppSchema } from '@/lib/schema';
 export const revalidate = 60; // Refresh static page every 60 seconds
 
 export const metadata: Metadata = {
-  title: `GlycoSense | Free Manual Blood Sugar Tracking Dashboard for Filipino Providers`,
+  title: `GlycoSense | Free Glucose & Metabolic Tracking Companion | Before the Numbers`,
   description:
-    'Turn simple, budget-friendly manual finger-prick logs and blood pressure checks into clear, actionable health trends that help you and your doctor safeguard your health.',
+    'Turn simple, budget-friendly manual finger-prick logs and blood pressure checks into clear, actionable health trends within the Before the Numbers framework.',
   keywords: [
     'GlycoSense',
-    'blood sugar tracker philippines',
+    'before the numbers tools',
+    'blood sugar tracker',
     'manual glucose log app',
     'free diabetes dashboard',
     'doctor ready health report',
@@ -28,18 +29,18 @@ export const metadata: Metadata = {
     canonical: `https://${SITE_CONFIG.domain}/glycosense`,
   },
   openGraph: {
-    title: 'GlycoSense | Zero-Cost Preventive Blood Sugar Dashboard',
+    title: 'GlycoSense | Free Metabolic Tracking Companion',
     description:
-      'Turn everyday finger-prick logs into actionable health trends to share with your physician. Free for family providers.',
+      'Turn everyday finger-prick logs into actionable health trends to share with your physician. Free companion tool by Before the Numbers.',
     url: `https://${SITE_CONFIG.domain}/glycosense`,
-    siteName: SITE_CONFIG.title,
+    siteName: SITE_CONFIG.author,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GlycoSense — Preventive Blood Sugar Dashboard',
+    title: 'GlycoSense — Companion Health Dashboard',
     description:
-      'Turn everyday manual glucose tests into clear, doctor-ready trends without expensive continuous monitors.',
+      'Turn everyday manual glucose tests into clear, doctor-ready trends without expensive subscriptions.',
   },
 };
 

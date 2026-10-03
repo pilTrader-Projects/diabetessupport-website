@@ -35,7 +35,7 @@ export default function SubscribePage() {
 
       {/* Main Opt-In Form Card */}
       <KitOptInForm
-        title="Join the DiabetesCare PH Newsletter"
+        title="Join the Before the Numbers Newsletter"
         subtitle="Receive our latest educational guides, blood sugar management strategies, and exclusive downloadable resources."
         buttonText="Subscribe Now (Free)"
         layout="card"

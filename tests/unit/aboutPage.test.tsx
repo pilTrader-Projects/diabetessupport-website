@@ -15,7 +15,7 @@ describe('AboutPage & Founder Story Flow', () => {
       const html = ReactDOMServer.renderToString(<AboutPage />);
 
       expect(html).toContain('Protecting Filipino Families from the Silent Threat of Diabetes');
-      expect(html).toContain('Why DiabetesCare PH Exists');
+      expect(html).toContain('Why Before the Numbers Exists');
       expect(html).toContain('silent financial and emotional catastrophe');
       expect(html).toContain('Earlier Awareness');
       expect(html).toContain('Evidence-Based &amp; Local');
@@ -38,11 +38,11 @@ describe('AboutPage & Founder Story Flow', () => {
       expect(html).toContain('Why We Started This Mission');
     });
 
-    it('renders JSON-LD MedicalOrganization structured data', () => {
+    it('renders JSON-LD EducationalOrganization structured data', () => {
       const html = ReactDOMServer.renderToString(<AboutPage />);
       expect(html).toContain('application/ld+json');
-      expect(html).toContain('MedicalOrganization');
-      expect(html).toContain('DiabetesCare PH');
+      expect(html).toContain('EducationalOrganization');
+      expect(html).toContain('Before the Numbers');
     });
 
     it('renders numerical stats with clickable annotations and legitimate reference citations', () => {

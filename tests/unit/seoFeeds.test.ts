@@ -8,6 +8,7 @@ import { GET as getSitemap } from '../../src/app/sitemap.xml/route';
 import { GET as getRssFeed } from '../../src/app/feed.xml/route';
 import { PostModel } from '../../src/models/Post';
 import { Thread } from '../../src/models/Thread';
+import { SITE_CONFIG } from '../../src/config/constants';
 
 jest.mock('../../src/lib/dbConnect', () => ({
   dbConnect: jest.fn().mockResolvedValue(true),
@@ -81,18 +82,19 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(response.headers.get('content-type')).toContain('xml');
       expect(xmlText).toContain('<?xml version="1.0" encoding="UTF-8"?>');
       expect(xmlText).toContain('<urlset');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/learn</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/community</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/glycosense</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/guides/cheatsheet</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/privacy-policy</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/terms-of-service</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/about</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/contact</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/learn/understanding-insulin-resistance-early</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/learn/warning-signs-of-high-blood-sugar</loc>');
-      expect(xmlText).toContain('<loc>https://diabetescareph.com/community/fasting-glucose-tips</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/ph</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/learn</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/community</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/glycosense</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/guides/cheatsheet</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/privacy-policy</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/terms-of-service</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/about</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/contact</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/learn/understanding-insulin-resistance-early</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/learn/warning-signs-of-high-blood-sugar</loc>');
+      expect(xmlText).toContain('<loc>https://beforethenumbers.org/community/fasting-glucose-tips</loc>');
     });
   });
 
@@ -111,9 +113,9 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toContain('xml');
       expect(xmlText).toContain('<rss version="2.0"');
-      expect(xmlText).toContain('<title>DiabetesCare PH - Educational &amp; Awareness Campaign for Diabetes Care</title>');
+      expect(xmlText).toContain('<title>Before the Numbers - Don&apos;t Wait for the Diagnosis</title>');
       expect(xmlText).toContain('<title>Understanding Insulin Resistance Early</title>');
-      expect(xmlText).toContain('<link>https://diabetescareph.com/learn/understanding-insulin-resistance-early</link>');
+      expect(xmlText).toContain(`<link>https://${SITE_CONFIG.domain}/learn/understanding-insulin-resistance-early</link>`);
     });
   });
 });

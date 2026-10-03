@@ -18,17 +18,25 @@ export interface AwarenessPillar {
  * @dependencies None. Centralized single source of truth for site configuration.
  */
 export const SITE_CONFIG = {
-  title: 'DiabetesCare PH - Educational & Awareness Campaign for Diabetes Care',
+  title: "Before the Numbers - Don't Wait for the Diagnosis",
   description:
-    'Protect your family and income from diabetes. Learn the vital numbers, manual tracking advantage, and reverse insulin resistance naturally.',
-  domain: process.env.NEXT_PUBLIC_SITE_URL || 'diabetescareph.com',
+    'Before the Numbers is a health-awareness and metabolic-health education movement helping you understand early signals and trajectories before a diagnosis forces you to.',
+  domain:
+    process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes('localhost')
+      ? process.env.NEXT_PUBLIC_SITE_URL.replace(/^https?:\/\//, '')
+      : 'beforethenumbers.org',
   wordpressApiUrl:
     process.env.WORDPRESS_API_URL ||
     'https://public-api.wordpress.com/wp/v2/sites/diabetescareph.wordpress.com',
-  author: 'DiabetesCare PH',
+  author: 'Before the Numbers',
+  brand: {
+    master: 'Before the Numbers',
+    tagline: "Don't wait for the diagnosis.",
+    flagshipFramework: 'The Hidden Metabolic Clock',
+  },
   social: {
-    facebook: 'https://facebook.com/diabetescareph',
-    twitter: 'https://twitter.com/diabetescareph',
+    facebook: 'https://facebook.com/beforethenumbers',
+    twitter: 'https://twitter.com/beforethenumbers',
   },
 };
 
@@ -80,6 +88,16 @@ export const ADSENSE_CONFIG = {
 };
 
 /**
+ * Google Analytics (gtag.js) configuration settings.
+ *
+ * @usecase Controls Google tag initialization and measurement ID across site layouts.
+ * @dependencies process.env.NEXT_PUBLIC_GA_ID.
+ */
+export const GA_CONFIG = {
+  measurementId: process.env.NEXT_PUBLIC_GA_ID || 'G-Z3316RT5Z7',
+};
+
+/**
  * Community Discussion Board & Guardrails Configuration.
  *
  * @usecase Configures forum category taxonomy, impersonation blocklists, rate limiting, and safe conditional email alerts.
@@ -94,6 +112,8 @@ export const COMMUNITY_CONFIG = {
   reservedAliases: [
     'admin',
     'moderator',
+    'before the numbers',
+    'beforethenumbers',
     'diabetescare',
     'diabetescare ph',
     'doctor',

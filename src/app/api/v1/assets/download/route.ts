@@ -111,7 +111,7 @@ function createErrorResponse(
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${title} | DiabetesCare PH</title>
+  <title>${title} | Before the Numbers</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #020617; color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box; }
     .card { max-width: 480px; width: 100%; background: #0f172a; border: 1px solid #1e293b; border-radius: 1.25rem; padding: 2rem; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
@@ -127,7 +127,7 @@ function createErrorResponse(
     <div class="badge">Security Notice</div>
     <h1>${title}</h1>
     <p>${message}</p>
-    <a href="/">&larr; Return to DiabetesCare PH</a>
+    <a href="/">&larr; Return to Before the Numbers</a>
   </div>
 </body>
 </html>`;

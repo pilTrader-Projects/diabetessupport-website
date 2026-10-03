@@ -26,15 +26,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   if (!post) {
-    return { title: 'Article Not Found | DiabetesCare PH' };
+    return { title: 'Article Not Found | Before the Numbers' };
   }
 
   const title = (post.title || '').replace(/&nbsp;/g, ' ');
-  const description = post.excerpt || post.metaDescription || 'Educational guide on diabetes care.';
+  const description = post.excerpt || post.metaDescription || 'Educational guide on metabolic health.';
   const pageUrl = `https://${SITE_CONFIG.domain}/learn/${slug}`;
 
   return {
-    title: `${title} | DiabetesCare PH`,
+    title: `${title} | Before the Numbers`,
     description,
     alternates: {
       canonical: `/learn/${slug}`,
@@ -127,7 +127,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </h1>
           {formattedDate && (
             <p className="text-sm font-semibold text-slate-500">
-              Published on <time dateTime={post.publishedAt.toString()}>{formattedDate}</time> • DiabetesCare PH Team
+              Published on <time dateTime={post.publishedAt.toString()}>{formattedDate}</time> • Before the Numbers Team
             </p>
           )}
         </header>

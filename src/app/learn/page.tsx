@@ -249,7 +249,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
       {/* RSS & Sitemap Links Footer Banner */}
       <div className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
         <div>
-          <span>DiabetesCare PH Educational Campaign &amp; Learning Hub</span>
+          <span>Before the Numbers Educational Movement &amp; Learning Hub</span>
         </div>
         <div className="flex items-center space-x-4">
           <a

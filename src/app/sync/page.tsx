@@ -74,7 +74,7 @@ function SyncContent() {
             Device Synchronization
           </h1>
           <p className="text-xs text-slate-500">
-            DiabetesCare PH Zero-Password Identity Transfer
+            Before the Numbers Zero-Password Identity Transfer
           </p>
         </div>
 
