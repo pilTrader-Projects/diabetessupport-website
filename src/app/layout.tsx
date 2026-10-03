@@ -131,7 +131,7 @@ export default function RootLayout({
               <Link href="/hidden-clock" className="hover:text-white transition-colors">The Hidden Clock</Link>
               <Link href="/learn" className="hover:text-white transition-colors">Learning Hub</Link>
               <Link href="/glycosense" className="hover:text-white transition-colors">Tools</Link>
-              <Link href="/ph" className="hover:text-white text-amber-300 font-black transition-colors">🇵🇭 Philippine Pilot</Link>
+              <Link href="/ph" className="hover:text-white transition-colors">Philippines (PH)</Link>
               <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
               <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
@@ -145,7 +145,7 @@ export default function RootLayout({
               <strong className="text-white">Medical Disclaimer:</strong> Before the Numbers is an independent health awareness and educational movement. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your individual health conditions.
             </p>
             <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
-              <strong className="text-white">Data Privacy &amp; Security Notice:</strong> Health metrics and logs entered across our companion tools are encrypted, strictly owned by you, and utilized exclusively for generating your personal summaries and doctor-ready reports. In our Philippine pilot operations, data handling adheres to Republic Act No. 10173 (Philippine Data Privacy Act of 2012). We never sell, rent, or disclose your health data to third parties, advertisers, or insurers.
+              <strong className="text-white">Data Privacy &amp; Security Notice:</strong> Health metrics and logs entered across our companion tools are encrypted, strictly owned by you, and utilized exclusively for generating your personal summaries and doctor-ready reports. In the Philippines, data handling adheres to Republic Act No. 10173 (Philippine Data Privacy Act of 2012). We never sell, rent, or disclose your health data to third parties, advertisers, or insurers.
             </p>
           </div>
         </footer>

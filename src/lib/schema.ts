@@ -258,12 +258,12 @@ export function buildHomeMedicalOrgSchema(): Record<string, any> {
   return {
     '@context': 'https://schema.org',
     '@type': 'MedicalOrganization',
-    name: 'Before the Numbers (Philippine Pilot)',
+    name: 'Before the Numbers (Philippines)',
     alternateName: 'Before the Numbers PH',
     url: `https://${SITE_CONFIG.domain}/ph`,
     logo: `https://${SITE_CONFIG.domain}/images/logo.png`,
     description:
-      'The Philippine pilot hub of Before the Numbers, providing complimentary lifestyle tools and predictive metabolic frameworks to counter chronic disease vectors within the Philippines.',
+      'The Philippine edition of Before the Numbers, providing complimentary lifestyle tools and predictive metabolic frameworks to counter chronic disease vectors within the Philippines.',
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'PH',

@@ -37,8 +37,8 @@ export default function PrivacyPolicyPage() {
         <h2 className="text-xl font-bold text-slate-900">1. Commitment to Health Data Confidentiality</h2>
         <p>
           At <strong>Before the Numbers</strong> ({SITE_CONFIG.domain}), we understand that personal glucose levels,
-          blood pressure logs, and medical histories represent <em>Sensitive Personal Information</em>. In our Philippine
-          pilot operations, we adhere strictly to the <strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173)</strong>,
+          blood pressure logs, and medical histories represent <em>Sensitive Personal Information</em>. In the Philippines,
+          we adhere strictly to the <strong>Philippine Data Privacy Act of 2012 (Republic Act No. 10173)</strong>,
           as well as international data protection principles. We guarantee that your personal logs are encrypted, strictly
           owned by you, and never sold, rented, or leased to third-party insurers, advertisers, or brokers.
         </p>

@@ -77,7 +77,7 @@ export default function AboutPage() {
         </p>
         <p>
           <strong>Before the Numbers</strong> (founded from our grassroots Philippine advocacy, DiabetesCare PH) was established to bridge the awareness gap by offering free, evidence-based,
-          and practical education. While piloted in the Philippine context—addressing staple dietary habits (like white rice,
+          and practical education. While rooted in the Philippine context—addressing staple dietary habits (like white rice,
           pancit, and merienda)
           <a
             href="#ref-fnri"

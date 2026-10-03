@@ -137,30 +137,6 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       />
 
       {/* ========================================================================= */}
-      {/* PHILIPPINE PILOT NOTICE BANNER                                            */}
-      {/* ========================================================================= */}
-      <div className="bg-gradient-to-r from-amber-500/10 via-amber-400/20 to-orange-500/10 border border-amber-300/60 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3 text-center sm:text-left">
-          <span className="text-2xl p-2 bg-amber-400/20 rounded-xl border border-amber-300/40">🇵🇭</span>
-          <div>
-            <p className="text-xs font-black text-amber-950 uppercase tracking-wider">
-              Currently Piloting in the Philippines
-            </p>
-            <p className="text-xs sm:text-sm text-slate-700 leading-snug">
-              Looking for Philippine metabolic statistics, regional food triggers, and family wealth protection guides?
-            </p>
-          </div>
-        </div>
-        <Link
-          href="/ph"
-          className="whitespace-nowrap px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-all hover:scale-105 flex items-center gap-1.5 cursor-pointer border border-amber-500/30"
-        >
-          <span>Explore Philippine Pilot</span>
-          <span>&rarr;</span>
-        </Link>
-      </div>
-
-      {/* ========================================================================= */}
       {/* SECTION 1: MASTER BRAND HERO                                              */}
       {/* ========================================================================= */}
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-2 sm:pt-4">

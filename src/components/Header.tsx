@@ -117,13 +117,6 @@ export default function Header() {
           <Link href="/community" className="text-purple-100 hover:text-white transition-colors">
             Community
           </Link>
-          <Link
-            href="/ph"
-            className="flex items-center gap-1 text-xs font-bold text-amber-200 hover:text-amber-100 bg-amber-400/15 hover:bg-amber-400/25 px-2.5 py-1 rounded-full border border-amber-300/30 transition-all"
-          >
-            <span>🇵🇭</span>
-            <span>Pilot (PH)</span>
-          </Link>
 
           {/* Header-Level Saved Library Notification Pill */}
           <button
@@ -259,13 +252,6 @@ export default function Header() {
             className="block py-2.5 px-3 rounded-xl text-base font-semibold text-purple-100 hover:text-white hover:bg-white/10 transition-colors"
           >
             💬 Community Forum
-          </Link>
-          <Link
-            href="/ph"
-            onClick={closeMenu}
-            className="block py-2.5 px-3 rounded-xl text-base font-bold text-amber-200 bg-amber-400/15 border border-amber-300/30 hover:bg-amber-400/25 transition-colors"
-          >
-            🇵🇭 Philippine Pilot Hub
           </Link>
           <button
             type="button"

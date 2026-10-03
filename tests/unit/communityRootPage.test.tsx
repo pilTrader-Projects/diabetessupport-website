@@ -74,9 +74,9 @@ describe('Organic Community Root Page & Schemas (Milestone 10)', () => {
   });
 
   describe('PhilippinePilotPage Component & Metadata (/ph)', () => {
-    it('exports fully-qualified Philippine pilot metadata', () => {
-      expect(phMetadata.title).toContain('Before the Numbers Philippines');
-      expect(phMetadata.description).toContain('Philippine pilot hub');
+    it('exports fully-qualified Philippine metadata', () => {
+      expect(phMetadata.title).toContain('Before the Numbers — Philippines');
+      expect(phMetadata.description).toContain('Philippine edition of Before the Numbers');
       expect(phMetadata.keywords).toContain('diabetes support philippines');
       expect(phMetadata.keywords).toContain('RA 10173 medical privacy');
     });

@@ -10,9 +10,9 @@ import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema } from '@/lib/sc
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Before the Numbers Philippines (PH Pilot) | Preventative Metabolic Health for Filipino Families',
+  title: 'Before the Numbers — Philippines | Preventative Metabolic Health for Filipino Families',
   description:
-    'The Philippine pilot hub of Before the Numbers. Empowering Filipino breadwinners and families with ancestral nutrition blueprints, early metabolic warning signs, and zero-cost tracking tools before diagnosis strikes.',
+    'The Philippine edition of Before the Numbers. Empowering Filipino breadwinners and families with ancestral nutrition blueprints, early metabolic warning signs, and zero-cost tracking tools before diagnosis strikes.',
   keywords: [
     'before the numbers philippines',
     'diabetes support philippines',
@@ -27,27 +27,27 @@ export const metadata: Metadata = {
     canonical: `https://${SITE_CONFIG.domain}/ph`,
   },
   openGraph: {
-    title: 'Before the Numbers Philippines (PH Pilot) | Preventative Metabolic Health',
+    title: 'Before the Numbers — Philippines | Preventative Metabolic Health',
     description:
       'Empowering Filipino breadwinners with free ancestral nutrition guides, community support, and zero-cost blood sugar tracking.',
     url: `https://${SITE_CONFIG.domain}/ph`,
-    siteName: 'Before the Numbers PH Pilot',
+    siteName: 'Before the Numbers Philippines',
     locale: 'en_PH',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Before the Numbers Philippines (PH Pilot)',
+    title: 'Before the Numbers — Philippines',
     description:
-      'Join our Philippine pilot protecting Filipino family wealth through preventative metabolic health and early awareness.',
+      'Protecting Filipino family wealth through preventative metabolic health and early awareness.',
   },
 };
 
 /**
- * Philippine Pilot Hub Page (/ph).
+ * Philippines Regional Page (/ph).
  *
- * @usecase Dedicated regional hub for the Philippine pilot of Before the Numbers, providing local metabolic reality statistics, culturally familiar food context, ancestral nutrition guides, and breadwinner wealth protection.
- * @returns {Promise<JSX.Element>} Rendered Philippine pilot page.
+ * @usecase Dedicated regional hub for Before the Numbers Philippines, providing local metabolic reality statistics, culturally familiar food context, ancestral nutrition guides, and breadwinner wealth protection.
+ * @returns {Promise<JSX.Element>} Rendered Philippine edition page.
  */
 export default async function PhilippinePilotPage(): Promise<React.JSX.Element> {
   const orgSchema = buildHomeMedicalOrgSchema();
@@ -136,7 +136,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-8">
         <div className="inline-flex items-center gap-2 bg-amber-50 text-amber-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-amber-300 shadow-xs">
           <span>🇵🇭</span>
-          <span>Philippine Pilot Hub &bull; Before the Numbers</span>
+          <span>Before the Numbers &bull; Philippines</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight sm:leading-none">
@@ -147,7 +147,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
         </h1>
 
         <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal">
-          Before the Numbers is piloting its grassroots health awareness movement in the Philippines. We empower Filipino breadwinners, families, and caregivers with practical ancestral nutrition blueprints, local food trigger guides, and free tracking tools—before a diagnosis forces unexpected hardship.
+          Before the Numbers provides dedicated health awareness and practical metabolic education for the Philippines. We empower Filipino breadwinners, families, and caregivers with practical ancestral nutrition blueprints, local food trigger guides, and free tracking tools—before a diagnosis forces unexpected hardship.
         </p>
 
         {/* CTA Buttons */}
@@ -156,7 +156,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
             href="#resources"
             className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-700 cursor-pointer"
           >
-            <span>Explore Pilot Resources</span>
+            <span>Explore Resources</span>
             <span className="text-lg">&darr;</span>
           </a>
           <Link
@@ -169,7 +169,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
         </div>
 
         <p className="text-xs text-slate-500 pt-1">
-          Philippine Regional Pilot • 100% Free Forever • Global movement: <Link href="/" className="underline text-teal-700 font-semibold hover:text-teal-900">Before the Numbers Home</Link>
+          Philippines Edition • 100% Free Forever • Global Movement: <Link href="/" className="underline text-teal-700 font-semibold hover:text-teal-900">Before the Numbers Home</Link>
         </p>
       </section>
 
@@ -251,7 +251,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
       <section id="resources" className="scroll-mt-12 space-y-8">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <span className="inline-block bg-indigo-50 text-indigo-900 text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-full border border-indigo-200">
-            🛠️ Pilot Tools &amp; Actionable Blueprints
+            🛠️ Actionable Tools &amp; Blueprints
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Free Community Tools &amp; Actionable Blueprints
@@ -388,7 +388,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
             ❓ Common Questions
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Frequently Asked Questions &bull; Philippines Pilot
+            Frequently Asked Questions &bull; Philippines
           </h2>
           <p className="text-sm text-slate-600">
             Answers for Filipino patients, family breadwinners, and caregivers.
