@@ -7,7 +7,6 @@
 import { dbConnect } from '@/lib/dbConnect';
 import { AuthorityModel } from '@/models/Authority';
 import { IAuthority, IAffiliateRecommendation } from '@/types/learning';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
 import { generateSlug } from './shared/slugUtils';
 import { resolveYouTubeChannelId } from './shared/feedFetcher';
@@ -43,11 +42,7 @@ export class AuthorityService {
     return authorities.map((doc: any) => ({
       ...doc,
       _id: doc._id?.toString(),
-      recommendedBooks: serializeRecommendedBooks(
-        doc.recommendedBooks?.length > 0
-          ? doc.recommendedBooks
-          : getRecommendedBooksForAuthority(doc.slug || doc.name)
-      ),
+      recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
     })) as IAuthority[];
   }
 
@@ -59,11 +54,7 @@ export class AuthorityService {
     return {
       ...doc,
       _id: doc._id?.toString(),
-      recommendedBooks: serializeRecommendedBooks(
-        doc.recommendedBooks?.length > 0
-          ? doc.recommendedBooks
-          : getRecommendedBooksForAuthority(doc.slug || doc.name)
-      ),
+      recommendedBooks: serializeRecommendedBooks(doc.recommendedBooks || []),
     };
   }
 

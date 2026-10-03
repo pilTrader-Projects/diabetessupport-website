@@ -6,7 +6,6 @@
  * Conforms to DRY and Single Responsibility Principles.
  */
 import { IAuthority, IAffiliateRecommendation, ILearningResource } from '@/types/learning';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 
 export interface ResourceRecommendationIdentifier {
   recommendedBooks?: IAffiliateRecommendation[];
@@ -71,9 +70,9 @@ export function matchAuthority(
  * Resolves the final list of recommended books for a given resource.
  *
  * Cascade Priority:
- * 1. Explicit books directly assigned to the resource (overrides).
- * 2. Dynamic books from the matched parent Authority in MongoDB.
- * 3. Curated static registry fallback from affiliateBooks config.
+ * 1. Explicit books directly assigned to the resource in MongoDB.
+ * 2. Dynamic books cascaded from matched Authority in MongoDB.
+ * 3. Empty array if none registered (database is the sole source of truth).
  */
 export function resolveRecommendedBooks(
   resource: ResourceRecommendationIdentifier | Partial<ILearningResource>,
@@ -84,7 +83,7 @@ export function resolveRecommendedBooks(
     return resource.recommendedBooks;
   }
 
-  // 2. Dynamic books cascaded from matched Authority
+  // 2. Dynamic books cascaded from matched Authority in MongoDB
   if (authorities && authorities.length > 0) {
     const matched = matchAuthority(resource, authorities);
     if (matched && matched.recommendedBooks && matched.recommendedBooks.length > 0) {
@@ -92,6 +91,6 @@ export function resolveRecommendedBooks(
     }
   }
 
-  // 3. Fallback to curated static registry
-  return getRecommendedBooksForAuthority(resource.authorityName || resource.authorityId);
+  // Database is the sole source of truth — no hardcoded fallback
+  return [];
 }

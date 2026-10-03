@@ -8,7 +8,6 @@ import { LearningResourceModel } from '@/models/LearningResource';
 import { AuthorityModel } from '@/models/Authority';
 import { ILearningResource, IAffiliateRecommendation, IAuthority } from '@/types/learning';
 import { ensureAffiliateUrl } from '@/lib/affiliateUtils';
-import { getRecommendedBooksForAuthority } from '@/config/affiliateBooks';
 import { generateSlug } from './shared/slugUtils';
 import { serializeRecommendedBooks } from './AuthorityService';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
@@ -95,11 +94,7 @@ export class LearningResourceService {
       fetchedAuthorities = authDocs.map((a: any) => ({
         ...a,
         _id: a._id?.toString(),
-        recommendedBooks: serializeRecommendedBooks(
-          a.recommendedBooks && a.recommendedBooks.length > 0
-            ? a.recommendedBooks
-            : getRecommendedBooksForAuthority(a.slug || a.name)
-        ),
+        recommendedBooks: serializeRecommendedBooks(a.recommendedBooks || []),
       })) as IAuthority[];
     }
 
@@ -149,11 +144,7 @@ export class LearningResourceService {
         fetchedAuthorities = authDocs.map((a: any) => ({
           ...a,
           _id: a._id?.toString(),
-          recommendedBooks: serializeRecommendedBooks(
-            a.recommendedBooks && a.recommendedBooks.length > 0
-              ? a.recommendedBooks
-              : getRecommendedBooksForAuthority(a.slug || a.name)
-          ),
+          recommendedBooks: serializeRecommendedBooks(a.recommendedBooks || []),
         })) as IAuthority[];
       }
     }
