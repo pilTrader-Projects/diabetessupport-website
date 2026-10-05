@@ -75,7 +75,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #50](https://github.com/pilTrader-Projects/diabetessupport-website/pull/50)** `[COMPLETED]`: Elevate `/learn` to a pure curation index with 3-layer bylines (Primary Authority + Editorial Desk + Medical Reviewer), `MedicalWebPage` & `VideoObject` JSON-LD schemas, evidence level badges, and privacy-sandboxed `youtube-nocookie.com` embeds (Closes Issue #44).
 
 ### Milestone 20: Trust & Compliance - Trust Pages Suite & Privacy Realignment
-- [ ] **[Issue #45](https://github.com/pilTrader-Projects/diabetessupport-website/issues/45)** `[IN PROGRESS]`: Deploy core trust pages (`/editorial-policy` with 3-layer authority curation standards, `/corrections`, updated `/about` governance transparency), and realign privacy copy to match actual local browser storage and anonymous 6-digit sync PIN architecture.
+- [x] **[PR #51](https://github.com/pilTrader-Projects/diabetessupport-website/pull/51)** `[COMPLETED]`: Deploy core trust pages (`/editorial-policy` with 3-layer authority curation standards, `/corrections`, updated `/about` governance transparency), realign privacy copy to match actual local browser storage and anonymous 6-digit sync PIN architecture, and enforce strict zero-assumption affiliate link policy (Closes Issue #45).
 
 ### Milestone 21: Product & Regulatory - Accelerate MetricPace Rebrand & Localization
 - [ ] **[Issue #46](https://github.com/pilTrader-Projects/diabetessupport-website/issues/46)** `[READY / PLANNED]`: Deprecate clinical naming overlaps (`GlycoSense`) in favor of `MetricPace` lifestyle companion ledger, deploy SaMD non-diagnostic safe harbor notices, and complete reciprocal `hreflang` localization on `/ph`.
