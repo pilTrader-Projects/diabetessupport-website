@@ -109,6 +109,7 @@ async function runSanityCheck() {
         'src/components/community/SyncDeviceModal.tsx',
         'src/components/community/CommunityFeedClient.tsx',
         'src/components/community/ThreadViewClient.tsx',
+        'src/components/community/MarkdownContent.tsx',
         'src/app/community/page.tsx',
         'src/app/community/[slug]/page.tsx',
         'src/components/home/HeroSection.tsx',

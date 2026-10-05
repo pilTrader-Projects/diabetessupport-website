@@ -1,4 +1,5 @@
 import React from 'react';
+import MarkdownContent from './MarkdownContent';
 import { IReply } from '@/types/community';
 
 interface ReplyCardProps {
@@ -39,8 +40,8 @@ export default function ReplyCard({ reply, isOp, isYou }: ReplyCardProps) {
         </div>
         <span className="text-slate-400">{formattedDate}</span>
       </div>
-      <div className="text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-        {reply.content}
+      <div className="text-slate-700 text-sm leading-relaxed">
+        <MarkdownContent content={reply.content} />
       </div>
     </div>
   );

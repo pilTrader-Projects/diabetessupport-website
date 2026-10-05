@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { IThread } from '@/types/community';
+import { stripMarkdown } from './MarkdownContent';
 
 interface ThreadCardProps {
   thread: IThread;
@@ -37,7 +38,7 @@ export default function ThreadCard({ thread }: ThreadCardProps) {
         </h2>
 
         <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
-          {thread.content.replace(/<[^>]*>?/gm, '')}
+          {stripMarkdown(thread.content)}
         </p>
       </div>
 

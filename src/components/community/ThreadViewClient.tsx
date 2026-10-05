@@ -6,6 +6,7 @@ import AdUnit from '@/components/ads/AdUnit';
 import ReplyCard from './ReplyCard';
 import ReplyForm from './ReplyForm';
 import SocialShareBar from './SocialShareBar';
+import MarkdownContent from './MarkdownContent';
 import { IThread, IReply } from '@/types/community';
 import { SITE_CONFIG } from '@/config/constants';
 
@@ -143,9 +144,7 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
           {thread.title}
         </h1>
 
-        <div className="text-slate-700 leading-relaxed whitespace-pre-line text-base md:text-lg">
-          {thread.content}
-        </div>
+        <MarkdownContent content={thread.content} className="space-y-1" />
 
         {/* Social Share & Helpful Like Bar */}
         <SocialShareBar
