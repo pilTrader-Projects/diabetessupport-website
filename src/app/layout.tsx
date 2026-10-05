@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import Link from 'next/link';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';

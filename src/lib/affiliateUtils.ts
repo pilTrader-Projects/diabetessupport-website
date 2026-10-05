@@ -64,15 +64,6 @@ export function extractAmazonAsin(url: string): string | null {
   return match ? match[1].toUpperCase() : null;
 }
 
-/**
- * Constructs a direct canonical Amazon product page link with tracking tag.
- */
-export function buildAmazonProductUrl(asin: string, tag?: string): string {
-  const cleanAsin = (asin || '').trim().toUpperCase();
-  const affiliateTag = (tag || DEFAULT_AMAZON_AFFILIATE_TAG || '').trim();
-  const tagParam = affiliateTag ? `?tag=${encodeURIComponent(affiliateTag)}` : '';
-  return `https://www.amazon.com/dp/${cleanAsin}${tagParam}`;
-}
 
 /**
  * Generates the permanent high-resolution Amazon product image URL from an ASIN or Amazon product URL.
