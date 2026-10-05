@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
 
+import { ALL_FOOTER_LINKS } from '@/config/trustConfig';
+
 /**
  * Global Application Footer Component.
  *
@@ -14,17 +16,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         {/* Quick Links Navigation */}
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
-          <Link href="/" className="hover:text-white transition-colors">Home</Link>
-          <Link href="/hidden-clock" className="hover:text-white transition-colors">The Hidden Clock</Link>
-          <Link href="/learn" className="hover:text-white transition-colors">Learning Hub</Link>
-          <Link href="/glycosense" className="hover:text-white transition-colors">Tools</Link>
-          <Link href="/ph" className="hover:text-white transition-colors">Philippines (PH)</Link>
-          <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
-          <Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link>
-          <Link href="/corrections" className="hover:text-white transition-colors">Corrections</Link>
-          <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-          <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+          {ALL_FOOTER_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="hover:text-white transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <p className="font-bold text-white tracking-wide">

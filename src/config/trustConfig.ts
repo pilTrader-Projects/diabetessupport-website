@@ -41,11 +41,29 @@ export const CORRECTIONS_LOG: ICorrectionEntry[] = [
   },
 ];
 
-export const TRUST_NAV_LINKS = [
+export interface INavLink {
+  href: string;
+  label: string;
+}
+
+export const MAIN_FOOTER_LINKS: INavLink[] = [
+  { href: '/', label: 'Home' },
+  { href: '/hidden-clock', label: 'The Hidden Clock' },
+  { href: '/learn', label: 'Learning Hub' },
+  { href: '/glycosense', label: 'Tools' },
+  { href: '/ph', label: 'Philippines (PH)' },
+];
+
+export const TRUST_NAV_LINKS: INavLink[] = [
   { href: '/about', label: 'About Us' },
   { href: '/editorial-policy', label: 'Editorial Policy' },
   { href: '/corrections', label: 'Corrections' },
+  { href: '/contact', label: 'Contact' },
   { href: '/privacy-policy', label: 'Privacy Policy' },
   { href: '/terms-of-service', label: 'Terms of Service' },
-  { href: '/contact', label: 'Contact' },
+];
+
+export const ALL_FOOTER_LINKS: INavLink[] = [
+  ...MAIN_FOOTER_LINKS,
+  ...TRUST_NAV_LINKS,
 ];
