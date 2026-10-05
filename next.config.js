@@ -17,12 +17,12 @@ const nextConfig = {
     return [
       {
         source: '/blog',
-        destination: '/community',
+        destination: '/learn',
         permanent: true,
       },
       {
         source: '/blog/:slug*',
-        destination: '/community/:slug*',
+        destination: '/learn/:slug*',
         permanent: true,
       },
       {

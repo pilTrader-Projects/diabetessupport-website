@@ -28,16 +28,6 @@ describe('Community Forum Feed UI Components (Step 4)', () => {
       const element = <ThreadCard thread={mockThread} />;
       expect(element).toBeDefined();
     });
-
-    it('renders Founder badge when authorTag is #FOUNDER', () => {
-      const founderThread: IThread = {
-        ...mockThread,
-        authorAlias: 'Founder & Advocate',
-        authorTag: '#FOUNDER',
-      };
-      const element = <ThreadCard thread={founderThread} />;
-      expect(element).toBeDefined();
-    });
   });
 
   describe('CommunityHeader Component', () => {

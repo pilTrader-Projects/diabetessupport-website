@@ -12,21 +12,21 @@ describe('Backward Compatibility URL Redirects (next.config.js)', () => {
     expect(typeof nextConfig.redirects).toBe('function');
   });
 
-  it('should configure permanent 301/308 redirect from /blog to /community', async () => {
+  it('should configure permanent 301/308 redirect from /blog to /learn', async () => {
     const redirects = await nextConfig.redirects();
 
     const blogRootRedirect = redirects.find(
-      (r: any) => r.source === '/blog' && r.destination === '/community'
+      (r: any) => r.source === '/blog' && r.destination === '/learn'
     );
     expect(blogRootRedirect).toBeDefined();
     expect(blogRootRedirect.permanent).toBe(true);
   });
 
-  it('should configure permanent wildcard redirect from /blog/:slug* to /community/:slug*', async () => {
+  it('should configure permanent wildcard redirect from /blog/:slug* to /learn/:slug*', async () => {
     const redirects = await nextConfig.redirects();
 
     const blogWildcardRedirect = redirects.find(
-      (r: any) => r.source === '/blog/:slug*' && r.destination === '/community/:slug*'
+      (r: any) => r.source === '/blog/:slug*' && r.destination === '/learn/:slug*'
     );
     expect(blogWildcardRedirect).toBeDefined();
     expect(blogWildcardRedirect.permanent).toBe(true);
