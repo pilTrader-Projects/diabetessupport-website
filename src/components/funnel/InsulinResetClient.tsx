@@ -159,7 +159,7 @@ export default function InsulinResetClient(): React.JSX.Element {
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
           This report was developed around the insulin-resistance and metabolic-health framework explored in{' '}
           <a
-            href="https://link.amazon/B03KBSMOg"
+            href="https://www.amazon.com/dp/194883698X?tag=diabetessup01-20"
             target="_blank"
             rel="noopener noreferrer sponsored"
             className="font-semibold text-teal-700 hover:text-teal-900 underline decoration-teal-400 hover:decoration-teal-600 transition-colors"

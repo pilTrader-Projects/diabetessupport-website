@@ -24,3 +24,9 @@
   - Unit tests pass with 100% success rate (`npm test`).
   - Sanity check passes (`tests/sanity_check.ts`).
   - Standards and medical disclaimers are respected.
+
+## 🛑 Strict Zero-Assumption & Zero-Fallback Rule (NON-NEGOTIABLE)
+- **DO NOT CREATE FALLBACK OR ASSUMED VALUES**: Never invent, assume, fabricate, or substitute placeholder values for external resources, affiliate links, URLs, API keys, credentials, or third-party identifiers.
+- **DO NOT OVERRIDE DATABASE RECORDS WITH ASSUMED VALUES**: Never overwrite or seed database records with assumed or synthetic placeholder links.
+- **ASK THE HUMAN CEO**: If an affiliate link, book URL, API credential, or external value is missing, needed, or uncertain, **STOP IMMEDIATELY AND ASK THE HUMAN CEO DIRECTLY** to provide the exact value. Do not guess, do not fabricate, and do not default to assumptions.
+

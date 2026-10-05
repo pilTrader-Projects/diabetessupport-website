@@ -8,13 +8,14 @@
 export const DEFAULT_AMAZON_AFFILIATE_TAG =
   process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
   process.env.AMAZON_AFFILIATE_TAG ||
-  'diabetes-code';
+  '';
 
 /**
  * Ensures a product or resource URL contains the appropriate affiliate tracking tag.
  * - Leaves `amzn.to` SiteStripe shortlinks untouched (they already encode the affiliate tag perpetually).
  * - Leaves non-Amazon external protocol URLs untouched.
- * - Detects raw Amazon product links (`amazon.com`, `amazon.co.uk`, etc.) and appends `?tag=` if missing.
+ * - Detects raw Amazon product links (`amazon.com`, `amazon.co.uk`, etc.) and appends `?tag=` if tag is provided.
+ * - Does NOT invent or assume a fallback tag if none is configured.
  */
 export function ensureAffiliateUrl(rawUrl: string, customTag?: string): string {
   if (!rawUrl || typeof rawUrl !== 'string') return '';
@@ -34,7 +35,7 @@ export function ensureAffiliateUrl(rawUrl: string, customTag?: string): string {
       return trimmed;
     }
 
-    const tag = (customTag || DEFAULT_AMAZON_AFFILIATE_TAG || 'diabetes-code').trim();
+    const tag = (customTag || DEFAULT_AMAZON_AFFILIATE_TAG || '').trim();
     if (!tag) return trimmed;
 
     try {
@@ -68,8 +69,9 @@ export function extractAmazonAsin(url: string): string | null {
  */
 export function buildAmazonProductUrl(asin: string, tag?: string): string {
   const cleanAsin = (asin || '').trim().toUpperCase();
-  const affiliateTag = (tag || DEFAULT_AMAZON_AFFILIATE_TAG || 'diabetes-code').trim();
-  return `https://www.amazon.com/dp/${cleanAsin}?tag=${encodeURIComponent(affiliateTag)}`;
+  const affiliateTag = (tag || DEFAULT_AMAZON_AFFILIATE_TAG || '').trim();
+  const tagParam = affiliateTag ? `?tag=${encodeURIComponent(affiliateTag)}` : '';
+  return `https://www.amazon.com/dp/${cleanAsin}${tagParam}`;
 }
 
 /**
