@@ -5,6 +5,7 @@ import { CategoryModel } from '../../../../models/Category';
 import { validateApiKey, slugify } from '../../../../lib/auth';
 import { isAdminAuthenticated } from '../../../../lib/adminAuth';
 import { getCategoryLookupMap, resolveCategoryName } from '../../../../lib/categoryUtils';
+import { syncPostToCommunityThread } from '../../../../services/communityArticleSyncService';
 
 /**
  * HTTP POST API route handler for automated blog post publishing.
@@ -122,6 +123,9 @@ export async function POST(req: Request): Promise<NextResponse> {
         { upsert: true }
       );
     }
+
+    // 8. Synchronize to Community forum as Founder discussion thread
+    await syncPostToCommunityThread(postData);
 
     return NextResponse.json(
       {

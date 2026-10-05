@@ -59,9 +59,9 @@ export default async function AdminDashboardPage() {
       {/* Analytics Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Blog Posts</div>
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Community Articles</div>
           <div className="text-3xl font-extrabold text-white">{totalPosts}</div>
-          <div className="text-xs text-teal-400 font-semibold">{publishedPosts} Published Articles</div>
+          <div className="text-xs text-teal-400 font-semibold">{publishedPosts} Published in Community</div>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
@@ -174,21 +174,21 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
 
-        {/* Blog Post Articles Management Card */}
+        {/* Community Articles Management Card */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 space-y-6 flex flex-col justify-between hover:border-teal-700 transition-all shadow-xl">
           <div className="space-y-3">
             <span className="text-3xl">✍️</span>
-            <h2 className="text-xl font-bold text-white">Blog Article CMS</h2>
+            <h2 className="text-xl font-bold text-white">Community Articles CMS</h2>
             <p className="text-xs text-slate-400 leading-relaxed">
-              View, edit, or publish educational health articles, manage categories, and modify featured images visually.
+              Write, edit, and publish founder educational articles directly to the Community forum discussions (#FOUNDER) with peer engagement prompts.
             </p>
           </div>
 
           <Link
             href="/admin/posts"
-            className="w-full bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs py-3.5 rounded-xl border border-slate-700 transition-colors text-center inline-block"
+            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-lg transition-colors text-center inline-block"
           >
-            Manage Blog Articles &rarr;
+            Manage Community Articles &rarr;
           </Link>
         </div>
       </div>

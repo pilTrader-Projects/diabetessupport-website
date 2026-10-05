@@ -186,9 +186,12 @@ export default function AdminPostsPage() {
           <div className="flex items-center gap-2 text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">
             <Link href="/admin" className="hover:text-teal-400">Admin Dashboard</Link>
             <span>/</span>
-            <span className="text-teal-400">Blog Articles</span>
+            <span className="text-teal-400">Community Articles</span>
           </div>
-          <h1 className="text-3xl font-black text-white">Blog Article CMS</h1>
+          <h1 className="text-3xl font-black text-white">Community Articles CMS</h1>
+          <p className="text-xs text-slate-400 mt-1 max-w-2xl">
+            Articles published here automatically post to the public Community forum as official Founder discussion threads (<span className="text-teal-400 font-semibold">#FOUNDER</span>) with interactive peer prompts.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -203,7 +206,7 @@ export default function AdminPostsPage() {
             onClick={handleOpenCreate}
             className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
           >
-            <span>+</span> Create Article
+            <span>+</span> Create Community Article
           </button>
         </div>
       </div>
@@ -234,13 +237,13 @@ export default function AdminPostsPage() {
                 <tr key={post._id} className="hover:bg-slate-850/50 transition-colors">
                   <td className="px-6 py-4">
                     <a
-                      href={`/learn/${post.slug}`}
+                      href={`/community/${post.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-bold text-white hover:text-teal-400 flex items-center gap-1.5"
                     >
                       <span>{post.title.replace(/&nbsp;/g, ' ')}</span>
-                      <span className="text-xs text-slate-500">↗</span>
+                      <span className="text-xs text-teal-400/80 font-normal">↗ View in Community</span>
                     </a>
                     {post.excerpt && (
                       <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">{post.excerpt}</p>
@@ -301,11 +304,14 @@ export default function AdminPostsPage() {
             <div className="flex justify-between items-center px-6 sm:px-8 py-5 border-b border-slate-800 shrink-0 bg-slate-900">
               <div>
                 <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">
-                  {editingPostId ? `Editing MongoDB Document (${editingPostId})` : 'Article Creator'}
+                  {editingPostId ? `Editing Community Article (${editingPostId})` : 'Founder Discussion Article Creator'}
                 </span>
                 <h2 className="text-2xl font-black text-white">
-                  {editingPostId ? '✏️ Edit Article' : '✨ Create New Article'}
+                  {editingPostId ? '✏️ Edit Article & Discussion' : '✨ Create Community Article'}
                 </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Published articles appear directly as official Founder topics in the Community forum.
+                </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -459,7 +465,7 @@ export default function AdminPostsPage() {
                   disabled={saving}
                   className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-extrabold text-xs shadow-lg transition-all disabled:opacity-50 cursor-pointer"
                 >
-                  {saving ? 'Saving...' : editingPostId ? 'Update Article' : 'Publish Article'}
+                  {saving ? 'Publishing & Syncing...' : editingPostId ? 'Update & Sync to Community' : '🚀 Publish to Community'}
                 </button>
               </div>
             </form>

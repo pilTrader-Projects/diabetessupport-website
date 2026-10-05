@@ -2,6 +2,7 @@ import { POST } from '../../src/app/api/v1/posts/route';
 import { PostModel } from '../../src/models/Post';
 import { ApiKeyModel } from '../../src/models/ApiKey';
 import { dbConnect } from '../../src/lib/dbConnect';
+import { syncPostToCommunityThread, removeCommunityThreadBySlug } from '../../src/services/communityArticleSyncService';
 
 jest.mock('../../src/lib/dbConnect', () => ({
   dbConnect: jest.fn().mockResolvedValue(true),
@@ -30,6 +31,11 @@ jest.mock('../../src/models/Category', () => ({
       lean: jest.fn().mockResolvedValue([]),
     }),
   },
+}));
+
+jest.mock('../../src/services/communityArticleSyncService', () => ({
+  syncPostToCommunityThread: jest.fn().mockResolvedValue({ _id: 'thread_mock' }),
+  removeCommunityThreadBySlug: jest.fn().mockResolvedValue(true),
 }));
 
 describe('POST /api/v1/posts Automated Publishing API', () => {
@@ -132,6 +138,7 @@ describe('POST /api/v1/posts Automated Publishing API', () => {
     expect(body.data.slug).toBe('understanding-insulin-resistance-early');
     expect(body.data.category).toBe('Education');
     expect(PostModel.create).toHaveBeenCalledTimes(1);
+    expect(syncPostToCommunityThread).toHaveBeenCalled();
   });
 
   it('should authenticate via DB ApiKeyModel when X-API-KEY matches stored key', async () => {
@@ -166,6 +173,7 @@ describe('POST /api/v1/posts Automated Publishing API', () => {
     expect(res.status).toBe(201);
     expect(body.success).toBe(true);
     expect(ApiKeyModel.findOne).toHaveBeenCalledWith({ key: 'db_valid_api_key_456', active: true });
+    expect(syncPostToCommunityThread).toHaveBeenCalled();
   });
 });
 
@@ -250,6 +258,30 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
     expect(body.data.title).toBe('Updated Title');
+    expect(syncPostToCommunityThread).toHaveBeenCalled();
+  });
+
+  it('should delete post and remove community thread via DELETE', async () => {
+    const { DELETE: DELETE_POST } = require('../../src/app/api/v1/posts/[id]/route');
+    const validSecret = process.env.API_SECRET_KEY || 'dev_secret_key_123';
+    (PostModel.findByIdAndDelete as jest.Mock).mockResolvedValue({
+      _id: 'post_123',
+      slug: 'test-article-slug',
+    });
+
+    const req = new Request('http://localhost:3000/api/v1/posts/post_123', {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${validSecret}`,
+      },
+    });
+
+    const res = await DELETE_POST(req, { params: Promise.resolve({ id: 'post_123' }) });
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(removeCommunityThreadBySlug).toHaveBeenCalledWith('test-article-slug');
   });
 
   it('should resolve Category ObjectId hex string to human-readable Category Name', async () => {

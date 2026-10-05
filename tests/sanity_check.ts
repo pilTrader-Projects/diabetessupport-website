@@ -61,6 +61,7 @@ async function runSanityCheck() {
         'src/services/learningService.ts',
         'src/services/aiQualifierService.ts',
         'src/services/postToThreadMigration.ts',
+        'src/services/communityArticleSyncService.ts',
         'scripts/migrate-wordpress.ts',
         'scripts/migrate-posts-to-threads.ts',
         'scripts/sanitize-database-tags.ts',
