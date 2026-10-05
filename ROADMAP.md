@@ -69,7 +69,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #48](https://github.com/pilTrader-Projects/diabetessupport-website/pull/48)** `[COMPLETED]`: Apex domain 301 canonicalization, clinical copy sanitization (hedging 'last biomarker', 'reversal', 'healing', and fear language), emergency fasting/low-carb safety callouts, and MongoDB legacy tag cleanup (Closes Issue #42).
 
 ### Milestone 18: Content Strategy - Legacy Blog Migration to Community Forum
-- [ ] **[Issue #43](https://github.com/pilTrader-Projects/diabetessupport-website/issues/43)** `[REVERTED / ON HOLD]`: Deprecate legacy WordPress blog posts from `/blog`, migrate into Community Discussions (`/community/[slug]`) with Founder attribution (`#FOUNDER`), append conversation prompts, and configure 301 permanent redirects (Reverted per user request pending clarification/redesign).
+- [ ] **[PR #49](https://github.com/pilTrader-Projects/diabetessupport-website/pull/49)** `[PENDING REVIEW]`: Abolish legacy WordPress blog posts from `/learn`, migrate live MongoDB documents into Community Discussions (`/community/[slug]`) with Founder attribution (`#FOUNDER`), append conversation prompts, and configure 301 permanent redirects (Closes Issue #43).
 
 ### Milestone 19: Learning Hub - Pure Curation Engine & Structured E-E-A-T Schema
 - [ ] **[Issue #44](https://github.com/pilTrader-Projects/diabetessupport-website/issues/44)** `[READY / PLANNED]`: Elevate `/learn` to a pure curation index with 3-layer bylines (Primary Authority + Editorial Desk + Medical Reviewer), `MedicalWebPage` & `VideoObject` JSON-LD schemas, evidence level badges, and privacy-sandboxed `youtube-nocookie.com` embeds.

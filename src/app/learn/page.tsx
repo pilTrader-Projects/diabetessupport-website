@@ -153,10 +153,9 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     await dbConnect();
     categoryMap = await getCategoryLookupMap();
 
-    // Fetch published editorial articles
-    rawPosts = await PostModel.find({ status: 'published' })
-      .sort({ publishedAt: -1 })
-      .lean();
+    // Legacy self-authored blog posts have been migrated to /community as peer discussions.
+    // /learn serves strictly curated evidence-based lectures, podcasts, and authority materials.
+    rawPosts = [];
 
     // Fetch active authorities
     rawAuthorities = await AuthorityModel.find({ isActive: true })

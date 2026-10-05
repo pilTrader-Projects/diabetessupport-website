@@ -6,6 +6,7 @@ import AdUnit from '@/components/ads/AdUnit';
 import ReplyCard from './ReplyCard';
 import ReplyForm from './ReplyForm';
 import SocialShareBar from './SocialShareBar';
+import MarkdownContent, { stripMarkdown } from './MarkdownContent';
 import { IThread, IReply } from '@/types/community';
 import { SITE_CONFIG } from '@/config/constants';
 
@@ -73,7 +74,7 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
   const formattedDate = thread.createdAt
     ? new Date(thread.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : 'Recently';
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
+  const canonicalUrl = `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
@@ -120,6 +121,11 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   OP 👑
                 </span>
+                {thread.authorTag === '#FOUNDER' && (
+                  <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
+                    ⭐ Founder
+                  </span>
+                )}
                 {isCurrentUserOp && (
                   <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                     YOU
@@ -138,15 +144,13 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
           {thread.title}
         </h1>
 
-        <div className="text-slate-700 leading-relaxed whitespace-pre-line text-base md:text-lg">
-          {thread.content}
-        </div>
+        <MarkdownContent content={thread.content} className="space-y-1" />
 
         {/* Social Share & Helpful Like Bar */}
         <SocialShareBar
           title={thread.title}
-          url={pageUrl}
-          snippet={thread.content}
+          url={canonicalUrl}
+          snippet={stripMarkdown(thread.content)}
           showLikeButton={true}
           likesCount={likesCount}
           onLike={handleLike}

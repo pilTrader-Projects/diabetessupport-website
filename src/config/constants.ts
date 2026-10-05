@@ -122,6 +122,7 @@ export const COMMUNITY_CONFIG = {
     'support',
     'system',
     'official',
+    'founder',
   ],
   reportAutoQuarantineThreshold: 2,
   syncCodeExpiresMinutes: 15,

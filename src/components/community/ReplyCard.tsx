@@ -1,4 +1,5 @@
 import React from 'react';
+import MarkdownContent from './MarkdownContent';
 import { IReply } from '@/types/community';
 
 interface ReplyCardProps {
@@ -26,6 +27,11 @@ export default function ReplyCard({ reply, isOp, isYou }: ReplyCardProps) {
               OP 👑
             </span>
           )}
+          {reply.authorTag === '#FOUNDER' && (
+            <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full flex items-center gap-1">
+              ⭐ Founder
+            </span>
+          )}
           {isYou && (
             <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
               YOU
@@ -34,8 +40,8 @@ export default function ReplyCard({ reply, isOp, isYou }: ReplyCardProps) {
         </div>
         <span className="text-slate-400">{formattedDate}</span>
       </div>
-      <div className="text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-        {reply.content}
+      <div className="text-slate-700 text-sm leading-relaxed">
+        <MarkdownContent content={reply.content} />
       </div>
     </div>
   );

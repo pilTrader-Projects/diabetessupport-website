@@ -4,8 +4,11 @@ import { PostModel } from '@/models/Post';
 import { CategoryModel } from '@/models/Category';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
 import { slugify } from '@/lib/auth';
-
 import { getCategoryLookupMap, resolveCategoryName } from '@/lib/categoryUtils';
+import {
+  syncPostToCommunityThread,
+  removeCommunityThreadBySlug,
+} from '@/services/communityArticleSyncService';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -90,6 +93,9 @@ export async function PUT(req: Request, { params }: RouteParams): Promise<NextRe
       return NextResponse.json({ success: false, error: 'Post not found.' }, { status: 404 });
     }
 
+    // Synchronize to Community forum discussion thread
+    await syncPostToCommunityThread(updated.toObject ? updated.toObject() : updated);
+
     return NextResponse.json({ success: true, message: 'Post updated successfully.', data: updated });
   } catch (err: any) {
     console.error('Error updating post:', err);
@@ -111,10 +117,16 @@ export async function DELETE(req: Request, { params }: RouteParams): Promise<Nex
   const { id } = await params;
   await dbConnect();
   try {
-    const deleted = await PostModel.findByIdAndDelete(id);
+    const deleted: any = await PostModel.findByIdAndDelete(id);
     if (!deleted) {
       return NextResponse.json({ success: false, error: 'Post not found.' }, { status: 404 });
     }
+
+    // Clean up corresponding Community discussion thread
+    if (deleted.slug) {
+      await removeCommunityThreadBySlug(deleted.slug);
+    }
+
     return NextResponse.json({ success: true, message: 'Post deleted successfully.' });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });

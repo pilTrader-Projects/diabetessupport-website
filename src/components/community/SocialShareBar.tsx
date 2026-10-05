@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { SITE_CONFIG } from '@/config/constants';
 
 interface SocialShareBarProps {
   title: string;
@@ -38,7 +39,7 @@ export default function SocialShareBar({
   }, [url]);
 
   const cleanSnippet = snippet ? snippet.slice(0, 160).replace(/\s+/g, ' ').trim() : '';
-  const shareText = cleanSnippet ? `"${cleanSnippet}..." — Join the discussion on DiabetesCare PH:` : title;
+  const shareText = cleanSnippet ? `"${cleanSnippet}..." — Join the discussion on ${SITE_CONFIG.title}:` : title;
 
   const handleNativeShare = async () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
@@ -59,7 +60,7 @@ export default function SocialShareBar({
   const handleCopyQuote = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       const textToCopy = cleanSnippet
-        ? `"${cleanSnippet}..."\n\n🔗 Read full discussion on DiabetesCare PH:\n${activeUrl}`
+        ? `"${cleanSnippet}..."\n\n🔗 Read full discussion on ${SITE_CONFIG.title}:\n${activeUrl}`
         : `${title}\n${activeUrl}`;
       navigator.clipboard.writeText(textToCopy);
       setCopied(true);
