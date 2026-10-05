@@ -66,7 +66,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #38](https://github.com/pilTrader-Projects/diabetessupport-website/pull/38)** `[COMPLETED]`: Fix dynamic cascading of authority recommended books to video player modal so that adding books to an authority in Admin automatically cascades across all their videos (Closes Issue #37).
 
 ### Milestone 17: Site Revision Blueprint - Stop-the-Risk (Phase 0)
-- [x] **[PR #48](https://github.com/pilTrader-Projects/diabetessupport-website/pull/48)** `[COMPLETED]`: Apex domain 301 canonicalization, clinical copy sanitization (hedging 'last biomarker', 'reversal', 'healing', and fear language), emergency fasting/low-carb safety callouts, and MongoDB legacy tag cleanup (Closes Issue #42).
+- [x] **[PR #48](https://github.com/pilTrader-Projects/diabetessupport-website/pull/48)** `[COMPLETED]`: Domain canonicalization on `www.beforethenumbers.org` (with edge apex-to-www redirection), clinical copy sanitization (hedging 'last biomarker', 'reversal', 'healing', and fear language), emergency fasting/low-carb safety callouts, and MongoDB legacy tag cleanup (Closes Issue #42).
 
 ### Milestone 18: Content Strategy - Legacy Blog Migration to Community Forum
 - [x] **[PR #49](https://github.com/pilTrader-Projects/diabetessupport-website/pull/49)** `[COMPLETED]`: Abolish legacy WordPress blog posts from `/learn`, migrate live MongoDB documents into Community Discussions (`/community/[slug]`) with Founder attribution (`#FOUNDER`), append conversation prompts, configure 301 permanent redirects, and align Admin CMS with automatic Community thread publishing (Closes Issue #43).
