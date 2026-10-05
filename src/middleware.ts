@@ -16,18 +16,6 @@ export const USER_REGION_COOKIE = 'bn_user_region';
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  // 0. Domain Canonicalization: Enforce apex host (redirect www to apex with 301)
-  const host = request.headers.get('host') || '';
-  if (host.startsWith('www.')) {
-    const apexHost = host.replace(/^www\./i, '');
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.host = apexHost;
-    if (!host.includes('localhost')) {
-      redirectUrl.protocol = 'https:';
-    }
-    return NextResponse.redirect(redirectUrl, { status: 301 });
-  }
-
   // 1. Resolve localization for root landing requests ('/')
   if (pathname === '/') {
     const queryEdition = searchParams.get('edition') || searchParams.get('region');
