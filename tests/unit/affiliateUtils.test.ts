@@ -1,7 +1,6 @@
 import {
   ensureAffiliateUrl,
   extractAmazonAsin,
-  buildAmazonProductUrl,
   getAmazonCoverUrl,
 } from '../../src/lib/affiliateUtils';
 
@@ -54,12 +53,6 @@ describe('affiliateUtils Unit Tests (TDD)', () => {
     });
   });
 
-  describe('buildAmazonProductUrl', () => {
-    it('builds canonical Amazon product URL with affiliate tag', () => {
-      const url = buildAmazonProductUrl('1771642658', 'diabetes-code');
-      expect(url).toBe('https://www.amazon.com/dp/1771642658?tag=diabetes-code');
-    });
-  });
 
   describe('getAmazonCoverUrl', () => {
     it('generates permanent product image URL from a raw ASIN', () => {

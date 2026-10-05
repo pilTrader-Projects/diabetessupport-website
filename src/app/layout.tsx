@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import Link from 'next/link';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import AdSenseScript from '@/components/ads/AdSenseScript';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import PwaRegister from '@/components/pwa/PwaRegister';
@@ -123,32 +123,7 @@ export default function RootLayout({
 
         <main className="flex-grow w-full max-w-full overflow-x-clip">{children}</main>
 
-        <footer className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white py-14 border-t border-white/10 mt-16 shadow-2xl">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-            {/* Quick Links Navigation */}
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/hidden-clock" className="hover:text-white transition-colors">The Hidden Clock</Link>
-              <Link href="/learn" className="hover:text-white transition-colors">Learning Hub</Link>
-              <Link href="/glycosense" className="hover:text-white transition-colors">Tools</Link>
-              <Link href="/ph" className="hover:text-white transition-colors">Philippines (PH)</Link>
-              <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
-              <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-              <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
-            </div>
-
-            <p className="font-bold text-white tracking-wide">
-              © {new Date().getFullYear()} {SITE_CONFIG.author}. All rights reserved.
-            </p>
-            <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
-              <strong className="text-white">Medical Disclaimer:</strong> Before the Numbers is an independent health awareness and educational movement. Content provided on this site is for informational and educational purposes only and must not be used as medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider regarding your individual health conditions.
-            </p>
-            <p className="max-w-3xl mx-auto text-xs text-purple-200/80 leading-relaxed">
-              <strong className="text-white">Data Privacy &amp; Security Notice:</strong> Health metrics and logs entered across our companion tools are encrypted, strictly owned by you, and utilized exclusively for generating your personal summaries and doctor-ready reports. In the Philippines, data handling adheres to Republic Act No. 10173 (Philippine Data Privacy Act of 2012). We never sell, rent, or disclose your health data to third parties, advertisers, or insurers.
-            </p>
-          </div>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

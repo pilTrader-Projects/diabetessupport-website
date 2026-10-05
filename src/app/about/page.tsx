@@ -164,15 +164,25 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Editorial & Medical Independence Standards */}
-      <section className="space-y-4 text-sm sm:text-base leading-relaxed bg-slate-100 p-6 rounded-2xl border border-slate-200">
-        <h2 className="text-xl font-bold text-slate-900">Editorial &amp; Independence Standards</h2>
-        <p className="text-xs text-slate-700 leading-relaxed">
-          We maintain strict editorial independence. We do not accept sponsorships from pharmaceutical companies to endorse
-          specific prescription medications. Advertising revenue through Google AdSense helps maintain our server infrastructure
-          and free educational content distribution.
+      {/* Governance & Funding Transparency */}
+      <section className="space-y-4 text-sm sm:text-base leading-relaxed bg-slate-100 p-6 sm:p-8 rounded-2xl border border-slate-200">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Governance &amp; Funding Transparency</h2>
+        <h3 className="text-sm font-extrabold uppercase tracking-wider text-indigo-900">Editorial &amp; Independence Standards</h3>
+        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <strong>Before the Numbers</strong> is an <strong>Independent Public Health Educational Initiative</strong> founded by Bong Bungalan Jr., evolving from our grassroots community work at DiabetesCare PH. For legal transparency, Before the Numbers is <strong>not a registered 501(c)(3) or tax-exempt non-profit</strong> foundation; our .org domain is utilized to signify an open-access public health educational mission.
         </p>
-        <p className="text-xs text-slate-600 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          <strong>Funding Model:</strong> The platform is <strong>self-funded by the founder</strong> and supported by non-intrusive programmatic advertising (Google AdSense) and occasional contextual affiliate book recommendations. We maintain complete commercial independence: we accept zero sponsorship, advertising, or grants from pharmaceutical manufacturers, medical device vendors, or commercial supplement brands.
+        </p>
+        <div className="pt-2 flex flex-wrap gap-3 text-xs font-bold text-indigo-700">
+          <Link href="/editorial-policy" className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:border-indigo-300">
+            Editorial Policy &rarr;
+          </Link>
+          <Link href="/corrections" className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:border-indigo-300">
+            Corrections &amp; Change Log &rarr;
+          </Link>
+        </div>
+        <p className="text-xs text-slate-500 leading-relaxed pt-2 border-t border-slate-200">
           <strong>Medical Notice:</strong> Information on this website is for educational purposes only and is not intended as medical advice or personalized treatment plans. Always consult your licensed physician or endocrinologist before modifying medications or dietary routines.
         </p>
       </section>
