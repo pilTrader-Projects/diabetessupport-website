@@ -445,18 +445,20 @@ export default function LearningHubClient({
             <span className="text-[11px] opacity-80">({podcastCount})</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveFormat('article')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-              activeFormat === 'article'
-                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>📖 Editorial Guides</span>
-            <span className="text-[11px] opacity-80">({articleCount})</span>
-          </button>
+          {articleCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveFormat('article')}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
+                activeFormat === 'article'
+                  ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>📖 Editorial Guides</span>
+              <span className="text-[11px] opacity-80">({articleCount})</span>
+            </button>
+          )}
 
           {studyCount > 0 && (
             <button

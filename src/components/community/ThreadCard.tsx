@@ -47,7 +47,13 @@ export default function ThreadCard({ thread }: ThreadCardProps) {
             {thread.authorAlias.charAt(0).toUpperCase()}
           </span>
           <span className="truncate max-w-[120px]">{thread.authorAlias}</span>
-          <span className="text-slate-400 font-normal">{thread.authorTag}</span>
+          {thread.authorTag === '#FOUNDER' ? (
+            <span className="bg-amber-100 text-amber-900 border border-amber-300 font-extrabold px-1.5 py-0.5 rounded text-[10px] flex items-center gap-0.5">
+              ⭐ Founder
+            </span>
+          ) : (
+            <span className="text-slate-400 font-normal">{thread.authorTag}</span>
+          )}
         </div>
 
         <div className="flex items-center space-x-3 text-slate-500 font-semibold">

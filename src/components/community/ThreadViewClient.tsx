@@ -120,6 +120,11 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   OP 👑
                 </span>
+                {thread.authorTag === '#FOUNDER' && (
+                  <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
+                    ⭐ Founder
+                  </span>
+                )}
                 {isCurrentUserOp && (
                   <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                     YOU
