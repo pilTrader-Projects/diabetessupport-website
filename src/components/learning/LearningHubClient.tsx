@@ -8,6 +8,8 @@ import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
+import CurationBylines from '@/components/learning/CurationBylines';
+import { resolveEvidenceLevel } from '@/lib/learningSchema';
 import {
   getSavedProtocolIds,
   saveProtocolResource,
@@ -776,6 +778,17 @@ export default function LearningHubClient({
                           • {getContextualTakeaway(item)}
                         </p>
                       </div>
+
+                      {/* 3-Layer Curation Bylines & Evidence Tag (Issue #44) */}
+                      <CurationBylines
+                        authorityName={item.authorityName}
+                        authorityTitle={item.authorityTitle}
+                        authorityAvatar={item.authorityAvatar}
+                        editorialDesk={item.editorialDesk}
+                        clinicalReviewer={item.clinicalReviewer}
+                        evidenceLevel={resolveEvidenceLevel(item)}
+                        compact={true}
+                      />
                     </div>
 
                     {/* Actions Footer */}
@@ -868,6 +881,16 @@ export default function LearningHubClient({
                           {item.keyTakeaways?.[0] || item.summary}
                         </p>
                       </div>
+
+                      {/* 3-Layer Curation Bylines & Evidence Tag (Issue #44) */}
+                      <CurationBylines
+                        authorityName={item.authorityName}
+                        authorityTitle={item.authorityTitle}
+                        editorialDesk={item.editorialDesk}
+                        clinicalReviewer={item.clinicalReviewer}
+                        evidenceLevel={resolveEvidenceLevel(item)}
+                        compact={true}
+                      />
                     </div>
 
                     <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">

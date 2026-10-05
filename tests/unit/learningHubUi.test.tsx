@@ -331,7 +331,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(element.props.resource?.embedId).toBe('abc123xyz');
 
       const html = ReactDOMServer.renderToString(element);
-      expect(html).toContain('youtube.com/embed/abc123xyz');
+      expect(html).toContain('youtube-nocookie.com/embed/abc123xyz');
       expect(html).toContain('absolute inset-0 w-full h-full');
       expect(html).toContain('Share');
       expect(html).toContain('Found this material valuable? Share it:');
@@ -470,7 +470,7 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       );
 
       const html = ReactDOMServer.renderToString(element);
-      expect(html).toContain('https://www.youtube.com/embed/dQw4w9WgXcQ');
+      expect(html).toContain('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
   });
 
@@ -538,7 +538,8 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       const page = await LearnFeedPage({});
       expect(page).toBeDefined();
-      const clientProps = (page as any).props.children[0].props;
+      const clientChild = (page as any).props.children.find((child: any) => child && child.props && child.props.initialResources);
+      const clientProps = clientChild.props;
       const inheritedResource = clientProps.initialResources[0];
       expect(inheritedResource.recommendedBooks).toHaveLength(4);
       expect(inheritedResource.recommendedBooks.map((b: any) => b.title)).toEqual([
