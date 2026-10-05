@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { ILearningResource, IAuthority } from '@/types/learning';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
+import CurationDetails from '@/components/learning/CurationDetails';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -87,7 +88,7 @@ export default function VideoPlayerModal({
   }
 
   const embedUrl = resolvedEmbedId
-    ? `https://www.youtube.com/embed/${resolvedEmbedId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&modestbranding=1${originParam}`
+    ? `https://www.youtube-nocookie.com/embed/${resolvedEmbedId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&modestbranding=1${originParam}`
     : null;
 
   const handleShare = async () => {
@@ -216,25 +217,8 @@ export default function VideoPlayerModal({
             </div>
           </div>
 
-          {/* 3 Key Takeaways Card */}
-          {resource.keyTakeaways && resource.keyTakeaways.length > 0 && (
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 space-y-3 shadow-inner">
-              <div className="flex items-center space-x-2">
-                <span className="text-lg">💡</span>
-                <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
-                  Key Scientific Takeaways (10-Second Summary)
-                </h3>
-              </div>
-              <ul className="space-y-2">
-                {resource.keyTakeaways.map((point, idx) => (
-                  <li key={idx} className="flex items-start space-x-2.5 text-xs text-purple-100 leading-relaxed">
-                    <span className="text-amber-300 font-bold">•</span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {/* Standardized Curation Template (Issue #44) */}
+          <CurationDetails resource={resource} />
 
           {/* Contextual Affiliate Book & Protocol Recommendations */}
           {recommendedBooks.length > 0 && (
@@ -314,11 +298,6 @@ export default function VideoPlayerModal({
             </div>
           )}
 
-          {/* Overview / Bio */}
-          <div className="space-y-2 text-xs text-slate-400 leading-relaxed">
-            <h4 className="font-bold text-slate-300 uppercase tracking-wider text-[11px]">Overview</h4>
-            <p>{resource.summary}</p>
-          </div>
 
           {/* Topic Tags */}
           {resource.topics && resource.topics.length > 0 && (

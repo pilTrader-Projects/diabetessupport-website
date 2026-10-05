@@ -69,6 +69,35 @@ const LearningResourceSchema = new Schema<ILearningResource>(
       type: [String],
       default: [],
     },
+    evidenceLevel: {
+      type: String,
+      enum: [
+        'Consensus Guideline',
+        'Systematic Review & Meta-Analysis',
+        'Randomized Controlled Trial (RCT)',
+        'Expert Clinical Lecture',
+        'Mechanistic & Observational Evidence',
+      ],
+      default: 'Expert Clinical Lecture',
+    },
+    editorialDesk: {
+      type: String,
+      default: 'Before the Numbers Editorial Desk',
+      trim: true,
+    },
+    clinicalReviewer: {
+      type: String,
+      default: 'Before the Numbers Clinical Review Desk',
+      trim: true,
+    },
+    discussionQuestions: {
+      type: [String],
+      default: [],
+    },
+    citations: {
+      type: [String],
+      default: [],
+    },
     sourceUrl: {
       type: String,
       required: [true, 'Source URL is required'],

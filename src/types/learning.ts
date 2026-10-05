@@ -98,6 +98,13 @@ export interface IPodcastChannel {
   updatedAt?: Date;
 }
 
+export type EvidenceLevel =
+  | 'Consensus Guideline'
+  | 'Systematic Review & Meta-Analysis'
+  | 'Randomized Controlled Trial (RCT)'
+  | 'Expert Clinical Lecture'
+  | 'Mechanistic & Observational Evidence';
+
 /**
  * Domain interface for Learning Resources (Videos, Studies, Articles, Podcasts).
  */
@@ -117,6 +124,13 @@ export interface ILearningResource {
   podcastChannelId?: string;
   podcastChannelName?: string;
   isGuestAppearance?: boolean;
+
+  // 3-Layer Curation & Evidence Hierarchy (Issue #44)
+  evidenceLevel?: EvidenceLevel;
+  editorialDesk?: string;         // e.g. "Before the Numbers Editorial Desk"
+  clinicalReviewer?: string;      // e.g. "Clinical Safety Review Desk"
+  discussionQuestions?: string[]; // Consultation questions for doctor visits
+  citations?: string[];           // Primary literature citations
 
   summary: string;
   keyTakeaways: string[];        // 3-5 bullet points for rapid 10-second consumption

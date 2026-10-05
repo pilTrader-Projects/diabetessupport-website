@@ -12,6 +12,7 @@ import { SITE_CONFIG } from '@/config/constants';
 import LearningHubClient from '@/components/learning/LearningHubClient';
 import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
+import { buildLearningHubMedicalSchema } from '@/lib/learningSchema';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -225,8 +226,16 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     };
   });
 
+  const medicalHubSchema = buildLearningHubMedicalSchema(allResources);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+      {/* MedicalWebPage JSON-LD Schema (Issue #44 Structured Data) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(medicalHubSchema) }}
+      />
+
       <LearningHubClient
         initialAuthorities={allAuthorities}
         initialPodcastChannels={allPodcastChannels}
