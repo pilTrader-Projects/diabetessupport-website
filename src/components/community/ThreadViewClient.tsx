@@ -6,7 +6,7 @@ import AdUnit from '@/components/ads/AdUnit';
 import ReplyCard from './ReplyCard';
 import ReplyForm from './ReplyForm';
 import SocialShareBar from './SocialShareBar';
-import MarkdownContent from './MarkdownContent';
+import MarkdownContent, { stripMarkdown } from './MarkdownContent';
 import { IThread, IReply } from '@/types/community';
 import { SITE_CONFIG } from '@/config/constants';
 
@@ -74,7 +74,7 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
   const formattedDate = thread.createdAt
     ? new Date(thread.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : 'Recently';
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
+  const canonicalUrl = `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
@@ -149,8 +149,8 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
         {/* Social Share & Helpful Like Bar */}
         <SocialShareBar
           title={thread.title}
-          url={pageUrl}
-          snippet={thread.content}
+          url={canonicalUrl}
+          snippet={stripMarkdown(thread.content)}
           showLikeButton={true}
           likesCount={likesCount}
           onLike={handleLike}
