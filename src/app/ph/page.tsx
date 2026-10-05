@@ -6,6 +6,7 @@ import { LearningResourceModel } from '@/models/LearningResource';
 import { IPost } from '@/types/blog';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema } from '@/lib/schema';
+import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
 
 export const revalidate = 60;
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   keywords: [
     'before the numbers philippines',
     'diabetes support philippines',
-    'reverse insulin resistance pinoy',
+    'improve insulin sensitivity pinoy',
     'the hidden metabolic clock',
     'tracking blood sugar free app',
     'filipino low carb guide',
@@ -165,10 +166,10 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
           </div>
 
           <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-2 text-center sm:text-left">
-            <div className="text-3xl font-black text-amber-600">10-15 Years</div>
+            <div className="text-3xl font-black text-amber-600">Multi-Year</div>
             <h3 className="text-base font-bold text-slate-900">Silent Compensation Window</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <strong>Hyperinsulinemia</strong> develops a decade before fasting blood sugar rises, giving families a crucial window to reverse resistance naturally.
+              <strong>Hyperinsulinemia</strong> often develops years before fasting blood sugar rises, giving families an opportune window to improve insulin sensitivity through sustainable lifestyle shifts.
             </p>
           </div>
 
@@ -213,6 +214,9 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
             <p className="text-xs text-slate-600">Checking 1 to 2 hours after local staples identifies your specific household triggers.</p>
           </div>
         </div>
+
+        {/* Clinical Safety & Medical Guidance Callout */}
+        <ClinicalSafetyBox variant="all" />
       </section>
 
       {/* Community Blueprints & Tools */}

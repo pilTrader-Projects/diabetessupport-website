@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildInsulinResetSchema } from '@/lib/schema';
 import InsulinResetClient from '@/components/funnel/InsulinResetClient';
+import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
 
 export const metadata: Metadata = {
   title: `Why "Normal" Blood Sugar Isn't the Whole Story | The Hidden Metabolic Clock`,
@@ -56,8 +57,9 @@ export default function InsulinResetPage(): React.JSX.Element {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main>
+      <main className="space-y-8">
         <InsulinResetClient />
+        <ClinicalSafetyBox variant="all" />
       </main>
     </div>
   );

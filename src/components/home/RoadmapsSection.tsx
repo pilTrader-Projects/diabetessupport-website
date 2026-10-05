@@ -29,13 +29,13 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
       <div className="space-y-6">
         <div className="text-center space-y-2 max-w-3xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
-            🚦 Actionable Turn-Around
+            🚦 Actionable Guidance
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Choose Your Path: It is Not Too Late to Turn Around
+            Choose Your Path: Clear Steps for Every Metabolic Stage
           </h2>
           <p className="text-slate-600 text-base">
-            Identify where your metabolism currently stands and take the precise steps to reverse or halt progression.
+            Identify where your metabolism currently stands and take evidence-backed steps to improve insulin sensitivity and support long-term metabolic health.
           </p>
         </div>
 
@@ -51,14 +51,14 @@ export default function RoadmapsSection({ articles }: RoadmapsSectionProps): Rea
               </div>
               <h3 className="text-2xl font-bold text-white">If You Are Insulin Resistant</h3>
               <p className="text-sm text-teal-100/90 leading-relaxed">
-                Your cells have stopped listening to insulin, but your pancreas is still fighting. You can be awakened to what you are facing and turn around by keeping close watch over your eating habits. No injections required.
+                Your cells have begun responding less effectively to insulin, and your pancreas is working harder to compensate. Daily habits, regular movement, and nutritional shifts can help improve insulin sensitivity before medical escalation is required.
               </p>
             </div>
             <Link
-              href="/learn/reverse-insulin-resistance-naturally"
+              href="/learn/improve-insulin-sensitivity-evidence"
               className="inline-flex items-center justify-between w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold px-5 py-3.5 rounded-xl transition-all shadow-md text-sm group"
             >
-              <span>Read: How to Reverse Insulin Resistance Naturally</span>
+              <span>Read: Ways to Improve Insulin Sensitivity: What the Evidence Says</span>
               <span className="group-hover:translate-x-1 transition-transform">➔</span>
             </Link>
           </div>

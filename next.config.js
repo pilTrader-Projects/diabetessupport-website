@@ -25,6 +25,11 @@ const nextConfig = {
         destination: '/community/:slug*',
         permanent: true,
       },
+      {
+        source: '/learn/reverse-insulin-resistance-naturally',
+        destination: '/learn/improve-insulin-sensitivity-evidence',
+        permanent: true,
+      },
     ];
   },
 };

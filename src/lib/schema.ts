@@ -342,7 +342,7 @@ export function buildGlobalHomeFaqSchema(): Record<string, any> {
         name: 'Why is fasting blood glucose not enough on its own?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Fasting blood glucose is often the last biomarker to deteriorate. For 10 to 15 years, the pancreas can compensate for insulin resistance by overproducing insulin (hyperinsulinemia), holding fasting blood sugar within normal lab ranges while metabolic stress silently progresses.',
+          text: 'Fasting glucose can remain within normal lab ranges while earlier metabolic signals begin to shift, such as after-meal glucose spikes, triglycerides, HDL, waist circumference, and blood pressure. In many individuals, the pancreas compensates for insulin resistance by overproducing insulin (hyperinsulinemia) years before fasting glucose crosses diagnostic thresholds. Fasting insulin is not part of routine screening, which is why evaluating your complete metabolic picture with a healthcare professional is essential.',
         },
       },
       {
