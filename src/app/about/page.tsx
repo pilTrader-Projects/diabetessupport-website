@@ -178,9 +178,6 @@ export default function AboutPage() {
           <Link href="/editorial-policy" className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:border-indigo-300">
             Editorial Policy &rarr;
           </Link>
-          <Link href="/medical-review-board" className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:border-indigo-300">
-            Medical Review Board &rarr;
-          </Link>
           <Link href="/corrections" className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm hover:border-indigo-300">
             Corrections &amp; Change Log &rarr;
           </Link>

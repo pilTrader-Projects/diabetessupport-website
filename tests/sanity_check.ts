@@ -138,7 +138,6 @@ async function runSanityCheck() {
         'src/app/about/page.tsx',
         'src/app/about/story/page.tsx',
         'src/app/editorial-policy/page.tsx',
-        'src/app/medical-review-board/page.tsx',
         'src/app/corrections/page.tsx',
         'src/app/contact/page.tsx',
         'src/app/not-found.tsx',

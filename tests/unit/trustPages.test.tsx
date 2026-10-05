@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import EditorialPolicyPage, { metadata as editorialMetadata } from '@/app/editorial-policy/page';
-import MedicalReviewBoardPage, { metadata as reviewBoardMetadata } from '@/app/medical-review-board/page';
 import CorrectionsPage, { metadata as correctionsMetadata } from '@/app/corrections/page';
 import AboutPage from '@/app/about/page';
 import Footer from '@/components/Footer';
@@ -39,7 +38,7 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
       expect(editorialMetadata.description).toBeDefined();
     });
 
-    it('renders sourcing standards, peer-review process, and conflict of interest policy', () => {
+    it('renders sourcing standards, 3-layer authority curation workflow, and conflict of interest policy', () => {
       const html = ReactDOMServer.renderToString(<EditorialPolicyPage />);
 
       expect(html).toContain('Editorial Policy &amp; Standards');
@@ -48,30 +47,11 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
       expect(html).toContain('Consensus Guidelines');
       expect(html).toContain('Conflict of Interest &amp; Commercial Independence');
       expect(html).toContain('Zero Pharmaceutical Sponsorship');
+      expect(html).toContain('3-Layer Authority Curation &amp; Safety Workflow');
+      expect(html).toContain('Primary Verified Authority');
+      expect(html).toContain('Clinical Safety Hedging');
       expect(html).toContain('12-Month Scheduled Review Cycle');
-    });
-  });
-
-  describe('Medical Review Board Page (src/app/medical-review-board/page.tsx)', () => {
-    it('exports valid metadata with canonical link', () => {
-      expect(reviewBoardMetadata.title).toContain('Medical Review Board');
-      expect(reviewBoardMetadata.alternates?.canonical).toBe('/medical-review-board');
-    });
-
-    it('renders licensed physician profiles with credentials and regulatory jurisdictions', () => {
-      const html = ReactDOMServer.renderToString(<MedicalReviewBoardPage />);
-
-      expect(html).toContain('Medical Review Board');
-      expect(html).toContain('Clinical Governance &amp; Expert Oversight');
-      expect(html).toContain('Professional Regulation Commission');
-      expect(html).toContain('Lead Clinical Reviewer');
-      expect(html).toContain('Dr. Raymond C. Manalo');
-      expect(html).toContain('Internal Medicine');
-      expect(html).toContain('Dr. Sarah Elena Gutierrez');
-      expect(html).toContain('Scope of Medical Review');
-      expect(html).toContain('Factual Accuracy &amp; Safety Caveats');
-      expect(html).toContain('Non-Prescriptive Educational Framing');
-      expect(html).toContain('No Doctor-Patient Relationship');
+      expect(html).not.toContain('href="/medical-review-board"');
     });
   });
 
@@ -90,6 +70,7 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
       expect(html).toContain('corrections@beforethenumbers.org');
       expect(html).toContain('24 to 48 hours');
       expect(html).toContain('Public Editorial Change Log');
+      expect(html).not.toContain('href="/medical-review-board"');
     });
   });
 
@@ -102,19 +83,19 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
       expect(html).toContain('not a registered 501(c)(3) or tax-exempt non-profit');
       expect(html).toContain('self-funded by the founder');
       expect(html).toContain('href="/editorial-policy"');
-      expect(html).toContain('href="/medical-review-board"');
       expect(html).toContain('href="/corrections"');
+      expect(html).not.toContain('href="/medical-review-board"');
     });
   });
 
   describe('Global Footer Navigation & Security Notice (src/app/layout.tsx)', () => {
-    it('renders links to all trust pages and realigned privacy notice in footer', () => {
+    it('renders links to all trust pages and realigned privacy notice in footer without medical-review-board', () => {
       const html = ReactDOMServer.renderToString(<Footer />);
 
       expect(html).toContain('href="/editorial-policy"');
       expect(html).toContain('Editorial Policy');
-      expect(html).toContain('href="/medical-review-board"');
-      expect(html).toContain('Medical Review Board');
+      expect(html).not.toContain('href="/medical-review-board"');
+      expect(html).not.toContain('Medical Review Board');
       expect(html).toContain('href="/corrections"');
       expect(html).toContain('Corrections');
       expect(html).toContain('href="/about"');
@@ -126,13 +107,13 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
   });
 
   describe('Dynamic Sitemap XML (src/app/sitemap.xml/route.ts)', () => {
-    it('includes all newly deployed trust pages in sitemap output', async () => {
+    it('includes active trust pages in sitemap output and excludes medical-review-board', async () => {
       const response = await getSitemap();
       const text = await response.text();
 
       expect(text).toContain('/editorial-policy');
-      expect(text).toContain('/medical-review-board');
       expect(text).toContain('/corrections');
+      expect(text).not.toContain('/medical-review-board');
     });
   });
 });

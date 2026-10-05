@@ -6,7 +6,7 @@ import { SITE_CONFIG } from '@/config/constants';
  * Global Application Footer Component.
  *
  * @usecase Renders global footer navigation including newly deployed E-E-A-T trust pages
- * (/editorial-policy, /medical-review-board, /corrections), medical disclaimers, and realigned privacy notice.
+ * (/editorial-policy, /corrections), medical disclaimers, and realigned privacy notice.
  */
 export default function Footer() {
   return (
@@ -21,7 +21,6 @@ export default function Footer() {
           <Link href="/ph" className="hover:text-white transition-colors">Philippines (PH)</Link>
           <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
           <Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link>
-          <Link href="/medical-review-board" className="hover:text-white transition-colors">Medical Review Board</Link>
           <Link href="/corrections" className="hover:text-white transition-colors">Corrections</Link>
           <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
           <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>

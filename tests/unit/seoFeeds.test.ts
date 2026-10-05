@@ -92,7 +92,7 @@ describe('SEO Dynamic XML Sitemap & RSS Feed Generators', () => {
       expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/terms-of-service</loc>');
       expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/about</loc>');
       expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/editorial-policy</loc>');
-      expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/medical-review-board</loc>');
+      expect(xmlText).not.toContain('<loc>https://www.beforethenumbers.org/medical-review-board</loc>');
       expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/corrections</loc>');
       expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/contact</loc>');
       expect(xmlText).toContain('<loc>https://www.beforethenumbers.org/learn/understanding-insulin-resistance-early</loc>');

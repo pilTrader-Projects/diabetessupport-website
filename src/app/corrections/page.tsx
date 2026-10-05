@@ -112,7 +112,7 @@ export default function CorrectionsPage() {
       {/* Navigation Footer */}
       <div className="pt-6 border-t border-slate-200 flex flex-wrap justify-between items-center gap-4 text-xs font-bold text-indigo-700">
         <Link href="/editorial-policy" className="hover:underline">&larr; Read Editorial Policy</Link>
-        <Link href="/medical-review-board" className="hover:underline">Meet the Medical Review Board &rarr;</Link>
+        <Link href="/contact" className="hover:underline">Submit a Correction Request &rarr;</Link>
         <Link href="/about" className="hover:underline">Back to About Us &rarr;</Link>
       </div>
     </div>

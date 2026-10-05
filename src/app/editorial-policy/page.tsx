@@ -78,23 +78,23 @@ export default function EditorialPolicyPage() {
         </div>
       </section>
 
-      {/* 3-Layer Review Workflow */}
+      {/* 3-Layer Curation & Clinical Safety Workflow */}
       <section className="space-y-4 text-sm sm:text-base leading-relaxed bg-indigo-50/60 p-6 sm:p-8 rounded-2xl border border-indigo-100">
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <span>🛡️</span> 3-Layer Curation &amp; Medical Review Workflow
+          <span>🛡️</span> 3-Layer Authority Curation &amp; Safety Workflow
         </h2>
         <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-          Every educational resource on our platform passes through three rigorous layers of validation before public indexing:
+          Every educational resource on our platform passes through three rigorous layers of curation before public indexing:
         </p>
         <ol className="space-y-3 text-xs sm:text-sm text-slate-700 list-decimal list-inside">
           <li>
-            <strong>Layer 1 — Primary Authority:</strong> Identifying lectures, trials, or research led by recognized researchers and clinicians (e.g., Dr. Benjamin Bikman, Dr. Jason Fung).
+            <strong>Layer 1 — Primary Verified Authority:</strong> Sourcing lectures, clinical trials, or research led exclusively by accredited researchers and licensed physicians (e.g., Dr. Benjamin Bikman, PhD, Dr. Jason Fung, MD, Dr. Ken D. Berry, MD).
           </li>
           <li>
-            <strong>Layer 2 — Editorial Desk Synthesis:</strong> Synthesizing key biochemical mechanisms, creating answer-first 10-second summaries, and formulating doctor consultation questions.
+            <strong>Layer 2 — Editorial Synthesis:</strong> Synthesizing key biochemical mechanisms, formulating answer-first 10-second summaries, and creating practical doctor consultation questions.
           </li>
           <li>
-            <strong>Layer 3 — Clinical Safety Review:</strong> Independent review by our <Link href="/medical-review-board" className="text-indigo-700 font-bold underline hover:text-indigo-900">Medical Review Board</Link> to ensure clinical accuracy, proper scientific hedging, and mandatory safety caveats.
+            <strong>Layer 3 — Clinical Safety Hedging:</strong> Enforcing non-prescriptive framing, mandatory medication contraindication alerts, and clear disclaimers that content represents educational curation and peer dialogue, not individual medical advice.
           </li>
         </ol>
       </section>
@@ -126,13 +126,13 @@ export default function EditorialPolicyPage() {
           <span>🔄</span> 12-Month Scheduled Review Cycle
         </h2>
         <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-          Metabolic science and clinical nutrition guidelines evolve rapidly. Before the Numbers subjects all core guides, curated resources, and frameworks to a <strong>12-Month Scheduled Review Cycle</strong>. Every resource is re-evaluated by our editorial and clinical team at least once per year to ensure ongoing scientific consensus.
+          Metabolic science and clinical nutrition guidelines evolve rapidly. Before the Numbers subjects all core guides, curated resources, and frameworks to a <strong>12-Month Scheduled Review Cycle</strong>. Every resource is re-evaluated by our editorial curation team at least once per year to ensure ongoing scientific consensus.
         </p>
       </section>
 
       {/* Navigation Footer */}
       <div className="pt-6 border-t border-slate-200 flex flex-wrap justify-between items-center gap-4 text-xs font-bold text-indigo-700">
-        <Link href="/medical-review-board" className="hover:underline">Meet the Medical Review Board &rarr;</Link>
+        <Link href="/about" className="hover:underline">About Our Mission &rarr;</Link>
         <Link href="/corrections" className="hover:underline">View Public Corrections Policy &rarr;</Link>
         <Link href="/contact" className="hover:underline">Contact Editorial Team &rarr;</Link>
       </div>
