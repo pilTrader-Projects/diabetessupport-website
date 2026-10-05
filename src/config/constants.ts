@@ -24,7 +24,7 @@ export const SITE_CONFIG = {
   domain:
     process.env.NEXT_PUBLIC_SITE_URL && !process.env.NEXT_PUBLIC_SITE_URL.includes('localhost')
       ? process.env.NEXT_PUBLIC_SITE_URL.replace(/^https?:\/\//, '')
-      : 'beforethenumbers.org',
+      : 'www.beforethenumbers.org',
   wordpressApiUrl:
     process.env.WORDPRESS_API_URL ||
     'https://public-api.wordpress.com/wp/v2/sites/diabetescareph.wordpress.com',

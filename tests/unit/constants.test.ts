@@ -10,7 +10,7 @@ describe('SITE_CONFIG Constant Validation (SOLID / Clean Code)', () => {
   it('should define essential site metadata', () => {
     expect(SITE_CONFIG.title).toContain('Before the Numbers');
     expect(SITE_CONFIG.description).toBeDefined();
-    expect(SITE_CONFIG.domain).toBe('beforethenumbers.org');
+    expect(SITE_CONFIG.domain).toBe('www.beforethenumbers.org');
   });
 
   it('should define educational awareness pillars for the campaign', () => {
