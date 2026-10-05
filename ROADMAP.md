@@ -72,7 +72,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #49](https://github.com/pilTrader-Projects/diabetessupport-website/pull/49)** `[COMPLETED]`: Abolish legacy WordPress blog posts from `/learn`, migrate live MongoDB documents into Community Discussions (`/community/[slug]`) with Founder attribution (`#FOUNDER`), append conversation prompts, configure 301 permanent redirects, and align Admin CMS with automatic Community thread publishing (Closes Issue #43).
 
 ### Milestone 19: Learning Hub - Pure Curation Engine & Structured E-E-A-T Schema
-- [ ] **[Issue #44](https://github.com/pilTrader-Projects/diabetessupport-website/issues/44)** `[IN PROGRESS]`: Elevate `/learn` to a pure curation index with 3-layer bylines (Primary Authority + Editorial Desk + Medical Reviewer), `MedicalWebPage` & `VideoObject` JSON-LD schemas, evidence level badges, and privacy-sandboxed `youtube-nocookie.com` embeds.
+- [x] **[PR #50](https://github.com/pilTrader-Projects/diabetessupport-website/pull/50)** `[COMPLETED]`: Elevate `/learn` to a pure curation index with 3-layer bylines (Primary Authority + Editorial Desk + Medical Reviewer), `MedicalWebPage` & `VideoObject` JSON-LD schemas, evidence level badges, and privacy-sandboxed `youtube-nocookie.com` embeds (Closes Issue #44).
 
 ### Milestone 20: Trust & Compliance - Trust Pages Suite & Privacy Realignment
 - [ ] **[Issue #45](https://github.com/pilTrader-Projects/diabetessupport-website/issues/45)** `[READY / PLANNED]`: Deploy core trust pages (`/editorial-policy`, `/medical-review-board`, `/corrections`, updated `/about`), and realign privacy copy to match actual local browser storage and anonymous 6-digit sync PIN architecture.
