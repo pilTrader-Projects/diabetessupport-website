@@ -65,10 +65,26 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **[PR #36](https://github.com/pilTrader-Projects/diabetessupport-website/pull/36)** `[COMPLETED / MERGED]`: Rebrand and elevate Educational Articles (`/blog` -> `/learn`) into a comprehensive Learning Materials & Evidence Hub. Features zero-hardcoding Admin Management for Authorities & Personalities (`/admin/learning/authorities`) and Podcasts (`/admin/learning/podcasts`), keyword & guest syndication, automated YouTube & PubMed ingestion, link-rot health verification (`/admin/learning/resources`), lite video player modal with "Watch on YouTube" handoff, multi-dimensional filtering, and "My Library" bookmark lead capture drawer synced with Brevo (Closes Issue #35).
 - [x] **[PR #38](https://github.com/pilTrader-Projects/diabetessupport-website/pull/38)** `[COMPLETED]`: Fix dynamic cascading of authority recommended books to video player modal so that adding books to an authority in Admin automatically cascades across all their videos (Closes Issue #37).
 
+### Milestone 17: Site Revision Blueprint - Stop-the-Risk (Phase 0)
+- [ ] **[Issue #42](https://github.com/pilTrader-Projects/diabetessupport-website/issues/42)** `[READY / PLANNED]`: Apex domain 301 canonicalization, clinical copy sanitization (hedging 'last biomarker', 'reversal', 'healing', and fear language), emergency fasting/low-carb safety callouts, and MongoDB legacy tag cleanup.
+
+### Milestone 18: Content Strategy - Legacy Blog Migration to Community Forum
+- [ ] **[Issue #43](https://github.com/pilTrader-Projects/diabetessupport-website/issues/43)** `[IN PROGRESS]`: Deprecate legacy WordPress blog posts from `/blog`, migrate into Community Discussions (`/community/[slug]`) with Founder attribution (`#FOUNDER`), append conversation prompts, and configure 301 permanent redirects.
+
+### Milestone 19: Learning Hub - Pure Curation Engine & Structured E-E-A-T Schema
+- [ ] **[Issue #44](https://github.com/pilTrader-Projects/diabetessupport-website/issues/44)** `[READY / PLANNED]`: Elevate `/learn` to a pure curation index with 3-layer bylines (Primary Authority + Editorial Desk + Medical Reviewer), `MedicalWebPage` & `VideoObject` JSON-LD schemas, evidence level badges, and privacy-sandboxed `youtube-nocookie.com` embeds.
+
+### Milestone 20: Trust & Compliance - Trust Pages Suite & Privacy Realignment
+- [ ] **[Issue #45](https://github.com/pilTrader-Projects/diabetessupport-website/issues/45)** `[READY / PLANNED]`: Deploy core trust pages (`/editorial-policy`, `/medical-review-board`, `/corrections`, updated `/about`), and realign privacy copy to match actual local browser storage and anonymous 6-digit sync PIN architecture.
+
+### Milestone 21: Product & Regulatory - Accelerate MetricPace Rebrand & Localization
+- [ ] **[Issue #46](https://github.com/pilTrader-Projects/diabetessupport-website/issues/46)** `[READY / PLANNED]`: Deprecate clinical naming overlaps (`GlycoSense`) in favor of `MetricPace` lifestyle companion ledger, deploy SaMD non-diagnostic safe harbor notices, and complete reciprocal `hreflang` localization on `/ph`.
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow
 - **Test-Driven Development (TDD)**: Unit & Integration tests created before or alongside code.
 - **Sanity Checks**: Mandatory execution of `npm run sanity` before merging PRs.
 - **Surgical Git Workflow**: Feature branch (`<issue>-<slug>`) -> PR -> Code Review -> Merge to `main`.
+
 

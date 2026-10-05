@@ -116,7 +116,13 @@ export default function ThreadViewClient({ thread, initialReplies }: ThreadViewC
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-slate-900">{thread.authorAlias}</span>
-                <span className="text-xs text-slate-400 font-mono">{thread.authorTag}</span>
+                {thread.authorTag === '#FOUNDER' ? (
+                  <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Founder ⭐
+                  </span>
+                ) : (
+                  <span className="text-xs text-slate-400 font-mono">{thread.authorTag}</span>
+                )}
                 <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   OP 👑
                 </span>
