@@ -67,12 +67,12 @@ export const AWARENESS_PILLARS: AwarenessPillar[] = [
   },
   {
     id: 'early-detection',
-    title: 'The Reversibility Critical Window',
-    subtitle: 'Catch It Before Permanent Harm',
+    title: 'The Early Opportunity Window',
+    subtitle: 'Actionable Early Steps',
     description:
-      'Catching elevated HbA1c between 5.7% and 6.4% gives you the critical window to reverse insulin resistance and restore metabolic balance through lifestyle changes before requiring insulin injections.',
+      'Identifying elevated HbA1c in the prediabetes range (5.7% to 6.4%) gives you an opportune window to improve insulin sensitivity and support metabolic health through evidence-based nutrition and daily movement under clinical guidance.',
     icon: '🔬',
-    stat: 'Reversible in Early Stages',
+    stat: 'Actionable in Early Stages',
   },
 ];
 

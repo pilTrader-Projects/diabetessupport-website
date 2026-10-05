@@ -2,6 +2,18 @@ import { NextRequest } from 'next/server';
 import { middleware, USER_REGION_COOKIE } from '../../src/middleware';
 
 describe('Edge Localization Middleware', () => {
+  it('redirects www.beforethenumbers.org to apex beforethenumbers.org with 301 status', () => {
+    const req = new NextRequest('http://www.beforethenumbers.org/learn', {
+      headers: {
+        host: 'www.beforethenumbers.org',
+      },
+    });
+
+    const res = middleware(req);
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('https://beforethenumbers.org/learn');
+  });
+
   it('redirects to /ph when visiting / from Philippines (x-vercel-ip-country)', () => {
     const req = new NextRequest('http://localhost:3000/', {
       headers: {

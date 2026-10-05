@@ -6,6 +6,7 @@ import { LearningResourceModel } from '@/models/LearningResource';
 import { IPost } from '@/types/blog';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildOrganizationSchema, buildGlobalHomeFaqSchema } from '@/lib/schema';
+import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
 
 export const revalidate = 60; // Refresh static page every 60 seconds
 
@@ -438,7 +439,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               Why do conventional fasting glucose tests miss early metabolic dysfunction?
             </h3>
             <p>
-              Fasting blood sugar is often the <strong>last biomarker to cross diagnostic thresholds</strong>. For 10 to 15 years prior, the pancreas works in overdrive producing elevated insulin (<strong>hyperinsulinemia</strong>) to force glucose into resistant cells. Looking only at glucose ignores this underlying hormonal strain.
+              Fasting blood glucose can remain within normal lab ranges while other metabolic signals begin shifting—such as post-meal glucose spikes, triglycerides, HDL, waist circumference, and blood pressure. In many individuals, the pancreas compensates for insulin resistance by overproducing insulin (<strong>hyperinsulinemia</strong>) years before fasting glucose crosses diagnostic thresholds. Because insulin testing is not part of routine screening, looking at your complete clinical picture with a healthcare professional is crucial.
             </p>
           </div>
 
@@ -456,7 +457,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               How does post-meal muscular movement clear glucose without demanding extra insulin?
             </h3>
             <p>
-              Engaging in 10 to 15 minutes of gentle walking or functional movement after eating recruits <strong>GLUT4 glucose transporters</strong> directly through muscle contraction. This clears circulating carbohydrates directly into muscle tissue without requiring the pancreas to spike additional insulin.
+              Engaging in 10 to 15 minutes of gentle walking or functional movement after eating recruits <strong>GLUT4 glucose transporters</strong> directly through muscle contraction. This helps clear circulating carbohydrates into muscle tissue independent of insulin. <em>Caution: If you take insulin or certain glucose-lowering medications, consult your doctor regarding physical activity and hypoglycemia risks.</em>
             </p>
           </div>
 
@@ -465,10 +466,13 @@ export default async function HomePage(): Promise<React.JSX.Element> {
               Why does Before the Numbers emphasize sustainable change over food extremism?
             </h3>
             <p>
-              Extremist diets demonizing entire cultural food groups frequently cause high friction, rebound binges, and social isolation. Sustainable metabolic restoration focuses on total context: pairing carbohydrates with protein and fiber, managing portion density, and prioritizing restful sleep and regular physical movement.
+              Extremist diets demonizing entire cultural food groups frequently cause high friction, rebound binges, and social isolation. Sustainable habits supporting metabolic health focus on total dietary context: pairing carbohydrates with protein and fiber, managing portion density, and prioritizing restful sleep and regular physical movement.
             </p>
           </div>
         </div>
+
+        {/* Prominent Clinical Safety & Medication Callout Box */}
+        <ClinicalSafetyBox variant="fasting" />
       </section>
 
       {/* ========================================================================= */}
@@ -478,13 +482,13 @@ export default async function HomePage(): Promise<React.JSX.Element> {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/15 pb-6">
           <div className="space-y-3 max-w-2xl">
             <span className="inline-block bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3.5 py-1 rounded-full border border-white/30 backdrop-blur-md shadow-sm">
-              🔬 PEER-REVIEWED SCIENCE &amp; EXPERT AUTHORITIES
+              🔬 EVIDENCE &amp; EXPERT PERSPECTIVES
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-sm">
               Curated Learning Materials &amp; Evidence Hub
             </h2>
             <p className="text-sm sm:text-base text-purple-100/90 leading-relaxed">
-              Explore clinical lectures, trial breakdowns, and dietary protocols from world-leading metabolic researchers—tailored to help you understand the root biology of healing.
+              Explore clinical lectures, trial breakdowns, and dietary protocols from world-leading metabolic researchers—tailored to help you understand the biology behind metabolic health.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
