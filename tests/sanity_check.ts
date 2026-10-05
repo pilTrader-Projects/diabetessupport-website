@@ -33,6 +33,7 @@ async function runSanityCheck() {
         'src/lib/communityUtils.ts',
         'src/lib/communityNotifications.ts',
         'src/lib/savedProtocolUtils.ts',
+        'src/lib/markdownUtils.tsx',
         'src/lib/recommendationResolver.ts',
         'src/lib/localizationResolver.ts',
         'src/middleware.ts',

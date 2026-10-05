@@ -1,102 +1,22 @@
 'use client';
 
 import React from 'react';
+import { parseInlineMarkdown, stripMarkdown, sanitizeUrl } from '@/lib/markdownUtils';
 
-/**
- * Strips markdown symbols (#, *, _, [, ], `, >) from text for clean plain-text card previews.
- */
-export function stripMarkdown(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/<[^>]*>?/gm, '') // Strip any HTML tags
-    .replace(/^#{1,6}\s+/gm, '') // Strip heading markers
-    .replace(/(\*\*|__)(.*?)\1/g, '$2') // Strip bold
-    .replace(/(\*|_)(.*?)\1/g, '$2') // Strip italic
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Strip links leaving link text
-    .replace(/`([^`]+)`/g, '$1') // Strip inline code
-    .replace(/^\s*[-*+]\s+/gm, '') // Strip list bullets
-    .replace(/^\s*\d+\.\s+/gm, '') // Strip ordered list numbers
-    .replace(/^\s*>\s*/gm, '') // Strip blockquotes
-    .replace(/---+/g, '') // Strip horizontal rules
-    .replace(/\s+/g, ' ') // Collapse multiple spaces
-    .trim();
-}
+export { stripMarkdown, sanitizeUrl };
 
-/**
- * Parses inline markdown (bold, italic, links, inline code) into React nodes.
- */
-function parseInline(text: string): React.ReactNode[] {
-  // Regex tokenizing links [text](url), bold **text**, italic *text*, and inline code `code`
-  const tokenRegex = /(\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|__([^_]+)__|(?<!\*)\*([^*]+)\*(?!\*)|(?<!_)_([^_]+)_(?!_)|`([^`]+)`)/g;
-
-  const nodes: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = tokenRegex.exec(text)) !== null) {
-    const matchIndex = match.index;
-    if (matchIndex > lastIndex) {
-      nodes.push(text.substring(lastIndex, matchIndex));
-    }
-
-    const [fullMatch, , linkText, linkUrl, bold1, bold2, italic1, italic2, code] = match;
-
-    if (linkText && linkUrl) {
-      nodes.push(
-        <a
-          key={`link-${matchIndex}`}
-          href={linkUrl}
-          target={linkUrl.startsWith('http') ? '_blank' : undefined}
-          rel={linkUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-          className="text-teal-700 font-semibold underline hover:text-teal-900 transition-colors"
-        >
-          {linkText}
-        </a>
-      );
-    } else if (bold1 || bold2) {
-      nodes.push(
-        <strong key={`bold-${matchIndex}`} className="font-bold text-slate-900">
-          {bold1 || bold2}
-        </strong>
-      );
-    } else if (italic1 || italic2) {
-      nodes.push(
-        <em key={`italic-${matchIndex}`} className="italic">
-          {italic1 || italic2}
-        </em>
-      );
-    } else if (code) {
-      nodes.push(
-        <code
-          key={`code-${matchIndex}`}
-          className="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-200"
-        >
-          {code}
-        </code>
-      );
-    } else {
-      nodes.push(fullMatch);
-    }
-
-    lastIndex = matchIndex + fullMatch.length;
-  }
-
-  if (lastIndex < text.length) {
-    nodes.push(text.substring(lastIndex));
-  }
-
-  return nodes.length > 0 ? nodes : [text];
-}
-
-interface MarkdownContentProps {
+export interface MarkdownContentProps {
   content: string;
   className?: string;
 }
 
 /**
- * Community Discussion Markdown Renderer.
+ * Community Discussion Markdown Renderer Component.
  *
- * @usecase Safely renders thread and reply markdown with responsive typography, headings, lists, and callout banners.
+ * @usecase Renders discussion forum threads and member replies with responsive typography, semantic headings, lists, and highlight cards without raw syntax markers.
+ * @param {MarkdownContentProps} props Content string containing markdown formatting and optional CSS className.
+ * @dependencies React, parseInlineMarkdown (@/lib/markdownUtils).
+ * @returns {JSX.Element | null} Formatted discussion nodes or null if content is empty.
  */
 export default function MarkdownContent({ content, className = '' }: MarkdownContentProps) {
   if (!content) return null;
@@ -123,9 +43,9 @@ export default function MarkdownContent({ content, className = '' }: MarkdownCon
       if (headingMatch) {
         const level = headingMatch[1].length;
         const headingText = headingMatch[2].trim();
-        const inlineNodes = parseInline(headingText);
+        const inlineNodes = parseInlineMarkdown(headingText);
 
-        // Special highlight card for Community Discussion prompt
+        // Highlight card for Community Discussion prompt
         if (headingText.includes('Community Discussion') || headingText.includes('Peer Experiences')) {
           elements.push(
             <div
@@ -189,7 +109,7 @@ export default function MarkdownContent({ content, className = '' }: MarkdownCon
           key={`quote-${blockIndex}`}
           className="border-l-4 border-teal-500 pl-4 py-2 my-4 bg-teal-50/50 rounded-r-lg text-slate-700 italic"
         >
-          {parseInline(quoteText)}
+          {parseInlineMarkdown(quoteText)}
         </blockquote>
       );
       return;
@@ -203,7 +123,7 @@ export default function MarkdownContent({ content, className = '' }: MarkdownCon
         <ul key={`ul-${blockIndex}`} className="list-disc list-outside pl-6 my-4 space-y-2 text-slate-700">
           {lines.map((line, liIndex) => {
             const itemText = line.replace(/^\s*[-*+]\s+/, '');
-            return <li key={`li-${liIndex}`}>{parseInline(itemText)}</li>;
+            return <li key={`li-${liIndex}`}>{parseInlineMarkdown(itemText)}</li>;
           })}
         </ul>
       );
@@ -217,7 +137,7 @@ export default function MarkdownContent({ content, className = '' }: MarkdownCon
         <ol key={`ol-${blockIndex}`} className="list-decimal list-outside pl-6 my-4 space-y-2 text-slate-700">
           {lines.map((line, liIndex) => {
             const itemText = line.replace(/^\s*\d+\.\s+/, '');
-            return <li key={`oli-${liIndex}`}>{parseInline(itemText)}</li>;
+            return <li key={`oli-${liIndex}`}>{parseInlineMarkdown(itemText)}</li>;
           })}
         </ol>
       );
@@ -227,7 +147,7 @@ export default function MarkdownContent({ content, className = '' }: MarkdownCon
     // 6. Regular Paragraphs
     elements.push(
       <p key={`p-${blockIndex}`} className="my-3 leading-relaxed text-slate-700 text-base md:text-lg">
-        {parseInline(trimmed)}
+        {parseInlineMarkdown(trimmed)}
       </p>
     );
   });
