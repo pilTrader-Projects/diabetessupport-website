@@ -20,7 +20,13 @@ export default function ReplyCard({ reply, isOp, isYou }: ReplyCardProps) {
       <div className="flex items-center justify-between text-xs border-b border-slate-50 pb-2">
         <div className="flex items-center space-x-2">
           <span className="font-bold text-slate-800">{reply.authorAlias}</span>
-          <span className="text-slate-400 font-mono">{reply.authorTag}</span>
+          {reply.authorTag === '#FOUNDER' ? (
+            <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full uppercase tracking-wider">
+              Founder ⭐
+            </span>
+          ) : (
+            <span className="text-slate-400 font-mono">{reply.authorTag}</span>
+          )}
           {isOp && (
             <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
               OP 👑
