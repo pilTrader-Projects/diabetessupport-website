@@ -47,4 +47,35 @@ describe('VideoPlayerModal (Issue #44 Privacy-Enhanced Media Embedding & Curatio
     expect(html).toContain('Clinical Safety &amp; Guidance Notice');
     expect(html).toContain('Questions to Explore with Your Physician');
   });
+
+  it('should render flanking companion reading cards in side spaces when recommended books exist', () => {
+    const resourceWithBooks: ILearningResource = {
+      ...mockResource,
+      recommendedBooks: [
+        {
+          title: 'The Obesity Code',
+          author: 'Dr. Jason Fung, MD',
+          description: 'The definitive guide to reversing insulin resistance.',
+          affiliateUrl: 'https://amazon.com/dp/obesity-code',
+          type: 'book',
+          platformName: 'Amazon',
+          badgeText: 'Essential Companion',
+        },
+      ],
+    };
+
+    const html = ReactDOMServer.renderToString(
+      <VideoPlayerModal
+        isOpen={true}
+        onClose={jest.fn()}
+        resource={resourceWithBooks}
+      />
+    );
+
+    expect(html).toContain('Companion Reading');
+    expect(html).toContain('The Obesity Code');
+    expect(html).toContain('The definitive guide to reversing insulin resistance.');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer sponsored"');
+  });
 });

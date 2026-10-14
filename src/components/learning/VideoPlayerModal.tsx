@@ -6,6 +6,8 @@ import { ILearningResource, IAuthority } from '@/types/learning';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import CurationDetails from '@/components/learning/CurationDetails';
+import AffiliateCompanionCard from '@/components/learning/AffiliateCompanionCard';
+import { distributeFlankBooks, stopPropagation } from '@/lib/affiliateFlankUtils';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -78,6 +80,8 @@ export default function VideoPlayerModal({
     authorities
   );
 
+  const { leftBooks, rightBooks } = distributeFlankBooks(recommendedBooks);
+
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   
   // Resilient embedId resolution: fallback to regex extraction if embedId is omitted but sourceUrl is YouTube
@@ -104,6 +108,20 @@ export default function VideoPlayerModal({
     }
   };
 
+  const handleOpenShareModal = (): void => {
+    setIsShareModalOpen(true);
+  };
+
+  const handleCloseShareModal = (): void => {
+    setIsShareModalOpen(false);
+  };
+
+  const handleToggleSaveClick = (): void => {
+    if (onToggleSave && resource._id) {
+      onToggleSave(resource._id);
+    }
+  };
+
   const modalContent = (
     <div
       role="dialog"
@@ -113,14 +131,38 @@ export default function VideoPlayerModal({
       onClick={onClose}
     >
       <div
-        className="bg-gradient-to-b from-slate-950 via-purple-950 to-blue-950 border border-white/20 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl text-white my-auto"
-        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-[1560px] flex items-center justify-center gap-4 xl:gap-6 my-auto"
+        onClick={stopPropagation}
       >
-        {/* Video Player Frame Area (Full 16:9 responsive frame with GPU isolation) */}
+        {/* Left Flank Companion Reading (Desktop XL+) */}
+        {leftBooks.length > 0 && (
+          <aside
+            aria-label="Companion reading left flank"
+            className="hidden xl:flex flex-col gap-3.5 w-64 2xl:w-72 shrink-0 max-h-[92vh] overflow-y-auto pr-1"
+          >
+            <div className="flex items-center gap-1.5 px-1 text-[11px] font-black uppercase tracking-wider text-amber-300">
+              <span>📖</span>
+              <span>Companion Reading</span>
+            </div>
+            {leftBooks.map((book) => (
+              <AffiliateCompanionCard
+                key={book._id || book.title}
+                book={book}
+                variant="flank"
+              />
+            ))}
+          </aside>
+        )}
+
+        {/* Central Video Modal — EXACT same width & height as before (max-w-4xl) */}
         <div
-          className="relative w-full aspect-video bg-black shrink-0 overflow-hidden"
-          style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', contain: 'layout paint' }}
+          className="bg-gradient-to-b from-slate-950 via-purple-950 to-blue-950 border border-white/20 rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl text-white my-auto relative shrink-0"
         >
+          {/* Video Player Frame Area (Full 16:9 responsive frame with GPU isolation) */}
+          <div
+            className="relative w-full aspect-video bg-black shrink-0 overflow-hidden"
+            style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', contain: 'layout paint' }}
+          >
           {embedUrl ? (
             <iframe
               src={embedUrl}
@@ -193,7 +235,7 @@ export default function VideoPlayerModal({
 
                 <button
                   type="button"
-                  onClick={() => setIsShareModalOpen(true)}
+                  onClick={handleOpenShareModal}
                   className="px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white border-white/20 shadow-md hover:scale-[1.02] cursor-pointer"
                   title="Found this material valuable? Share it!"
                 >
@@ -203,7 +245,7 @@ export default function VideoPlayerModal({
                 {onToggleSave && resource._id && (
                   <button
                     type="button"
-                    onClick={() => onToggleSave(resource._id!)}
+                    onClick={handleToggleSaveClick}
                     className={`px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border inline-flex items-center gap-1.5 cursor-pointer ${
                       isSaved
                         ? 'bg-amber-400/25 border-amber-300/40 text-amber-200 shadow-sm'
@@ -237,58 +279,11 @@ export default function VideoPlayerModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {recommendedBooks.map((book) => (
-                  <div
+                  <AffiliateCompanionCard
                     key={book._id || book.title}
-                    className="flex gap-3 bg-white/10 border border-white/15 rounded-xl p-3 hover:border-amber-400/40 transition-all group backdrop-blur-sm"
-                  >
-                    {book.coverUrl ? (
-                      <div className="w-16 h-24 shrink-0 rounded-lg overflow-hidden bg-purple-950/60 shadow-md border border-white/10">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={book.coverUrl}
-                          alt={book.title}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const parent = e.currentTarget.parentElement;
-                            if (parent) {
-                              parent.innerHTML = '<div class="w-full h-full bg-amber-950/40 flex items-center justify-center text-xl text-amber-400 font-bold">📖</div>';
-                            }
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-16 h-24 shrink-0 rounded-lg bg-amber-900/30 border border-amber-600/30 flex items-center justify-center text-xl">
-                        📚
-                      </div>
-                    )}
-                    <div className="flex-1 flex flex-col justify-between min-w-0">
-                      <div>
-                        {book.badgeText && (
-                          <span className="text-[9px] font-black uppercase text-amber-300">
-                            {book.badgeText}
-                          </span>
-                        )}
-                        <h4 className="text-xs font-bold text-white line-clamp-1 group-hover:text-amber-300 transition-colors">
-                          {book.title}
-                        </h4>
-                        <p className="text-[11px] text-purple-200 line-clamp-2 mt-0.5">
-                          {book.description}
-                        </p>
-                      </div>
-                      <div className="pt-2 flex items-center gap-2">
-                        <a
-                          href={book.affiliateUrl}
-                          target="_blank"
-                          rel="noopener noreferrer sponsored"
-                          className="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-extrabold rounded-lg transition-colors inline-flex items-center gap-1 shadow-sm"
-                        >
-                          <span>Get on {book.platformName?.split(' ')[0] || 'Amazon'} ↗</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                    book={book}
+                    variant="inline"
+                  />
                 ))}
               </div>
 
@@ -297,7 +292,6 @@ export default function VideoPlayerModal({
               </p>
             </div>
           )}
-
 
           {/* Topic Tags */}
           {resource.topics && resource.topics.length > 0 && (
@@ -314,15 +308,36 @@ export default function VideoPlayerModal({
           )}
         </div>
       </div>
+
+      {/* Right Flank Companion Reading (Desktop XL+) */}
+      {rightBooks.length > 0 && (
+        <aside
+          aria-label="Companion reading right flank"
+          className="hidden xl:flex flex-col gap-3.5 w-64 2xl:w-72 shrink-0 max-h-[92vh] overflow-y-auto pl-1"
+        >
+          <div className="flex items-center gap-1.5 px-1 text-[11px] font-black uppercase tracking-wider text-amber-300">
+            <span>📖</span>
+            <span>Companion Reading</span>
+          </div>
+          {rightBooks.map((book) => (
+            <AffiliateCompanionCard
+              key={book._id || book.title}
+              book={book}
+              variant="flank"
+            />
+          ))}
+        </aside>
+      )}
     </div>
-  );
+  </div>
+);
 
   const fullContent = (
     <>
       {modalContent}
       <ResourceShareModal
         isOpen={isShareModalOpen}
-        onClose={() => setIsShareModalOpen(false)}
+        onClose={handleCloseShareModal}
         resource={resource}
       />
     </>
