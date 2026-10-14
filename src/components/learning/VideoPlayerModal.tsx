@@ -7,7 +7,7 @@ import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import CurationDetails from '@/components/learning/CurationDetails';
 import AffiliateCompanionCard from '@/components/learning/AffiliateCompanionCard';
-import { distributeFlankBooks, stopPropagation } from '@/lib/affiliateFlankUtils';
+import { resolveFlankPanels, stopPropagation } from '@/lib/affiliateFlankUtils';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -80,7 +80,12 @@ export default function VideoPlayerModal({
     authorities
   );
 
-  const { leftBooks, rightBooks } = distributeFlankBooks(recommendedBooks);
+  const flankLayout = resolveFlankPanels({
+    authorBooks: recommendedBooks,
+    authorityName: resource.authorityName,
+    topics: resource.topics,
+    authorities,
+  });
 
   const originParam = typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
   
@@ -135,16 +140,16 @@ export default function VideoPlayerModal({
         onClick={stopPropagation}
       >
         {/* Left Flank Companion Reading (Desktop XL+) */}
-        {leftBooks.length > 0 && (
+        {flankLayout.leftBooks.length > 0 && (
           <aside
             aria-label="Companion reading left flank"
             className="hidden xl:flex flex-col gap-3.5 w-64 2xl:w-72 shrink-0 max-h-[92vh] overflow-y-auto pr-1"
           >
             <div className="flex items-center gap-1.5 px-1 text-[11px] font-black uppercase tracking-wider text-amber-300">
               <span>📖</span>
-              <span>Companion Reading</span>
+              <span>{flankLayout.leftTitle}</span>
             </div>
-            {leftBooks.map((book) => (
+            {flankLayout.leftBooks.map((book) => (
               <AffiliateCompanionCard
                 key={book._id || book.title}
                 book={book}
@@ -263,13 +268,13 @@ export default function VideoPlayerModal({
           <CurationDetails resource={resource} />
 
           {/* Contextual Affiliate Book & Protocol Recommendations */}
-          {recommendedBooks.length > 0 && (
+          {flankLayout.allDisplayBooks.length > 0 && (
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 space-y-4 shadow-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <span className="text-lg">📖</span>
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-amber-300">
-                    {`Recommended Reading by ${resource.authorityName || 'Author'}`}
+                    {flankLayout.inlineTitle}
                   </h3>
                 </div>
                 <span className="text-[10px] uppercase font-bold text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
@@ -278,7 +283,7 @@ export default function VideoPlayerModal({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {recommendedBooks.map((book) => (
+                {flankLayout.allDisplayBooks.map((book) => (
                   <AffiliateCompanionCard
                     key={book._id || book.title}
                     book={book}
@@ -310,16 +315,16 @@ export default function VideoPlayerModal({
       </div>
 
       {/* Right Flank Companion Reading (Desktop XL+) */}
-      {rightBooks.length > 0 && (
+      {flankLayout.rightBooks.length > 0 && (
         <aside
           aria-label="Companion reading right flank"
           className="hidden xl:flex flex-col gap-3.5 w-64 2xl:w-72 shrink-0 max-h-[92vh] overflow-y-auto pl-1"
         >
           <div className="flex items-center gap-1.5 px-1 text-[11px] font-black uppercase tracking-wider text-amber-300">
             <span>📖</span>
-            <span>Companion Reading</span>
+            <span>{flankLayout.rightTitle}</span>
           </div>
-          {rightBooks.map((book) => (
+          {flankLayout.rightBooks.map((book) => (
             <AffiliateCompanionCard
               key={book._id || book.title}
               book={book}
