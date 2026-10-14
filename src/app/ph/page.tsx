@@ -105,45 +105,49 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-4 sm:pt-8">
         <div className="inline-flex items-center gap-2 bg-amber-50 text-amber-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-amber-300 shadow-xs">
           <span>🇵🇭</span>
-          <span>Before the Numbers &bull; Philippines</span>
+          <span>PROTECT YOUR FAMILY &bull; GAIN THE KNOWLEDGE THAT KEEPS THEM SAFE</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight sm:leading-none">
-          Protecting Filipino Family Wealth Through{' '}
-          <span className="text-teal-700 underline decoration-teal-300">
-            Preventative Metabolic Health.
+          The Diseases That Bankrupt Filipino Families{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 via-rose-700 to-indigo-700">
+            Are 80% Preventable With the Right Knowledge.
           </span>
         </h1>
 
-        <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal">
-          Before the Numbers provides dedicated health awareness and practical metabolic education for the Philippines. We empower Filipino breadwinners, families, and caregivers with practical ancestral nutrition blueprints, local food trigger guides, and free tracking tools—before a diagnosis forces unexpected hardship.
+        <p className="text-lg sm:text-xl font-bold text-slate-800 max-w-3xl mx-auto leading-relaxed">
+          Diabetes, hypertension, fatty liver, and kidney disease don&apos;t happen overnight—they take decades of silent metabolic dysfunction.
+        </p>
+
+        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-normal">
+          In Filipino households, when a breadwinner falls chronically ill, medical expenses and ₱350,000+ annual dialysis can devastate a family&apos;s life savings. Busy clinical visits focus on managing prescriptions, rarely leaving time to explore the underlying metabolic science. Our open-access Learning Hub curates published lectures, research discussions, and educational insights directly from respected independent scientists, medical doctors, and health researchers—empowering families with the knowledge to understand their bodies and partner more proactively with their own healthcare providers.
         </p>
 
         {/* CTA Buttons */}
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto">
+          <Link
+            href="/learn"
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 hover:from-indigo-800 hover:via-purple-800 hover:to-pink-700 text-white font-black text-base rounded-2xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-white/20 cursor-pointer"
+          >
+            <span>Explore the Evidence &amp; Learning Hub</span>
+            <span className="text-lg">&rarr;</span>
+          </Link>
           <a
-            href="#resources"
+            href="#reality"
             className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-700 cursor-pointer"
           >
-            <span>Explore Resources</span>
+            <span>The Philippine Reality</span>
             <span className="text-lg">&darr;</span>
           </a>
-          <Link
-            href="/community"
-            className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 text-slate-900 font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-300 cursor-pointer"
-          >
-            <span>Join Pinoy Community</span>
-            <span className="text-lg">👥</span>
-          </Link>
         </div>
 
         <p className="text-xs text-slate-500 pt-1">
-          Philippines Edition • 100% Free Forever • Global Movement: <Link href="/?edition=global" className="underline text-teal-700 font-semibold hover:text-teal-900">Before the Numbers Home (Global)</Link>
+          Dialysis and chronic complications bankrupt families &bull; True metabolic knowledge is 100% Free Forever &bull; <Link href="/?edition=global" className="underline text-indigo-700 font-semibold hover:text-indigo-900">Before the Numbers Home (Global)</Link>
         </p>
       </section>
 
       {/* Transparent Philippine Reality Statistics */}
-      <section className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6">
+      <section id="reality" className="scroll-mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-6">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
             📊 The Philippine Reality
@@ -234,17 +238,95 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: Flagship Guide */}
+          {/* Card 1: The Learning Hub -> /learn (PRIORITY #1) */}
+          <div className="bg-white rounded-3xl p-8 border-2 border-indigo-200 shadow-md hover:shadow-lg transition-shadow flex flex-col justify-between space-y-6 relative overflow-hidden">
+            <div className="space-y-4">
+              <span className="inline-block bg-indigo-50 text-indigo-900 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-md border border-indigo-200">
+                🎓 Global Evidence Hub &bull; Priority #1
+              </span>
+              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                Learning Materials &amp; Evidence
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Access educational lectures, published research reviews, and clinical insights from independent specialists including Dr. Bikman and Dr. Fung explaining root metabolic biology.
+              </p>
+              <ul className="space-y-2 text-xs text-slate-600">
+                <li className="flex items-center gap-2">
+                  <span className="text-indigo-600 font-bold">✓</span>
+                  <span>50+ Expert lectures &amp; published research reviews</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-indigo-600 font-bold">✓</span>
+                  <span>Published clinical research &amp; authority books</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-indigo-600 font-bold">✓</span>
+                  <span>Save items to your personal &ldquo;My Library&rdquo;</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <Link
+                href="/learn"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 hover:from-indigo-800 hover:via-purple-800 hover:to-pink-700 text-white font-black text-sm rounded-2xl shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] border border-white/20"
+              >
+                <span>Browse Learning Hub</span>
+                <span className="text-base">&rarr;</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Pinoy Peer Community */}
+          <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <span className="inline-block bg-teal-50 text-teal-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-teal-200">
+                👥 Peer Support Community
+              </span>
+              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                Pinoy Peer Discussions
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Connect with Filipino breadwinners and families navigating insulin resistance, meal planning, and preventative metabolic lifestyle shifts together.
+              </p>
+              <ul className="space-y-2 text-xs text-slate-600">
+                <li className="flex items-center gap-2">
+                  <span className="text-teal-600 font-bold">✓</span>
+                  <span>Safe, passwordless community forum</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-teal-600 font-bold">✓</span>
+                  <span>Local food swaps and household advice</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-teal-600 font-bold">✓</span>
+                  <span>Philippine RA 10173 privacy protection</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <Link
+                href="/community"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
+              >
+                <span>Join Pinoy Community</span>
+                <span className="text-base">&rarr;</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: Flagship Guide -> Secondary */}
           <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <span className="inline-block bg-purple-50 text-purple-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-purple-200">
-                ⏱️ Flagship Educational Framework
+                ⏱️ Educational Framework
               </span>
               <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
                 The Hidden Metabolic Clock
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Why &ldquo;normal&rdquo; blood sugar isn&apos;t the whole story. Download our free 8-page guide explaining insulin resistance and the 4 early warning clues in Filipino households.
+                Why &ldquo;normal&rdquo; blood sugar isn&apos;t the whole story. Read our foundational guide explaining insulin resistance and the 4 early warning clues in Filipino households.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -265,87 +347,9 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
             <div>
               <Link
                 href="/hidden-clock"
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
+                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-300"
               >
                 <span>Read The Hidden Clock</span>
-                <span className="text-base">&rarr;</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 2: The Tracking Tool -> /glycosense */}
-          <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <span className="inline-block bg-teal-50 text-teal-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-teal-200">
-                📱 Companion Digital Tool
-              </span>
-              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                GlycoSense Health Dashboard
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Turn manual blood sugar logs into automated digital trend lines. Isolate Filipino food triggers and export doctor-ready summaries.
-              </p>
-              <ul className="space-y-2 text-xs text-slate-600">
-                <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Automates trend lines from finger-prick logs</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Pinpoint local Pinoy food spikes</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Philippine RA 10173 privacy compliant</span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <Link
-                href="/glycosense"
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-teal-700 hover:bg-teal-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-teal-600"
-              >
-                <span>Explore GlycoSense</span>
-                <span className="text-base">&rarr;</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 3: The Learning Hub -> /learn */}
-          <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
-              <span className="inline-block bg-amber-50 text-amber-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md border border-amber-200">
-                🎓 Global Evidence Hub
-              </span>
-              <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                Learning Materials &amp; Evidence
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Access curated video breakdowns, clinical trials, and medical authority lectures explaining root metabolic health.
-              </p>
-              <ul className="space-y-2 text-xs text-slate-600">
-                <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>50+ Expert lectures &amp; trials</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Peer-reviewed clinical evidence</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-teal-600 font-bold">✓</span>
-                  <span>Save items to &ldquo;My Library&rdquo;</span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <Link
-                href="/learn"
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-black text-sm rounded-2xl shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] border border-slate-700"
-              >
-                <span>Browse Learning Hub</span>
                 <span className="text-base">&rarr;</span>
               </Link>
             </div>

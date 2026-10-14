@@ -4,6 +4,7 @@
  * @usecase Validates HomePage metadata, schema builders, and GlycoSense standalone pitch page.
  */
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 import HomePage, { metadata as homeMetadata } from '@/app/page';
 import PhilippinePilotPage, { metadata as phMetadata } from '@/app/ph/page';
 import GlycoSensePage, { metadata as glycoSenseMetadata } from '@/app/glycosense/page';
@@ -85,6 +86,23 @@ describe('Organic Community Root Page & Schemas (Milestone 10)', () => {
       const element = await PhilippinePilotPage();
       expect(element).toBeDefined();
       expect(element.type).toBe('div');
+    });
+
+    it('renders Option B hook tailored for Philippine breadwinners and family wealth protection', async () => {
+      const element = await PhilippinePilotPage();
+      const html = ReactDOMServer.renderToString(element);
+
+      expect(html).toContain('The Diseases That Bankrupt Filipino Families');
+      expect(html).toContain('80% Preventable With the Right Knowledge');
+      expect(html).toContain('GAIN THE KNOWLEDGE THAT KEEPS THEM SAFE');
+    });
+
+    it('prioritizes direct routing to the Learning Hub (/learn) in hero CTA', async () => {
+      const element = await PhilippinePilotPage();
+      const html = ReactDOMServer.renderToString(element);
+
+      expect(html).toContain('href="/learn"');
+      expect(html).toContain('Explore the Evidence &amp; Learning Hub');
     });
   });
 

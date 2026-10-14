@@ -80,6 +80,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 21: Product & Regulatory - Accelerate MetricPace Rebrand & Localization
 - [ ] **[Issue #46](https://github.com/pilTrader-Projects/diabetessupport-website/issues/46)** `[READY / PLANNED]`: Deprecate clinical naming overlaps (`GlycoSense`) in favor of `MetricPace` lifestyle companion ledger, deploy SaMD non-diagnostic safe harbor notices, and complete reciprocal `hreflang` localization on `/ph`.
 
+### Milestone 22: Growth & CRO - Align Hero and Regional Funnel to Learning Hub First
+- [ ] **[Issue #53](https://github.com/pilTrader-Projects/diabetessupport-website/issues/53)** `[IN PROGRESS]`: Align global (`/`) and Philippine (`/ph`) hero sections and resource funnels to prioritize the Learning Materials Hub (`/learn`), deploy Option B emotional family protection hook, eliminate direct clinical liability with safe-harbor independent authority curation framing, and reorder regional action pathways.
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow

@@ -170,8 +170,8 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
         />
       );
 
-      expect(html).toContain('The Metabolic Health &amp; Diabetes Reversal Hub');
-      expect(html).toContain('reversing insulin resistance');
+      expect(html).toContain('The Metabolic Health &amp; Evidence Learning Hub');
+      expect(html).toContain('cellular metabolism, and nutritional science');
       expect(html).not.toContain('Filipino families');
     });
 

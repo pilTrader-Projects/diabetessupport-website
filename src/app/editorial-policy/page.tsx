@@ -76,6 +76,14 @@ export default function EditorialPolicyPage() {
             </p>
           </div>
         </div>
+
+        {/* Protective Legal Safe Harbor Notice */}
+        <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl text-xs sm:text-sm text-amber-950 leading-relaxed mt-4">
+          <p className="font-bold mb-1">⚖️ Educational Safe-Harbor &amp; Attribution Notice</p>
+          <p>
+            Citations, research reviews, and references to peer-reviewed medical literature on this platform are provided strictly for educational attribution, scientific literacy, and doctor consultation preparation. Before the Numbers does not conduct independent clinical trials, manufacture therapeutic protocols, or guarantee individual diagnostic outcomes. Content should never substitute for personalized clinical judgment or professional medical care from your licensed physician.
+          </p>
+        </div>
       </section>
 
       {/* 3-Layer Curation & Clinical Safety Workflow */}
@@ -88,7 +96,7 @@ export default function EditorialPolicyPage() {
         </p>
         <ol className="space-y-3 text-xs sm:text-sm text-slate-700 list-decimal list-inside">
           <li>
-            <strong>Layer 1 — Primary Verified Authority:</strong> Sourcing lectures, clinical trials, or research led exclusively by accredited researchers and licensed physicians (e.g., Dr. Benjamin Bikman, PhD, Dr. Jason Fung, MD, Dr. Ken D. Berry, MD).
+            <strong>Layer 1 — Primary Verified Authority:</strong> Sourcing lectures, published clinical studies, and literature reviews led exclusively by accredited researchers and licensed physicians (e.g., Dr. Benjamin Bikman, PhD, Dr. Jason Fung, MD, Dr. Ken D. Berry, MD).
           </li>
           <li>
             <strong>Layer 2 — Editorial Synthesis:</strong> Synthesizing key biochemical mechanisms, formulating answer-first 10-second summaries, and creating practical doctor consultation questions.

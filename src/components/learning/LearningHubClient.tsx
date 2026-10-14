@@ -370,10 +370,10 @@ export default function LearningHubClient({
           <span>🌱</span> Evidence-Based Metabolic Science
         </span>
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
-          The Metabolic Health &amp; Diabetes Reversal Hub
+          The Metabolic Health &amp; Evidence Learning Hub
         </h1>
         <p className="text-lg text-slate-600 leading-relaxed">
-          World-class lectures, peer-reviewed science, and practical guides to reversing insulin resistance—the hidden root cause of Type 2 diabetes, fatty liver, PCOS, and metabolic dysfunction.
+          Curated video lectures, educational breakdowns, and published literature from independent medical doctors and researchers exploring insulin dynamics, cellular metabolism, and nutritional science.
         </p>
 
         {/* Global Search Bar */}

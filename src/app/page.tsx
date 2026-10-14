@@ -106,65 +106,65 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       />
 
       {/* ========================================================================= */}
-      {/* SECTION 1: MASTER BRAND HERO                                              */}
+      {/* SECTION 1: MASTER BRAND HERO — OPTION B: KNOWLEDGE & FAMILY PROTECTION    */}
       {/* ========================================================================= */}
       <section className="text-center space-y-6 max-w-4xl mx-auto pt-2 sm:pt-4">
         <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-950 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full border border-indigo-200 shadow-xs">
-          <span>⏳</span>
-          <span>BEFORE THE NUMBERS &bull; HEALTH AWARENESS MOVEMENT</span>
+          <span>🛡️</span>
+          <span>PROTECT YOUR FAMILY &bull; GAIN THE KNOWLEDGE THAT KEEPS THEM SAFE</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight sm:leading-none">
-          Don&apos;t Wait for the{' '}
+          The Diseases That Bankrupt Families{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600">
-            Diagnosis.
+            Are 80% Preventable With the Right Knowledge.
           </span>
         </h1>
 
         <p className="text-xl sm:text-2xl font-bold text-slate-800 max-w-3xl mx-auto tracking-tight">
-          Understand your health before a diagnosis forces you to.
+          Diabetes, hypertension, fatty liver, and chronic kidney disease don&apos;t happen overnight—they take decades of silent metabolic dysfunction.
         </p>
 
         <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Learn the signals. Understand the numbers. Know your trajectory. Make informed changes. We help you recognize what may be happening in your metabolic health years before diagnostic numbers become a serious wake-up call.
+          Busy clinical visits focus on managing prescriptions, rarely leaving time to explore the underlying metabolic science. Our open-access Learning Hub curates published lectures, research discussions, and educational insights directly from respected independent scientists, medical doctors, and health researchers—empowering you with the knowledge to understand your body and partner more proactively with your own healthcare provider.
         </p>
 
-        {/* Primary and Secondary CTA Hierarchy */}
+        {/* Primary and Secondary CTA Hierarchy: Direct routing to /learn */}
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto" id="start-here">
+          <Link
+            href="/learn"
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 hover:from-indigo-800 hover:via-purple-800 hover:to-pink-700 text-white font-black text-base rounded-2xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-white/20 cursor-pointer"
+          >
+            <span>Explore the Evidence &amp; Learning Hub</span>
+            <span className="text-lg">&rarr;</span>
+          </Link>
           <a
             href="#framework"
             className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-700 cursor-pointer"
           >
-            <span>Start Here: The Approach</span>
+            <span>The Knowledge Pathway</span>
             <span className="text-lg">&darr;</span>
           </a>
-          <Link
-            href="/hidden-clock"
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-600 hover:from-indigo-800 hover:via-purple-800 hover:to-pink-700 text-white font-black text-base rounded-2xl shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-white/20 cursor-pointer"
-          >
-            <span>The Hidden Metabolic Clock</span>
-            <span className="text-lg">&rarr;</span>
-          </Link>
         </div>
 
         <p className="text-xs text-slate-500 pt-1">
-          Open-access health education movement &bull; 100% Free Forever &bull; Non-commercial advocacy
+          Dialysis and chronic disease complications cost millions &bull; True metabolic understanding is 100% Free Forever
         </p>
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2: THE CORE ADVOCACY & ACTION FRAMEWORK                           */}
+      {/* SECTION 2: THE 5-STAGE KNOWLEDGE-TO-PREVENTION FRAMEWORK                   */}
       {/* ========================================================================= */}
       <section id="framework" className="scroll-mt-16 bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-8">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
           <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
-            🧭 The Advocacy Movement
+            🧭 The Knowledge-First Pathway
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Warning &rarr; Awareness &rarr; Understanding &rarr; Action &rarr; Hope
+            Problem &rarr; Knowledge &rarr; Decision &rarr; Monitoring &rarr; Avoid Cost
           </h2>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            The brand challenges the common habit of waiting for a formal medical diagnosis, offering a constructive, disciplined alternative to reclaim agency over your health.
+            You cannot fix what you do not understand. Our framework shifts you from passive diagnosis waiting to proactive biological mastery.
           </p>
         </div>
 
@@ -172,39 +172,50 @@ export default async function HomePage(): Promise<React.JSX.Element> {
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2">
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
             <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">01</span>
-            <h3 className="text-sm font-bold text-slate-900">MEASURE</h3>
+            <h3 className="text-sm font-bold text-slate-900">THE SILENT PROBLEM</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Track what is relevant: glucose response, waist, pressure, and fasting markers.
+              Standard fasting tests miss 10–15 years of silent hyperinsulinemia, fatty liver, and vascular damage.
             </p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
             <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">02</span>
-            <h3 className="text-sm font-bold text-slate-900">UNDERSTAND</h3>
+            <h3 className="text-sm font-bold text-slate-900">KNOWLEDGE FIRST</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Interpret signals in full metabolic context, not single isolated lab numbers.
+              Study the biology with curated lectures from Dr. Bikman, Dr. Fung, and clinical researchers in our Hub.
             </p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
             <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">03</span>
-            <h3 className="text-sm font-bold text-slate-900">INTERVENE</h3>
+            <h3 className="text-sm font-bold text-slate-900">INFORMED ACTION</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Make sustainable shifts in meal composition, timing, movement, and sleep.
+              Take agency with sustainable meal composition, carbohydrate management, and fasting timing.
             </p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
             <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">04</span>
             <h3 className="text-sm font-bold text-slate-900">MONITOR</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Observe trends over weeks and months rather than stressing single-day swings.
+              Observe multi-marker biological trends over weeks and months rather than stressing single-day numbers.
             </p>
           </div>
           <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-1.5">
             <span className="text-xs font-black text-indigo-600 uppercase tracking-widest block">05</span>
-            <h3 className="text-sm font-bold text-slate-900">ADJUST</h3>
+            <h3 className="text-sm font-bold text-slate-900">AVOID THE PRICE</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Refine your habits based on objective biological feedback and clinical advice.
+              Prevent catastrophic costs: ₱40k/month dialysis, strokes, amputations, and family financial collapse.
             </p>
           </div>
+        </div>
+
+        {/* Direct Link to Hub within Framework */}
+        <div className="pt-2 text-center">
+          <Link
+            href="/learn"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-950 font-bold text-sm rounded-xl border border-indigo-200 transition-colors"
+          >
+            <span>Start Step 1: Open the Evidence &amp; Learning Hub</span>
+            <span>&rarr;</span>
+          </Link>
         </div>
       </section>
 
@@ -386,7 +397,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 Learning Materials &amp; Evidence
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Explore curated medical lectures, peer-reviewed clinical studies, and metabolic science from leading clinicians including Dr. Fung, Dr. Bikman, and Dr. Attia.
+                Explore curated educational lectures, published research discussions, and metabolic science from respected independent clinicians including Dr. Fung, Dr. Bikman, and Dr. Attia.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -395,7 +406,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Longitudinal clinical trial evidence &amp; books</span>
+                  <span>Published scientific literature &amp; authority books</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>

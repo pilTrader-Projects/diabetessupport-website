@@ -108,7 +108,7 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
   return {
     title: `Learning Materials & Evidence Hub | ${SITE_CONFIG.title}`,
     description:
-      'Comprehensive library of reputable medical sources, videos, and clinical trials on Low Carb, Intermittent Fasting, and Natural Metabolic Healing.',
+      'Curated educational library of video lectures, published literature, and expert discussions from independent clinicians on low-carbohydrate nutrition, fasting physiology, and metabolic health literacy.',
     openGraph: {
       title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
       description: SITE_CONFIG.description,

@@ -50,6 +50,7 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
       expect(html).toContain('3-Layer Authority Curation &amp; Safety Workflow');
       expect(html).toContain('Primary Verified Authority');
       expect(html).toContain('Clinical Safety Hedging');
+      expect(html).toContain('Educational Safe-Harbor &amp; Attribution Notice');
       expect(html).toContain('12-Month Scheduled Review Cycle');
       expect(html).not.toContain('href="/medical-review-board"');
     });
