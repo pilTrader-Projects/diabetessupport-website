@@ -812,61 +812,61 @@ export default function LearningHubClient({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-col space-y-4">
           {filteredItems.map((item, index) => {
             const isSaved = item._id ? savedIds.includes(item._id) : false;
 
-            // Render Video / Podcast Card
+            // Render Video / Podcast Card (Row Layout)
             if (item.type === 'video' || item.type === 'podcast') {
               return (
                 <React.Fragment key={item._id || item.slug}>
                   <article
-                    className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all group h-full"
+                    className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md hover:border-teal-300 transition-all group"
                   >
-                    <div className="space-y-4 p-6 flex-1 flex flex-col justify-between">
-                      <div className="space-y-4">
-                        {/* Thumbnail with Lite Play Trigger */}
-                        <div
-                          id={`play-thumb-${index}`}
-                          data-testid="play-thumb-trigger"
-                          className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-950 cursor-pointer group"
-                          onClick={() => handlePlayVideo(item)}
-                        >
-                          {item.thumbnailUrl ? (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img
-                              src={item.thumbnailUrl}
-                              alt={item.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-slate-900 flex items-center justify-center text-4xl">
-                              🎬
-                            </div>
-                          )}
-
-                          {/* Play Button Overlay */}
-                          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 flex items-center justify-center transition-colors">
-                            <div className="w-12 h-12 rounded-full bg-teal-600/90 group-hover:bg-teal-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                              ▶
-                            </div>
-                          </div>
-
-                          {/* Platform & Duration Badges */}
-                          <span className="absolute top-3 left-3 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-slate-950/85 text-white backdrop-blur-md border border-white/20">
-                            {item.type === 'podcast' || item.isGuestAppearance ? '🎙️ Podcast' : `🎬 ${item.platform}`}
-                          </span>
-                          {item.duration && (
-                            <span className="absolute bottom-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded bg-black/80 text-white">
-                              {item.duration}
-                            </span>
-                          )}
+                    {/* Left: Thumbnail with Lite Play Trigger */}
+                    <div
+                      id={`play-thumb-${index}`}
+                      data-testid="play-thumb-trigger"
+                      className="relative w-full md:w-64 lg:w-72 aspect-video shrink-0 bg-slate-950 cursor-pointer overflow-hidden group"
+                      onClick={() => handlePlayVideo(item)}
+                    >
+                      {item.thumbnailUrl ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-slate-900 flex items-center justify-center text-4xl">
+                          🎬
                         </div>
+                      )}
 
-                        {/* Author & Title */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-xs gap-2">
-                            <span className="font-bold text-teal-800 truncate max-w-[200px] flex items-center gap-1.5">
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 flex items-center justify-center transition-colors">
+                        <div className="w-12 h-12 rounded-full bg-teal-600/90 group-hover:bg-teal-500 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                          ▶
+                        </div>
+                      </div>
+
+                      {/* Platform & Duration Badges */}
+                      <span className="absolute top-2.5 left-2.5 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-950/85 text-white backdrop-blur-md border border-white/20">
+                        {item.type === 'podcast' || item.isGuestAppearance ? '🎙️ Podcast' : `🎬 ${item.platform}`}
+                      </span>
+                      {item.duration && (
+                        <span className="absolute bottom-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded bg-black/80 text-white">
+                          {item.duration}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Right: Author, Title, Takeaways, Bylines & Actions */}
+                    <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs gap-2">
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="font-bold text-teal-800 truncate flex items-center gap-1.5">
                               <span className="w-2 h-2 rounded-full bg-teal-500 inline-block"></span>
                               {item.authorityName}
                             </span>
@@ -885,7 +885,7 @@ export default function LearningHubClient({
                                     setSearchQuery(item.podcastChannelName || '');
                                   }
                                 }}
-                                className="bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[160px] transition-colors cursor-pointer text-left"
+                                className="bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200 px-2 py-0.5 rounded-full text-[10px] font-extrabold truncate max-w-[150px] transition-colors cursor-pointer text-left"
                                 title={`Filter by ${item.podcastChannelName}`}
                               >
                                 🎙️ {item.podcastChannelName}
@@ -897,51 +897,70 @@ export default function LearningHubClient({
                             )}
                           </div>
 
-                          <h2
-                            className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 cursor-pointer pt-0.5"
-                            onClick={() => handlePlayVideo(item)}
-                          >
-                            {item.title}
-                          </h2>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenShare(item)}
+                              title="Found this material valuable? Share it!"
+                              className="p-1 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
+                            >
+                              📤
+                            </button>
+
+                            {item._id && (
+                              <button
+                                type="button"
+                                onClick={() => handleToggleSave(item._id!)}
+                                title={isSaved ? 'Remove from library' : 'Save to library'}
+                                className={`p-1 rounded-lg text-xs font-bold border transition-colors ${
+                                  isSaved
+                                    ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                    : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                                }`}
+                              >
+                                {isSaved ? '★' : '☆'}
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
 
-                      {/* 3 Key Takeaways Card */}
-                      <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 text-xs space-y-1.5 mt-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-teal-700 flex items-center gap-1">
-                          <span>💡</span> Key Takeaway:
-                        </span>
-                        <p className="text-slate-600 line-clamp-2 leading-relaxed">
+                        <h2
+                          className="text-base sm:text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 cursor-pointer pt-0.5 leading-snug"
+                          onClick={() => handlePlayVideo(item)}
+                        >
+                          {item.title}
+                        </h2>
+
+                        <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                          <span className="font-extrabold text-[10px] uppercase tracking-wider text-teal-700 mr-1.5">
+                            💡 Key Takeaway:
+                          </span>
                           • {getContextualTakeaway(item)}
-                        </p>
+                        </div>
+
+                        <CurationBylines
+                          authorityName={item.authorityName}
+                          authorityTitle={item.authorityTitle}
+                          authorityAvatar={item.authorityAvatar}
+                          editorialDesk={item.editorialDesk}
+                          clinicalReviewer={item.clinicalReviewer}
+                          safetyNotice={item.safetyNotice}
+                          evidenceLevel={resolveEvidenceLevel(item)}
+                          compact={true}
+                        />
                       </div>
 
-                      {/* 3-Layer Curation Bylines & Evidence Tag (Issue #44) */}
-                      <CurationBylines
-                        authorityName={item.authorityName}
-                        authorityTitle={item.authorityTitle}
-                        authorityAvatar={item.authorityAvatar}
-                        editorialDesk={item.editorialDesk}
-                        clinicalReviewer={item.clinicalReviewer}
-                        safetyNotice={item.safetyNotice}
-                        evidenceLevel={resolveEvidenceLevel(item)}
-                        compact={true}
-                      />
-                    </div>
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button
+                          type="button"
+                          id={`play-video-btn-${index}`}
+                          data-testid="play-video-btn"
+                          onClick={() => handlePlayVideo(item)}
+                          className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 border border-teal-200 transition-colors"
+                        >
+                          ▶ Play Video
+                        </button>
 
-                    {/* Actions Footer */}
-                    <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
-                      <button
-                        type="button"
-                        id={`play-video-btn-${index}`}
-                        data-testid="play-video-btn"
-                        onClick={() => handlePlayVideo(item)}
-                        className="text-xs font-bold text-teal-700 hover:text-teal-900 inline-flex items-center gap-1"
-                      >
-                        ▶ Play Video
-                      </button>
-
-                      <div className="flex items-center gap-2">
                         <a
                           href={item.sourceUrl}
                           target="_blank"
@@ -950,37 +969,13 @@ export default function LearningHubClient({
                         >
                           {item.isGuestAppearance ? 'Watch Episode ↗' : 'Watch on YouTube ↗'}
                         </a>
-
-                        <button
-                          type="button"
-                          onClick={() => handleOpenShare(item)}
-                          title="Found this material valuable? Share it!"
-                          className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
-                        >
-                          📤
-                        </button>
-
-                        {item._id && (
-                          <button
-                            type="button"
-                            onClick={() => handleToggleSave(item._id!)}
-                            title={isSaved ? 'Remove from library' : 'Save to library'}
-                            className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                              isSaved
-                                ? 'bg-amber-50 text-amber-600 border-amber-300'
-                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                            }`}
-                          >
-                            {isSaved ? '★' : '☆'}
-                          </button>
-                        )}
                       </div>
                     </div>
                   </article>
 
                   {/* Inline Sponsored Placement between row 1 and row 2 */}
                   {index === 2 && (
-                    <div className="col-span-full my-2">
+                    <div className="w-full my-2">
                       <AdUnit slotId="learning-feed-mid" format="horizontal" />
                     </div>
                   )}
@@ -988,15 +983,19 @@ export default function LearningHubClient({
               );
             }
 
-            // Render Study / Clinical Trial Card
+            // Render Study / Clinical Trial Card (Row Layout)
             if (item.type === 'study') {
               return (
                 <React.Fragment key={item._id || item.slug}>
                   <article
-                    className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all h-full"
+                    className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md hover:border-teal-300 transition-all"
                   >
-                    <div className="space-y-4 p-6 flex-1 flex flex-col justify-between">
-                      <div className="space-y-4">
+                    <div className="w-full md:w-64 lg:w-72 aspect-video shrink-0 bg-gradient-to-br from-indigo-50 to-slate-100 flex items-center justify-center text-4xl border-b md:border-b-0 md:border-r border-indigo-100">
+                      🔬
+                    </div>
+
+                    <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs">
                           <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md font-bold uppercase tracking-wider text-[10px]">
                             🔬 Clinical Study
@@ -1004,73 +1003,72 @@ export default function LearningHubClient({
                           <span className="text-slate-400 font-semibold">{item.authorityName}</span>
                         </div>
 
-                        <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 pt-1">
+                        <h2 className="text-base sm:text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-700 pt-0.5 leading-snug">
                           <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
                             {item.title}
                           </a>
                         </h2>
+
+                        <div className="bg-gradient-to-br from-indigo-50/50 to-teal-50/50 border border-indigo-100 rounded-xl px-3 py-2 text-xs">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-900 mr-1.5">
+                            📊 Clinical Takeaway:
+                          </span>
+                          <p className="text-slate-700 line-clamp-2 leading-relaxed inline">
+                            {item.keyTakeaways?.[0] || item.summary}
+                          </p>
+                        </div>
+
+                        <CurationBylines
+                          authorityName={item.authorityName}
+                          authorityTitle={item.authorityTitle}
+                          editorialDesk={item.editorialDesk}
+                          clinicalReviewer={item.clinicalReviewer}
+                          safetyNotice={item.safetyNotice}
+                          evidenceLevel={resolveEvidenceLevel(item)}
+                          compact={true}
+                        />
                       </div>
 
-                      <div className="bg-gradient-to-br from-indigo-50/50 to-teal-50/50 border border-indigo-100 rounded-2xl p-4 text-xs space-y-1.5 mt-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-900">
-                          📊 Clinical Takeaway:
-                        </span>
-                        <p className="text-slate-700 line-clamp-3 leading-relaxed">
-                          {item.keyTakeaways?.[0] || item.summary}
-                        </p>
-                      </div>
-
-                      {/* 3-Layer Curation Bylines & Evidence Tag (Issue #44) */}
-                      <CurationBylines
-                        authorityName={item.authorityName}
-                        authorityTitle={item.authorityTitle}
-                        editorialDesk={item.editorialDesk}
-                        clinicalReviewer={item.clinicalReviewer}
-                        safetyNotice={item.safetyNotice}
-                        evidenceLevel={resolveEvidenceLevel(item)}
-                        compact={true}
-                      />
-                    </div>
-
-                    <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
-                      <a
-                        href={item.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-bold text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1"
-                      >
-                        Read Study on PubMed ↗
-                      </a>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenShare(item)}
-                          title="Found this study valuable? Share it!"
-                          className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-indigo-700 hover:bg-slate-50 transition-colors"
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-bold text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1"
                         >
-                          📤
-                        </button>
+                          Read Study on PubMed ↗
+                        </a>
 
-                        {item._id && (
+                        <div className="flex items-center gap-1.5">
                           <button
                             type="button"
-                            onClick={() => handleToggleSave(item._id!)}
-                            className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                              isSaved
-                                ? 'bg-amber-50 text-amber-600 border-amber-300'
-                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                            }`}
+                            onClick={() => handleOpenShare(item)}
+                            title="Found this study valuable? Share it!"
+                            className="p-1 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-indigo-700 hover:bg-slate-50 transition-colors"
                           >
-                            {isSaved ? '★ Saved' : '☆ Save'}
+                            📤
                           </button>
-                        )}
+
+                          {item._id && (
+                            <button
+                              type="button"
+                              onClick={() => handleToggleSave(item._id!)}
+                              className={`p-1 rounded-lg text-xs font-bold border transition-colors ${
+                                isSaved
+                                  ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                  : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {isSaved ? '★ Saved' : '☆ Save'}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </article>
 
                   {index === 2 && (
-                    <div className="col-span-full my-2">
+                    <div className="w-full my-2">
                       <AdUnit slotId="learning-feed-mid" format="horizontal" />
                     </div>
                   )}
@@ -1078,184 +1076,183 @@ export default function LearningHubClient({
               );
             }
 
-            // Render Affiliate Book & Clinical Protocol Card
+            // Render Affiliate Book & Clinical Protocol Card (Row Layout)
             if (item.type === 'book') {
               return (
                 <React.Fragment key={item._id || item.slug}>
-                  <article className="bg-white rounded-3xl border border-amber-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-amber-400 transition-all h-full group">
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-4">
-                        <div className="flex gap-4 items-start">
-                          {item.thumbnailUrl ? (
-                            <div className="w-20 h-28 shrink-0 rounded-xl overflow-hidden bg-slate-100 shadow-md border border-slate-200">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={item.thumbnailUrl}
-                                alt={item.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-20 h-28 shrink-0 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-3xl">
-                              📚
-                            </div>
-                          )}
-
-                          <div className="space-y-1.5 flex-1 min-w-0">
-                            <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[10px] inline-block">
-                              📖 Book &amp; Protocol
-                            </span>
-                            <h2 className="text-base font-bold text-slate-900 line-clamp-2 pt-1 group-hover:text-amber-800 transition-colors">
-                              <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer sponsored">
-                                {item.title}
-                              </a>
-                            </h2>
-                            <p className="text-xs font-semibold text-slate-500">
-                              By {item.authorityName}
-                            </p>
-                          </div>
-                        </div>
-
-                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                          {item.summary}
-                        </p>
-                      </div>
-
-                      <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 text-[11px] text-amber-900 space-y-1">
-                        <span className="font-extrabold uppercase tracking-wider text-[10px] text-amber-950 flex items-center gap-1">
-                          <span>💡</span> Why Read This:
-                        </span>
-                        <p className="text-slate-700 line-clamp-2">
-                          {item.keyTakeaways?.[0] || 'Essential clinical insights on reversing insulin resistance.'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
-                      <a
-                        href={item.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer sponsored"
-                        className="inline-flex items-center text-xs font-bold text-amber-700 hover:text-amber-900 group/link"
-                      >
-                        Get Book on Amazon ↗
-                      </a>
-
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenShare(item)}
-                          title="Found this material valuable? Share it!"
-                          className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-amber-700 hover:bg-slate-50 transition-colors"
-                        >
-                          📤
-                        </button>
-
-                        {item._id && (
-                          <button
-                            type="button"
-                            onClick={() => handleToggleSave(item._id!)}
-                            className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                              isSaved
-                                ? 'bg-amber-50 text-amber-600 border-amber-300'
-                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                            }`}
-                          >
-                            {isSaved ? '★ Saved' : '☆ Save'}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-
-                  {index === 2 && (
-                    <div className="col-span-full my-2">
-                      <AdUnit slotId="learning-feed-mid" format="horizontal" />
-                    </div>
-                  )}
-                </React.Fragment>
-              );
-            }
-
-            // Render Editorial Article Card
-            return (
-              <React.Fragment key={item._id || item.slug}>
-                <article
-                  className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md hover:border-teal-300 transition-all h-full"
-                >
-                  <div className="space-y-4 p-6 flex-1 flex flex-col justify-between">
-                    <div className="space-y-4">
+                  <article className="bg-white rounded-3xl border border-amber-200/80 shadow-sm overflow-hidden flex flex-col sm:flex-row hover:shadow-md hover:border-amber-400 transition-all group">
+                    <div className="w-full sm:w-48 shrink-0 flex items-center justify-center p-4 bg-amber-50/40 border-b sm:border-b-0 sm:border-r border-amber-100">
                       {item.thumbnailUrl ? (
-                        <div className="aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 relative">
+                        <div className="w-24 sm:w-28 aspect-[2/3] shrink-0 rounded-xl overflow-hidden bg-slate-100 shadow-md border border-slate-200">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={item.thumbnailUrl}
                             alt={item.title}
-                            className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           />
                         </div>
                       ) : (
-                        <div className="aspect-video w-full rounded-2xl bg-gradient-to-br from-teal-50 to-slate-100 flex items-center justify-center text-teal-700 text-3xl font-extrabold border border-teal-100">
-                          📖 Editorial Guide
+                        <div className="w-24 sm:w-28 aspect-[2/3] shrink-0 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-3xl">
+                          📚
                         </div>
                       )}
-
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 text-[10px]">
-                            📖 {item.topics[0] || 'Guide'}
-                          </span>
-                          <span className="text-slate-400 font-semibold">{item.duration}</span>
-                        </div>
-
-                        <h2 className="text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-600 pt-1">
-                          <Link href={`/learn/${item.slug}`}>{item.title.replace(/&nbsp;/g, ' ')}</Link>
-                        </h2>
-                      </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed mt-2">
-                      {item.summary}
-                    </p>
+                    <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col justify-between space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[10px] inline-block">
+                            📖 Book &amp; Protocol
+                          </span>
+                          <p className="text-xs font-semibold text-slate-500">
+                            By {item.authorityName}
+                          </p>
+                        </div>
+
+                        <h2 className="text-base sm:text-lg font-bold text-slate-900 line-clamp-2 pt-0.5 group-hover:text-amber-800 transition-colors leading-snug">
+                          <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer sponsored">
+                            {item.title}
+                          </a>
+                        </h2>
+
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                          {item.summary}
+                        </p>
+
+                        <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl px-3 py-2 text-[11px] text-amber-900">
+                          <span className="font-extrabold uppercase tracking-wider text-[10px] text-amber-950 mr-1">
+                            💡 Why Read This:
+                          </span>
+                          <span className="text-slate-700 line-clamp-2 inline">
+                            {item.keyTakeaways?.[0] || 'Essential clinical insights on reversing insulin resistance.'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer sponsored"
+                          className="inline-flex items-center text-xs font-bold text-amber-700 hover:text-amber-900 group/link px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
+                        >
+                          Get Book on Amazon ↗
+                        </a>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenShare(item)}
+                            title="Found this material valuable? Share it!"
+                            className="p-1 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-amber-700 hover:bg-slate-50 transition-colors"
+                          >
+                            📤
+                          </button>
+
+                          {item._id && (
+                            <button
+                              type="button"
+                              onClick={() => handleToggleSave(item._id!)}
+                              className={`p-1 rounded-lg text-xs font-bold border transition-colors ${
+                                isSaved
+                                  ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                  : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                              }`}
+                            >
+                              {isSaved ? '★ Saved' : '☆ Save'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  {index === 2 && (
+                    <div className="w-full my-2">
+                      <AdUnit slotId="learning-feed-mid" format="horizontal" />
+                    </div>
+                  )}
+                </React.Fragment>
+              );
+            }
+
+            // Render Editorial Article Card (Row Layout)
+            return (
+              <React.Fragment key={item._id || item.slug}>
+                <article
+                  className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row hover:shadow-md hover:border-teal-300 transition-all"
+                >
+                  <div className="w-full md:w-64 lg:w-72 aspect-video shrink-0 overflow-hidden bg-slate-100 relative">
+                    {item.thumbnailUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={item.thumbnailUrl}
+                        alt={item.title}
+                        className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-teal-50 to-slate-100 flex items-center justify-center text-teal-700 text-3xl font-extrabold border border-teal-100">
+                        📖 Editorial Guide
+                      </div>
+                    )}
                   </div>
 
-                  <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-auto">
-                    <Link
-                      href={`/learn/${item.slug}`}
-                      className="inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-900 group"
-                    >
-                      Read Full Article <span className="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
-                    </Link>
+                  <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col justify-between space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 text-[10px]">
+                          📖 {item.topics[0] || 'Guide'}
+                        </span>
+                        <span className="text-slate-400 font-semibold">{item.duration}</span>
+                      </div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenShare(item)}
-                        title="Found this guide valuable? Share it!"
-                        className="p-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
+                      <h2 className="text-base sm:text-lg font-bold text-slate-900 line-clamp-2 hover:text-teal-600 pt-0.5 leading-snug">
+                        <Link href={`/learn/${item.slug}`}>{item.title.replace(/&nbsp;/g, ' ')}</Link>
+                      </h2>
+
+                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                        {item.summary}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                      <Link
+                        href={`/learn/${item.slug}`}
+                        className="inline-flex items-center text-xs font-bold text-teal-700 hover:text-teal-900 group px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 border border-teal-200 transition-colors"
                       >
-                        📤
-                      </button>
+                        Read Full Article <span className="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
+                      </Link>
 
-                      {item._id && (
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
-                          onClick={() => handleToggleSave(item._id!)}
-                          className={`p-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                            isSaved
-                              ? 'bg-amber-50 text-amber-600 border-amber-300'
-                              : 'text-slate-400 border-slate-200 hover:bg-slate-50'
-                          }`}
+                          onClick={() => handleOpenShare(item)}
+                          title="Found this guide valuable? Share it!"
+                          className="p-1 rounded-lg text-xs font-bold border border-slate-200 text-slate-500 hover:text-teal-700 hover:bg-slate-50 transition-colors"
                         >
-                          {isSaved ? '★ Saved' : '☆ Save'}
+                          📤
                         </button>
-                      )}
+
+                        {item._id && (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleSave(item._id!)}
+                            className={`p-1 rounded-lg text-xs font-bold border transition-colors ${
+                              isSaved
+                                ? 'bg-amber-50 text-amber-600 border-amber-300'
+                                : 'text-slate-400 border-slate-200 hover:bg-slate-50'
+                            }`}
+                          >
+                            {isSaved ? '★ Saved' : '☆ Save'}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </article>
 
                 {index === 2 && (
-                  <div className="col-span-full my-2">
+                  <div className="w-full my-2">
                     <AdUnit slotId="learning-feed-mid" format="horizontal" />
                   </div>
                 )}
