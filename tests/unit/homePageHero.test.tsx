@@ -29,6 +29,8 @@ jest.mock('../../src/models/LearningResource', () => ({
   },
 }));
 
+import ReactDOMServer from 'react-dom/server';
+
 describe('HomePage Hero Full-Viewport Responsiveness & Modular Architecture', () => {
   it('should be defined and export a valid async React component function', () => {
     expect(typeof HomePage).toBe('function');
@@ -39,4 +41,34 @@ describe('HomePage Hero Full-Viewport Responsiveness & Modular Architecture', ()
     expect(element).toBeDefined();
     expect(element.type).toBe('div');
   });
+
+  it('renders Option B hero hook focusing on family protection, knowledge, and avoiding chronic disease costs', async () => {
+    const element = await HomePage();
+    const html = ReactDOMServer.renderToString(element);
+
+    // Option B Hook assertions
+    expect(html).toContain('The Diseases That Bankrupt Families');
+    expect(html).toContain('80% Preventable With the Right Knowledge');
+    expect(html).toContain('GAIN THE KNOWLEDGE THAT KEEPS THEM SAFE');
+  });
+
+  it('prioritizes direct routing to the Learning Hub (/learn) as primary hero CTA', async () => {
+    const element = await HomePage();
+    const html = ReactDOMServer.renderToString(element);
+
+    // Primary CTA routes immediately to /learn
+    expect(html).toContain('href="/learn"');
+    expect(html).toContain('Explore the Evidence &amp; Learning Hub');
+  });
+
+  it('articulates the Problem -> Knowledge -> Informed Decision -> Avoid Catastrophic Cost framework', async () => {
+    const element = await HomePage();
+    const html = ReactDOMServer.renderToString(element);
+
+    expect(html).toContain('THE SILENT PROBLEM');
+    expect(html).toContain('KNOWLEDGE FIRST');
+    expect(html).toContain('INFORMED ACTION');
+    expect(html).toContain('AVOID THE PRICE');
+  });
 });
+
