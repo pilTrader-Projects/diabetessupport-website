@@ -31,10 +31,9 @@ describe('learningSchema (Issue #44 Structured Data & Evidence Hierarchy)', () =
       expect(schema['@type']).toBe('MedicalWebPage');
       expect(schema.name).toContain('Learning');
       expect(schema.editor['@type']).toBe('Organization');
-      expect(schema.editor.name).toContain('Before the Numbers Editorial Desk');
-      expect(schema.reviewedBy['@type']).toBe('Organization');
-      expect(schema.reviewedBy.name).toContain('Clinical Review Desk');
+      expect(schema.editor.name).toContain('Before the Numbers');
       expect(schema.publisher.name).toBe('Before the Numbers');
+      expect(schema.reviewedBy).toBeUndefined();
       expect(schema.hasPart).toHaveLength(1);
       expect(schema.hasPart[0].name).toBe(mockResource.title);
     });

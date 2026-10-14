@@ -87,7 +87,12 @@ const LearningResourceSchema = new Schema<ILearningResource>(
     },
     clinicalReviewer: {
       type: String,
-      default: 'Before the Numbers Clinical Review Desk',
+      default: '',
+      trim: true,
+    },
+    safetyNotice: {
+      type: String,
+      default: '',
       trim: true,
     },
     discussionQuestions: {

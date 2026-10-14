@@ -38,6 +38,7 @@ export default function CurationDetails({
           authorityAvatar={resource.authorityAvatar}
           editorialDesk={resource.editorialDesk}
           clinicalReviewer={resource.clinicalReviewer}
+          safetyNotice={resource.safetyNotice}
           evidenceLevel={evidenceLevel}
         />
       )}
