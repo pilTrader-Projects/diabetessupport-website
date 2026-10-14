@@ -381,11 +381,11 @@ export default function LearningHubClient({
       </div>
 
       {/* 2-Column App & Media Layout: Left Sidebar Filter Panel + Right Content Grid */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Left Sidebar Filter Panel */}
-        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
+      <div className="flex flex-col lg:flex-row gap-8 items-start relative">
+        {/* Left Sidebar Filter Panel (Sticky on Desktop) */}
+        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 lg:sticky lg:top-20 self-start z-30">
           {/* Mobile Filter Toggle Button */}
-          <div className="lg:hidden flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="lg:hidden flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-4">
             <div className="flex items-center gap-2">
               <span className="text-base">🎛️</span>
               <span className="text-sm font-bold text-slate-800">Filter Materials</span>
@@ -404,11 +404,11 @@ export default function LearningHubClient({
             </button>
           </div>
 
-          {/* Filter Container (Collapsible on mobile, always visible & sticky on desktop) */}
+          {/* Filter Container (Collapsible on mobile, always visible on desktop) */}
           <div
             className={`${
               isMobileFiltersOpen ? 'block' : 'hidden'
-            } lg:block bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-6 lg:sticky lg:top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin`}
+            } lg:block bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto scrollbar-thin`}
           >
             {/* 1. Global Search Box */}
             <div className="space-y-2">

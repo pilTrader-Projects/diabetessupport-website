@@ -323,6 +323,8 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       );
 
       // Left sidebar presence and elements
+      expect(html).toContain('lg:sticky');
+      expect(html).toContain('lg:top-20');
       expect(html).toContain('Search Library');
       expect(html).toContain('Browse Format');
       expect(html).toContain('Filter by Authority / Speaker:');
