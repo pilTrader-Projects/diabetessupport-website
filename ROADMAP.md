@@ -83,8 +83,8 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 22: Growth & CRO - Align Hero and Regional Funnel to Learning Hub First
 - [x] **[PR #54](https://github.com/pilTrader-Projects/diabetessupport-website/pull/54)** `[COMPLETED / MERGED]`: Align global (`/`) and Philippine (`/ph`) hero sections and resource funnels to prioritize the Learning Materials Hub (`/learn`), deploy Option B emotional family protection hook, eliminate direct clinical liability with safe-harbor independent authority curation framing, and reorder regional action pathways (Closes Issue #53).
 
-### Milestone 23: UX & Layout - Elevate Learning Hub with Sticky Sidebar Filter Navigation
-- [ ] **[Issue #55](https://github.com/pilTrader-Projects/diabetessupport-website/issues/55)** `[IN PROGRESS]`: Re-layout `/learn` from stacked filter rows into a 2-column layout with a left sidebar filter panel (search, formats, authorities, shows, topics) and right-side learning card grid to bring content immediately above the fold and reduce bounce rate.
+### Milestone 23: UX & Layout - Elevate Learning Hub with Sticky Sidebar Filter Navigation & Compact Row Cards
+- [ ] **[Issue #55](https://github.com/pilTrader-Projects/diabetessupport-website/issues/55)** `[IN PROGRESS - PR #56]`: Re-layout `/learn` into a 2-column layout with a left sidebar filter panel (search, formats, authorities, shows, topics) and compact horizontal single-row material cards (thumbnail on left, metadata/authorities/takeaways on right) to maximize scannability, perceived catalog depth, and eliminate bounce rate.
 
 ---
 
