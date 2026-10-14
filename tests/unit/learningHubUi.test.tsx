@@ -175,8 +175,8 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       expect(html).not.toContain('Filipino families');
     });
 
-    it('generates contextual fallback takeaway instead of echoing title verbatim', () => {
-      const videoWithRepetitiveTakeaway: ILearningResource = {
+    it('renders clean compact video card without redundant takeaways or curation bylines (deferred to video player modal)', () => {
+      const videoResource: ILearningResource = {
         ...mockVideoResource,
         title: 'GLP-1 Natural Activation',
         keyTakeaways: ['Key scientific overview presented on GLP-1 Natural Activation.'],
@@ -185,13 +185,20 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
       const html = ReactDOMServer.renderToString(
         <LearningHubClient
           initialAuthorities={[mockAuthority]}
-          initialResources={[videoWithRepetitiveTakeaway]}
+          initialResources={[videoResource]}
           initialArticles={[]}
         />
       );
 
-      expect(html).toContain('Essential lecture breakdown on insulin regulation');
-      expect(html).not.toContain('Key scientific overview presented on');
+      // Compact card elements are present
+      expect(html).toContain('GLP-1 Natural Activation');
+      expect(html).toContain('Dr. Jason Fung');
+      expect(html).toContain('Play Video');
+
+      // Bulky stacked takeaway and curation bylines are removed from feed card (already shown inside video player modal)
+      expect(html).not.toContain('💡 Key Takeaway:');
+      expect(html).not.toContain('PRIMARY AUTHORITY');
+      expect(html).not.toContain('EDITORIAL SYNTHESIS');
     });
 
     it('renders podcast shows filter bar when podcast channels are provided', () => {

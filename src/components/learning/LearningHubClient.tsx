@@ -8,8 +8,6 @@ import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
-import CurationBylines from '@/components/learning/CurationBylines';
-import { resolveEvidenceLevel } from '@/lib/learningSchema';
 import {
   getSavedProtocolIds,
   saveProtocolResource,
@@ -138,17 +136,6 @@ export default function LearningHubClient({
   });
   const dynamicTopics = ['All', ...Array.from(allTopicsSet).slice(0, 12)];
 
-  // Helper for dynamic contextual takeaway
-  const getContextualTakeaway = (item: ILearningResource): string => {
-    const rawTakeaway = item.keyTakeaways && item.keyTakeaways.length > 0 ? item.keyTakeaways[0] : '';
-    if (!rawTakeaway || rawTakeaway.toLowerCase().includes('key scientific overview presented on')) {
-      if (item.isGuestAppearance) {
-        return `Clinical discussion exploring metabolic health, insulin dynamics, and real-world nutrition on ${item.podcastChannelName || 'podcast'}.`;
-      }
-      return `Essential lecture breakdown on insulin regulation, dietary protocols, and metabolic mechanisms by ${item.authorityName}.`;
-    }
-    return rawTakeaway;
-  };
 
   // Convert editorial articles to a unified shape for filtering
   const articleItems: ILearningResource[] = initialArticles.map((art) => ({
@@ -931,23 +918,18 @@ export default function LearningHubClient({
                           {item.title}
                         </h2>
 
-                        <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                          <span className="font-extrabold text-[10px] uppercase tracking-wider text-teal-700 mr-1.5">
-                            💡 Key Takeaway:
-                          </span>
-                          • {getContextualTakeaway(item)}
-                        </div>
-
-                        <CurationBylines
-                          authorityName={item.authorityName}
-                          authorityTitle={item.authorityTitle}
-                          authorityAvatar={item.authorityAvatar}
-                          editorialDesk={item.editorialDesk}
-                          clinicalReviewer={item.clinicalReviewer}
-                          safetyNotice={item.safetyNotice}
-                          evidenceLevel={resolveEvidenceLevel(item)}
-                          compact={true}
-                        />
+                        {item.topics && item.topics.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {item.topics.slice(0, 3).map((topic, tIdx) => (
+                              <span
+                                key={tIdx}
+                                className="text-[10px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md"
+                              >
+                                #{topic}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
 
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
@@ -1009,24 +991,9 @@ export default function LearningHubClient({
                           </a>
                         </h2>
 
-                        <div className="bg-gradient-to-br from-indigo-50/50 to-teal-50/50 border border-indigo-100 rounded-xl px-3 py-2 text-xs">
-                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-900 mr-1.5">
-                            📊 Clinical Takeaway:
-                          </span>
-                          <p className="text-slate-700 line-clamp-2 leading-relaxed inline">
-                            {item.keyTakeaways?.[0] || item.summary}
-                          </p>
-                        </div>
-
-                        <CurationBylines
-                          authorityName={item.authorityName}
-                          authorityTitle={item.authorityTitle}
-                          editorialDesk={item.editorialDesk}
-                          clinicalReviewer={item.clinicalReviewer}
-                          safetyNotice={item.safetyNotice}
-                          evidenceLevel={resolveEvidenceLevel(item)}
-                          compact={true}
-                        />
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                          {item.keyTakeaways?.[0] || item.summary}
+                        </p>
                       </div>
 
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
