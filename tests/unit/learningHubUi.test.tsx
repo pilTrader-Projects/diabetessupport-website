@@ -304,6 +304,30 @@ describe('Learning Materials Hub Public UI (TDD Unit Tests)', () => {
 
       expect(html).toContain('My Library');
     });
+
+    it('renders sticky left sidebar filter panel with Search, Format, Authority, Podcast, and Topics (Issue #55)', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningHubClient
+          initialAuthorities={[mockAuthority]}
+          initialPodcastChannels={[mockPodcastChannel]}
+          initialResources={[mockVideoResource]}
+          initialArticles={[mockArticle]}
+        />
+      );
+
+      // Left sidebar presence and elements
+      expect(html).toContain('Search Library');
+      expect(html).toContain('Browse Format');
+      expect(html).toContain('Filter by Authority / Speaker:');
+      expect(html).toContain('Filter by Podcast Show:');
+      expect(html).toContain('Topics:');
+
+      // Mobile filter toggle
+      expect(html).toContain('Filter Materials');
+
+      // Results summary bar
+      expect(html).toContain('materials found');
+    });
   });
 
   describe('Header Component (Global Saved Library Integration)', () => {

@@ -70,6 +70,7 @@ export default function LearningHubClient({
   const [selectedPodcastChannelId, setSelectedPodcastChannelId] = useState<string>(resolveInitialPodcastId());
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState<boolean>(false);
 
   // Modal & Drawer State
   const [playingResource, setPlayingResource] = useState<ILearningResource | null>(null);
@@ -362,291 +363,427 @@ export default function LearningHubClient({
   // Collect saved resources for drawer
   const savedResources = allItems.filter((item) => item._id && savedIds.includes(item._id));
 
+  const hasActiveFilters =
+    searchQuery.trim() !== '' ||
+    activeFormat !== 'all' ||
+    selectedAuthorityId !== 'all' ||
+    selectedPodcastChannelId !== 'all' ||
+    selectedTopic !== 'All';
+
+  const resetAllFilters = () => {
+    setActiveFormat('all');
+    setSelectedAuthorityId('all');
+    setSelectedPodcastChannelId('all');
+    setSelectedTopic('All');
+    setSearchQuery('');
+  };
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       {/* Hero Header */}
-      <div className="text-center space-y-4 max-w-3xl mx-auto pt-4">
+      <div className="text-center space-y-3 max-w-3xl mx-auto pt-2 pb-2">
         <span className="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-900 text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full border border-purple-200 inline-flex items-center gap-1.5 shadow-sm">
           <span>🌱</span> Evidence-Based Metabolic Science
         </span>
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
           The Metabolic Health &amp; Evidence Learning Hub
         </h1>
-        <p className="text-lg text-slate-600 leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">
           Curated video lectures, educational breakdowns, and published literature from independent medical doctors and researchers exploring insulin dynamics, cellular metabolism, and nutritional science.
         </p>
-
-        {/* Global Search Bar */}
-        <div className="pt-2 max-w-xl mx-auto relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by doctor, condition, or keyword (e.g. Bikman, Autophagy, A1C)..."
-            className="w-full pl-11 pr-10 py-3.5 bg-white border border-slate-300 rounded-2xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
-          />
-          <svg
-            className="w-5 h-5 text-slate-400 absolute left-3.5 top-5.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-3.5 top-4 text-slate-400 hover:text-slate-600 p-1"
-            >
-              ✕
-            </button>
-          )}
-        </div>
       </div>
 
-      {/* Format Tabs (Segmented Control) */}
-      <div className="flex justify-center">
-        <div className="bg-slate-100 p-1.5 rounded-2xl inline-flex flex-wrap items-center justify-center gap-1 border border-slate-200 shadow-inner">
-          <button
-            type="button"
-            onClick={() => setActiveFormat('all')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-              activeFormat === 'all'
-                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>🌟 All Materials</span>
-            <span className="text-[11px] opacity-80">({allItems.length})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveFormat('video')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-              activeFormat === 'video'
-                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>🎬 Videos &amp; Talks</span>
-            <span className="text-[11px] opacity-80">({videoCount})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveFormat('podcast')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-              activeFormat === 'podcast'
-                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>🎙️ Podcasts &amp; Shows</span>
-            <span className="text-[11px] opacity-80">({podcastCount})</span>
-          </button>
-
-          {articleCount > 0 && (
+      {/* 2-Column App & Media Layout: Left Sidebar Filter Panel + Right Content Grid */}
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        {/* Left Sidebar Filter Panel */}
+        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
+          {/* Mobile Filter Toggle Button */}
+          <div className="lg:hidden flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="flex items-center gap-2">
+              <span className="text-base">🎛️</span>
+              <span className="text-sm font-bold text-slate-800">Filter Materials</span>
+              {hasActiveFilters && (
+                <span className="bg-purple-100 text-purple-800 text-[11px] font-black px-2 py-0.5 rounded-full">
+                  Active
+                </span>
+              )}
+            </div>
             <button
               type="button"
-              onClick={() => setActiveFormat('article')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-                activeFormat === 'article'
-                  ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+              className="text-xs font-bold text-purple-700 hover:text-purple-900 px-3 py-1.5 rounded-xl border border-purple-200 bg-purple-50 transition-colors"
             >
-              <span>📖 Editorial Guides</span>
-              <span className="text-[11px] opacity-80">({articleCount})</span>
+              {isMobileFiltersOpen ? 'Hide Filters ✕' : 'Show Filters ☰'}
             </button>
-          )}
-
-          {studyCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setActiveFormat('study')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-                activeFormat === 'study'
-                  ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span>🔬 Clinical Studies</span>
-              <span className="text-[11px] opacity-80">({studyCount})</span>
-            </button>
-          )}
-
-          {bookCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setActiveFormat('book')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-                activeFormat === 'book'
-                  ? 'bg-amber-600 text-white shadow-md'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span>📚 Books &amp; Protocols</span>
-              <span className="text-[11px] opacity-80">({bookCount})</span>
-            </button>
-          )}
-
-          {/* My Saved Library In-Page Filter Tab */}
-          <button
-            type="button"
-            onClick={() => setActiveFormat('saved')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
-              activeFormat === 'saved'
-                ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <span>🔖 My Library</span>
-            {savedIds.length > 0 && (
-              <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-black ${
-                activeFormat === 'saved' ? 'bg-amber-400 text-slate-950' : 'bg-amber-400/25 text-amber-900 border border-amber-300/40'
-              }`}>
-                {savedIds.length}
-              </span>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Authorities Carousel Filter Bar (Loaded dynamically from DB) */}
-      {initialAuthorities.length > 0 && (
-        <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
-            <span>Filter by Authority / Speaker:</span>
-            {selectedAuthorityId !== 'all' && (
-              <button
-                type="button"
-                onClick={() => setSelectedAuthorityId('all')}
-                className="text-teal-700 hover:underline"
-              >
-                Reset Authority
-              </button>
-            )}
           </div>
 
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
-            <button
-              type="button"
-              onClick={() => setSelectedAuthorityId('all')}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                selectedAuthorityId === 'all'
-                  ? 'bg-slate-900 text-white border-slate-900'
-                  : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              All Experts
-            </button>
+          {/* Filter Container (Collapsible on mobile, always visible & sticky on desktop) */}
+          <div
+            className={`${
+              isMobileFiltersOpen ? 'block' : 'hidden'
+            } lg:block bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-6 lg:sticky lg:top-24 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin`}
+          >
+            {/* 1. Global Search Box */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                Search Library
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search doctor, topic, keyword..."
+                  className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all shadow-sm"
+                />
+                <svg
+                  className="w-4 h-4 text-slate-400 absolute left-3 top-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 p-1 text-xs"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
 
-            {initialAuthorities.map((auth) => {
-              const isSelected = selectedAuthorityId === auth._id;
-              return (
+            {/* 2. Format Navigation */}
+            <div className="space-y-2 border-t border-slate-100 pt-4">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                Browse Format
+              </span>
+              <div className="flex flex-col space-y-1">
                 <button
-                  key={auth._id}
                   type="button"
-                  onClick={() => setSelectedAuthorityId(isSelected ? 'all' : auth._id!)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                    isSelected
-                      ? 'bg-teal-700 text-white border-teal-700 shadow-sm'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-teal-300'
+                  onClick={() => setActiveFormat('all')}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    activeFormat === 'all'
+                      ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
-                  {auth.avatarUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={auth.avatarUrl}
-                      alt={auth.name}
-                      className="w-5 h-5 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="w-5 h-5 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center text-[10px]">
-                      {auth.name.charAt(0)}
+                  <span className="flex items-center gap-2">
+                    <span>🌟</span>
+                    <span>All Materials</span>
+                  </span>
+                  <span className="text-[11px] opacity-80">({allItems.length})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveFormat('video')}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    activeFormat === 'video'
+                      ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span>🎬</span>
+                    <span>Videos &amp; Talks</span>
+                  </span>
+                  <span className="text-[11px] opacity-80">({videoCount})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveFormat('podcast')}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    activeFormat === 'podcast'
+                      ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span>🎙️</span>
+                    <span>Podcasts &amp; Shows</span>
+                  </span>
+                  <span className="text-[11px] opacity-80">({podcastCount})</span>
+                </button>
+
+                {articleCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveFormat('article')}
+                    className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                      activeFormat === 'article'
+                        ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>📖</span>
+                      <span>Editorial Guides</span>
+                    </span>
+                    <span className="text-[11px] opacity-80">({articleCount})</span>
+                  </button>
+                )}
+
+                {studyCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveFormat('study')}
+                    className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                      activeFormat === 'study'
+                        ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>🔬</span>
+                      <span>Clinical Studies</span>
+                    </span>
+                    <span className="text-[11px] opacity-80">({studyCount})</span>
+                  </button>
+                )}
+
+                {bookCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveFormat('book')}
+                    className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                      activeFormat === 'book'
+                        ? 'bg-amber-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>📚</span>
+                      <span>Books &amp; Protocols</span>
+                    </span>
+                    <span className="text-[11px] opacity-80">({bookCount})</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setActiveFormat('saved')}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-between cursor-pointer ${
+                    activeFormat === 'saved'
+                      ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <span>🔖</span>
+                    <span>My Library</span>
+                  </span>
+                  {savedIds.length > 0 && (
+                    <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-black ${
+                      activeFormat === 'saved' ? 'bg-amber-400 text-slate-950' : 'bg-amber-400/25 text-amber-900 border border-amber-300/40'
+                    }`}>
+                      {savedIds.length}
                     </span>
                   )}
-                  <span>{auth.name}</span>
                 </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+              </div>
+            </div>
 
-      {/* Podcast Shows Filter Bar (Displayed when initialPodcastChannels exist) */}
-      {initialPodcastChannels && initialPodcastChannels.length > 0 && (activeFormat === 'all' || activeFormat === 'podcast') && (
-        <div className="space-y-2 pt-1">
-          <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
-            <span>Filter by Podcast Show:</span>
-            {selectedPodcastChannelId !== 'all' && (
+            {/* 3. Filter by Authority / Speaker */}
+            {initialAuthorities.length > 0 && (
+              <div className="space-y-2 border-t border-slate-100 pt-4">
+                <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
+                  <span>Filter by Authority / Speaker:</span>
+                  {selectedAuthorityId !== 'all' && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedAuthorityId('all')}
+                      className="text-teal-700 hover:underline font-bold text-[11px]"
+                    >
+                      Reset Authority
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAuthorityId('all')}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
+                      selectedAuthorityId === 'all'
+                        ? 'bg-slate-900 text-white border-slate-900'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    All Experts
+                  </button>
+
+                  {initialAuthorities.map((auth) => {
+                    const isSelected = selectedAuthorityId === auth._id;
+                    return (
+                      <button
+                        key={auth._id}
+                        type="button"
+                        onClick={() => setSelectedAuthorityId(isSelected ? 'all' : auth._id!)}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all border ${
+                          isSelected
+                            ? 'bg-teal-700 text-white border-teal-700 shadow-sm'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-teal-300'
+                        }`}
+                      >
+                        {auth.avatarUrl ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={auth.avatarUrl}
+                            alt={auth.name}
+                            className="w-4 h-4 rounded-full object-cover"
+                          />
+                        ) : (
+                          <span className="w-4 h-4 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center text-[9px]">
+                            {auth.name.charAt(0)}
+                          </span>
+                        )}
+                        <span className="truncate max-w-[150px]">{auth.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 4. Filter by Podcast Show */}
+            {initialPodcastChannels && initialPodcastChannels.length > 0 && (activeFormat === 'all' || activeFormat === 'podcast') && (
+              <div className="space-y-2 border-t border-slate-100 pt-4">
+                <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
+                  <span>Filter by Podcast Show:</span>
+                  {selectedPodcastChannelId !== 'all' && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPodcastChannelId('all')}
+                      className="text-purple-700 hover:underline font-bold text-[11px]"
+                    >
+                      Reset Show
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPodcastChannelId('all')}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all border ${
+                      selectedPodcastChannelId === 'all'
+                        ? 'bg-purple-900 text-white border-purple-900'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    All Shows
+                  </button>
+
+                  {initialPodcastChannels.map((channel) => {
+                    const isSelected = selectedPodcastChannelId === channel._id;
+                    return (
+                      <button
+                        key={channel._id}
+                        type="button"
+                        onClick={() => setSelectedPodcastChannelId(isSelected ? 'all' : channel._id!)}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all border ${
+                          isSelected
+                            ? 'bg-purple-700 text-white border-purple-700 shadow-sm'
+                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-purple-300'
+                        }`}
+                      >
+                        <span>🎙️ {channel.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 5. Topics */}
+            <div className="space-y-2 border-t border-slate-100 pt-4">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
+                <span>Topics:</span>
+                {selectedTopic !== 'All' && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTopic('All')}
+                    className="text-teal-700 hover:underline font-bold text-[11px]"
+                  >
+                    Reset Topic
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
+                {dynamicTopics.map((topic) => {
+                  const isSelected = selectedTopic.toLowerCase() === topic.toLowerCase();
+                  return (
+                    <button
+                      key={topic}
+                      type="button"
+                      onClick={() => setSelectedTopic(topic)}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                        isSelected
+                          ? 'bg-teal-800 text-white shadow-sm'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      }`}
+                    >
+                      {topic}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Reset All Filters Button */}
+            {hasActiveFilters && (
+              <div className="border-t border-slate-100 pt-3">
+                <button
+                  type="button"
+                  onClick={resetAllFilters}
+                  className="w-full py-2 text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors border border-rose-200"
+                >
+                  Reset All Filters ✕
+                </button>
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {/* Right Main Content Area */}
+        <main className="flex-1 min-w-0 w-full space-y-6">
+          {/* Status & Results Summary Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm text-xs text-slate-600">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-extrabold text-slate-900 text-sm">{filteredItems.length}</span>
+              <span>{filteredItems.length === 1 ? 'material found' : 'materials found'}</span>
+              {activeFormat !== 'all' && (
+                <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md font-semibold">
+                  Format: {activeFormat}
+                </span>
+              )}
+              {selectedAuthorityId !== 'all' && (
+                <span className="bg-teal-100 text-teal-800 px-2 py-0.5 rounded-md font-semibold">
+                  {initialAuthorities.find((a) => a._id === selectedAuthorityId)?.name || 'Selected Authority'}
+                </span>
+              )}
+              {selectedTopic !== 'All' && (
+                <span className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded-md font-semibold">
+                  Topic: {selectedTopic}
+                </span>
+              )}
+            </div>
+
+            {hasActiveFilters && (
               <button
                 type="button"
-                onClick={() => setSelectedPodcastChannelId('all')}
-                className="text-purple-700 hover:underline font-bold"
+                onClick={resetAllFilters}
+                className="text-purple-700 hover:text-purple-900 font-bold hover:underline"
               >
-                Reset Show
+                Clear Filters
               </button>
             )}
           </div>
-
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
-            <button
-              type="button"
-              onClick={() => setSelectedPodcastChannelId('all')}
-              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                selectedPodcastChannelId === 'all'
-                  ? 'bg-purple-900 text-white border-purple-900'
-                  : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              All Shows
-            </button>
-
-            {initialPodcastChannels.map((channel) => {
-              const isSelected = selectedPodcastChannelId === channel._id;
-              return (
-                <button
-                  key={channel._id}
-                  type="button"
-                  onClick={() => setSelectedPodcastChannelId(isSelected ? 'all' : channel._id!)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                    isSelected
-                      ? 'bg-purple-700 text-white border-purple-700 shadow-sm'
-                      : 'bg-white text-slate-700 border-slate-200 hover:border-purple-300'
-                  }`}
-                >
-                  <span>🎙️ {channel.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Dynamic Topic Chips Filter */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-5">
-        <span className="text-xs font-bold text-slate-400 mr-1">Topics:</span>
-        {dynamicTopics.map((topic) => {
-          const isSelected = selectedTopic.toLowerCase() === topic.toLowerCase();
-          return (
-            <button
-              key={topic}
-              type="button"
-              onClick={() => setSelectedTopic(topic)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                isSelected
-                  ? 'bg-teal-800 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {topic}
-            </button>
-          );
-        })}
-      </div>
 
       {/* Materials Grid */}
       {filteredItems.length === 0 ? (
@@ -1127,6 +1264,8 @@ export default function LearningHubClient({
           })}
         </div>
       )}
+        </main>
+      </div>
 
       {/* Video Lite Embed Player Modal */}
       <VideoPlayerModal
