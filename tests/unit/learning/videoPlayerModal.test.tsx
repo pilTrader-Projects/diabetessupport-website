@@ -43,7 +43,7 @@ describe('VideoPlayerModal (Issue #44 Privacy-Enhanced Media Embedding & Curatio
     );
 
     expect(html).toContain('Dr. Jason Fung, MD');
-    expect(html).toContain('Curated &amp; Synthesized by Before the Numbers Editorial Desk');
+    expect(html).toContain('Curated &amp; Synthesized by Before the Numbers');
     expect(html).toContain('Clinical Safety &amp; Guidance Notice');
     expect(html).toContain('Questions to Explore with Your Physician');
   });

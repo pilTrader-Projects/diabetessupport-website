@@ -786,6 +786,7 @@ export default function LearningHubClient({
                         authorityAvatar={item.authorityAvatar}
                         editorialDesk={item.editorialDesk}
                         clinicalReviewer={item.clinicalReviewer}
+                        safetyNotice={item.safetyNotice}
                         evidenceLevel={resolveEvidenceLevel(item)}
                         compact={true}
                       />
@@ -888,6 +889,7 @@ export default function LearningHubClient({
                         authorityTitle={item.authorityTitle}
                         editorialDesk={item.editorialDesk}
                         clinicalReviewer={item.clinicalReviewer}
+                        safetyNotice={item.safetyNotice}
                         evidenceLevel={resolveEvidenceLevel(item)}
                         compact={true}
                       />

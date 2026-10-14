@@ -7,6 +7,7 @@ interface CurationBylinesProps {
   authorityAvatar?: string;
   editorialDesk?: string;
   clinicalReviewer?: string;
+  safetyNotice?: string;
   evidenceLevel?: EvidenceLevel;
   className?: string;
   compact?: boolean;
@@ -16,19 +17,32 @@ interface CurationBylinesProps {
  * 3-Layer Curation Authorship Bylines Component (Issue #44).
  *
  * @usecase Clarifies that materials are primary medical authority findings, curated by
- * the editorial desk, and verified for clinical safety without claiming prescriptive advice.
+ * the editorial desk, and provides an honest clinical safety advisory without claiming prescriptive advice.
  * @dependencies EvidenceLevel type from types/learning.
  */
 export default function CurationBylines({
   authorityName,
   authorityTitle,
   authorityAvatar,
-  editorialDesk = 'Before the Numbers Editorial Desk',
-  clinicalReviewer = 'Before the Numbers Clinical Review Desk',
+  editorialDesk = 'Before the Numbers',
+  clinicalReviewer,
+  safetyNotice,
   evidenceLevel,
   className = '',
   compact = false,
 }: CurationBylinesProps): React.JSX.Element {
+  const isCustomReviewer = Boolean(
+    clinicalReviewer &&
+      clinicalReviewer.trim().length > 0 &&
+      !clinicalReviewer.toLowerCase().includes('clinical review desk')
+  );
+
+  const resolvedSafetyNotice =
+    safetyNotice ||
+    (isCustomReviewer
+      ? `Medically Reviewed for Safety by ${clinicalReviewer}`
+      : 'Educational resource only — consult your doctor before medication changes.');
+
   return (
     <div className={`space-y-3 ${className}`}>
       {/* Evidence Level Badge (if provided) */}
@@ -87,7 +101,7 @@ export default function CurationBylines({
           </div>
         </div>
 
-        {/* Layer 3: Clinical Safety Review */}
+        {/* Layer 3: Clinical Safety Advisory */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-start gap-2.5">
           <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold shrink-0 text-sm">
             🛡️
@@ -97,7 +111,7 @@ export default function CurationBylines({
               3. Clinical Safety
             </span>
             <span className="font-semibold text-slate-800 text-[11px] leading-snug block">
-              {`Medically Reviewed for Safety by ${clinicalReviewer}`}
+              {resolvedSafetyNotice}
             </span>
           </div>
         </div>

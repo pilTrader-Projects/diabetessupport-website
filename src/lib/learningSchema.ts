@@ -79,11 +79,7 @@ export function buildLearningHubMedicalSchema(resources: ILearningResource[]): R
         url: `https://${SITE_CONFIG.domain}/images/logo.png`,
       },
     },
-    reviewedBy: {
-      '@type': 'Organization',
-      name: 'Before the Numbers Clinical Review Desk',
-      url: `https://${SITE_CONFIG.domain}/about`,
-    },
+    publishingPrinciples: `https://${SITE_CONFIG.domain}/editorial-policy`,
     medicalAudience: 'Patient',
     aspect: ['Overview', 'Etiology', 'Pathophysiology', 'Prevention'],
     hasPart: resources.slice(0, 15).map((r) => ({

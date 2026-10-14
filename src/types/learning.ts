@@ -128,7 +128,8 @@ export interface ILearningResource {
   // 3-Layer Curation & Evidence Hierarchy (Issue #44)
   evidenceLevel?: EvidenceLevel;
   editorialDesk?: string;         // e.g. "Before the Numbers Editorial Desk"
-  clinicalReviewer?: string;      // e.g. "Clinical Safety Review Desk"
+  clinicalReviewer?: string;      // Optional verified medical reviewer (e.g. "Dr. Sarah Jenkins, MD")
+  safetyNotice?: string;          // Clinical safety notice / disclaimer text
   discussionQuestions?: string[]; // Consultation questions for doctor visits
   citations?: string[];           // Primary literature citations
 
