@@ -237,7 +237,7 @@ export default function SavedResourcesDrawer({
                 </h4>
               </div>
               <p className="text-[11px] text-purple-100/90 leading-relaxed">
-                Save your curated library to your email and receive our weekly 3-minute research recap on reversing insulin resistance.
+                Save your curated library to your email and receive our weekly 3-minute digest of independent medical research and educational insights on improving insulin sensitivity.
               </p>
 
               {isSuccess ? (

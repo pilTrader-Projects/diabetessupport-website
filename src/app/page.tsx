@@ -397,7 +397,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 Learning Materials &amp; Evidence
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Explore curated medical lectures, peer-reviewed clinical studies, and metabolic science from leading clinicians including Dr. Fung, Dr. Bikman, and Dr. Attia.
+                Explore curated educational lectures, published research discussions, and metabolic science from respected independent clinicians including Dr. Fung, Dr. Bikman, and Dr. Attia.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
@@ -406,7 +406,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>Longitudinal clinical trial evidence &amp; books</span>
+                  <span>Published scientific literature &amp; authority books</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>

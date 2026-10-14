@@ -42,12 +42,12 @@ export default function CoreMetricsSection(): React.JSX.Element {
               <h3 className="font-bold text-slate-800 text-lg">HbA1c Blood Level</h3>
             </div>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Measures your true baseline over 90 days. Catching this between <strong>5.7% and 6.4%</strong> flags prediabetes—the golden window where you can completely reverse the condition before it becomes permanent.
+              Measures your true baseline over 90 days. Catching this between <strong>5.7% and 6.4%</strong> flags prediabetes—an opportune window to work with your physician to restore insulin sensitivity before long-term complications arise.
             </p>
           </div>
           <div className="pt-3 border-t border-slate-100 text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
             <span>✓</span>
-            <span>Golden Window for Full Reversibility</span>
+            <span>Opportune Window for Metabolic Improvement</span>
           </div>
         </div>
 

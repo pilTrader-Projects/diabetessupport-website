@@ -63,7 +63,7 @@ export function buildLearningHubMedicalSchema(resources: ILearningResource[]): R
     '@type': 'MedicalWebPage',
     name: 'Before the Numbers Learning & Evidence Hub',
     description:
-      'Curated library of evidence-based medical lectures, clinical trials, and protocols on metabolic health and insulin dynamics.',
+      'Curated educational library of public lectures, published literature reviews, and health literacy guides from independent medical authorities on metabolic health and insulin dynamics.',
     url: hubUrl,
     editor: {
       '@type': 'Organization',

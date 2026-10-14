@@ -248,12 +248,12 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
                 Learning Materials &amp; Evidence
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Access curated video breakdowns, clinical trials, and medical authority lectures from Dr. Bikman, Dr. Fung, and global specialists explaining root metabolic biology.
+                Access educational lectures, published research reviews, and clinical insights from independent specialists including Dr. Bikman and Dr. Fung explaining root metabolic biology.
               </p>
               <ul className="space-y-2 text-xs text-slate-600">
                 <li className="flex items-center gap-2">
                   <span className="text-indigo-600 font-bold">✓</span>
-                  <span>50+ Expert lectures &amp; clinical trials</span>
+                  <span>50+ Expert lectures &amp; published research reviews</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-indigo-600 font-bold">✓</span>
