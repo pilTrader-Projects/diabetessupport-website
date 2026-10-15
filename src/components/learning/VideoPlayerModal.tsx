@@ -8,6 +8,7 @@ import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import CurationDetails from '@/components/learning/CurationDetails';
 import AffiliateCompanionCard from '@/components/learning/AffiliateCompanionCard';
 import { resolveFlankPanels, stopPropagation } from '@/lib/affiliateFlankUtils';
+import { useVideoTracking } from '@/analytics/trackers/useVideoTracking';
 
 interface VideoPlayerModalProps {
   isOpen: boolean;
@@ -36,6 +37,9 @@ export default function VideoPlayerModal({
   const [mounted, setMounted] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Modular GA4 Embedded Video Engagement Tracker
+  useVideoTracking(isOpen, resource?.title, resource?.duration);
 
   useEffect(() => {
     setMounted(true);
@@ -154,6 +158,7 @@ export default function VideoPlayerModal({
                 key={book._id || book.title}
                 book={book}
                 variant="flank"
+                position="left_sidebar"
               />
             ))}
           </aside>
@@ -288,6 +293,7 @@ export default function VideoPlayerModal({
                     key={book._id || book.title}
                     book={book}
                     variant="inline"
+                    position="inline_modal"
                   />
                 ))}
               </div>
@@ -329,6 +335,7 @@ export default function VideoPlayerModal({
               key={book._id || book.title}
               book={book}
               variant="flank"
+              position="right_sidebar"
             />
           ))}
         </aside>

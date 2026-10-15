@@ -89,6 +89,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 24: Admin CMS - Community Article Sync, Engagement Preservation & Status Filters
 - [x] **[PR #58](https://github.com/pilTrader-Projects/diabetessupport-website/pull/58)** `[COMPLETED]`: Fix Community Article CMS in Admin Dashboard with non-destructive thread sync (preserving likes, views, and repliesCount), prevent duplicate discussion CTA footers, and support status filtering ('all', 'published', 'draft', 'archived') in GET /api/v1/posts and Admin UI (Closes Issue #57).
 
+### Milestone 25: GA4 Event Tracking Implementation (/learn page)
+- [ ] **[Issue #59](https://github.com/pilTrader-Projects/diabetessupport-website/issues/59)** `[IN PROGRESS]`: Modular GA4 event tracking pipeline for `/learn` affiliate card clicks (left/right sidebars) and embedded YouTube video player engagement (play, pause, heartbeat duration).
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow
