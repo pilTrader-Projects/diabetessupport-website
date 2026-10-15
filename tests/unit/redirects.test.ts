@@ -31,4 +31,18 @@ describe('Backward Compatibility URL Redirects (next.config.js)', () => {
     expect(blogWildcardRedirect).toBeDefined();
     expect(blogWildcardRedirect.permanent).toBe(true);
   });
+
+  it('should redirect legacy emoji slug to clean slug permanently', async () => {
+    const redirects = await nextConfig.redirects();
+
+    const emojiRedirect = redirects.find(
+      (r: any) =>
+        r.source ===
+          '/community/%f0%9f%a9%b8how-diabetes-really-starts-the-silent-process-inside-your-body-you-need-to-know' &&
+        r.destination ===
+          '/community/how-diabetes-really-starts-the-silent-process-inside-your-body-you-need-to-know'
+    );
+    expect(emojiRedirect).toBeDefined();
+    expect(emojiRedirect.permanent).toBe(true);
+  });
 });

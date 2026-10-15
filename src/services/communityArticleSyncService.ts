@@ -12,18 +12,26 @@ import { transformPostToThread } from './postToThreadMigration';
  * @dependencies ThreadModel, transformPostToThread.
  * @returns {Promise<IThread | null>} The synchronized discussion thread or null if archived.
  */
-export async function syncPostToCommunityThread(post: Partial<IPost>): Promise<IThread | null> {
+export async function syncPostToCommunityThread(
+  post: Partial<IPost>,
+  previousSlug?: string
+): Promise<IThread | null> {
   const slug = post.slug?.trim();
   if (!slug) return null;
+
+  const targetLookupSlug = previousSlug && previousSlug.trim() ? previousSlug.trim() : slug;
 
   if (post.status === 'published') {
     const threadData = transformPostToThread(post);
     const { likes, views, repliesCount, pinned, createdAt, ...mutableFields } = threadData;
 
     const updatedThread = await ThreadModel.findOneAndUpdate(
-      { slug },
+      { slug: targetLookupSlug },
       {
-        $set: mutableFields,
+        $set: {
+          ...mutableFields,
+          slug,
+        },
         $setOnInsert: {
           likes: likes ?? 0,
           views: views ?? 0,
@@ -38,7 +46,7 @@ export async function syncPostToCommunityThread(post: Partial<IPost>): Promise<I
   }
 
   // If article is draft or archived, ensure the community thread is archived
-  await ThreadModel.updateOne({ slug }, { $set: { status: 'archived' } });
+  await ThreadModel.updateOne({ slug: targetLookupSlug }, { $set: { status: 'archived', slug } });
   return null;
 }
 

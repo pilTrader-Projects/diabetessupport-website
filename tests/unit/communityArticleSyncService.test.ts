@@ -68,6 +68,38 @@ describe('communityArticleSyncService', () => {
       expect(result).toEqual(mockThread);
     });
 
+    it('should query by previousSlug and update thread with new slug when previousSlug differs', async () => {
+      const mockPost = {
+        title: 'Clean Title Without Emoji',
+        slug: 'clean-slug-without-emoji',
+        content: '<p>Content</p>',
+        status: 'published' as const,
+      };
+
+      const mockThread = {
+        _id: 'thread_123',
+        slug: 'clean-slug-without-emoji',
+        title: 'Clean Title Without Emoji',
+        status: 'published',
+      };
+
+      (ThreadModel.findOneAndUpdate as jest.Mock).mockResolvedValue(mockThread);
+
+      const result = await syncPostToCommunityThread(mockPost, 'old-emoji-slug');
+
+      expect(ThreadModel.findOneAndUpdate).toHaveBeenCalledWith(
+        { slug: 'old-emoji-slug' },
+        expect.objectContaining({
+          $set: expect.objectContaining({
+            slug: 'clean-slug-without-emoji',
+            title: 'Clean Title Without Emoji',
+          }),
+        }),
+        { upsert: true, returnDocument: 'after' }
+      );
+      expect(result).toEqual(mockThread);
+    });
+
     it('should archive existing community thread when article status is draft or archived', async () => {
       const mockPost = {
         title: 'Draft Post',
@@ -82,7 +114,7 @@ describe('communityArticleSyncService', () => {
 
       expect(ThreadModel.updateOne).toHaveBeenCalledWith(
         { slug: 'draft-post' },
-        { $set: { status: 'archived' } }
+        { $set: expect.objectContaining({ status: 'archived' }) }
       );
       expect(result).toBeNull();
     });

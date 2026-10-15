@@ -284,9 +284,17 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
 
   it('should update post content successfully via PUT when authenticated', async () => {
     const validSecret = process.env.API_SECRET_KEY || 'dev_secret_key_123';
+    (PostModel.findById as jest.Mock).mockReturnValue({
+      lean: jest.fn().mockResolvedValue({
+        _id: 'post_123',
+        slug: 'original-slug',
+        title: 'Original Title',
+      }),
+    });
     (PostModel.findByIdAndUpdate as jest.Mock).mockResolvedValue({
       _id: 'post_123',
       title: 'Updated Title',
+      slug: 'updated-title',
       content: '<h2>Updated HTML Content</h2>',
     });
 
@@ -298,6 +306,7 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
       },
       body: JSON.stringify({
         title: 'Updated Title',
+        slug: 'updated-title',
         content: '<h2>Updated HTML Content</h2>',
       }),
     });
@@ -308,7 +317,10 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
     expect(body.data.title).toBe('Updated Title');
-    expect(syncPostToCommunityThread).toHaveBeenCalled();
+    expect(syncPostToCommunityThread).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Updated Title' }),
+      'original-slug'
+    );
   });
 
   it('should delete post and remove community thread via DELETE', async () => {

@@ -87,6 +87,12 @@ export async function PUT(req: Request, { params }: RouteParams): Promise<NextRe
       );
     }
 
+    const existingPost: any = await PostModel.findById(id).lean();
+    if (!existingPost) {
+      return NextResponse.json({ success: false, error: 'Post not found.' }, { status: 404 });
+    }
+    const previousSlug = existingPost.slug;
+
     const updated = await PostModel.findByIdAndUpdate(id, updateData, { returnDocument: 'after', runValidators: true });
 
     if (!updated) {
@@ -94,7 +100,7 @@ export async function PUT(req: Request, { params }: RouteParams): Promise<NextRe
     }
 
     // Synchronize to Community forum discussion thread
-    await syncPostToCommunityThread(updated.toObject ? updated.toObject() : updated);
+    await syncPostToCommunityThread(updated.toObject ? updated.toObject() : updated, previousSlug);
 
     return NextResponse.json({ success: true, message: 'Post updated successfully.', data: updated });
   } catch (err: any) {
