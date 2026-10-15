@@ -9,12 +9,12 @@ import { dispatchAffiliateCardClick } from '@/analytics/dispatchers/dispatchAffi
 interface ClickEventLike {
   target?: EventTarget | null;
   currentTarget?: EventTarget | null;
-  stopPropagation?: () => void;
 }
 
 /**
- * Handles affiliate card click interactions.
+ * Handles affiliate card click interactions passively.
  * Extracts context, formats payload, and dispatches GA4 affiliate_card_click event.
+ * NOTE: Strictly passive — never interferes with event propagation or default actions.
  *
  * @param event DOM click event or event-like object.
  * @param win Optional window reference.
@@ -24,10 +24,6 @@ export function handleAffiliateClick(
   event: ClickEventLike,
   win?: Window
 ): boolean {
-  if (typeof event?.stopPropagation === 'function') {
-    event.stopPropagation();
-  }
-
   const anchor =
     findClosestAffiliateCard(event.currentTarget || null) ||
     findClosestAffiliateCard(event.target || null);

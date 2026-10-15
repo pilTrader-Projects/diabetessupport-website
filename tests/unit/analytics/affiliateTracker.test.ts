@@ -18,7 +18,7 @@ describe('affiliateTracker & handleAffiliateClick', () => {
     jest.clearAllMocks();
   });
 
-  it('tracks affiliate card click for left_sidebar position', () => {
+  it('tracks affiliate card click for left_sidebar position without stopping propagation', () => {
     const mockAnchor = {
       getAttribute: jest.fn((attr: string) => {
         if (attr === 'data-click-type') return 'affiliate_card';
@@ -35,12 +35,16 @@ describe('affiliateTracker & handleAffiliateClick', () => {
       target: mockAnchor,
       currentTarget: mockAnchor,
       stopPropagation: jest.fn(),
+      preventDefault: jest.fn(),
     } as any;
 
     const handled = handleAffiliateClick(mockEvent);
 
     expect(handled).toBe(true);
-    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    // Passive tracking contract: NEVER stop propagation or prevent default
+    expect(mockEvent.stopPropagation).not.toHaveBeenCalled();
+    expect(mockEvent.preventDefault).not.toHaveBeenCalled();
+
     expect(mockGtag).toHaveBeenCalledWith('event', 'affiliate_card_click', {
       page_location: 'https://www.beforethenumbers.org/learn?topic=Fasting',
       affiliate_item: 'Metabolical',
@@ -49,7 +53,7 @@ describe('affiliateTracker & handleAffiliateClick', () => {
     });
   });
 
-  it('tracks affiliate card click for right_sidebar position', () => {
+  it('tracks affiliate card click for right_sidebar position without stopping propagation', () => {
     const mockAnchor = {
       getAttribute: jest.fn((attr: string) => {
         if (attr === 'data-click-type') return 'affiliate_card';
@@ -65,11 +69,14 @@ describe('affiliateTracker & handleAffiliateClick', () => {
     const mockEvent = {
       target: mockAnchor,
       stopPropagation: jest.fn(),
+      preventDefault: jest.fn(),
     } as any;
 
     const handled = handleAffiliateClick(mockEvent);
 
     expect(handled).toBe(true);
+    expect(mockEvent.stopPropagation).not.toHaveBeenCalled();
+    expect(mockEvent.preventDefault).not.toHaveBeenCalled();
     expect(mockGtag).toHaveBeenCalledWith('event', 'affiliate_card_click', {
       page_location: 'https://www.beforethenumbers.org/learn?topic=Fasting',
       affiliate_item: 'Drop Acid',
@@ -78,23 +85,28 @@ describe('affiliateTracker & handleAffiliateClick', () => {
     });
   });
 
-  it('returns false and does not dispatch if clicked element is not an affiliate card', () => {
-    const mockElement = {
+  it('ignores clicks on non-affiliate elements (buttons, filters, player triggers) without interfering', () => {
+    const mockFilterButton = {
+      tagName: 'BUTTON',
       getAttribute: jest.fn().mockReturnValue(null),
       closest: jest.fn().mockReturnValue(null),
     };
 
     const mockEvent = {
-      target: mockElement,
+      target: mockFilterButton,
+      stopPropagation: jest.fn(),
+      preventDefault: jest.fn(),
     } as any;
 
     const handled = handleAffiliateClick(mockEvent);
 
     expect(handled).toBe(false);
+    expect(mockEvent.stopPropagation).not.toHaveBeenCalled();
+    expect(mockEvent.preventDefault).not.toHaveBeenCalled();
     expect(mockGtag).not.toHaveBeenCalled();
   });
 
-  it('attachAffiliateTracking registers and removes click listener on root container', () => {
+  it('attachAffiliateTracking registers passive bubbling listener on root container', () => {
     const addEventListener = jest.fn();
     const removeEventListener = jest.fn();
     const mockContainer = {
@@ -104,10 +116,36 @@ describe('affiliateTracker & handleAffiliateClick', () => {
 
     const cleanup = attachAffiliateTracking(mockContainer);
 
-    expect(addEventListener).toHaveBeenCalledWith('click', expect.any(Function), true);
+    // Verifies bubbling phase (false) instead of capture (true)
+    expect(addEventListener).toHaveBeenCalledWith('click', expect.any(Function), false);
 
     cleanup();
 
-    expect(removeEventListener).toHaveBeenCalledWith('click', expect.any(Function), true);
+    expect(removeEventListener).toHaveBeenCalledWith('click', expect.any(Function), false);
+  });
+
+  it('delegated click listener ignores non-affiliate targets completely', () => {
+    let capturedListener: any = null;
+    const mockContainer: any = {
+      addEventListener: jest.fn((event: string, fn: any) => {
+        if (event === 'click') capturedListener = fn;
+      }),
+      removeEventListener: jest.fn(),
+    };
+
+    attachAffiliateTracking(mockContainer);
+    expect(capturedListener).toBeDefined();
+
+    const mockNormalButtonEvent = {
+      target: {
+        closest: jest.fn().mockReturnValue(null),
+      },
+      stopPropagation: jest.fn(),
+    };
+
+    capturedListener(mockNormalButtonEvent);
+
+    expect(mockNormalButtonEvent.stopPropagation).not.toHaveBeenCalled();
+    expect(mockGtag).not.toHaveBeenCalled();
   });
 });
