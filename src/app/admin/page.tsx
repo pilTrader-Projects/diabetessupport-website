@@ -21,6 +21,7 @@ export default async function AdminDashboardPage() {
   await dbConnect();
   const totalPosts = await PostModel.countDocuments();
   const publishedPosts = await PostModel.countDocuments({ status: 'published' });
+  const archivedPosts = await PostModel.countDocuments({ status: 'archived' });
   const totalAuthorities = await AuthorityModel.countDocuments();
   const totalResources = await LearningResourceModel.countDocuments();
   const totalCampaigns = await CampaignConfigModel.countDocuments();
@@ -61,7 +62,9 @@ export default async function AdminDashboardPage() {
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
           <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Community Articles</div>
           <div className="text-3xl font-extrabold text-white">{totalPosts}</div>
-          <div className="text-xs text-teal-400 font-semibold">{publishedPosts} Published in Community</div>
+          <div className="text-xs text-teal-400 font-semibold">
+            {publishedPosts} Published • {archivedPosts} Archived
+          </div>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
