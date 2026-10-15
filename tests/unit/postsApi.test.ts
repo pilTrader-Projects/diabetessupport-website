@@ -208,6 +208,56 @@ describe('GET /api/v1/posts API Query Endpoint', () => {
     expect(body.success).toBe(true);
     expect(body.data.length).toBe(2);
     expect(body.pagination.total).toBe(2);
+    expect(PostModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ status: { $in: ['published', 'draft'] } })
+    );
+  });
+
+  it('should support querying all posts including archived when status=all', async () => {
+    const mockPosts = [
+      { title: 'Article 1', slug: 'article-1', status: 'published' },
+      { title: 'Article 2', slug: 'article-2', status: 'archived' },
+    ];
+
+    const mockQuery = {
+      sort: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue(mockPosts),
+    };
+
+    (PostModel.find as jest.Mock) = jest.fn().mockReturnValue(mockQuery);
+    (PostModel.countDocuments as jest.Mock) = jest.fn().mockResolvedValue(2);
+
+    const req = new Request('http://localhost:3000/api/v1/posts?status=all&limit=50');
+    const res = await GET(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(PostModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ status: { $in: ['published', 'draft', 'archived'] } })
+    );
+  });
+
+  it('should filter strictly by specific status when status=archived', async () => {
+    const mockQuery = {
+      sort: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue([]),
+    };
+
+    (PostModel.find as jest.Mock) = jest.fn().mockReturnValue(mockQuery);
+    (PostModel.countDocuments as jest.Mock) = jest.fn().mockResolvedValue(0);
+
+    const req = new Request('http://localhost:3000/api/v1/posts?status=archived');
+    const res = await GET(req);
+
+    expect(res.status).toBe(200);
+    expect(PostModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'archived' })
+    );
   });
 });
 

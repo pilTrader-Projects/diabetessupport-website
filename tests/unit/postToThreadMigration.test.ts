@@ -88,6 +88,13 @@ describe('Legacy Post to Community Thread Migration (BE Service)', () => {
       expect(emptyContent).toContain('Community Discussion');
       expect(emptyContent).toContain('Share your questions and thoughts below.');
     });
+
+    it('does not duplicate discussion prompt if content already includes it (Idempotency)', () => {
+      const initial = cleanHtmlToDiscussionContent('<p>First version</p>', 'Test');
+      const secondPass = cleanHtmlToDiscussionContent(initial, 'Test');
+      const matches = (secondPass.match(/Community Discussion & Peer Experiences/g) || []).length;
+      expect(matches).toBe(1);
+    });
   });
 
   describe('transformPostToThread', () => {

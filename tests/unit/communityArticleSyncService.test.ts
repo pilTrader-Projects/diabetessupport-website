@@ -51,9 +51,20 @@ describe('communityArticleSyncService', () => {
             status: 'published',
             category: 'Low-GI Pinoy Meals',
           }),
+          $setOnInsert: expect.objectContaining({
+            likes: 0,
+            views: 0,
+            repliesCount: 0,
+            pinned: false,
+          }),
         }),
         { upsert: true, returnDocument: 'after' }
       );
+      // Ensure $set does not overwrite engagement metrics
+      const updatePayload = (ThreadModel.findOneAndUpdate as jest.Mock).mock.calls[0][1];
+      expect(updatePayload.$set.likes).toBeUndefined();
+      expect(updatePayload.$set.views).toBeUndefined();
+      expect(updatePayload.$set.repliesCount).toBeUndefined();
       expect(result).toEqual(mockThread);
     });
 

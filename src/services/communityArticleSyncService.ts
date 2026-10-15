@@ -18,9 +18,20 @@ export async function syncPostToCommunityThread(post: Partial<IPost>): Promise<I
 
   if (post.status === 'published') {
     const threadData = transformPostToThread(post);
+    const { likes, views, repliesCount, pinned, createdAt, ...mutableFields } = threadData;
+
     const updatedThread = await ThreadModel.findOneAndUpdate(
       { slug },
-      { $set: threadData },
+      {
+        $set: mutableFields,
+        $setOnInsert: {
+          likes: likes ?? 0,
+          views: views ?? 0,
+          repliesCount: repliesCount ?? 0,
+          pinned: pinned ?? false,
+          createdAt: createdAt || new Date(),
+        },
+      },
       { upsert: true, returnDocument: 'after' }
     );
     return updatedThread as IThread;

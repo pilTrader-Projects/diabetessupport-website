@@ -103,7 +103,11 @@ export function cleanHtmlToDiscussionContent(htmlContent: string, title: string)
   // Compress consecutive blank lines
   text = text.replace(/\n\s*\n\s*\n/g, '\n\n').trim();
 
-  // Discussion prompt inviting peer experiences
+  // Discussion prompt inviting peer experiences (append only if not already present)
+  if (text.includes('Community Discussion & Peer Experiences')) {
+    return text;
+  }
+
   const prompt = `\n\n---\n\n### 💬 Community Discussion & Peer Experiences\n*What has your personal experience been with this? Have you noticed similar signs or found practical routines that worked for you and your family? Share your questions and thoughts below.*`;
 
   return `${text}${prompt}`;

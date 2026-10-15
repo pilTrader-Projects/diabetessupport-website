@@ -165,7 +165,9 @@ export async function GET(req: Request): Promise<NextResponse> {
     const skip = (page - 1) * limit;
 
     const query: any = {};
-    if (statusParam) {
+    if (statusParam === 'all') {
+      query.status = { $in: ['published', 'draft', 'archived'] };
+    } else if (statusParam) {
       query.status = statusParam;
     } else {
       query.status = { $in: ['published', 'draft'] };
