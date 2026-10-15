@@ -13,8 +13,6 @@ import {
   saveProtocolResource,
   PROTOCOL_UPDATE_EVENT,
 } from '@/lib/savedProtocolUtils';
-import { attachAffiliateTracking } from '@/analytics/trackers/affiliateTracker';
-import { handleAffiliateClick } from '@/analytics/handlers/handleAffiliateClick';
 
 interface LearningHubClientProps {
   initialAuthorities: IAuthority[];
@@ -96,14 +94,6 @@ export default function LearningHubClient({
         window.removeEventListener(PROTOCOL_UPDATE_EVENT, handleUpdate);
         window.removeEventListener('storage', handleUpdate);
       }
-    };
-  }, []);
-
-  // Automatically track affiliate card clicks throughout the Learning Hub
-  useEffect(() => {
-    const detachAffiliateTracking = attachAffiliateTracking();
-    return () => {
-      detachAffiliateTracking();
     };
   }, []);
 
@@ -1087,15 +1077,7 @@ export default function LearningHubClient({
                         </div>
 
                         <h2 className="text-base sm:text-lg font-bold text-slate-900 line-clamp-2 pt-0.5 group-hover:text-amber-800 transition-colors leading-snug">
-                          <a
-                            href={item.sourceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer sponsored"
-                            data-click-type="affiliate_card"
-                            data-book-title={item.title}
-                            data-card-position="feed_row"
-                            onClick={handleAffiliateClick}
-                          >
+                          <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer sponsored">
                             {item.title}
                           </a>
                         </h2>
@@ -1119,10 +1101,6 @@ export default function LearningHubClient({
                           href={item.sourceUrl}
                           target="_blank"
                           rel="noopener noreferrer sponsored"
-                          data-click-type="affiliate_card"
-                          data-book-title={item.title}
-                          data-card-position="feed_row"
-                          onClick={handleAffiliateClick}
                           className="inline-flex items-center text-xs font-bold text-amber-700 hover:text-amber-900 group/link px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
                         >
                           Get Book on Amazon ↗

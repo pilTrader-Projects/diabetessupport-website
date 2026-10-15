@@ -3,13 +3,11 @@
 import React, { useState } from 'react';
 import { IAffiliateRecommendation } from '@/types/learning';
 import { stopPropagation } from '@/lib/affiliateFlankUtils';
-import { handleAffiliateClick } from '@/analytics/handlers/handleAffiliateClick';
 
 interface AffiliateCompanionCardProps {
   book: IAffiliateRecommendation;
   variant?: 'flank' | 'inline';
   className?: string;
-  position?: 'left_sidebar' | 'right_sidebar' | 'inline_modal' | string;
 }
 
 /**
@@ -23,7 +21,6 @@ export default function AffiliateCompanionCard({
   book,
   variant = 'flank',
   className = '',
-  position,
 }: AffiliateCompanionCardProps): React.JSX.Element {
   const [imageFailed, setImageFailed] = useState(false);
 
@@ -33,17 +30,13 @@ export default function AffiliateCompanionCard({
 
   const platformDisplay = book.platformName?.split(' ')[0] || 'Amazon';
   const isFlank = variant === 'flank';
-  const cardPosition = position || (isFlank ? 'left_sidebar' : 'inline_modal');
 
   return (
     <a
       href={book.affiliateUrl}
       target="_blank"
       rel="noopener noreferrer sponsored"
-      onClick={handleAffiliateClick}
-      data-click-type="affiliate_card"
-      data-book-title={book.title}
-      data-card-position={cardPosition}
+      onClick={stopPropagation}
       className={`group block transition-all duration-200 select-none ${
         isFlank
           ? 'bg-slate-900/90 hover:bg-slate-900 border border-white/20 hover:border-amber-400/60 rounded-2xl p-3.5 shadow-xl hover:shadow-amber-500/10 backdrop-blur-xl'
