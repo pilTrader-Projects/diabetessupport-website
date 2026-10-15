@@ -17,7 +17,7 @@ interface Post {
   content?: string;
   excerpt?: string;
   category?: string;
-  status: 'published' | 'draft';
+  status: 'published' | 'draft' | 'archived';
   featuredImage?: string;
   publishedAt?: string;
   createdAt: string;
@@ -27,6 +27,7 @@ export default function AdminPostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft' | 'archived'>('all');
 
   // Modal State for Create & Edit
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,16 +38,17 @@ export default function AdminPostsPage() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [category, setCategory] = useState('General');
-  const [status, setStatus] = useState<'published' | 'draft'>('published');
+  const [status, setStatus] = useState<'published' | 'draft' | 'archived'>('published');
   const [excerpt, setExcerpt] = useState('');
   const [featuredImage, setFeaturedImage] = useState('');
   const [tagsInput, setTagsInput] = useState('');
   const [content, setContent] = useState('');
   const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (filter: 'all' | 'published' | 'draft' | 'archived' = statusFilter) => {
     try {
-      const res = await fetch('/api/v1/posts?limit=100');
+      setLoading(true);
+      const res = await fetch(`/api/v1/posts?status=${filter}&limit=100`);
       const data = await res.json();
       if (data.success) {
         setPosts(data.data || []);
@@ -59,8 +61,8 @@ export default function AdminPostsPage() {
   };
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPosts(statusFilter);
+  }, [statusFilter]);
 
   const handleOpenCreate = () => {
     setEditingPostId(null);
@@ -211,14 +213,44 @@ export default function AdminPostsPage() {
         </div>
       </div>
 
+      {/* Status Filter Tabs & Stats Bar */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-800/80 pb-4">
+        {(['all', 'published', 'draft', 'archived'] as const).map((filterKey) => {
+          const isActive = statusFilter === filterKey;
+          const labelMap = {
+            all: 'All Articles',
+            published: 'Published (Live)',
+            draft: 'Drafts',
+            archived: 'Archived',
+          };
+          return (
+            <button
+              key={filterKey}
+              onClick={() => setStatusFilter(filterKey)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                isActive
+                  ? 'bg-teal-500 text-slate-950 shadow-md font-extrabold'
+                  : 'bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
+              }`}
+            >
+              <span>{labelMap[filterKey]}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Articles Table */}
       {loading ? (
-        <div className="text-center py-12 text-slate-400">Loading blog articles...</div>
+        <div className="text-center py-12 text-slate-400">Loading community articles...</div>
       ) : filteredPosts.length === 0 ? (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center space-y-4">
           <span className="text-4xl">📚</span>
           <h3 className="text-xl font-bold text-white">No Articles Found</h3>
-          <p className="text-sm text-slate-400">Create a new article using the button above or use the automated publishing API.</p>
+          <p className="text-sm text-slate-400">
+            {statusFilter !== 'all'
+              ? `No articles found with status "${statusFilter}". Try switching to "All Articles".`
+              : 'Create a new article using the button above or use the automated publishing API.'}
+          </p>
         </div>
       ) : (
         <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
@@ -236,15 +268,22 @@ export default function AdminPostsPage() {
               {filteredPosts.map((post) => (
                 <tr key={post._id} className="hover:bg-slate-850/50 transition-colors">
                   <td className="px-6 py-4">
-                    <a
-                      href={`/community/${post.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-white hover:text-teal-400 flex items-center gap-1.5"
-                    >
-                      <span>{post.title.replace(/&nbsp;/g, ' ')}</span>
-                      <span className="text-xs text-teal-400/80 font-normal">↗ View in Community</span>
-                    </a>
+                    {post.status === 'published' ? (
+                      <a
+                        href={`/community/${post.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-bold text-white hover:text-teal-400 flex items-center gap-1.5"
+                      >
+                        <span>{post.title.replace(/&nbsp;/g, ' ')}</span>
+                        <span className="text-xs text-teal-400/80 font-normal">↗ View in Community</span>
+                      </a>
+                    ) : (
+                      <div className="font-bold text-white flex items-center gap-1.5">
+                        <span>{post.title.replace(/&nbsp;/g, ' ')}</span>
+                        <span className="text-xs text-slate-500 font-normal">({post.status})</span>
+                      </div>
+                    )}
                     {post.excerpt && (
                       <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">{post.excerpt}</p>
                     )}
@@ -259,7 +298,9 @@ export default function AdminPostsPage() {
                       className={`px-3 py-1 rounded-full text-xs font-extrabold ${
                         post.status === 'published'
                           ? 'bg-teal-950 text-teal-300 border border-teal-800'
-                          : 'bg-amber-950 text-amber-300 border border-amber-800'
+                          : post.status === 'draft'
+                          ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                          : 'bg-slate-800 text-slate-400 border border-slate-700'
                       }`}
                     >
                       {post.status.toUpperCase()}
@@ -389,8 +430,9 @@ export default function AdminPostsPage() {
                       onChange={(e) => setStatus(e.target.value as any)}
                       className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-500 focus:outline-none"
                     >
-                      <option value="published">Published</option>
-                      <option value="draft">Draft</option>
+                      <option value="published">Published (Live in Community)</option>
+                      <option value="draft">Draft (Unpublished)</option>
+                      <option value="archived">Archived (Retired)</option>
                     </select>
                   </div>
 

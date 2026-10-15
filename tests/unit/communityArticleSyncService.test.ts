@@ -51,6 +51,49 @@ describe('communityArticleSyncService', () => {
             status: 'published',
             category: 'Low-GI Pinoy Meals',
           }),
+          $setOnInsert: expect.objectContaining({
+            likes: 0,
+            views: 0,
+            repliesCount: 0,
+            pinned: false,
+          }),
+        }),
+        { upsert: true, returnDocument: 'after' }
+      );
+      // Ensure $set does not overwrite engagement metrics
+      const updatePayload = (ThreadModel.findOneAndUpdate as jest.Mock).mock.calls[0][1];
+      expect(updatePayload.$set.likes).toBeUndefined();
+      expect(updatePayload.$set.views).toBeUndefined();
+      expect(updatePayload.$set.repliesCount).toBeUndefined();
+      expect(result).toEqual(mockThread);
+    });
+
+    it('should query by previousSlug and update thread with new slug when previousSlug differs', async () => {
+      const mockPost = {
+        title: 'Clean Title Without Emoji',
+        slug: 'clean-slug-without-emoji',
+        content: '<p>Content</p>',
+        status: 'published' as const,
+      };
+
+      const mockThread = {
+        _id: 'thread_123',
+        slug: 'clean-slug-without-emoji',
+        title: 'Clean Title Without Emoji',
+        status: 'published',
+      };
+
+      (ThreadModel.findOneAndUpdate as jest.Mock).mockResolvedValue(mockThread);
+
+      const result = await syncPostToCommunityThread(mockPost, 'old-emoji-slug');
+
+      expect(ThreadModel.findOneAndUpdate).toHaveBeenCalledWith(
+        { slug: 'old-emoji-slug' },
+        expect.objectContaining({
+          $set: expect.objectContaining({
+            slug: 'clean-slug-without-emoji',
+            title: 'Clean Title Without Emoji',
+          }),
         }),
         { upsert: true, returnDocument: 'after' }
       );
@@ -71,7 +114,7 @@ describe('communityArticleSyncService', () => {
 
       expect(ThreadModel.updateOne).toHaveBeenCalledWith(
         { slug: 'draft-post' },
-        { $set: { status: 'archived' } }
+        { $set: expect.objectContaining({ status: 'archived' }) }
       );
       expect(result).toBeNull();
     });

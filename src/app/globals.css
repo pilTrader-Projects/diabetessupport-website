@@ -88,6 +88,7 @@ pre, code {
 
 .page-transition-enter {
   animation: pageSlideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Progressive enhancement: Native View Transitions API for modern browsers */

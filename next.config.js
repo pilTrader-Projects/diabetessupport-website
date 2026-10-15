@@ -30,6 +30,11 @@ const nextConfig = {
         destination: '/learn/improve-insulin-sensitivity-evidence',
         permanent: true,
       },
+      {
+        source: '/community/%f0%9f%a9%b8how-diabetes-really-starts-the-silent-process-inside-your-body-you-need-to-know',
+        destination: '/community/how-diabetes-really-starts-the-silent-process-inside-your-body-you-need-to-know',
+        permanent: true,
+      },
     ];
   },
 };

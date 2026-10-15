@@ -86,6 +86,9 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 ### Milestone 23: UX & Layout - Elevate Learning Hub with Sticky Sidebar Filter Navigation & Compact Row Cards
 - [x] **[PR #56](https://github.com/pilTrader-Projects/diabetessupport-website/pull/56)** `[COMPLETED / MERGED]`: Re-layout `/learn` into a 2-column layout with a sticky left sidebar filter panel (search, formats, authorities, shows, topics) and compact horizontal single-row material cards (thumbnail on left, metadata/authorities on right) to maximize scannability, perceived catalog depth, and eliminate bounce rate (Closes Issue #55).
 
+### Milestone 24: Admin CMS - Community Article Sync, Engagement Preservation & Status Filters
+- [x] **[PR #58](https://github.com/pilTrader-Projects/diabetessupport-website/pull/58)** `[COMPLETED]`: Fix Community Article CMS in Admin Dashboard with non-destructive thread sync (preserving likes, views, and repliesCount), prevent duplicate discussion CTA footers, and support status filtering ('all', 'published', 'draft', 'archived') in GET /api/v1/posts and Admin UI (Closes Issue #57).
+
 ---
 
 ## 🛡️ Engineering Standards & Workflow

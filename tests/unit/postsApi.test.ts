@@ -208,6 +208,56 @@ describe('GET /api/v1/posts API Query Endpoint', () => {
     expect(body.success).toBe(true);
     expect(body.data.length).toBe(2);
     expect(body.pagination.total).toBe(2);
+    expect(PostModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ status: { $in: ['published', 'draft'] } })
+    );
+  });
+
+  it('should support querying all posts including archived when status=all', async () => {
+    const mockPosts = [
+      { title: 'Article 1', slug: 'article-1', status: 'published' },
+      { title: 'Article 2', slug: 'article-2', status: 'archived' },
+    ];
+
+    const mockQuery = {
+      sort: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue(mockPosts),
+    };
+
+    (PostModel.find as jest.Mock) = jest.fn().mockReturnValue(mockQuery);
+    (PostModel.countDocuments as jest.Mock) = jest.fn().mockResolvedValue(2);
+
+    const req = new Request('http://localhost:3000/api/v1/posts?status=all&limit=50');
+    const res = await GET(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(PostModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ status: { $in: ['published', 'draft', 'archived'] } })
+    );
+  });
+
+  it('should filter strictly by specific status when status=archived', async () => {
+    const mockQuery = {
+      sort: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue([]),
+    };
+
+    (PostModel.find as jest.Mock) = jest.fn().mockReturnValue(mockQuery);
+    (PostModel.countDocuments as jest.Mock) = jest.fn().mockResolvedValue(0);
+
+    const req = new Request('http://localhost:3000/api/v1/posts?status=archived');
+    const res = await GET(req);
+
+    expect(res.status).toBe(200);
+    expect(PostModel.find).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'archived' })
+    );
   });
 });
 
@@ -234,9 +284,17 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
 
   it('should update post content successfully via PUT when authenticated', async () => {
     const validSecret = process.env.API_SECRET_KEY || 'dev_secret_key_123';
+    (PostModel.findById as jest.Mock).mockReturnValue({
+      lean: jest.fn().mockResolvedValue({
+        _id: 'post_123',
+        slug: 'original-slug',
+        title: 'Original Title',
+      }),
+    });
     (PostModel.findByIdAndUpdate as jest.Mock).mockResolvedValue({
       _id: 'post_123',
       title: 'Updated Title',
+      slug: 'updated-title',
       content: '<h2>Updated HTML Content</h2>',
     });
 
@@ -248,6 +306,7 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
       },
       body: JSON.stringify({
         title: 'Updated Title',
+        slug: 'updated-title',
         content: '<h2>Updated HTML Content</h2>',
       }),
     });
@@ -258,7 +317,10 @@ describe('GET & PUT /api/v1/posts/[id] Single Post Route Handlers', () => {
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
     expect(body.data.title).toBe('Updated Title');
-    expect(syncPostToCommunityThread).toHaveBeenCalled();
+    expect(syncPostToCommunityThread).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Updated Title' }),
+      'original-slug'
+    );
   });
 
   it('should delete post and remove community thread via DELETE', async () => {
