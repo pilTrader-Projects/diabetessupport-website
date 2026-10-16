@@ -183,7 +183,8 @@ async function runSanityCheck() {
         'src/app/template.tsx',
         'src/app/page.tsx',
         'src/app/globals.css',
-        'playwright.config.ts'
+        'playwright.config.ts',
+        '.github/workflows/ci.yml'
     ];
 
     console.log("Checking required files...");
