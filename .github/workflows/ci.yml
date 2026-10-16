@@ -1,0 +1,72 @@
+name: CI & Regression Gate
+
+on:
+  push:
+    branches:
+      - main
+      - '59-**'
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-test:
+    name: Build, Unit, Sanity & Playwright Regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      CI: 'true'
+      NODE_ENV: test
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      API_SECRET_KEY: test_secret_key_ci
+      MONGODB_URI: mongodb://localhost:27017/diabetessupport_test
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Static Code Analysis (Lint)
+        run: npm run lint
+
+      - name: TypeScript Type Checking
+        run: npx tsc --noEmit
+
+      - name: Execute Unit Test Suites
+        run: npm test
+
+      - name: Run Architecture & Sanity Verification
+        run: npm run sanity
+
+      - name: Build Next.js Production Bundle
+        run: npm run build
+
+      - name: Install Playwright Chromium with OS Dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright Regression Test Suite
+        run: npm run test:regression
+
+      - name: Run Playwright Core Smoke Tests
+        run: npx playwright test tests/e2e/core_smoke.spec.ts
+
+      - name: Upload Playwright Test Artifacts on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
