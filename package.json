@@ -10,6 +10,8 @@
     "build": "next build",
     "start": "next start",
     "test": "jest --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test:regression": "playwright test tests/e2e/regression",
     "sanity": "ts-node tests/sanity_check.ts",
     "lint": "eslint .",
     "db:up": "docker compose up -d",
@@ -41,6 +43,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.4.1",

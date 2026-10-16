@@ -6,9 +6,10 @@ description: CI/CD Workflow
 
 // turbo-all
 
-1.  **Linting**: Run `npm run lint` to check for style violations.
+1.  **Linting**: Run `npm run lint` and `npx tsc --noEmit` to check for style and type violations.
 2.  **Unit Tests**: Run `npm test` to verify logic.
 3.  **Sanity Test**: Run `npm run sanity` (triggers `tests/sanity_check.ts`).
 4.  **Build**: Run `npm run build` to ensure project compiles.
-5.  **Audit**: Run `npm audit` for security vulnerabilities.
-6.  **Report**: QA Engineer generates a `walkthrough.md` with results.
+5.  **E2E / Regression Tests**: Run `npm run test:regression` (triggers Playwright real-browser suite).
+6.  **Audit**: Run `npm audit` for security vulnerabilities.
+7.  **Report**: QA Engineer generates a `walkthrough.md` with results.

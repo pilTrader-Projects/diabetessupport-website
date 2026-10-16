@@ -29,3 +29,6 @@ next-env.d.ts
 *.pem
 .idea
 .vscode
+coverage/
+test-results/
+playwright-report/
