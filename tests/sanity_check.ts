@@ -182,7 +182,8 @@ async function runSanityCheck() {
         'src/app/layout.tsx',
         'src/app/template.tsx',
         'src/app/page.tsx',
-        'src/app/globals.css'
+        'src/app/globals.css',
+        'playwright.config.ts'
     ];
 
     console.log("Checking required files...");
