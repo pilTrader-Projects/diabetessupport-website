@@ -99,7 +99,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ### Milestone 26: Site Revision - Governance, Privacy & Consent Foundation (Phase 0 & 1)
 - [ ] **Item P1-01**: Data Privacy Map (`docs/DATA_MAP.md` for RA 10173 compliance).
-- [~] **Item P1-02** (IN PROGRESS, #66): SEO Metadata Helper & Self-Referencing Canonical Fixes (`src/lib/seo.ts` & `/hidden-clock`).
+- [x] **Item P1-02** [COMPLETED / MERGED] (PR #67, Closes #66): SEO Metadata Helper & Self-Referencing Canonical Fixes (`src/lib/seo.ts` & `/hidden-clock`).
 - [ ] **Item P1-03**: Google Consent Mode v2 & `ConsentBanner` Component (cookie settings & ad/GA4 gating).
 - [ ] **Item P1-04**: Unified `<EmailCapture />` Component, `ConsentRecord` Model & Zod validation on `/api/v1/subscribe`.
 - [ ] **Item P1-05**: GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
