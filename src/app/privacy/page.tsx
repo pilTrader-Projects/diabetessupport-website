@@ -1,16 +1,9 @@
-import { Metadata } from 'next';
 import LegalPageLayout from '@/components/legal/LegalPageLayout';
-import { getLegalDocument } from '@/lib/legalContent';
+import { buildLegalMetadata, getLegalDocument } from '@/lib/legalContent';
 
 const doc = getLegalDocument('privacy');
 
-export const metadata: Metadata = {
-  title: doc.meta.metaTitle,
-  description: doc.meta.description,
-  alternates: {
-    canonical: '/privacy',
-  },
-};
+export const metadata = buildLegalMetadata(doc, '/privacy');
 
 /**
  * Privacy Policy page. Content lives in src/content/legal/privacy.md.

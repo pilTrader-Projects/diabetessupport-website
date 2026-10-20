@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { ALL_FOOTER_LINKS } from '@/config/trustConfig';
 import { getLegalDocument } from '@/lib/legalContent';
-import { parseLegalBlocks } from '@/components/legal/LegalMarkdown';
+import { parseLegalBlocks } from '@/lib/legalMarkdown';
 import { parseInlineMarkdown } from '@/lib/markdownUtils';
 
 /**

@@ -1,11 +1,12 @@
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import {
   parseFrontMatter,
   getLegalDocument,
   getAllLegalSlugs,
   formatEffectiveDate,
-  LEGAL_CONTENT_DIR,
+  buildLegalMetadata,
 } from '@/lib/legalContent';
 
 describe('legalContent loader (P0-01)', () => {
@@ -56,14 +57,46 @@ describe('legalContent loader (P0-01)', () => {
       expect(() => getLegalDocument('nope')).toThrow(/legal document/i);
     });
 
-    it('throws when effectiveDate is missing or invalid', () => {
-      const tmp = path.join(LEGAL_CONTENT_DIR, '__tmp-test.md');
-      fs.writeFileSync(tmp, '---\ntitle: T\nversion: 1\n---\nbody');
-      try {
-        expect(() => getLegalDocument('__tmp-test')).toThrow(/effectiveDate/);
-      } finally {
-        fs.unlinkSync(tmp);
-      }
+    describe('validation (isolated temp directory)', () => {
+      let dir: string;
+      const write = (name: string, front: string) =>
+        fs.writeFileSync(path.join(dir, `${name}.md`), `---\n${front}\n---\nbody`);
+
+      beforeEach(() => {
+        dir = fs.mkdtempSync(path.join(os.tmpdir(), 'legal-'));
+      });
+      afterEach(() => {
+        fs.rmSync(dir, { recursive: true, force: true });
+      });
+
+      it('throws when effectiveDate is missing', () => {
+        write('a', 'title: T\nversion: 1');
+        expect(() => getLegalDocument('a', dir)).toThrow(/effectiveDate/);
+      });
+
+      it('throws when effectiveDate is not a real calendar date', () => {
+        write('b', 'title: T\nversion: 1\neffectiveDate: 2026-13-45');
+        expect(() => getLegalDocument('b', dir)).toThrow(/effectiveDate/);
+      });
+
+      it('throws on an unknown accent instead of silently falling back', () => {
+        write('c', 'title: T\nversion: 1\neffectiveDate: 2026-10-01\naccent: pink');
+        expect(() => getLegalDocument('c', dir)).toThrow(/accent/);
+      });
+
+      it('lists slugs from the given directory', () => {
+        write('x', 'title: T\nversion: 1\neffectiveDate: 2026-10-01');
+        expect(getAllLegalSlugs(dir)).toEqual(['x']);
+      });
+    });
+  });
+
+  describe('buildLegalMetadata', () => {
+    it('maps title, description and canonical from the document', () => {
+      const meta = buildLegalMetadata(getLegalDocument('privacy'), '/privacy');
+      expect(meta.title).toBe('Privacy Policy & Data Security Notice | Before the Numbers');
+      expect(meta.alternates?.canonical).toBe('/privacy');
+      expect(meta.description).toContain('RA 10173');
     });
   });
 

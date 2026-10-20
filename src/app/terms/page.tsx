@@ -1,16 +1,9 @@
-import { Metadata } from 'next';
 import LegalPageLayout from '@/components/legal/LegalPageLayout';
-import { getLegalDocument } from '@/lib/legalContent';
+import { buildLegalMetadata, getLegalDocument } from '@/lib/legalContent';
 
 const doc = getLegalDocument('terms');
 
-export const metadata: Metadata = {
-  title: doc.meta.metaTitle,
-  description: doc.meta.description,
-  alternates: {
-    canonical: '/terms',
-  },
-};
+export const metadata = buildLegalMetadata(doc, '/terms');
 
 /**
  * Terms of Service page. Content lives in src/content/legal/terms.md.
