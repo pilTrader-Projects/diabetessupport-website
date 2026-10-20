@@ -7,13 +7,15 @@ import { IPost } from '@/types/blog';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildOrganizationSchema, buildGlobalHomeFaqSchema } from '@/lib/schema';
 import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
+import { buildMetadata } from '@/lib/seo';
 
 export const revalidate = 60; // Refresh static page every 60 seconds
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Before the Numbers | Don't Wait for the Diagnosis",
   description:
     'Before the Numbers is a health-awareness and metabolic-health education movement helping you understand early signals and trajectories before a diagnosis forces you to.',
+  path: '/',
   keywords: [
     'before the numbers',
     'metabolic health education',
@@ -24,25 +26,7 @@ export const metadata: Metadata = {
     'glucose trajectory vs snapshot',
     'cardiometabolic awareness',
   ],
-  alternates: {
-    canonical: `https://${SITE_CONFIG.domain}`,
-  },
-  openGraph: {
-    title: "Before the Numbers | Don't Wait for the Diagnosis",
-    description:
-      'Understand your health before a diagnosis forces you to. Learn the early signals, know your trajectory, and make informed changes.',
-    url: `https://${SITE_CONFIG.domain}`,
-    siteName: SITE_CONFIG.author,
-    locale: 'en_US',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: "Before the Numbers | Don't Wait for the Diagnosis",
-    description:
-      'Learn the early metabolic signals, understand the numbers, and take informed action before a diagnosis becomes your first wake-up call.',
-  },
-};
+});
 
 /**
  * Global Master Brand Homepage (/).

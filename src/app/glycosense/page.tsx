@@ -9,13 +9,15 @@ import ManualAdvantageSection from '@/components/home/ManualAdvantageSection';
 import RoadmapsSection from '@/components/home/RoadmapsSection';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildSoftwareAppSchema } from '@/lib/schema';
+import { buildMetadata } from '@/lib/seo';
 
 export const revalidate = 60; // Refresh static page every 60 seconds
 
-export const metadata: Metadata = {
-  title: `GlycoSense | Free Glucose & Metabolic Tracking Companion | Before the Numbers`,
+export const metadata: Metadata = buildMetadata({
+  title: 'GlycoSense | Free Glucose & Metabolic Tracking Companion',
   description:
     'Turn simple, budget-friendly manual finger-prick logs and blood pressure checks into clear, actionable health trends within the Before the Numbers framework.',
+  path: '/glycosense',
   keywords: [
     'GlycoSense',
     'before the numbers tools',
@@ -25,24 +27,7 @@ export const metadata: Metadata = {
     'doctor ready health report',
     'filipino diabetes app',
   ],
-  alternates: {
-    canonical: `https://${SITE_CONFIG.domain}/glycosense`,
-  },
-  openGraph: {
-    title: 'GlycoSense | Free Metabolic Tracking Companion',
-    description:
-      'Turn everyday finger-prick logs into actionable health trends to share with your physician. Free companion tool by Before the Numbers.',
-    url: `https://${SITE_CONFIG.domain}/glycosense`,
-    siteName: SITE_CONFIG.author,
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'GlycoSense — Companion Health Dashboard',
-    description:
-      'Turn everyday manual glucose tests into clear, doctor-ready trends without expensive subscriptions.',
-  },
-};
+});
 
 /**
  * High-Awareness GlycoSense Tracker Pitch Page (/glycosense).

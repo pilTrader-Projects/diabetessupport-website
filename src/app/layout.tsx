@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(`https://${SITE_CONFIG.domain}`),
   title: {
     default: SITE_CONFIG.title,
-    template: `%s | Before the Numbers`,
+    template: '%s',
   },
   description: SITE_CONFIG.description,
   manifest: '/manifest.webmanifest',

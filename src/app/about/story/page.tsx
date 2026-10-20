@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Why We Started This Mission: The Founder\'s Story | Before the Numbers',
+export const metadata: Metadata = buildMetadata({
+  title: "Why We Started This Mission: The Founder's Story | Before the Numbers",
   description:
     'The personal story behind Before the Numbers: how family loss, lived experience with diabetes, and cultural realities sparked an urgent advocacy for early metabolic awareness.',
-  alternates: {
-    canonical: '/about/story',
-  },
-};
+  path: '/about/story',
+});
 
 /**
  * Full Founder Story & Mission Page.

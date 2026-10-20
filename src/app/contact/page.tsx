@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE_CONFIG } from '@/config/constants';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Contact Us & Editorial Inquiries | DiabetesCare PH',
+export const metadata: Metadata = buildMetadata({
+  title: 'Contact Us & Editorial Inquiries | Before the Numbers',
   description:
-    'Get in touch with the DiabetesCare PH team for general inquiries, feedback, medical corrections, or community partnership.',
-  alternates: {
-    canonical: '/contact',
-  },
-};
+    'Get in touch with the Before the Numbers team for general inquiries, feedback, medical corrections, or community partnership.',
+  path: '/contact',
+});
 
 /**
  * Contact & Editorial Feedback Page Component.

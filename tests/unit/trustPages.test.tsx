@@ -34,7 +34,7 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
   describe('Editorial Policy Page (src/app/editorial-policy/page.tsx)', () => {
     it('exports valid metadata with canonical link', () => {
       expect(editorialMetadata.title).toContain('Editorial Policy');
-      expect(editorialMetadata.alternates?.canonical).toBe('/editorial-policy');
+      expect(editorialMetadata.alternates?.canonical).toContain('/editorial-policy');
       expect(editorialMetadata.description).toBeDefined();
     });
 
@@ -59,7 +59,7 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
   describe('Corrections Policy Page (src/app/corrections/page.tsx)', () => {
     it('exports valid metadata with canonical link', () => {
       expect(correctionsMetadata.title).toContain('Corrections Policy');
-      expect(correctionsMetadata.alternates?.canonical).toBe('/corrections');
+      expect(correctionsMetadata.alternates?.canonical).toContain('/corrections');
     });
 
     it('renders error reporting procedures, response timeframe, and public change log', () => {

@@ -3,12 +3,14 @@ import LeadMagnetCard from '@/components/LeadMagnetCard';
 import { SITE_CONFIG } from '@/config/constants';
 import { CAMPAIGN_CODES } from '@/config/leadConfig';
 import Link from 'next/link';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: `Free Download: 7-Day Diabetes Prevention & Action Cheatsheet | ${SITE_CONFIG.domain}`,
+export const metadata: Metadata = buildMetadata({
+  title: 'Free Download: 7-Day Diabetes Prevention & Action Cheatsheet | Before the Numbers',
   description:
     'Download the free 7-Day Diabetes Action Plan & Cheatsheet PDF. Learn 5 daily morning habits to reset insulin sensitivity and track fasting glucose.',
-};
+  path: '/guides/cheatsheet',
+});
 
 /**
  * Dedicated Lead Magnet Download Landing Page (/guides/cheatsheet).

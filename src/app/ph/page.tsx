@@ -7,13 +7,15 @@ import { IPost } from '@/types/blog';
 import { SITE_CONFIG } from '@/config/constants';
 import { buildHomeMedicalOrgSchema, buildCommunityHomeFaqSchema } from '@/lib/schema';
 import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
+import { buildMetadata } from '@/lib/seo';
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Before the Numbers — Philippines | Preventative Metabolic Health for Filipino Families',
   description:
     'The Philippine edition of Before the Numbers. Empowering Filipino breadwinners and families with ancestral nutrition blueprints, early metabolic warning signs, and zero-cost tracking tools before diagnosis strikes.',
+  path: '/ph',
   keywords: [
     'before the numbers philippines',
     'diabetes support philippines',
@@ -24,25 +26,7 @@ export const metadata: Metadata = {
     'chronic disease prevention',
     'RA 10173 medical privacy',
   ],
-  alternates: {
-    canonical: `https://${SITE_CONFIG.domain}/ph`,
-  },
-  openGraph: {
-    title: 'Before the Numbers — Philippines | Preventative Metabolic Health',
-    description:
-      'Empowering Filipino breadwinners with free ancestral nutrition guides, community support, and zero-cost blood sugar tracking.',
-    url: `https://${SITE_CONFIG.domain}/ph`,
-    siteName: 'Before the Numbers Philippines',
-    locale: 'en_PH',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Before the Numbers — Philippines',
-    description:
-      'Protecting Filipino family wealth through preventative metabolic health and early awareness.',
-  },
-};
+});
 
 /**
  * Philippines Regional Page (/ph).

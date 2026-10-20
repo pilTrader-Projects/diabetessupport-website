@@ -4,24 +4,16 @@ import { ThreadModel } from '@/models/Thread';
 import { IThread } from '@/types/community';
 import CommunityFeedClient from '@/components/community/CommunityFeedClient';
 import { SITE_CONFIG } from '@/config/constants';
+import { buildMetadata } from '@/lib/seo';
 
 export const revalidate = 30; // Revalidate dynamic forum feed every 30s
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Community Board & Peer Discussions | Before the Numbers',
   description:
     'Join family providers, caregivers, and peers sharing practical metabolic tracking experiences, lifestyle tips, and everyday meal ideas.',
-  alternates: {
-    canonical: '/community',
-  },
-  openGraph: {
-    title: 'Community Board & Peer Discussions | Before the Numbers',
-    description:
-      'Join family providers, caregivers, and peers sharing practical metabolic tracking experiences, lifestyle tips, and everyday meal ideas.',
-    url: `https://${SITE_CONFIG.domain}/community`,
-    type: 'website',
-  },
-};
+  path: '/community',
+});
 
 interface CommunityPageProps {
   searchParams?: Promise<{ category?: string; search?: string; page?: string }>;
