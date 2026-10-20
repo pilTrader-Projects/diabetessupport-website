@@ -13,6 +13,7 @@ import LearningHubClient from '@/components/learning/LearningHubClient';
 import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import { buildLearningHubMedicalSchema } from '@/lib/learningSchema';
+import { formatTitle } from '@/lib/seo';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -63,7 +64,7 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
       }
 
       if (resource) {
-        const cleanTitle = `${(resource.title || '').replace(/&nbsp;/g, ' ')} | ${SITE_CONFIG.title}`;
+        const cleanTitle = formatTitle((resource.title || '').replace(/&nbsp;/g, ' '));
         const cleanDesc = resource.summary || 'Evidence-based metabolic health lecture and research.';
         const shareUrl = `${baseUrl}/learn?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`;
         let imageUrl = resource.thumbnailUrl || `${baseUrl}/icons/icon-512x512.png`;
@@ -81,7 +82,7 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
             title: cleanTitle,
             description: cleanDesc,
             url: shareUrl,
-            siteName: SITE_CONFIG.title,
+            siteName: SITE_CONFIG.author,
             type: 'video.other',
             images: [
               {
@@ -105,23 +106,25 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
     }
   }
 
+  const defaultTitle = formatTitle('Learning Materials & Evidence Hub');
   return {
-    title: `Learning Materials & Evidence Hub | ${SITE_CONFIG.title}`,
+    title: defaultTitle,
     description:
       'Curated educational library of video lectures, published literature, and expert discussions from independent clinicians on low-carbohydrate nutrition, fasting physiology, and metabolic health literacy.',
     openGraph: {
-      title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
+      title: defaultTitle,
       description: SITE_CONFIG.description,
       url: `${baseUrl}/learn`,
-      siteName: SITE_CONFIG.title,
+      siteName: SITE_CONFIG.author,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Metabolic Health Learning Materials & Evidence Hub | ${SITE_CONFIG.domain}`,
+      title: defaultTitle,
       description: SITE_CONFIG.description,
     },
     alternates: {
+      canonical: `${baseUrl}/learn`,
       types: {
         'application/rss+xml': `${baseUrl}/feed.xml`,
       },

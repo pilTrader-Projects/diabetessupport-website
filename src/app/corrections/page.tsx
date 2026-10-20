@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { CORRECTIONS_LOG } from '@/config/trustConfig';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Editorial Corrections Policy & Change Log | Before the Numbers',
   description:
     'Our public correction policy, error submission procedures, 24-48 hour triage timeframe, and transparent change log of editorial revisions.',
-  alternates: {
-    canonical: '/corrections',
-  },
-};
+  path: '/corrections',
+});
 
 /**
  * Editorial Corrections Policy Page Component.

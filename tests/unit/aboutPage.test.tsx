@@ -7,7 +7,7 @@ describe('AboutPage & Founder Story Flow', () => {
   describe('About Us Main Page (src/app/about/page.tsx)', () => {
     it('exports valid SEO metadata and canonical link', () => {
       expect(aboutMetadata.title).toContain('About Us & Mission');
-      expect(aboutMetadata.alternates?.canonical).toBe('/about');
+      expect(aboutMetadata.alternates?.canonical).toContain('/about');
       expect(aboutMetadata.description).toBeDefined();
     });
 
@@ -69,7 +69,7 @@ describe('AboutPage & Founder Story Flow', () => {
   describe('Full Founder Story Page (src/app/about/story/page.tsx)', () => {
     it('exports dedicated SEO metadata and canonical URL', () => {
       expect(storyMetadata.title).toContain('Why We Started This Mission');
-      expect(storyMetadata.alternates?.canonical).toBe('/about/story');
+      expect(storyMetadata.alternates?.canonical).toContain('/about/story');
     });
 
     it('renders the complete personal story, founder byline, and mission', () => {

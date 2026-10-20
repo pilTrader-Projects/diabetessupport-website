@@ -31,6 +31,7 @@ async function runSanityCheck() {
         'src/config/trustConfig.ts',
         'src/lib/dbConnect.ts',
         'src/lib/schema.ts',
+        'src/lib/seo.ts',
         'src/lib/communityUtils.ts',
         'src/lib/communityNotifications.ts',
         'src/lib/savedProtocolUtils.ts',

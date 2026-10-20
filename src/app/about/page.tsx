@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { buildOrganizationSchema } from '@/lib/schema';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'About Us & Mission | Before the Numbers',
   description:
     'Learn about Before the Numbers, our mission to help people understand early metabolic signals before diagnosis forces them to, our founder story, and our educational standards.',
-  alternates: {
-    canonical: '/about',
-  },
-};
+  path: '/about',
+});
 
 /**
  * About Us Page Component.

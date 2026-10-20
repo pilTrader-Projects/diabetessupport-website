@@ -1,15 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: '🎉 Your Free Report is on the Way! | Next Critical Step',
   description:
     'Your free 8-page Hidden Metabolic Clock report is on its way to your inbox. Read this critical next step to start tracking your local food triggers with GlycoSense.',
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+  path: '/reset-success',
+  noIndex: true,
+});
 
 /**
  * High-Converting Bridge Page / Upsell Route (/reset-success).

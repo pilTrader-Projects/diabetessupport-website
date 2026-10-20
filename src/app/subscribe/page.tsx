@@ -3,12 +3,14 @@ import KitOptInForm from '@/components/KitOptInForm';
 import { SITE_CONFIG } from '@/config/constants';
 import { CAMPAIGN_CODES } from '@/config/leadConfig';
 import Link from 'next/link';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: `Subscribe to Diabetes Care Newsletter | ${SITE_CONFIG.domain}`,
+export const metadata: Metadata = buildMetadata({
+  title: 'Subscribe to Newsletter | Before the Numbers',
   description:
     'Join thousands of individuals receiving weekly evidence-based diabetes prevention, insulin resistance guides, and low-GI meal planning advice.',
-};
+  path: '/subscribe',
+});
 
 /**
  * Dedicated Newsletter Subscription Landing Page.

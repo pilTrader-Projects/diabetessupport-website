@@ -1,14 +1,13 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { buildMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: 'Editorial Policy & Standards | Before the Numbers',
   description:
     'Our strict sourcing criteria, peer-review standards, conflict of interest safeguards, and 12-month re-review cycle ensuring scientific rigor and integrity.',
-  alternates: {
-    canonical: '/editorial-policy',
-  },
-};
+  path: '/editorial-policy',
+});
 
 /**
  * Editorial Policy Page Component.

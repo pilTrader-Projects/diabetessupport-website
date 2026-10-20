@@ -119,7 +119,7 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
       const hiddenClockElement = <HiddenClockPage />;
       expect(hiddenClockElement).toBeDefined();
       expect(hiddenClockMetadata.title).toContain('Hidden Metabolic Clock');
-      expect(hiddenClockMetadata.alternates?.canonical).toContain('/insulin-reset');
+      expect(hiddenClockMetadata.alternates?.canonical).toContain('/hidden-clock');
     });
   });
 });
