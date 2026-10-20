@@ -35,6 +35,16 @@ const nextConfig = {
         destination: '/community/how-diabetes-really-starts-the-silent-process-inside-your-body-you-need-to-know',
         permanent: true,
       },
+      {
+        source: '/privacy-policy',
+        destination: '/privacy',
+        permanent: true,
+      },
+      {
+        source: '/terms-of-service',
+        destination: '/terms',
+        permanent: true,
+      },
     ];
   },
 };

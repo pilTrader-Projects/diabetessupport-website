@@ -45,4 +45,17 @@ describe('Backward Compatibility URL Redirects (next.config.js)', () => {
     expect(emojiRedirect).toBeDefined();
     expect(emojiRedirect.permanent).toBe(true);
   });
+
+  it.each([
+    ['/privacy-policy', '/privacy'],
+    ['/terms-of-service', '/terms'],
+  ])('should permanently redirect legacy legal route %s to %s', async (source, destination) => {
+    const redirects = await nextConfig.redirects();
+
+    const legalRedirect = redirects.find(
+      (r: any) => r.source === source && r.destination === destination
+    );
+    expect(legalRedirect).toBeDefined();
+    expect(legalRedirect.permanent).toBe(true);
+  });
 });
