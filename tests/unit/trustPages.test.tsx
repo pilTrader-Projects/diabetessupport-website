@@ -101,6 +101,12 @@ describe('Trust Pages Suite & Governance (Issue #45)', () => {
       expect(html).toContain('Corrections');
       expect(html).toContain('href="/about"');
       expect(html).toContain('About Us');
+      expect(html).toContain('href="/privacy"');
+      expect(html).toContain('href="/terms"');
+      expect(html).toContain('href="/refund-policy"');
+      expect(html).toContain('href="/medical-disclaimer"');
+      expect(html).toContain('href="/disclosure"');
+      expect(html).toContain('href="/copyright"');
       expect(html).toContain('localStorage');
       expect(html).toContain('ephemeral 6-digit PIN');
       expect(html).toContain('zero health records stored on a central server');

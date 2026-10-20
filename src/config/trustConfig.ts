@@ -61,6 +61,10 @@ export const TRUST_NAV_LINKS: INavLink[] = [
   { href: '/contact', label: 'Contact' },
   { href: '/privacy', label: 'Privacy Policy' },
   { href: '/terms', label: 'Terms of Service' },
+  { href: '/refund-policy', label: 'Refund Policy' },
+  { href: '/medical-disclaimer', label: 'Medical Disclaimer' },
+  { href: '/disclosure', label: 'Disclosure' },
+  { href: '/copyright', label: 'Copyright' },
 ];
 
 export const ALL_FOOTER_LINKS: INavLink[] = [
