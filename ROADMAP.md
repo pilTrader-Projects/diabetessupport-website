@@ -94,6 +94,47 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 ---
 
+## 🚀 Site Update & Expansion Blueprint (Revision 2 Reconciled)
+*Detailed sequential tracking maintained in [`docs/revisions-updates/SITE_UPDATE_EXECUTION_TRACKER.md`](docs/revisions-updates/SITE_UPDATE_EXECUTION_TRACKER.md).*
+
+### Milestone 26: Site Revision - Governance, Privacy & Consent Foundation (Phase 0 & 1)
+- [ ] **Item P1-01**: Data Privacy Map (`docs/DATA_MAP.md` for RA 10173 compliance).
+- [ ] **Item P1-02**: SEO Metadata Helper & Self-Referencing Canonical Fixes (`src/lib/seo.ts` & `/hidden-clock`).
+- [ ] **Item P1-03**: Google Consent Mode v2 & `ConsentBanner` Component (cookie settings & ad/GA4 gating).
+- [ ] **Item P1-04**: Unified `<EmailCapture />` Component, `ConsentRecord` Model & Zod validation on `/api/v1/subscribe`.
+- [ ] **Item P1-05**: GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
+- [ ] **Item P1-06**: Standardized `<AffiliateLink />` Component with disclosure & `scripts/check-affiliate-links.ts`.
+- [ ] **Item P1-07**: Data-Rights Tooling (`scripts/data-request.ts` export/delete & `DataRequestLog` model).
+- [~] **Item P0-01** (IN PROGRESS, #62): Legal Pages Suite (`/privacy`, `/terms`, `/refund-policy`, `/medical-disclaimer`, `/disclosure`, `/copyright`). Done: `/privacy` and `/terms` migrated verbatim to markdown (`src/content/legal/`); remaining four pages pending.
+- [ ] **Item P0-GATE**: Priority 0 Gate Checklist Sign-Off (DTI/BIR, DPO, Claims audit, merchant-of-record approved).
+
+### Milestone 27: Site Revision - 5-Step Learning Roadmap Engine (Phase 2)
+- [ ] **Item P2-01**: Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
+- [ ] **Item P2-02**: 5-Step Roadmap UI above Catalog on `/learn` (`src/app/learn/page.tsx`).
+- [ ] **Item P2-03**: Individual Shareable Step Pages (`src/app/learn/roadmap/[step]/page.tsx`).
+- [ ] **Item P2-04**: Catalog Hygiene & Sponsored Content Labelling (`LearningResourceModel`).
+
+### Milestone 28: Site Revision - ₱299 Starter Pack Monetization Funnel (Phase 3)
+- [ ] **Item P3-01**: Starter Pack Digital Product Assets (30-day meal plan, logs, doctor questions reviewed by dietitian).
+- [ ] **Item P3-02**: Merchant of Record Checkout & Refund Verification (Gumroad/Lemon Squeezy).
+- [ ] **Item P3-03**: Starter Pack Product Page (`src/app/ph/starter-pack/page.tsx`, `src/config/products.ts`, `<ProductCTA />` on `/learn`).
+- [ ] **Item P3-04**: Commercial Launch (`NEXT_PUBLIC_FLAG_STARTER_PACK=true` activation).
+
+### Milestone 29: Site Revision - Welcome Automation & Recommendations (Phase 4)
+- [ ] **Item P4-01**: Brevo 5-Email Automated Sequence.
+- [ ] **Item P4-02**: Starter Kit Recommendations Page (`src/app/ph/starter-kit/page.tsx` + `src/config/affiliates.ts`).
+
+### Milestone 30: Site Revision - Multi-Edition Architecture & Units (Phase 5)
+- [ ] **Item P5-01**: Centralized Edition Config (`src/config/editions/` - `types.ts`, `ph.ts`, `global.ts`).
+- [ ] **Item P5-02**: Glucose Units Converter Utility (`src/lib/units.ts` with mg/dL ↔ mmol/L tests).
+- [ ] **Item P5-03**: Regional SEO Alternates & Reciprocal `hreflang`.
+
+### Milestone 31: Site Revision - CI Guardrails & Maintenance Playbook (Phase 6 & 7)
+- [ ] **Item P6-01**: CI Guardrails (scheduled weekly affiliate check) & `docs/MAINTENANCE.md`.
+- [ ] **Item P7-01**: New Edition Expansion Playbook (`/hk`, `/sg`).
+
+---
+
 ## 🛡️ Engineering Standards & Workflow
 - **Test-Driven Development (TDD)**: Unit & Integration tests created before or alongside code.
 - **Sanity Checks**: Mandatory execution of `npm run sanity` before merging PRs.

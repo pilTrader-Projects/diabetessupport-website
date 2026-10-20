@@ -59,8 +59,8 @@ export const TRUST_NAV_LINKS: INavLink[] = [
   { href: '/editorial-policy', label: 'Editorial Policy' },
   { href: '/corrections', label: 'Corrections' },
   { href: '/contact', label: 'Contact' },
-  { href: '/privacy-policy', label: 'Privacy Policy' },
-  { href: '/terms-of-service', label: 'Terms of Service' },
+  { href: '/privacy', label: 'Privacy Policy' },
+  { href: '/terms', label: 'Terms of Service' },
 ];
 
 export const ALL_FOOTER_LINKS: INavLink[] = [

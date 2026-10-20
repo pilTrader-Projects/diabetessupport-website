@@ -53,8 +53,8 @@ export async function GET(): Promise<NextResponse> {
     { url: `${baseUrl}/editorial-policy`, priority: '0.7', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/corrections`, priority: '0.6', changefreq: 'monthly', lastmod: now },
     { url: `${baseUrl}/contact`, priority: '0.7', changefreq: 'monthly', lastmod: now },
-    { url: `${baseUrl}/privacy-policy`, priority: '0.5', changefreq: 'monthly', lastmod: now },
-    { url: `${baseUrl}/terms-of-service`, priority: '0.5', changefreq: 'monthly', lastmod: now },
+    { url: `${baseUrl}/privacy`, priority: '0.5', changefreq: 'monthly', lastmod: now },
+    { url: `${baseUrl}/terms`, priority: '0.5', changefreq: 'monthly', lastmod: now },
   ];
 
   const postRoutes = posts.map((post) => ({

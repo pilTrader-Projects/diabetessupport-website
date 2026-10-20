@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import PrivacyPolicyPage, { metadata as privacyMetadata } from '@/app/privacy-policy/page';
+import PrivacyPolicyPage, { metadata as privacyMetadata } from '@/app/privacy/page';
 
 describe('Privacy Policy & Storage Architecture Realignment (Issue #45)', () => {
   it('exports valid metadata with canonical link', () => {
     expect(privacyMetadata.title).toContain('Privacy Policy');
-    expect(privacyMetadata.alternates?.canonical).toBe('/privacy-policy');
+    expect(privacyMetadata.alternates?.canonical).toBe('/privacy');
   });
 
   it('accurately discloses local device caching via localStorage', () => {
