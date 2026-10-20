@@ -105,7 +105,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [ ] **Item P1-05**: GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
 - [ ] **Item P1-06**: Standardized `<AffiliateLink />` Component with disclosure & `scripts/check-affiliate-links.ts`.
 - [ ] **Item P1-07**: Data-Rights Tooling (`scripts/data-request.ts` export/delete & `DataRequestLog` model).
-- [~] **Item P0-01** (IN PROGRESS, #64): Legal Pages Suite (`/privacy`, `/terms`, `/refund-policy`, `/medical-disclaimer`, `/disclosure`, `/copyright`). Step 1 merged (#63); Step 2 in progress (#64).
+- [x] **Item P0-01** [COMPLETED / MERGED] (PR #63 & PR #65, Closes #64): Complete Legal Pages Suite (`/privacy`, `/terms`, `/refund-policy`, `/medical-disclaimer`, `/disclosure`, `/copyright`) with front-matter metadata, shared layout, DRAFT legal placeholders, sitemap, footer nav, and 22 Playwright regression tests.
 - [ ] **Item P0-GATE**: Priority 0 Gate Checklist Sign-Off (DTI/BIR, DPO, Claims audit, merchant-of-record approved).
 
 ### Milestone 27: Site Revision - 5-Step Learning Roadmap Engine (Phase 2)
