@@ -40,6 +40,10 @@ export interface LegalDocument {
  * @returns Parsed key/value data and the remaining markdown body.
  */
 export function parseFrontMatter(raw: string): { data: Record<string, string>; body: string } {
+  if (!raw || typeof raw !== 'string') {
+    return { data: {}, body: '' };
+  }
+
   const normalized = raw.replace(/\r\n/g, '\n');
   const match = normalized.match(/^---\n([\s\S]*?)\n---\n?/);
   if (!match) {
@@ -170,9 +174,22 @@ export function getLegalDocument(slug: string, dir: string = LEGAL_CONTENT_DIR):
  * @param canonicalPath Self-referencing canonical path, e.g. "/privacy".
  */
 export function buildLegalMetadata(doc: LegalDocument, canonicalPath: string): Metadata {
+  const url = `https://${SITE_CONFIG.domain}${canonicalPath}`;
   return {
     title: doc.meta.metaTitle,
     description: doc.meta.description,
     alternates: { canonical: canonicalPath },
+    openGraph: {
+      title: doc.meta.metaTitle,
+      description: doc.meta.description,
+      url,
+      type: 'website',
+      siteName: SITE_CONFIG.author,
+    },
+    twitter: {
+      card: 'summary',
+      title: doc.meta.metaTitle,
+      description: doc.meta.description,
+    },
   };
 }

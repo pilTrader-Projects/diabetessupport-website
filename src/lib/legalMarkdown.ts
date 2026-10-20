@@ -19,6 +19,10 @@ function isContainerKind(value: string): value is ContainerKind {
  *   mistakes in the markdown fail the build/tests instead of silently rendering as text.
  */
 export function parseLegalBlocks(markdown: string): LegalBlock[] {
+  if (!markdown || typeof markdown !== 'string') {
+    return [];
+  }
+
   const root: LegalBlock[] = [];
   const stack: LegalBlock[][] = [root];
 
@@ -66,10 +70,10 @@ export function parseLegalBlocks(markdown: string): LegalBlock[] {
     } else if (trimmed.startsWith('## ')) {
       flush();
       current().push({ type: 'h2', text: trimmed.slice(3) });
-    } else if (trimmed.startsWith('- ')) {
+    } else if (/^[-*]\s+/.test(trimmed)) {
       if (paragraph.length) flush();
       list = list ?? [];
-      list.push(trimmed.slice(2));
+      list.push(trimmed.replace(/^[-*]\s+/, ''));
     } else {
       if (list) flush();
       paragraph.push(trimmed);

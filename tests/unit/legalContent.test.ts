@@ -97,6 +97,9 @@ describe('legalContent loader (P0-01)', () => {
       expect(meta.title).toBe('Privacy Policy & Data Security Notice | Before the Numbers');
       expect(meta.alternates?.canonical).toBe('/privacy');
       expect(meta.description).toContain('RA 10173');
+      expect(meta.openGraph?.title).toBe('Privacy Policy & Data Security Notice | Before the Numbers');
+      expect(meta.openGraph?.url).toBe('https://www.beforethenumbers.org/privacy');
+      expect(meta.twitter && 'card' in meta.twitter ? meta.twitter.card : undefined).toBe('summary');
     });
   });
 

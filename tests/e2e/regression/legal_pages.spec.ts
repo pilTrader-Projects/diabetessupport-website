@@ -33,6 +33,52 @@ const LEGAL_PAGES = [
       '3. Limitation of Liability',
     ],
   },
+  {
+    path: '/refund-policy',
+    h1: 'Refund & Cancellation Policy',
+    title: /Refund Policy/,
+    sections: [
+      'DRAFT: Pending Final Legal Review',
+      '1. Digital Product Refund Eligibility',
+      '2. Processing & Payout Timelines',
+      '3. Exceptions & Abuse Prevention',
+      '4. Contact for Refund Requests',
+    ],
+  },
+  {
+    path: '/medical-disclaimer',
+    h1: 'Medical & Clinical Information Disclaimer',
+    title: /Medical Disclaimer & Clinical Safety Notice/,
+    sections: [
+      '⚠️ Mandatory Emergency & Non-Diagnostic Notice',
+      '1. Educational Purpose Only (No Doctor-Patient Relationship)',
+      '2. Medication Warnings & Fasting Precautions',
+      '3. Individual Variation & Professional Consultation',
+      '4. Software as a Medical Device (SaMD) Disclaimer',
+    ],
+  },
+  {
+    path: '/disclosure',
+    h1: 'Transparency & Editorial Disclosure',
+    title: /Advertising & Affiliate Disclosure/,
+    sections: [
+      '1. How Before the Numbers is Funded',
+      '2. Google AdSense & Programmatic Advertising',
+      '3. Affiliate Relationships & Sponsored Links',
+      '4. Editorial Independence & Non-Influence',
+    ],
+  },
+  {
+    path: '/copyright',
+    h1: 'Copyright, Fair Use & Content Removal Notice',
+    title: /Copyright & Takedown Policy/,
+    sections: [
+      '1. Curated Educational Video Embeds',
+      '2. Non-Affiliation with Featured Speakers',
+      '3. Original Content & Trademarks',
+      '4. DMCA & Copyright Takedown Procedure',
+    ],
+  },
 ] as const;
 
 /** Collects uncaught page errors, ignoring known third-party tracker noise. */
@@ -170,13 +216,14 @@ test.describe('REG-006: Global footer notices (markdown-driven) on every page', 
 });
 
 test.describe('REG-007: Sitemap lists the canonical legal URLs only', () => {
-  test('/sitemap.xml contains /privacy and /terms and not the legacy routes', async ({ request }) => {
+  test('/sitemap.xml contains all 6 canonical legal URLs and not legacy routes', async ({ request }) => {
     const res = await request.get('/sitemap.xml');
     expect(res.status()).toBe(200);
     const xml = await res.text();
 
-    expect(xml).toMatch(/<loc>[^<]*\/privacy<\/loc>/);
-    expect(xml).toMatch(/<loc>[^<]*\/terms<\/loc>/);
+    for (const slug of ['/privacy', '/terms', '/refund-policy', '/medical-disclaimer', '/disclosure', '/copyright']) {
+      expect(xml).toMatch(new RegExp(`<loc>[^<]*${slug}</loc>`));
+    }
     expect(xml).not.toContain('/privacy-policy');
     expect(xml).not.toContain('/terms-of-service');
   });
