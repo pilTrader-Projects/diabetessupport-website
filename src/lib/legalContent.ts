@@ -21,6 +21,8 @@ export interface LegalMeta {
   backHref: string;
   nextLabel: string;
   nextHref: string;
+  /** Optional copyright line (used by footer.md). */
+  copyright: string;
 }
 
 export interface LegalDocument {
@@ -74,6 +76,7 @@ function resolvePlaceholders(text: string): string {
     domain: SITE_CONFIG.domain,
     siteUrl: `https://${SITE_CONFIG.domain}`,
     author: SITE_CONFIG.author,
+    year: String(new Date().getFullYear()),
   };
   return text.replace(/\{\{\s*(\w+)\s*\}\}/g, (full, key: string) => values[key] ?? full);
 }
@@ -126,6 +129,7 @@ export function getLegalDocument(slug: string): LegalDocument {
     backHref: data.backHref || '/',
     nextLabel: data.nextLabel || '',
     nextHref: data.nextHref || '',
+    copyright: resolvePlaceholders(data.copyright || ''),
   };
 
   return { slug, meta, body: resolvePlaceholders(body) };
