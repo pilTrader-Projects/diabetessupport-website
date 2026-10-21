@@ -27,6 +27,12 @@ export default function InsulinResetClient(): React.JSX.Element {
     const el = document.getElementById('lead-form');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
+      const input = el.querySelector<HTMLInputElement>(
+        'input[name="firstName"], input[name="email"], [data-testid="firstname-capture-input"]'
+      );
+      if (input) {
+        setTimeout(() => input.focus(), 600);
+      }
     }
   };
 

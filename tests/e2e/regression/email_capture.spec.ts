@@ -86,4 +86,16 @@ test.describe('P1-04 Unified EmailCapture & Consent Architecture', () => {
     // Verifies redirection to /reset-success on completion
     await expect(page).toHaveURL(/\/reset-success/, { timeout: 10000 });
   });
+
+  test('TC-05: Hero "Get the Free 8-Page Guide" button smoothly navigates to lead capture form', async ({ page }) => {
+    await page.goto('/insulin-reset');
+
+    const heroCtaBtn = page.locator('button:has-text("Get the Free 8-Page Guide")');
+    await expect(heroCtaBtn).toBeVisible();
+
+    await heroCtaBtn.click();
+
+    const leadForm = page.locator('#lead-form');
+    await expect(leadForm).toBeInViewport();
+  });
 });

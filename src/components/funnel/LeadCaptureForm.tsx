@@ -22,16 +22,18 @@ export default function LeadCaptureForm({
   const router = useRouter();
 
   return (
-    <EmailCapture
-      source={source}
-      layout="funnel"
-      symptomsChecked={symptomsChecked}
-      title="Where Should We Send Your Guide?"
-      subtitle="Enter your details below to receive the complete 8-page protocol immediately in your inbox."
-      buttonText="Send My Free Guide"
-      onSuccess={() => {
-        router.push('/reset-success');
-      }}
-    />
+    <div id="lead-form" className="scroll-mt-12">
+      <EmailCapture
+        source={source}
+        layout="funnel"
+        symptomsChecked={symptomsChecked}
+        title="Where Should We Send Your Guide?"
+        subtitle="Enter your details below to receive the complete 8-page protocol immediately in your inbox."
+        buttonText="Send My Free Guide"
+        onSuccess={() => {
+          router.push('/reset-success');
+        }}
+      />
+    </div>
   );
 }
