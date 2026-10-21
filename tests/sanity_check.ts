@@ -18,6 +18,7 @@ async function runSanityCheck() {
         'docs/guardrails.md',
         'docs/intended-use-statement.md',
         'docs/brand_repositioning_rebranding_strategy.md',
+        'docs/DATA_MAP.md',
         '.agent/personas.md',
         '.agent/workflows/coo_orchestration_flow.md',
         '.agent/workflows/cross_functional_campaign_flow.md',
