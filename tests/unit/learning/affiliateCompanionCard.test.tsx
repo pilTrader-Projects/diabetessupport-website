@@ -24,8 +24,9 @@ describe('AffiliateCompanionCard Component', () => {
     expect(html).toContain('Dr. Jason Fung, MD');
     expect(html).toContain('Unlocking the secrets of weight loss and insulin resistance.');
     expect(html).toContain('Essential Companion');
+    expect(html).toContain('(affiliate link)');
     expect(html).toContain('target="_blank"');
-    expect(html).toContain('rel="noopener noreferrer sponsored"');
+    expect(html).toContain('rel="sponsored noopener noreferrer"');
     expect(html).toContain('href="https://amazon.com/dp/sample-code?tag=affiliate-20"');
   });
 

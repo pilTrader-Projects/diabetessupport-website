@@ -73,6 +73,7 @@ async function runSanityCheck() {
         'scripts/migrate-wordpress.ts',
         'scripts/migrate-posts-to-threads.ts',
         'scripts/sanitize-database-tags.ts',
+        'scripts/check-affiliate-links.ts',
         'src/app/api/v1/migration/route.ts',
         'src/app/api/v1/posts/route.ts',
         'src/app/api/v1/subscribe/route.ts',
@@ -104,6 +105,7 @@ async function runSanityCheck() {
         'src/components/common/ClinicalSafetyBox.tsx',
         'src/components/common/ConsentBanner.tsx',
         'src/components/common/EmailCapture.tsx',
+        'src/components/common/AffiliateLink.tsx',
         'src/components/common/CookieSettingsButton.tsx',
         'src/components/ExtensionGuard.tsx',
         'src/components/Header.tsx',
@@ -204,6 +206,7 @@ async function runSanityCheck() {
         'src/app/globals.css',
         'playwright.config.ts',
         'tests/e2e/regression/email_capture.spec.ts',
+        'tests/e2e/regression/affiliate_links.spec.ts',
         '.github/workflows/ci.yml'
     ];
 
