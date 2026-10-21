@@ -2,6 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  dispatchEmailSignup,
+  dispatchLeadMagnetDownload,
+} from '@/analytics';
 
 export interface EmailCaptureProps {
   source: string;
@@ -102,7 +106,8 @@ export default function EmailCapture({
         ctaText: data.ctaText,
       });
 
-      // Dispatch custom browser event for conversion tracking (Issue #44 / P1-05)
+      // Dispatch GA4 conversion event and custom browser event (P1-05)
+      dispatchEmailSignup({ source, edition });
       if (typeof window !== 'undefined') {
         window.dispatchEvent(
           new CustomEvent('bts:email_signup', {
@@ -145,6 +150,13 @@ export default function EmailCapture({
               href={successData.downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                dispatchLeadMagnetDownload({
+                  file_name: 'lead_magnet_guide',
+                  source,
+                  edition,
+                });
+              }}
               className="inline-flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <span>📥 Download Your Guide Now</span>

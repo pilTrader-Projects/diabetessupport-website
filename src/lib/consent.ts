@@ -136,6 +136,17 @@ export function getStoredConsent(win?: Window): ConsentPreferences | null {
 }
 
 /**
+ * Checks whether user has explicitly granted analytics consent under Google Consent Mode v2.
+ *
+ * @param win Optional window reference for dependency injection or testing.
+ * @returns boolean indicating if analytics storage is granted.
+ */
+export function hasAnalyticsConsent(win?: Window): boolean {
+  const stored = getStoredConsent(win);
+  return Boolean(stored?.analytics);
+}
+
+/**
  * Persists user consent preferences to both cookie and localStorage,
  * fires gtag consent update, and notifies all listening components.
  */
