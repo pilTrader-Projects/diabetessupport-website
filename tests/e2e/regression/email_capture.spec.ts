@@ -51,8 +51,16 @@ test.describe('P1-04 Unified EmailCapture & Consent Architecture', () => {
     await expect(page.locator('[data-testid="email-capture-success"]')).toHaveCount(0);
   });
 
-  test('TC-03: Submitting with valid email and checked consent succeeds', async ({ page }) => {
+  test('TC-03: Submitting with valid email and checked consent succeeds and dispatches conversion telemetry', async ({ page }) => {
     await page.goto('/subscribe');
+
+    // Register event listener to capture conversion telemetry
+    await page.evaluate(() => {
+      (window as any).__capturedConversionEvents = [];
+      window.addEventListener('bts:email_signup', (e: any) => {
+        (window as any).__capturedConversionEvents.push(e.detail);
+      });
+    });
 
     await page.locator('[data-testid="firstname-capture-input"]').fill('Jane');
     await page.locator('[data-testid="email-capture-input"]').fill('jane.e2e@example.com');
@@ -65,6 +73,16 @@ test.describe('P1-04 Unified EmailCapture & Consent Architecture', () => {
     const successBox = page.locator('[data-testid="email-capture-success"]');
     await expect(successBox).toBeVisible({ timeout: 10000 });
     await expect(successBox).toContainText(/Check Your Inbox!/i);
+
+    // Verify conversion event was dispatched with zero PII
+    const events = await page.evaluate(() => (window as any).__capturedConversionEvents);
+    expect(events.length).toBeGreaterThan(0);
+    expect(events[0]).toMatchObject({
+      edition: 'ph',
+    });
+    expect(events[0].source).toBeDefined();
+    // Verify no email address was leaked in telemetry detail
+    expect(JSON.stringify(events[0])).not.toContain('jane.e2e@example.com');
   });
 
   test('TC-04: Funnel page (/insulin-reset) renders funnel layout, captures lead, and redirects to /reset-success', async ({ page }) => {
