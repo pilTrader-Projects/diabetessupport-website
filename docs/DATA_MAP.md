@@ -22,10 +22,10 @@ This inventory and audit are governed by:
 - **Implementing Rules and Regulations (IRR) of RA 10173**: Sections 21-29 (Data Subject Rights) and Section 34 (Security Measures).
 
 ### 1.3 Key Definitions under RA 10173
-- **Personal Information (PI) [Sec. 3(g)]**: Any information, whether recorded in a material form or not, from which the identity of an individual is apparent or can be reasonably and directly ascertained.
-- **Sensitive Personal Information (SPI) [Sec. 3(l)]**: Personal information referring to an individual's race, ethnic origin, marital status, age, color, and religious, philosophical, or political affiliations; health, education, genetic, or sexual life of a person; proceeding for any offense committed or alleged to have been committed; or issued by government agencies peculiar to an individual.
+- **Personal Information (PI) [Section 3(g)]**: Any information, whether recorded in a material form or not, from which the identity of an individual is apparent or can be reasonably and directly ascertained.
+- **Sensitive Personal Information (SPI) [Section 3(l)]**: Personal information referring to an individual's race, ethnic origin, marital status, age, color, and religious, philosophical, or political affiliations; health, education, genetic, or sexual life of a person; proceeding for any offense committed or alleged to have been committed; or issued by government agencies peculiar to an individual.
   > *Critical Note:* Self-reported metabolic symptoms, finger-prick blood glucose readings, blood pressure measurements, and algorithmic metabolic stage classifications constitute **health-related SPI** under Section 3(l)(2), which requires explicit, specific, and documented consent before collection.
-- **Privileged Information [Sec. 3(k)]**: Any and all forms of data which under the Rules of Court and other pertinent laws constitute privileged communication (e.g. physician-patient communications).
+- **Privileged Information [Section 3(k)]**: Any and all forms of data which under the Rules of Court and other pertinent laws constitute privileged communication (e.g. physician-patient communications).
 
 ---
 
