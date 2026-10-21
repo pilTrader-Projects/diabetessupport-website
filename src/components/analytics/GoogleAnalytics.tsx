@@ -1,23 +1,40 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { GA_CONFIG } from '@/config/constants';
+import { getStoredConsent, CONSENT_CHANGED_EVENT, ConsentPreferences } from '@/lib/consent';
 
 interface GoogleAnalyticsProps {
   gaId?: string;
 }
 
 /**
- * Global Asynchronous Google Analytics (gtag.js) Script Loader Component.
- *
- * @usecase Injects the official Google Analytics measurement scripts into the application layout.
- * @dependencies Next.js Script component, GA_CONFIG constant.
- * @returns {JSX.Element | null} Rendered Script components or null if measurement ID is empty.
+ * Client-side hook-driven loader that activates GA4 only when analytics consent is granted.
  */
-export default function GoogleAnalytics({ gaId }: GoogleAnalyticsProps = {}) {
-  const measurementId = gaId !== undefined ? gaId : GA_CONFIG.measurementId;
+function GoogleAnalyticsClient({ measurementId }: { measurementId: string }) {
+  const [hasConsent, setHasConsent] = useState(false);
 
-  if (!measurementId) {
+  useEffect(() => {
+    // 1. Check existing stored consent
+    const existing = getStoredConsent();
+    if (existing?.analytics) {
+      setHasConsent(true);
+    }
+
+    // 2. React to dynamic consent updates
+    const handleConsentChanged = (e: Event) => {
+      const detail = (e as CustomEvent<ConsentPreferences>).detail;
+      if (detail) {
+        setHasConsent(Boolean(detail.analytics));
+      }
+    };
+
+    window.addEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
+    return () => window.removeEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
+  }, []);
+
+  if (!hasConsent) {
     return null;
   }
 
@@ -43,4 +60,22 @@ export default function GoogleAnalytics({ gaId }: GoogleAnalyticsProps = {}) {
       />
     </>
   );
+}
+
+/**
+ * Global Asynchronous Google Analytics (gtag.js) Script Loader Component.
+ *
+ * @usecase Injects the official Google Analytics measurement scripts into the application layout
+ * strictly after affirmative user consent is granted under Google Consent Mode v2 and RA 10173.
+ * @dependencies Next.js Script component, GA_CONFIG constant, consent module.
+ * @returns {JSX.Element | null} Rendered Script components or null if unconsented or disabled.
+ */
+export default function GoogleAnalytics({ gaId }: GoogleAnalyticsProps = {}) {
+  const measurementId = gaId !== undefined ? gaId : GA_CONFIG.measurementId;
+
+  if (!measurementId) {
+    return null;
+  }
+
+  return <GoogleAnalyticsClient measurementId={measurementId} />;
 }

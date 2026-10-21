@@ -5,12 +5,14 @@ import { ALL_FOOTER_LINKS } from '@/config/trustConfig';
 import { getLegalDocument } from '@/lib/legalContent';
 import { parseLegalBlocks } from '@/lib/legalMarkdown';
 import { parseInlineMarkdown } from '@/lib/markdownUtils';
+import CookieSettingsButton from '@/components/common/CookieSettingsButton';
 
 /**
  * Global Application Footer Component.
  *
  * @usecase Renders global footer navigation including newly deployed E-E-A-T trust pages
- * (/editorial-policy, /corrections), medical disclaimers, and realigned privacy notice.
+ * (/editorial-policy, /corrections), medical disclaimers, realigned privacy notice,
+ * and an interactive Cookie Settings button to reopen the Google Consent Mode v2 modal.
  * The copyright line and notices are edited in src/content/legal/footer.md (no code change needed).
  */
 export default function Footer() {
@@ -21,7 +23,7 @@ export default function Footer() {
     <footer className="bg-gradient-to-r from-blue-900 via-purple-950 to-pink-950 text-white py-14 border-t border-white/10 mt-16 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
         {/* Quick Links Navigation */}
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
+        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs font-bold text-purple-200 uppercase tracking-wider">
           {ALL_FOOTER_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -31,6 +33,7 @@ export default function Footer() {
               {link.label}
             </Link>
           ))}
+          <CookieSettingsButton />
         </div>
 
         {meta.copyright && <p className="font-bold text-white tracking-wide">{meta.copyright}</p>}

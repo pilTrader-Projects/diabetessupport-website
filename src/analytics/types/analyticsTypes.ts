@@ -66,8 +66,8 @@ export interface VideoTrackerInstance {
  * Global window interface extended with GA4 gtag function.
  */
 export type GtagFunction = (
-  command: 'event' | 'config' | 'set' | 'js',
-  targetOrAction: string | Date,
+  command: 'event' | 'config' | 'set' | 'js' | 'consent',
+  targetOrAction: string | Date | Record<string, any>,
   params?: Record<string, any>
 ) => void;
 
