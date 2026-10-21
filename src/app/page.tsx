@@ -355,7 +355,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="text-teal-600 font-bold">✓</span>
-                  <span>100% private, user-owned, zero ads or sales</span>
+                  <span>100% private, user-owned data • Transparent funding disclosure</span>
                 </li>
               </ul>
             </div>
@@ -725,7 +725,7 @@ export default async function HomePage(): Promise<React.JSX.Element> {
       <section className="p-6 bg-slate-100 rounded-2xl border border-slate-200 text-center space-y-2">
         <p className="text-xs font-bold text-slate-700 flex items-center justify-center gap-1.5">
           <span>🔒</span>
-          <span>Zero-commercial barrier • User-owned data • Non-promotional educational movement.</span>
+          <span>Open-access educational resources • User-owned data • Community health literacy.</span>
         </p>
         <p className="text-[11px] text-slate-500 max-w-2xl mx-auto leading-relaxed">
           Before the Numbers is an independent health awareness and metabolic literacy initiative. Educational content is provided for informational purposes and does not substitute for individualized medical care.

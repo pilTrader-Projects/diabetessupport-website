@@ -226,6 +226,9 @@ export default function VideoPlayerModal({
               <h2 id="video-modal-title" className="text-xl sm:text-2xl font-black text-white leading-tight">
                 {resource.title}
               </h2>
+              <p className="text-[11px] text-purple-200/90 font-medium pt-1">
+                Video by <strong className="text-white">{resource.authorityName}</strong> on YouTube • Independent educational curation (not affiliated with or endorsed by speaker or channel).
+              </p>
             </div>
 
             {/* Direct Platform Jump Button & Share Encouragement */}
