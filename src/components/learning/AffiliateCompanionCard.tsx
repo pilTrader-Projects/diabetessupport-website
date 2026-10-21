@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { IAffiliateRecommendation } from '@/types/learning';
 import { stopPropagation } from '@/lib/affiliateFlankUtils';
 import { handleAffiliateClick } from '@/analytics/handlers/handleAffiliateClick';
+import { AffiliateLink } from '@/components/common/AffiliateLink';
 
 interface AffiliateCompanionCardProps {
   book: IAffiliateRecommendation;
@@ -36,14 +37,13 @@ export default function AffiliateCompanionCard({
   const cardPosition = position || (isFlank ? 'left_sidebar' : 'inline_modal');
 
   return (
-    <a
+    <AffiliateLink
       href={book.affiliateUrl}
-      target="_blank"
-      rel="noopener noreferrer sponsored"
+      merchant={platformDisplay}
+      label={book.title}
+      position={cardPosition}
+      variant="plain"
       onClick={handleAffiliateClick}
-      data-click-type="affiliate_card"
-      data-book-title={book.title}
-      data-card-position={cardPosition}
       className={`group block transition-all duration-200 select-none ${
         isFlank
           ? 'bg-slate-900/90 hover:bg-slate-900 border border-white/20 hover:border-amber-400/60 rounded-2xl p-3.5 shadow-xl hover:shadow-amber-500/10 backdrop-blur-xl'
@@ -81,9 +81,19 @@ export default function AffiliateCompanionCard({
         {/* Text Context & Metadata */}
         <div className="flex-1 flex flex-col justify-between min-w-0">
           <div>
-            <div className="flex items-center gap-1.5 mb-1">
+            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
               <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-400/15 border border-amber-400/30 px-1.5 py-0.5 rounded-full inline-block">
                 {book.badgeText || 'Companion Book'}
+              </span>
+              <span
+                onClick={(e) => {
+                  stopPropagation(e);
+                  window.open('/disclosure', '_blank', 'noopener,noreferrer');
+                }}
+                className="text-[9px] text-amber-200/80 hover:text-amber-300 underline cursor-pointer transition-colors"
+                title="View affiliate monetization disclosure"
+              >
+                (affiliate link)
               </span>
             </div>
 
@@ -125,6 +135,6 @@ export default function AffiliateCompanionCard({
           <span>Get on {platformDisplay} ↗</span>
         </span>
       </div>
-    </a>
+    </AffiliateLink>
   );
 }

@@ -76,7 +76,7 @@ describe('VideoPlayerModal (Issue #44 Privacy-Enhanced Media Embedding & Curatio
     expect(html).toContain('The Obesity Code');
     expect(html).toContain('The definitive guide to reversing insulin resistance.');
     expect(html).toContain('target="_blank"');
-    expect(html).toContain('rel="noopener noreferrer sponsored"');
+    expect(html).toContain('rel="sponsored noopener noreferrer"');
   });
 
   it('should display related reading on flanks when author has no books but authorities pool exists', () => {
