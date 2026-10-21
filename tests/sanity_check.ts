@@ -34,6 +34,7 @@ async function runSanityCheck() {
         'src/lib/schema.ts',
         'src/lib/seo.ts',
         'src/lib/consent.ts',
+        'src/lib/subscribeValidation.ts',
         'src/lib/communityUtils.ts',
         'src/lib/communityNotifications.ts',
         'src/lib/savedProtocolUtils.ts',
@@ -57,6 +58,7 @@ async function runSanityCheck() {
         'src/models/AssetDownloadToken.ts',
         'src/models/Authority.ts',
         'src/models/PodcastChannel.ts',
+        'src/models/ConsentRecord.ts',
         'src/models/LearningResource.ts',
         'src/services/wordpressMigration.ts',
         'src/services/brevoService.ts',
@@ -100,6 +102,7 @@ async function runSanityCheck() {
         'src/app/feed.xml/route.ts',
         'src/components/common/ClinicalSafetyBox.tsx',
         'src/components/common/ConsentBanner.tsx',
+        'src/components/common/EmailCapture.tsx',
         'src/components/common/CookieSettingsButton.tsx',
         'src/components/ExtensionGuard.tsx',
         'src/components/Header.tsx',
@@ -193,6 +196,7 @@ async function runSanityCheck() {
         'src/app/page.tsx',
         'src/app/globals.css',
         'playwright.config.ts',
+        'tests/e2e/regression/email_capture.spec.ts',
         '.github/workflows/ci.yml'
     ];
 
