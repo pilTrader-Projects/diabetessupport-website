@@ -27,7 +27,7 @@
 
 | ID | Status | Focus | Branch Name | PR / Commit | Done Criteria |
 | :--- | :---: | :--- | :--- | :--- | :--- |
-| **P1-01** | [ ] | **Data Privacy Map** | `feature/data-privacy-map` | PR: #___ | `docs/DATA_MAP.md` created documenting all personal data touchpoints, storage locations (MongoDB, Brevo, localStorage), retention rules, and deletion paths. |
+| **P1-01** | [~] | **Data Privacy Map** | `68-data-privacy-map` | Issue #68 (In Progress) | `docs/DATA_MAP.md` created documenting all personal data touchpoints, storage locations (MongoDB, Brevo, localStorage), retention rules, and deletion paths. |
 | **P1-02** | [x] | **SEO Metadata & Canonical Fixes** | `main` | PR #67 (Closed #66) | `src/lib/seo.ts` created with `buildMetadata()`. `/hidden-clock` canonical updated to self-reference (`/hidden-clock`). Title duplication eliminated. Jest test confirms canonical matches `og:url`. |
 | **P1-03** | [ ] | **Consent Mode v2 & Consent Banner** | `feature/consent-mode-banner` | PR: #___ | Google Consent Mode v2 initialized (default `denied`). `ConsentBanner.tsx` created with cookie persistence and footer "Cookie settings" trigger. AdSense and GA4 gated on consent. Playwright test verifies no ad/tracker network requests before consent. |
 | **P1-04** | [ ] | **Unified `<EmailCapture />` & Consent Records** | `feature/email-capture-consent` | PR: #___ | Reusable `<EmailCapture />` component created with unticked consent checkbox, honeypot, and Brevo double opt-in. Zod validation on `/api/v1/subscribe`. `ConsentRecord` Mongoose model logs signups. Jest + Playwright tests pass. |
