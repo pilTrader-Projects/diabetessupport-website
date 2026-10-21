@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import AdSenseScript from '@/components/ads/AdSenseScript';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import PwaRegister from '@/components/pwa/PwaRegister';
+import ConsentBanner from '@/components/common/ConsentBanner';
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/schema';
 
 /**
@@ -81,9 +82,10 @@ export const metadata: Metadata = {
 /**
  * Root Layout Component for Next.js App Router.
  *
- * @usecase Wraps all page components with consistent HTML head metadata, responsive header navigation, AdSense loader, ExtensionGuard, JSON-LD schemas, and footer.
+ * @usecase Wraps all page components with consistent HTML head metadata, Google Consent Mode v2,
+ * responsive header navigation, AdSense loader, ExtensionGuard, JSON-LD schemas, ConsentBanner, and footer.
  * @param {Readonly<{ children: React.ReactNode }>} props Component props containing child pages.
- * @dependencies SITE_CONFIG, ExtensionGuard, Header, AdSenseScript, globals.css.
+ * @dependencies SITE_CONFIG, ExtensionGuard, Header, ConsentBanner, AdSenseScript, globals.css.
  * @returns {JSX.Element} Rendered root HTML document structure.
  */
 export default function RootLayout({
@@ -97,6 +99,38 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Consent Mode v2 Early Initialization (Default Denied) */}
+        <script
+          id="google-consent-mode-init"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 500
+              });
+              try {
+                var m = document.cookie.match(/(^|;)\\s*bts_consent_preferences=([^;]+)/);
+                if (m) {
+                  var p = JSON.parse(decodeURIComponent(m[2]));
+                  if (p && p.version === 1) {
+                    gtag('consent', 'update', {
+                      'analytics_storage': p.analytics ? 'granted' : 'denied',
+                      'ad_storage': p.marketing ? 'granted' : 'denied',
+                      'ad_user_data': p.marketing ? 'granted' : 'denied',
+                      'ad_personalization': p.marketing ? 'granted' : 'denied'
+                    });
+                  }
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+
         {/* Preconnect to YouTube CDN edge servers for zero-stutter instant video streaming */}
         <link rel="preconnect" href="https://www.youtube.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://i.ytimg.com" crossOrigin="anonymous" />
@@ -124,6 +158,7 @@ export default function RootLayout({
         <main className="flex-grow w-full max-w-full overflow-x-clip">{children}</main>
 
         <Footer />
+        <ConsentBanner />
       </body>
     </html>
   );
