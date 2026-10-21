@@ -101,7 +101,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **Item P1-01** [COMPLETED / MERGED] (PR #69, Closes #68): Data Privacy Map (`docs/DATA_MAP.md` for RA 10173 compliance).
 - [x] **Item P1-02** [COMPLETED / MERGED] (PR #67, Closes #66): SEO Metadata Helper & Self-Referencing Canonical Fixes (`src/lib/seo.ts` & `/hidden-clock`).
 - [x] **Item P1-03** [COMPLETED / MERGED] (PR #71, Closes #70): Google Consent Mode v2 & `ConsentBanner` Component (cookie settings & ad/GA4 gating).
-- [ ] **Item P1-04**: Unified `<EmailCapture />` Component, `ConsentRecord` Model & Zod validation on `/api/v1/subscribe`.
+- [x] **Item P1-04** [COMPLETED] (Closes #74): Unified `<EmailCapture />` Component, `ConsentRecord` Model & Zod validation on `/api/v1/subscribe`.
 - [ ] **Item P1-05**: GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
 - [ ] **Item P1-06**: Standardized `<AffiliateLink />` Component with disclosure & `scripts/check-affiliate-links.ts`.
 - [ ] **Item P1-07**: Data-Rights Tooling (`scripts/data-request.ts` export/delete & `DataRequestLog` model).
