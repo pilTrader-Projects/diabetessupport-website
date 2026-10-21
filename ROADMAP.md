@@ -102,7 +102,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **Item P1-02** [COMPLETED / MERGED] (PR #67, Closes #66): SEO Metadata Helper & Self-Referencing Canonical Fixes (`src/lib/seo.ts` & `/hidden-clock`).
 - [x] **Item P1-03** [COMPLETED / MERGED] (PR #71, Closes #70): Google Consent Mode v2 & `ConsentBanner` Component (cookie settings & ad/GA4 gating).
 - [x] **Item P1-04** [COMPLETED / MERGED] (PR #75, Closes #74): Unified `<EmailCapture />` Component, `ConsentRecord` Model & Zod validation on `/api/v1/subscribe`.
-- [~] **Item P1-05** [IN PROGRESS] (Issue #76): GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
+- [x] **Item P1-05** [COMPLETED / MERGED] (PR #77, Closes #76): GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
 - [ ] **Item P1-06**: Standardized `<AffiliateLink />` Component with disclosure & `scripts/check-affiliate-links.ts`.
 - [ ] **Item P1-07**: Data-Rights Tooling (`scripts/data-request.ts` export/delete & `DataRequestLog` model).
 - [x] **Item P0-01** [COMPLETED / MERGED] (PR #63 & PR #65, Closes #64): Complete Legal Pages Suite (`/privacy`, `/terms`, `/refund-policy`, `/medical-disclaimer`, `/disclosure`, `/copyright`) with front-matter metadata, shared layout, DRAFT legal placeholders, sitemap, footer nav, and 22 Playwright regression tests.
