@@ -75,3 +75,42 @@ export interface GtagWindow extends Window {
   gtag?: GtagFunction;
   dataLayer?: any[];
 }
+
+/**
+ * Payload structure for GA4 email_signup conversion events.
+ * MANDATORY PRIVACY (RA 10173): Strictly non-PII. Email addresses, names, and phone numbers are forbidden.
+ */
+export interface EmailSignupPayload {
+  source: string;
+  edition?: string;
+}
+
+/**
+ * Payload structure for GA4 lead_magnet_download conversion events.
+ * MANDATORY PRIVACY: Only file/resource name and source campaign. No user tokens or PII.
+ */
+export interface LeadMagnetDownloadPayload {
+  file_name: string;
+  source: string;
+  edition?: string;
+}
+
+/**
+ * Payload structure for GA4 roadmap_step_click conversion events.
+ */
+export interface RoadmapStepClickPayload {
+  step_number: number;
+  step_slug: string;
+  edition?: string;
+}
+
+/**
+ * Payload structure for GA4 checkout_click conversion events.
+ */
+export interface CheckoutClickPayload {
+  product_id: string;
+  product_name: string;
+  currency: string;
+  price: number;
+  destination_url?: string;
+}

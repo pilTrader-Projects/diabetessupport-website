@@ -4,7 +4,13 @@
 export const GA4_EVENTS = {
   AFFILIATE_CARD_CLICK: 'affiliate_card_click',
   VIDEO_ENGAGEMENT: 'video_engagement',
+  EMAIL_SIGNUP: 'email_signup',
+  LEAD_MAGNET_DOWNLOAD: 'lead_magnet_download',
+  ROADMAP_STEP_CLICK: 'roadmap_step_click',
+  CHECKOUT_CLICK: 'checkout_click',
 } as const;
+
+export type GA4EventName = (typeof GA4_EVENTS)[keyof typeof GA4_EVENTS];
 
 /**
  * Valid action types for video engagement lifecycle.
