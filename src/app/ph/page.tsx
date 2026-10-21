@@ -217,7 +217,7 @@ export default async function PhilippinePilotPage(): Promise<React.JSX.Element> 
             Free Community Tools &amp; Actionable Blueprints
           </h2>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-            Tailored for Filipino households, completely open-access and zero commercial barrier.
+            Tailored for Filipino households, completely open-access and community-supported.
           </p>
         </div>
 

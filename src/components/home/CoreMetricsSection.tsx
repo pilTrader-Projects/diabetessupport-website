@@ -138,7 +138,7 @@ export default function CoreMetricsSection(): React.JSX.Element {
       {/* Contextual SaMD & Regulatory Operational Note */}
       <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 text-center max-w-4xl mx-auto shadow-sm">
         <p className="text-xs text-slate-600 leading-relaxed">
-          <strong className="text-slate-800">Operational Note:</strong> GlycoSense AI features provide descriptive statistical data trends for personal logging purposes only. It is not an FDA-cleared diagnostic device, does not directly evaluate organ function or monitor drug interactions, and should not be used as a substitute for consulting an endocrinologist, nephrologist, or primary care physician.
+          <strong className="text-slate-800">Operational Note:</strong> GlycoSense personal logging features provide descriptive statistical data trends for personal logging purposes only. It is not an FDA-cleared diagnostic device, does not directly evaluate organ function or monitor drug interactions, and should not be used as a substitute for consulting an endocrinologist, nephrologist, or primary care physician.
         </p>
       </div>
     </section>

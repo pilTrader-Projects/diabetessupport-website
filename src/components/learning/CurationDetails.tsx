@@ -100,10 +100,20 @@ export default function CurationDetails({
       </div>
 
       {/* 5. Primary Scientific Citations & Source Attribution */}
-      <div className="border-t border-slate-200 pt-4 space-y-2 text-xs">
+      <div className="border-t border-slate-200 pt-4 space-y-3 text-xs">
         <h4 className="text-[11px] font-black uppercase tracking-wider text-slate-400">
           Primary Scientific Citations &amp; Source Attribution
         </h4>
+
+        {/* Video Authority & Independent Non-Endorsement Notice */}
+        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-600 text-[11px] leading-relaxed space-y-1">
+          <p className="font-bold text-slate-800">
+            {`Video by ${resource.authorityName || 'Featured Medical Authority'} on YouTube.`}
+          </p>
+          <p className="text-slate-500 text-[10px]">
+            Curated strictly for public health literacy and non-commercial educational review. Before the Numbers is an independent educational platform and is not affiliated with, sponsored by, or endorsed by the featured speakers or YouTube channels.
+          </p>
+        </div>
         {resource.citations && resource.citations.length > 0 ? (
           <ul className="space-y-1 text-slate-600 text-[11px]">
             {resource.citations.map((cite, idx) => (
