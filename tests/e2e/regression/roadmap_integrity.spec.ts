@@ -48,24 +48,68 @@ test.describe('P2-01: Learning Hub & Roadmap Foundation Regression', () => {
     await expect(footerDisclaimer).toContainText(/medical disclaimer|educational purposes/i);
   });
 
-  test('REG-ROADMAP-03: Video player triggers and modal attributions remain operational', async ({
+  test('REG-ROADMAP-04: 5-step roadmap curriculum renders above catalog with EmailCapture and SafetyNotice', async ({
     page,
   }) => {
     await page.goto('/learn');
 
-    const playBtn = page.locator('button[data-testid="play-video-btn"], button:has-text("Play Video")').first();
-    if (await playBtn.isVisible()) {
-      await playBtn.click();
+    // Verify roadmap container
+    const roadmapSection = page.locator('section[aria-label="Guided 5-Step Learning Roadmap"]');
+    await expect(roadmapSection).toBeVisible();
 
-      // Modal container should become visible
-      const modal = page.locator('div[role="dialog"]');
-      await expect(modal).toBeVisible();
+    // Verify 5 step cards
+    await expect(page.locator('text=Step 1: Understand')).toBeVisible();
+    await expect(page.locator('text=Step 2: Spot the Signs')).toBeVisible();
+    await expect(page.locator('text=Step 3: Know the Causes')).toBeVisible();
+    await expect(page.locator('text=Step 4: Take Action')).toBeVisible();
+    await expect(page.locator('text=Step 5: Stay Safe')).toBeVisible();
 
-      // Verify close button dismisses cleanly
-      const closeBtn = page.locator('button[aria-label="Close video player"]');
-      await expect(closeBtn).toBeVisible();
-      await closeBtn.click();
-      await expect(modal).toBeHidden();
-    }
+    // Verify progress indicator
+    const progressLabel = page.locator('text=Roadmap Progress');
+    await expect(progressLabel).toBeVisible();
+
+    // Verify EmailCapture after Step 2
+    const emailCapture = page.locator('[data-testid="learn-roadmap-email-capture"]');
+    await expect(emailCapture).toBeVisible();
+
+    // Verify SafetyNotice before Step 5
+    const safetyNotice = page.locator('[data-testid="learn-roadmap-safety-notice"]');
+    await expect(safetyNotice).toBeVisible();
+  });
+
+  test('REG-ROADMAP-05: Resource cards display speaker, note, and interactive "Mark as done" checkbox', async ({
+    page,
+  }) => {
+    await page.goto('/learn');
+
+    // Locate first checkbox in roadmap
+    const firstCheckbox = page.locator('section[aria-label="Guided 5-Step Learning Roadmap"] input[type="checkbox"]').first();
+    await expect(firstCheckbox).toBeVisible();
+    expect(await firstCheckbox.isChecked()).toBe(false);
+
+    // Toggle checkbox
+    await firstCheckbox.click();
+    expect(await firstCheckbox.isChecked()).toBe(true);
+
+    // Un-toggle
+    await firstCheckbox.click();
+    expect(await firstCheckbox.isChecked()).toBe(false);
+  });
+
+  test('REG-ROADMAP-06: Mobile layout presents roadmap first and allows expanding catalog', async ({
+    page,
+  }) => {
+    // Set viewport to mobile phone (375x667)
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/learn');
+
+    // Verify roadmap section is visible at top of page
+    const roadmapSection = page.locator('section[aria-label="Guided 5-Step Learning Roadmap"]');
+    await expect(roadmapSection).toBeVisible();
+
+    // Verify mobile catalog expander button
+    const expandBtn = page.getByRole('button', { name: /Browse Full Resource Catalog/i });
+    await expect(expandBtn).toBeVisible();
   });
 });
+

@@ -192,6 +192,7 @@ async function runSanityCheck() {
         'src/components/learning/CurationBylines.tsx',
         'src/components/learning/CurationDetails.tsx',
         'src/components/learning/SavedResourcesDrawer.tsx',
+        'src/components/learning/LearningRoadmapSection.tsx',
         'src/components/learning/LearningHubClient.tsx',
         'src/lib/affiliateFlankUtils.ts',
         'src/app/learn/page.tsx',

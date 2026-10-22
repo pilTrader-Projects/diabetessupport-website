@@ -14,6 +14,8 @@ import { serializeRecommendedBooks } from '@/services/learning/AuthorityService'
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import { buildLearningHubMedicalSchema } from '@/lib/learningSchema';
 import { buildMetadata } from '@/lib/seo';
+import { getRoadmap, ResolvedRoadmapStep } from '@/services/learning/roadmapService';
+import { normalizeEdition } from '@/config/roadmap';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -26,6 +28,7 @@ interface BlogFeedPageProps {
     podcast?: string;
     resource?: string;
     play?: string;
+    edition?: string;
   }>;
 }
 
@@ -118,16 +121,26 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   const authorityQuery = (resolvedParams.authority || 'all').trim();
   const podcastQuery = (resolvedParams.podcast || 'all').trim();
   const resourceQuery = (resolvedParams.resource || resolvedParams.play || '').trim();
+  const edition = normalizeEdition(resolvedParams.edition);
 
   let rawPosts: any[] = [];
   let rawAuthorities: any[] = [];
   let rawPodcastChannels: any[] = [];
   let rawResources: any[] = [];
+  let initialRoadmap: ResolvedRoadmapStep[] = [];
   let categoryMap: Map<string, string> = new Map();
 
   try {
     await dbConnect();
     categoryMap = await getCategoryLookupMap();
+
+    try {
+      initialRoadmap = await getRoadmap(edition);
+    } catch (roadmapErr) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Roadmap could not be loaded for /learn page:', roadmapErr);
+      }
+    }
 
     // Legacy self-authored blog posts have been migrated to /community as peer discussions.
     // /learn serves strictly curated evidence-based lectures, podcasts, and authority materials.
@@ -216,6 +229,8 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
         initialPodcastChannels={allPodcastChannels}
         initialResources={allResources}
         initialArticles={allPosts}
+        initialRoadmap={initialRoadmap}
+        edition={edition}
         initialSearch={searchQuery}
         initialTopic={activeCategory}
         initialFormat={['all', 'video', 'podcast', 'article', 'study', 'book'].includes(formatQuery) ? (formatQuery as any) : 'all'}
