@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { COMMUNITY_CONFIG } from '@/config/constants';
+import PublicForumNotice from '@/components/community/PublicForumNotice';
 
 interface CreateThreadModalProps {
   isOpen: boolean;
@@ -206,12 +207,7 @@ export default function CreateThreadModal({
           )}
 
           {/* Public Health & Privacy Safe Harbor Notice */}
-          <div className="p-3 bg-amber-50/80 border border-amber-200/80 rounded-xl flex items-start gap-2.5 text-xs text-amber-900 leading-relaxed">
-            <span className="text-base shrink-0">⚠️</span>
-            <span>
-              <strong>Public Forum Notice:</strong> Discussions are publicly visible to all members. For your personal privacy and health safety, please do not include confidential medical records, diagnostic lab printouts, or sensitive personal identifiers.
-            </span>
-          </div>
+          <PublicForumNotice />
 
           <div className="pt-2 flex justify-end space-x-3">
             <button

@@ -13,7 +13,7 @@ import LearningHubClient from '@/components/learning/LearningHubClient';
 import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import { buildLearningHubMedicalSchema } from '@/lib/learningSchema';
-import { buildMetadata, formatTitle } from '@/lib/seo';
+import { buildMetadata } from '@/lib/seo';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 

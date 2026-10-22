@@ -57,4 +57,26 @@ test.describe('P1-06: Standardized <AffiliateLink /> & Outbound Compliance', () 
     await expect(heading).toContainText(/Disclosure|Commercial/i);
     await expect(page.locator('body')).toContainText(/affiliate/i);
   });
+
+  test('AFF-04: /hidden-clock citation enforces compliant <AffiliateLink /> with Amazon ASIN and sponsored rel', async ({ page }) => {
+    await page.goto('/hidden-clock');
+
+    const bikmanLink = page.locator('a[href*="1953295770"]');
+    await expect(bikmanLink).toBeVisible();
+
+    const rel = await bikmanLink.getAttribute('rel');
+    expect(rel).toContain('sponsored');
+    expect(rel).toContain('noopener');
+    expect(rel).toContain('noreferrer');
+
+    const target = await bikmanLink.getAttribute('target');
+    expect(target).toBe('_blank');
+
+    const merchant = await bikmanLink.getAttribute('data-merchant');
+    expect(merchant).toBe('Amazon');
+
+    const position = await bikmanLink.getAttribute('data-card-position');
+    expect(position).toBe('funnel_authority_citation');
+  });
 });
+

@@ -1,9 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ADSENSE_CONFIG } from '@/config/constants';
 import { getStoredConsent, CONSENT_CHANGED_EVENT } from '@/lib/consent';
+
+declare global {
+  interface Window {
+    adsbygoogle?: Array<Record<string, unknown>>;
+  }
+}
 
 export interface AdUnitProps {
   slotId: string;
@@ -29,7 +35,6 @@ export default function AdUnit({
   className = '',
   fallbackType = 'pwa',
 }: AdUnitProps) {
-  const adRef = useRef<HTMLModElement | null>(null);
   const [adFailed, setAdFailed] = useState(false);
   const [hasMarketingConsent, setHasMarketingConsent] = useState(false);
 
@@ -63,7 +68,8 @@ export default function AdUnit({
 
     try {
       if (typeof window !== 'undefined') {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        window.adsbygoogle = window.adsbygoogle || [];
+        window.adsbygoogle.push({});
       }
     } catch (err) {
       console.warn('AdSense push error or AdBlocker detected:', err);
@@ -132,7 +138,6 @@ export default function AdUnit({
       </span>
       <div className="w-full bg-slate-50 border border-slate-200/80 rounded-2xl p-2 min-h-[250px] flex items-center justify-center">
         <ins
-          ref={adRef}
           className="adsbygoogle block w-full"
           style={{ display: 'block', minHeight: '250px' }}
           data-ad-client={ADSENSE_CONFIG.publisherId}
