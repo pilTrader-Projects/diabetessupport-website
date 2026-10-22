@@ -111,7 +111,13 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [ ] **Item P0-GATE**: Priority 0 Gate Checklist Sign-Off (DTI/BIR, DPO, Claims audit, merchant-of-record approved).
 
 ### Milestone 27: Site Revision - 5-Step Learning Roadmap Engine (Phase 2)
-- [ ] **Item P2-01** [IN PROGRESS] (PR #85, Closes #84): Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
+> **Branching & Integration Workflow**:
+> - **Parent Epic Feature Branch**: `feature/phase-2-learning-roadmap`
+> - **Epic Pull Request**: [PR #86](https://github.com/pilTrader-Projects/diabetessupport-website/pull/86) (`feature/phase-2-learning-roadmap` -> `main`, Draft).
+> - **Sub-task PR Policy**: All individual Phase 2 PRs (P2-01 through P2-06 + Gate) target `feature/phase-2-learning-roadmap` as their base branch.
+> - **Production Release**: Once all Phase 2 features are implemented, reviewed, tested, and polished, Epic PR #86 will be merged into `main` to deploy to production.
+
+- [x] **Item P2-01** [COMPLETED / MERGED] (PR #85, Closed #84): Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
 - [ ] **Item P2-02**: 5-Step Roadmap UI above Catalog on `/learn` (`src/app/learn/page.tsx`).
 - [ ] **Item P2-03**: Individual Shareable Step Pages (`src/app/learn/roadmap/[step]/page.tsx`).
 - [ ] **Item P2-04**: Catalog Hygiene & Sponsored Content Labelling (`LearningResourceModel`).
