@@ -49,7 +49,7 @@
 
 | ID | Status | Focus | Branch Name | PR / Commit | Done Criteria |
 | :--- | :---: | :--- | :--- | :--- | :--- |
-| **P2-01** | [ ] | **Roadmap Definition & Integrity Service** | `feature/roadmap-definition-service` | PR: #___ | `src/config/roadmap.ts` defines the 5 steps referencing existing MongoDB resource slugs. `roadmapService.ts` resolves slugs and fails build/tests if any slug is missing. ISR caching applied. Jest tests pass. |
+| **P2-01** | [IN PROGRESS] | **Roadmap Definition & Integrity Service** | `84-roadmap-definition-service` | PR: #85 (Closes #84) | `src/config/roadmap.ts` defines the 5 steps referencing existing MongoDB resource slugs. `roadmapService.ts` resolves slugs and fails build/tests if any slug is missing. ISR caching applied. Jest tests pass. |
 | **P2-02** | [ ] | **Roadmap UI on `/learn` Page** | `feature/learn-roadmap-ui` | PR: #___ | 5-step cards rendered above existing catalog in `src/app/learn/page.tsx`. `<EmailCapture source="learn-roadmap" />` placed after Step 2. `SafetyNotice` placed before Step 5. `roadmap_step_click` events fire. Mobile Lighthouse score >= 85. |
 | **P2-03** | [ ] | **Individual Shareable Step Pages** | `feature/roadmap-step-pages` | PR: #___ | Dynamic routes created at `src/app/learn/roadmap/[step]/page.tsx` with static params, prev/next navigation, and `buildMetadata()` SEO tags. Playwright tests confirm all 5 step URLs render. |
 | **P2-04** | [ ] | **Catalog Hygiene & Sponsored Labelling** | `feature/catalog-hygiene-sponsored` | PR: #___ | Added `sponsored: boolean` to `LearningResourceModel` and Admin CMS. "Sponsored content" badge displayed in catalog and excluded from roadmap. Advanced fasting topics grouped under safety warning. |
