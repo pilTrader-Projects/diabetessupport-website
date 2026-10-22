@@ -174,5 +174,23 @@ export function getRoadmapStepConfig(
   if (typeof identifier === 'number') {
     return ROADMAP_STEPS.find((s) => s.order === identifier);
   }
-  return ROADMAP_STEPS.find((s) => s.id === identifier);
+  const clean = typeof identifier === 'string' ? identifier.trim().toLowerCase() : identifier;
+  return ROADMAP_STEPS.find((s) => s.id === clean);
 }
+
+/**
+ * Returns previous and next step objects for sequential curriculum navigation.
+ */
+export function getAdjacentSteps(
+  currentStepId: StepId | string
+): { prev: RoadmapStep | null; next: RoadmapStep | null } {
+  const currentIndex = ROADMAP_STEPS.findIndex((s) => s.id === currentStepId);
+  if (currentIndex === -1) {
+    return { prev: null, next: null };
+  }
+  return {
+    prev: currentIndex > 0 ? ROADMAP_STEPS[currentIndex - 1] : null,
+    next: currentIndex < ROADMAP_STEPS.length - 1 ? ROADMAP_STEPS[currentIndex + 1] : null,
+  };
+}
+

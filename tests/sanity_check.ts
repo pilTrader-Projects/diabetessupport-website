@@ -193,10 +193,12 @@ async function runSanityCheck() {
         'src/components/learning/CurationDetails.tsx',
         'src/components/learning/SavedResourcesDrawer.tsx',
         'src/hooks/useRoadmapProgress.ts',
+        'src/components/learning/StepDetailClient.tsx',
         'src/components/learning/LearningRoadmapSection.tsx',
         'src/components/learning/LearningHubClient.tsx',
         'src/lib/affiliateFlankUtils.ts',
         'src/app/learn/page.tsx',
+        'src/app/learn/roadmap/[step]/page.tsx',
         'src/app/manifest.ts',
         'src/app/offline/page.tsx',
         'src/components/pwa/PwaRegister.tsx',
@@ -214,6 +216,7 @@ async function runSanityCheck() {
         'tests/e2e/regression/email_capture.spec.ts',
         'tests/e2e/regression/affiliate_links.spec.ts',
         'tests/e2e/regression/roadmap_integrity.spec.ts',
+        'tests/e2e/regression/roadmap_step_pages.spec.ts',
         '.github/workflows/ci.yml'
     ];
 
