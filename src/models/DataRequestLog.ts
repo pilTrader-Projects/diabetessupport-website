@@ -33,7 +33,7 @@ const DataRequestLogSchema: Schema = new Schema<IDataRequestLogDocument>(
   {
     emailHash: {
       type: String,
-      required: [true, 'SHA-256 email hash is required for auditable proof'],
+      required: [true, 'HMAC-SHA256 pseudonymized email hash is required for auditable proof'],
       index: true,
       trim: true,
     },

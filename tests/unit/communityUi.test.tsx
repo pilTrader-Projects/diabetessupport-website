@@ -6,6 +6,13 @@ import SyncDeviceModal from '../../src/components/community/SyncDeviceModal';
 import CommunityFeedClient from '../../src/components/community/CommunityFeedClient';
 import { IThread } from '../../src/types/community';
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}));
+
 describe('Community Forum Feed UI Components (Step 4)', () => {
   const mockThread: IThread = {
     _id: 'thread_1',
@@ -51,6 +58,34 @@ describe('Community Forum Feed UI Components (Step 4)', () => {
       const closedModal = <CreateThreadModal isOpen={false} onClose={jest.fn()} />;
       expect(openModal).toBeDefined();
       expect(closedModal).toBeDefined();
+    });
+
+    it('renders the public forum health warning and privacy notice when open', () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const ReactDOMServer = require('react-dom/server');
+      const html = ReactDOMServer.renderToString(
+        <CreateThreadModal isOpen={true} onClose={jest.fn()} />
+      );
+
+      expect(html).toContain('Public Forum Notice');
+      expect(html).toContain('confidential medical records');
+      expect(html).toContain('Discussions are publicly visible to all members');
+    });
+  });
+
+  describe('ReplyForm Component', () => {
+    it('renders public forum health warning and privacy notice', () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const ReactDOMServer = require('react-dom/server');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const ReplyForm = require('../../src/components/community/ReplyForm').default;
+      const html = ReactDOMServer.renderToString(
+        <ReplyForm threadSlug="test-thread" onReplyAdded={jest.fn()} />
+      );
+
+      expect(html).toContain('Public Forum Notice');
+      expect(html).toContain('confidential medical records');
+      expect(html).toContain('Never used for marketing');
     });
   });
 

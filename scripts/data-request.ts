@@ -24,12 +24,17 @@ import { DataRequestLogModel } from '../src/models/DataRequestLog';
 import { BrevoService } from '../src/services/brevoService';
 
 /**
- * Computes a deterministic SHA-256 hash of a normalized email address.
- * Never stores plain text email in audit logs (RA 10173 & GDPR data minimization).
+ * Computes a deterministic HMAC-SHA256 pseudonymized hash of a normalized email address using a secret server salt.
+ * Protects audit logs against dictionary attacks while ensuring auditable tracking (RA 10173 & GDPR).
  */
-export function hashEmail(email: string): string {
+export function hashEmail(email: string, secret?: string): string {
   const normalized = email.trim().toLowerCase();
-  return crypto.createHash('sha256').update(normalized).digest('hex');
+  const secretKey =
+    secret ||
+    process.env.DATA_PRIVACY_SECRET ||
+    process.env.API_SECRET_KEY ||
+    'bts_privacy_salt_2026';
+  return crypto.createHmac('sha256', secretKey).update(normalized).digest('hex');
 }
 
 export interface UserDataExportReport {

@@ -265,7 +265,7 @@ export default function LeadMagnetCard({
                     className="mt-0.5 rounded border-white/40 text-amber-500 focus:ring-amber-400 focus:ring-offset-0 bg-white/20"
                   />
                   <span>
-                    I agree to receive health education and companion app updates in accordance with the{' '}
+                    I agree to the{' '}
                     <Link
                       href="/privacy"
                       target="_blank"
@@ -273,7 +273,8 @@ export default function LeadMagnetCard({
                       className="underline text-amber-200 hover:text-white font-semibold"
                     >
                       Privacy Policy
-                    </Link>.
+                    </Link>{' '}
+                    and consent to receiving free account access details, companion app onboarding instructions, and educational diabetes health resources via email (with double opt-in confirmation).
                   </span>
                 </label>
               </div>

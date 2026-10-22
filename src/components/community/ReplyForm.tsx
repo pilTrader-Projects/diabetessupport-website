@@ -12,6 +12,7 @@ interface ReplyFormProps {
 export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) {
   const [alias, setAlias] = useState('');
   const [email, setEmail] = useState('');
+  const [notifyOnReply, setNotifyOnReply] = useState(false);
   const [content, setContent] = useState('');
   const [currentToken, setCurrentToken] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -31,6 +32,8 @@ export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) 
     setSubmitting(true);
     setError('');
 
+    const resolvedEmail = notifyOnReply && email.trim() ? email.trim() : undefined;
+
     try {
       const res = await fetch(`/api/v1/community/threads/${threadSlug}/replies`, {
         method: 'POST',
@@ -41,7 +44,7 @@ export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) 
         body: JSON.stringify({
           content: content.trim(),
           authorAlias: alias.trim(),
-          authorEmail: email.trim() || undefined,
+          authorEmail: resolvedEmail,
         }),
       });
 
@@ -54,7 +57,7 @@ export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) 
         localStorage.setItem('community_author_token', data.authorToken);
         localStorage.setItem('community_author_alias', data.reply.authorAlias);
         localStorage.setItem('community_author_tag', data.reply.authorTag);
-        if (email.trim()) localStorage.setItem('community_author_email', email.trim());
+        if (resolvedEmail) localStorage.setItem('community_author_email', resolvedEmail);
         setCurrentToken(data.authorToken);
       }
 
@@ -93,12 +96,29 @@ export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) 
               placeholder="you@example.com"
               className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             />
-            <p className="mt-1 text-[11px] text-slate-500 leading-tight">
-              Used solely to notify you when someone replies to this topic, under our{' '}
-              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-emerald-700 underline font-medium hover:text-emerald-900">
-                Privacy Policy
-              </Link>. Never shared or used for marketing.
-            </p>
+            {email.trim().length > 0 ? (
+              <div className="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg space-y-1">
+                <label className="flex items-center space-x-2 text-xs font-semibold text-emerald-900 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={notifyOnReply}
+                    onChange={(e) => setNotifyOnReply(e.target.checked)}
+                    className="rounded text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <span>Email me when someone replies to this discussion</span>
+                </label>
+                <p className="text-[11px] text-emerald-800 leading-tight">
+                  Used solely for transactional reply alerts under our{' '}
+                  <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-emerald-950">
+                    Privacy Policy
+                  </Link>. Never added to marketing sequences.
+                </p>
+              </div>
+            ) : (
+              <p className="mt-1 text-[11px] text-slate-500 leading-tight">
+                Provide an email to receive transactional alerts when members reply. Never used for marketing.
+              </p>
+            )}
           </div>
         </div>
         <div>
@@ -112,6 +132,15 @@ export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) 
             className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
           />
         </div>
+
+        {/* Public Health & Privacy Safe Harbor Notice */}
+        <div className="p-3 bg-amber-50/80 border border-amber-200/80 rounded-xl flex items-start gap-2.5 text-xs text-amber-900 leading-relaxed">
+          <span className="text-base shrink-0">⚠️</span>
+          <span>
+            <strong>Public Forum Notice:</strong> Discussions are publicly visible to all members. For your personal privacy and health safety, please do not include confidential medical records, diagnostic lab printouts, or sensitive personal identifiers.
+          </span>
+        </div>
+
         <div className="flex justify-end">
           <button
             type="submit"
