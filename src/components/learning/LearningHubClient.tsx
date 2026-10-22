@@ -8,6 +8,7 @@ import VideoPlayerModal from '@/components/learning/VideoPlayerModal';
 import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
+import { AffiliateLink } from '@/components/common/AffiliateLink';
 import {
   getSavedProtocolIds,
   saveProtocolResource,
@@ -1115,18 +1116,15 @@ export default function LearningHubClient({
                       </div>
 
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <a
+                        <AffiliateLink
                           href={item.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer sponsored"
-                          data-click-type="affiliate_card"
-                          data-book-title={item.title}
-                          data-card-position="feed_row"
-                          onClick={handleAffiliateClick}
+                          merchant="Amazon"
+                          label={item.title}
+                          position="feed_row"
                           className="inline-flex items-center text-xs font-bold text-amber-700 hover:text-amber-900 group/link px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
                         >
                           Get Book on Amazon ↗
-                        </a>
+                        </AffiliateLink>
 
                         <div className="flex items-center gap-1.5">
                           <button

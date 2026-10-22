@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ADSENSE_CONFIG } from '@/config/constants';
+import { getStoredConsent, CONSENT_CHANGED_EVENT } from '@/lib/consent';
 
 export interface AdUnitProps {
   slotId: string;
@@ -15,9 +16,10 @@ export interface AdUnitProps {
 /**
  * Zero-CLS Responsive Google AdSense Unit with Integrated House Ad Fallback.
  *
- * @usecase Renders AdSense ad slot with geometry reservation to eliminate layout shifts; renders fallback promotion when ads are un-filled or blocked.
+ * @usecase Renders AdSense ad slot only after explicit marketing consent is granted (Google Consent Mode v2 & ePrivacy).
+ * When consent is not yet granted or denied, displays a zero-cookie internal house promotion.
  * @param {AdUnitProps} props Ad slot identifier, format, and fallback style.
- * @dependencies ADSENSE_CONFIG, React useEffect.
+ * @dependencies ADSENSE_CONFIG, getStoredConsent, React useEffect.
  * @returns {JSX.Element} Rendered ad unit or house fallback promotion.
  */
 export default function AdUnit({
@@ -29,8 +31,27 @@ export default function AdUnit({
 }: AdUnitProps) {
   const adRef = useRef<HTMLModElement | null>(null);
   const [adFailed, setAdFailed] = useState(false);
+  const [hasMarketingConsent, setHasMarketingConsent] = useState(false);
 
   useEffect(() => {
+    const updateConsent = () => {
+      const stored = getStoredConsent();
+      setHasMarketingConsent(Boolean(stored?.marketing));
+    };
+
+    updateConsent();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener(CONSENT_CHANGED_EVENT, updateConsent);
+      return () => {
+        window.removeEventListener(CONSENT_CHANGED_EVENT, updateConsent);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasMarketingConsent) return;
+
     if (
       !ADSENSE_CONFIG.enabled ||
       !ADSENSE_CONFIG.publisherId ||
@@ -48,9 +69,9 @@ export default function AdUnit({
       console.warn('AdSense push error or AdBlocker detected:', err);
       setAdFailed(true);
     }
-  }, [slotId]);
+  }, [slotId, hasMarketingConsent]);
 
-  if (adFailed || !ADSENSE_CONFIG.enabled) {
+  if (!hasMarketingConsent || adFailed || !ADSENSE_CONFIG.enabled) {
     if (fallbackType === 'cheatsheet') {
       return (
         <div

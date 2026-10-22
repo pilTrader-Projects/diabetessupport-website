@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SymptomChecklist from '@/components/funnel/SymptomChecklist';
 import LeadCaptureForm from '@/components/funnel/LeadCaptureForm';
 import { CAMPAIGN_CODES } from '@/config/leadConfig';
+import { AffiliateLink } from '@/components/common/AffiliateLink';
 
 /**
  * Client-Side Interactive Funnel Container for the Insulin Reset Landing Page.
@@ -164,14 +165,15 @@ export default function InsulinResetClient(): React.JSX.Element {
         </div>
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
           This report was developed around the insulin-resistance and metabolic-health framework explored in{' '}
-          <a
-            href="https://link.amazon/B02qe2HZA"
-            target="_blank"
-            rel="noopener noreferrer sponsored"
+          <AffiliateLink
+            href="https://www.amazon.com/dp/1953295770"
+            merchant="Amazon"
+            label="Why We Get Sick by Dr. Benjamin Bikman, PhD"
+            position="funnel_authority_citation"
             className="font-semibold text-teal-700 hover:text-teal-900 underline decoration-teal-400 hover:decoration-teal-600 transition-colors"
           >
             <em>Why We Get Sick</em> by Dr. Benjamin Bikman, PhD
-          </a>
+          </AffiliateLink>
           . It examines how impaired glucose regulation begins years before standard diagnosis, and how recognizing early warning clues gives families the power to intervene before a crisis occurs.
         </p>
       </section>

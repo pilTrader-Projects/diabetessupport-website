@@ -13,7 +13,7 @@ import LearningHubClient from '@/components/learning/LearningHubClient';
 import { serializeRecommendedBooks } from '@/services/learning/AuthorityService';
 import { resolveRecommendedBooks } from '@/lib/recommendationResolver';
 import { buildLearningHubMedicalSchema } from '@/lib/learningSchema';
-import { formatTitle } from '@/lib/seo';
+import { buildMetadata, formatTitle } from '@/lib/seo';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -64,67 +64,39 @@ export async function generateMetadata({ searchParams }: BlogFeedPageProps): Pro
       }
 
       if (resource) {
-        const cleanTitle = formatTitle((resource.title || '').replace(/&nbsp;/g, ' '));
+        const cleanTitle = (resource.title || '').replace(/&nbsp;/g, ' ');
         const cleanDesc = resource.summary || 'Evidence-based metabolic health lecture and research.';
-        const shareUrl = `${baseUrl}/learn?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`;
-        let imageUrl = resource.thumbnailUrl || `${baseUrl}/icons/icon-512x512.png`;
-        if (imageUrl.startsWith('/')) {
-          imageUrl = `${baseUrl}${imageUrl}`;
-        }
+        const resourcePath = `/learn?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`;
+        const imageUrl = resource.thumbnailUrl || '/icons/icon-512x512.png';
 
-        return {
+        return buildMetadata({
           title: cleanTitle,
           description: cleanDesc,
-          alternates: {
-            canonical: `/learn?resource=${encodeURIComponent(resource.slug || resolvedParams.resource)}`,
-          },
-          openGraph: {
-            title: cleanTitle,
-            description: cleanDesc,
-            url: shareUrl,
-            siteName: SITE_CONFIG.author,
-            type: 'video.other',
-            images: [
-              {
-                url: imageUrl,
-                width: 1280,
-                height: 720,
-                alt: resource.title,
-              },
-            ],
-          },
-          twitter: {
-            card: 'summary_large_image',
-            title: cleanTitle,
-            description: cleanDesc,
-            images: [imageUrl],
-          },
-        };
+          path: resourcePath,
+          image: imageUrl,
+          imageWidth: 1280,
+          imageHeight: 720,
+          imageAlt: resource.title || cleanTitle,
+          type: 'website',
+        });
       }
     } catch (err) {
       console.error('Error generating dynamic metadata for resource share:', err);
     }
   }
 
-  const defaultTitle = formatTitle('Learning Materials & Evidence Hub');
-  return {
-    title: defaultTitle,
+  const baseMetadata = buildMetadata({
+    title: 'Learning Materials & Evidence Hub',
     description:
       'Curated educational library of video lectures, published literature, and expert discussions from independent clinicians on low-carbohydrate nutrition, fasting physiology, and metabolic health literacy.',
-    openGraph: {
-      title: defaultTitle,
-      description: SITE_CONFIG.description,
-      url: `${baseUrl}/learn`,
-      siteName: SITE_CONFIG.author,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: defaultTitle,
-      description: SITE_CONFIG.description,
-    },
+    path: '/learn',
+    image: '/icons/icon-512x512.png',
+  });
+
+  return {
+    ...baseMetadata,
     alternates: {
-      canonical: `${baseUrl}/learn`,
+      ...baseMetadata.alternates,
       types: {
         'application/rss+xml': `${baseUrl}/feed.xml`,
       },

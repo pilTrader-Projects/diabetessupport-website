@@ -91,8 +91,8 @@ describe('Insulin Reset Lead Capture Funnel - UI & Schema Tests', () => {
         path.resolve(__dirname, '../../src/components/funnel/InsulinResetClient.tsx'),
         'utf-8'
       );
-      expect(fileContent).toContain('https://link.amazon/B02qe2HZA');
-      expect(fileContent).toContain('rel="noopener noreferrer sponsored"');
+      expect(fileContent).toContain('https://www.amazon.com/dp/1953295770');
+      expect(fileContent).toContain('AffiliateLink');
       expect(fileContent).toContain('Why We Get Sick');
     });
   });

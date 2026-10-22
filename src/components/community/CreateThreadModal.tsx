@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { COMMUNITY_CONFIG } from '@/config/constants';
 
 interface CreateThreadModalProps {
@@ -180,13 +181,26 @@ export default function CreateThreadModal({
                 <span>Email me when someone replies to this topic</span>
               </label>
               {notify && (
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your.email@example.com"
-                  className="w-full px-3 py-2 bg-white border border-teal-300 rounded-lg text-xs"
-                />
+                <>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your.email@example.com"
+                    className="w-full px-3 py-2 bg-white border border-teal-300 rounded-lg text-xs"
+                  />
+                  <p className="text-[11px] text-teal-850 leading-tight text-teal-900">
+                    Used solely for reply notifications under our{' '}
+                    <Link
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-teal-950 font-bold underline"
+                    >
+                      Privacy Policy
+                    </Link>. Never shared or used for marketing.
+                  </p>
+                </>
               )}
             </div>
           )}

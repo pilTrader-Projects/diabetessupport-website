@@ -105,6 +105,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [x] **Item P1-05** [COMPLETED / MERGED] (PR #77, Closes #76): GA4 Conversion Event Dispatchers in `src/analytics` (`email_signup`, `lead_magnet_download`, `roadmap_step_click`, `checkout_click`).
 - [x] **Item P1-06** [COMPLETED / MERGED] (PR #79, Closes #78): Standardized `<AffiliateLink />` Component with disclosure & `scripts/check-affiliate-links.ts`.
 - [x] **Item P1-07** [COMPLETED / MERGED] (PR #81, Closes #80): Data-Rights Tooling (`scripts/data-request.ts` export/delete & `DataRequestLog` model).
+- [x] **Item P1-REMEDY** [IN PROGRESS] (Issue #82): Phase 1 Evaluator Gap Remediation (metadata canonicalization on `/learn` and `/community/[slug]`, `AdUnit` consent-gating with zero-cookie house fallbacks, affirmative consent on `LeadMagnetCard`, standardizing affiliate components and sanitizing MongoDB authority book URLs).
 - [x] **Item P0-01** [COMPLETED / MERGED] (PR #63 & PR #65, Closes #64): Complete Legal Pages Suite (`/privacy`, `/terms`, `/refund-policy`, `/medical-disclaimer`, `/disclosure`, `/copyright`) with front-matter metadata, shared layout, DRAFT legal placeholders, sitemap, footer nav, and 22 Playwright regression tests.
 - [x] **Item P0-03** [COMPLETED / MERGED] (PR #73, Closes #72): Claims, Content & Endorsement Audit (replace "zero ads", frame GlycoSense as personal logging, YouTube attributions).
 - [ ] **Item P0-GATE**: Priority 0 Gate Checklist Sign-Off (DTI/BIR, DPO, Claims audit, merchant-of-record approved).

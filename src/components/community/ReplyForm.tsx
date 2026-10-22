@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { IReply } from '@/types/community';
 
 interface ReplyFormProps {
@@ -92,6 +93,12 @@ export default function ReplyForm({ threadSlug, onReplyAdded }: ReplyFormProps) 
               placeholder="you@example.com"
               className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             />
+            <p className="mt-1 text-[11px] text-slate-500 leading-tight">
+              Used solely to notify you when someone replies to this topic, under our{' '}
+              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-emerald-700 underline font-medium hover:text-emerald-900">
+                Privacy Policy
+              </Link>. Never shared or used for marketing.
+            </p>
           </div>
         </div>
         <div>
