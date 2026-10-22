@@ -213,4 +213,80 @@ describe('BrevoService Unit Tests', () => {
       expect(result.error).toContain('Network offline');
     });
   });
+
+  describe('getContact()', () => {
+    it('should return sandbox contact when BREVO_API_KEY is not configured', async () => {
+      delete process.env.BREVO_API_KEY;
+
+      const result = await BrevoService.getContact('user@example.com');
+      expect(result.success).toBe(true);
+      expect(result.sandbox).toBe(true);
+      expect(result.contact).toBeNull();
+    });
+
+    it('should fetch contact profile and attributes when BREVO_API_KEY is configured', async () => {
+      process.env.BREVO_API_KEY = 'xkeysib-mock-test-key';
+
+      const mockContactData = {
+        email: 'user@example.com',
+        id: 1234,
+        attributes: { FIRSTNAME: 'Juan', METABOLIC_STAGE: 'EARLY_STAGE_HYPERINSULINEMIA' },
+      };
+
+      global.fetch = jest.fn().mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => mockContactData,
+      });
+
+      const result = await BrevoService.getContact('user@example.com');
+      expect(result.success).toBe(true);
+      expect(result.contact).toEqual(mockContactData);
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://api.brevo.com/v3/contacts/user%40example.com',
+        expect.objectContaining({ method: 'GET' })
+      );
+    });
+
+    it('should return null contact if contact does not exist (HTTP 404)', async () => {
+      process.env.BREVO_API_KEY = 'xkeysib-mock-test-key';
+
+      global.fetch = jest.fn().mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+      });
+
+      const result = await BrevoService.getContact('missing@example.com');
+      expect(result.success).toBe(true);
+      expect(result.contact).toBeNull();
+    });
+  });
+
+  describe('deleteContact()', () => {
+    it('should return sandbox deletion when BREVO_API_KEY is not configured', async () => {
+      delete process.env.BREVO_API_KEY;
+
+      const result = await BrevoService.deleteContact('user@example.com');
+      expect(result.success).toBe(true);
+      expect(result.sandbox).toBe(true);
+      expect(result.deleted).toBe(true);
+    });
+
+    it('should delete contact via DELETE API call when BREVO_API_KEY is configured', async () => {
+      process.env.BREVO_API_KEY = 'xkeysib-mock-test-key';
+
+      global.fetch = jest.fn().mockResolvedValueOnce({
+        ok: true,
+        status: 204,
+      });
+
+      const result = await BrevoService.deleteContact('user@example.com');
+      expect(result.success).toBe(true);
+      expect(result.deleted).toBe(true);
+      expect(global.fetch).toHaveBeenCalledWith(
+        'https://api.brevo.com/v3/contacts/user%40example.com',
+        expect.objectContaining({ method: 'DELETE' })
+      );
+    });
+  });
 });
