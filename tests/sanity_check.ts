@@ -196,6 +196,7 @@ async function runSanityCheck() {
         'src/components/learning/StepDetailClient.tsx',
         'src/components/learning/LearningRoadmapSection.tsx',
         'src/components/learning/LearningHubClient.tsx',
+        'src/components/learning/SponsoredBadge.tsx',
         'src/lib/affiliateFlankUtils.ts',
         'src/app/learn/page.tsx',
         'src/app/learn/roadmap/[step]/page.tsx',
@@ -217,6 +218,7 @@ async function runSanityCheck() {
         'tests/e2e/regression/affiliate_links.spec.ts',
         'tests/e2e/regression/roadmap_integrity.spec.ts',
         'tests/e2e/regression/roadmap_step_pages.spec.ts',
+        'tests/e2e/regression/sponsored_labelling.spec.ts',
         '.github/workflows/ci.yml'
     ];
 

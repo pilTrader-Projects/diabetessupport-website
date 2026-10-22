@@ -119,8 +119,8 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 
 - [x] **Item P2-01** [COMPLETED / MERGED] (PR #85, Closed #84): Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
 - [x] **Item P2-02** [COMPLETED / MERGED] (PR #88, Closed #87): 5-Step Roadmap UI above Catalog on `/learn` (`src/app/learn/page.tsx`).
-- [x] **Item P2-03** [COMPLETED] (Issue #89, branch `89-roadmap-step-pages`): Individual Shareable Step Pages (`src/app/learn/roadmap/[step]/page.tsx`).
-- [ ] **Item P2-04**: Catalog Hygiene & Sponsored Content Labelling (`LearningResourceModel`).
+- [x] **Item P2-03** [COMPLETED / MERGED] (PR #90, Closed #89): Individual Shareable Step Pages (`src/app/learn/roadmap/[step]/page.tsx`).
+- [x] **Item P2-04** [COMPLETED] (Closes #91, branch `91-catalog-hygiene-sponsored`): Catalog Hygiene & Sponsored Content Labelling (`LearningResourceModel`, `SponsoredBadge`, `ClinicalSafetyBox`).
 
 ### Milestone 28: Site Revision - ₱299 Starter Pack Monetization Funnel (Phase 3)
 - [ ] **Item P3-01**: Starter Pack Digital Product Assets (30-day meal plan, logs, doctor questions reviewed by dietitian).
