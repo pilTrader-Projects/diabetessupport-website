@@ -82,6 +82,7 @@ export function AffiliateLink({
       data-click-type="affiliate_card"
       data-book-title={itemName}
       data-card-position={position}
+      data-merchant={detectedMerchant}
       className={className}
       {...rest}
     >

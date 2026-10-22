@@ -23,6 +23,24 @@ describe('LeadMagnetCard and NewsletterOptInForm Native Lead Capture Components'
       expect(element.props.title).toBe('Custom Protective Tracking');
       expect(element.props.source).toBe('companion_app_users');
     });
+
+    it('renders with an unticked affirmative consent checkbox linking to /privacy', () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const ReactDOMServer = require('react-dom/server');
+      const html = ReactDOMServer.renderToString(
+        <LeadMagnetCard
+          title="Custom Protective Tracking"
+          subtitle="Custom subtitle description"
+          source="companion_app_users"
+        />
+      );
+
+      expect(html).toContain('type="email"');
+      expect(html).toContain('type="checkbox"');
+      expect(html).toContain('/privacy');
+      expect(html).toContain('Privacy Policy');
+      expect(html).not.toMatch(/checked=""/);
+    });
   });
 
   describe('NewsletterOptInForm Component', () => {

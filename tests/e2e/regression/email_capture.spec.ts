@@ -116,4 +116,52 @@ test.describe('P1-04 Unified EmailCapture & Consent Architecture', () => {
     const leadForm = page.locator('#lead-form');
     await expect(leadForm).toBeInViewport();
   });
+
+  test('TC-06: LeadMagnetCard on /glycosense enforces affirmative consent before claim submission', async ({ page }) => {
+    // Pre-set consent cookie so banner doesn't obstruct form
+    await page.context().addCookies([
+      {
+        name: 'bts_consent_preferences',
+        value: encodeURIComponent(
+          JSON.stringify({
+            necessary: true,
+            analytics: false,
+            marketing: false,
+            version: 1,
+            updatedAt: new Date().toISOString(),
+          })
+        ),
+        domain: 'localhost',
+        path: '/',
+      },
+    ]);
+
+    await page.goto('/glycosense');
+
+    const emailInput = page.locator('#lead-magnet-email');
+    await emailInput.scrollIntoViewIfNeeded();
+    await expect(emailInput).toBeVisible();
+
+    const consentCheckbox = page.locator('#lead-magnet-consent-checkbox');
+    await expect(consentCheckbox).toBeVisible();
+    await expect(consentCheckbox).not.toBeChecked();
+
+    // Fill valid email but leave consent unticked
+    await emailInput.fill('maria.lead@example.ph');
+    const submitBtn = page.locator('button[type="submit"]:has-text("Claim Your Free")');
+    await submitBtn.click();
+
+    // Verifies accessibility alert requirement
+    const errorAlert = page.locator('[role="alert"]:has-text("agree to the privacy policy")');
+    await expect(errorAlert).toBeVisible();
+
+    // Now tick consent and submit
+    await consentCheckbox.check();
+    await submitBtn.click();
+
+    // Verify success confirmation card displays
+    const successCard = page.locator('h5:has-text("Free Account Access Ready!")');
+    await expect(successCard).toBeVisible({ timeout: 10000 });
+  });
 });
+

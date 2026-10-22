@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { IAffiliateRecommendation } from '@/types/learning';
 import { stopPropagation } from '@/lib/affiliateFlankUtils';
 import { handleAffiliateClick } from '@/analytics/handlers/handleAffiliateClick';
@@ -85,16 +86,16 @@ export default function AffiliateCompanionCard({
               <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-400/15 border border-amber-400/30 px-1.5 py-0.5 rounded-full inline-block">
                 {book.badgeText || 'Companion Book'}
               </span>
-              <span
-                onClick={(e) => {
-                  stopPropagation(e);
-                  window.open('/disclosure', '_blank', 'noopener,noreferrer');
-                }}
-                className="text-[9px] text-amber-200/80 hover:text-amber-300 underline cursor-pointer transition-colors"
+              <Link
+                href="/disclosure"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => stopPropagation(e)}
+                className="text-[9px] text-amber-200/90 hover:text-amber-300 underline transition-colors"
                 title="View affiliate monetization disclosure"
               >
-                (affiliate link)
-              </span>
+                (affiliate link) ↗
+              </Link>
             </div>
 
             <h4 className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">

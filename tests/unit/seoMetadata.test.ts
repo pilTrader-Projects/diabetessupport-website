@@ -137,5 +137,19 @@ describe('SEO Metadata Helper (src/lib/seo.ts) & Canonical Validation (P1-02)', 
       expect(hiddenClockMetadata.openGraph?.url).toBe('https://www.beforethenumbers.org/hidden-clock');
       expect(hiddenClockMetadata.alternates?.canonical).not.toContain('/insulin-reset');
     });
+
+    it('verifies /learn generateMetadata has canonical equal to og:url and site name exactly once in title', async () => {
+      const { generateMetadata: generateLearnMetadata } = await import('@/app/learn/page');
+      const meta = await generateLearnMetadata({});
+      const titleStr = typeof meta.title === 'string' ? meta.title : '';
+
+      expect(titleStr).toContain('Before the Numbers');
+      const siteCount = (titleStr.match(/Before the Numbers/g) || []).length;
+      expect(siteCount).toBe(1);
+
+      expect(meta.alternates?.canonical).toBe('https://www.beforethenumbers.org/learn');
+      expect(meta.openGraph?.url).toBe('https://www.beforethenumbers.org/learn');
+      expect(meta.alternates?.canonical).toBe(meta.openGraph?.url);
+    });
   });
 });

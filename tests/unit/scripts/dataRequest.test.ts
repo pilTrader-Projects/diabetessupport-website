@@ -72,14 +72,14 @@ jest.mock('../../../src/services/brevoService', () => ({
 
 describe('Data Rights Management Tooling (scripts/data-request.ts)', () => {
   const testEmail = 'patient.juan@example.ph';
-  const expectedHash = crypto.createHash('sha256').update(testEmail).digest('hex');
+  const expectedHash = hashEmail(testEmail);
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('hashEmail() - Anonymization & Data Minimization', () => {
-    it('computes a deterministic 64-character SHA-256 hex hash', () => {
+    it('computes a deterministic 64-character HMAC-SHA256 hex hash', () => {
       const hash = hashEmail(testEmail);
       expect(hash).toHaveLength(64);
       expect(hash).toBe(expectedHash);
@@ -94,6 +94,12 @@ describe('Data Rights Management Tooling (scripts/data-request.ts)', () => {
       const hash1 = hashEmail('user1@example.com');
       const hash2 = hashEmail('user2@example.com');
       expect(hash1).not.toBe(hash2);
+    });
+
+    it('supports custom salt secret keys', () => {
+      const customHash = hashEmail(testEmail, 'custom_secret_key_123');
+      expect(customHash).toHaveLength(64);
+      expect(customHash).not.toBe(expectedHash);
     });
   });
 

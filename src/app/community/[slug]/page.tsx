@@ -7,6 +7,8 @@ import Reply from '@/models/Reply';
 import ThreadViewClient from '@/components/community/ThreadViewClient';
 import { buildDiscussionForumPostingSchema, buildBreadcrumbSchema } from '@/lib/schema';
 import { SITE_CONFIG } from '@/config/constants';
+import { stripMarkdown } from '@/lib/markdownUtils';
+import { buildMetadata } from '@/lib/seo';
 
 interface ThreadPageProps {
   params: Promise<{ slug: string }>;
@@ -18,30 +20,25 @@ export async function generateMetadata({ params }: ThreadPageProps): Promise<Met
   const thread = await Thread.findOne({ slug }).lean();
 
   if (!thread || thread.status === 'archived') {
-    return {
-      title: `Discussion Not Found | Before the Numbers`,
+    return buildMetadata({
+      title: 'Discussion Not Found',
       description: 'The requested community discussion could not be found.',
-    };
+      path: `/community/${slug}`,
+      noIndex: true,
+    });
   }
 
   const isQuarantined = thread.status === 'flagged' || (thread.reportCount && thread.reportCount >= 2);
-  const threadUrl = `https://${SITE_CONFIG.domain}/community/${thread.slug}`;
+  const rawSnippet = stripMarkdown(thread.content || '').slice(0, 155).trim();
+  const cleanDescription = rawSnippet || 'Community peer discussion on metabolic health.';
 
-  return {
-    title: `${thread.title} | Before the Numbers Community`,
-    description: thread.content.slice(0, 155),
-    alternates: {
-      canonical: threadUrl,
-    },
-    robots: isQuarantined ? { index: false, follow: false } : { index: true, follow: true },
-    openGraph: {
-      title: thread.title,
-      description: thread.content.slice(0, 155),
-      url: threadUrl,
-      siteName: 'Before the Numbers Community',
-      type: 'article',
-    },
-  };
+  return buildMetadata({
+    title: `${thread.title} | Community`,
+    description: cleanDescription,
+    path: `/community/${thread.slug}`,
+    noIndex: Boolean(isQuarantined),
+    type: 'article',
+  });
 }
 
 export default async function ThreadPage({ params }: ThreadPageProps) {

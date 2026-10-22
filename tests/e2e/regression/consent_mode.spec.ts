@@ -169,4 +169,39 @@ test.describe('Google Consent Mode v2 & ConsentBanner Regression (P1-03)', () =>
     await page.keyboard.press('Escape');
     await expect(modal).not.toBeVisible();
   });
+
+  test('TC-06: AdUnit renders zero-cookie house promotion on /learn when marketing consent is denied', async ({ page }) => {
+    // Visit with explicit marketing consent = false
+    await page.context().addCookies([
+      {
+        name: 'bts_consent_preferences',
+        value: encodeURIComponent(
+          JSON.stringify({
+            necessary: true,
+            analytics: false,
+            marketing: false,
+            version: 1,
+            updatedAt: new Date().toISOString(),
+          })
+        ),
+        domain: 'localhost',
+        path: '/',
+      },
+    ]);
+
+    await page.goto('/learn');
+
+    // Confirm that AdSense <ins> tags are NOT rendered
+    const adIns = page.locator('ins.adsbygoogle');
+    await expect(adIns).toHaveCount(0);
+
+    // Confirm "Advertisement" label is NOT shown
+    const adLabel = page.locator('span:has-text("Advertisement")');
+    await expect(adLabel).toHaveCount(0);
+
+    // Confirm the zero-cookie house promotion is displayed instead
+    const housePromo = page.locator('text=Explore GlycoSense Free');
+    await expect(housePromo.first()).toBeVisible();
+  });
 });
+

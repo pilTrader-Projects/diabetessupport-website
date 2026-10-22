@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { CAMPAIGN_CODES } from '@/config/leadConfig';
+import { dispatchEmailSignup } from '@/analytics';
 
 export interface LeadMagnetCardProps {
   title?: string;
@@ -12,9 +14,9 @@ export interface LeadMagnetCardProps {
 /**
  * Lead Magnet Promotional Card Component.
  *
- * @usecase Captures companion app leads natively on-page and enrolls them into Brevo companion_app_users list.
+ * @usecase Captures companion app leads natively on-page with affirmative RA 10173 consent and enrolls them into Brevo.
  * @param {LeadMagnetCardProps} props Custom parameters (title, subtitle, source).
- * @dependencies /api/v1/subscribe REST API endpoint, Tailwind CSS.
+ * @dependencies /api/v1/subscribe REST API endpoint, dispatchEmailSignup, Tailwind CSS.
  * @returns {JSX.Element} Rendered promotional card container with native lead capture.
  */
 export default function LeadMagnetCard({
@@ -24,6 +26,7 @@ export default function LeadMagnetCard({
 }: LeadMagnetCardProps): React.JSX.Element {
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
+  const [consentChecked, setConsentChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [appName, setAppName] = useState('GlycoSense');
@@ -70,6 +73,11 @@ export default function LeadMagnetCard({
       return;
     }
 
+    if (!consentChecked) {
+      setErrorMsg('You must agree to the privacy policy to continue.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -80,6 +88,9 @@ export default function LeadMagnetCard({
           firstName: firstName.trim() || undefined,
           email: cleanEmail,
           source: source || CAMPAIGN_CODES.COMPANION_APP_USERS,
+          consent: true,
+          edition: 'ph',
+          noticeVersion: '2026.1',
         }),
       });
 
@@ -94,8 +105,18 @@ export default function LeadMagnetCard({
         const resolvedTitle = data.successTitle || 'Free Account Access Ready!';
         const resolvedMsg =
           data.message ||
-          'Your free account access is ready! Click below to launch your companion app immediately.';
+          'Your free account access is ready! Click below to launch your companion app immediately. Please check your inbox for double opt-in confirmation.';
         const resolvedTab = data.openInNewTab !== undefined ? Boolean(data.openInNewTab) : openInNewTab;
+
+        // Dispatch GA4 conversion event
+        try {
+          dispatchEmailSignup({
+            source: source || CAMPAIGN_CODES.COMPANION_APP_USERS,
+            edition: 'ph',
+          });
+        } catch {
+          // Passive telemetry
+        }
 
         setSuccessData({
           successTitle: resolvedTitle,
@@ -108,6 +129,7 @@ export default function LeadMagnetCard({
 
         setEmail('');
         setFirstName('');
+        setConsentChecked(false);
       }
     } catch {
       setErrorMsg('Network error. Please try again later.');
@@ -230,6 +252,31 @@ export default function LeadMagnetCard({
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full min-h-[46px] px-4 py-2.5 bg-white text-slate-900 placeholder-slate-400 rounded-xl text-sm border border-white/30 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
+              </div>
+
+              {/* Affirmative Consent Checkbox (RA 10173 & GDPR) */}
+              <div className="pt-1">
+                <label className="flex items-start gap-2.5 cursor-pointer text-xs text-purple-100/90 leading-snug select-none">
+                  <input
+                    id="lead-magnet-consent-checkbox"
+                    type="checkbox"
+                    checked={consentChecked}
+                    onChange={(e) => setConsentChecked(e.target.checked)}
+                    className="mt-0.5 rounded border-white/40 text-amber-500 focus:ring-amber-400 focus:ring-offset-0 bg-white/20"
+                  />
+                  <span>
+                    I agree to the{' '}
+                    <Link
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-amber-200 hover:text-white font-semibold"
+                    >
+                      Privacy Policy
+                    </Link>{' '}
+                    and consent to receiving free account access details, companion app onboarding instructions, and educational diabetes health resources via email (with double opt-in confirmation).
+                  </span>
+                </label>
               </div>
 
               {errorMsg && (

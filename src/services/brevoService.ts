@@ -5,7 +5,7 @@
  * @dependencies process.env.BREVO_API_KEY.
  */
 
-import { BREVO_ATTRIBUTES } from '@/config/leadConfig';
+import { BREVO_ATTRIBUTES } from '../config/leadConfig';
 
 export interface BrevoContactParams {
   email: string;

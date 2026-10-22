@@ -10,6 +10,9 @@ export interface BuildMetadataOptions {
   path: string;
   keywords?: string[];
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
   noIndex?: boolean;
   type?: 'website' | 'article';
 }
@@ -85,6 +88,9 @@ export function buildMetadata(options: BuildMetadataOptions): Metadata {
     path,
     keywords,
     image,
+    imageWidth = 1200,
+    imageHeight = 630,
+    imageAlt,
     noIndex = false,
     type = 'website',
   } = options;
@@ -114,9 +120,9 @@ export function buildMetadata(options: BuildMetadataOptions): Metadata {
       images: [
         {
           url: resolvedImage,
-          width: 1200,
-          height: 630,
-          alt: fullTitle,
+          width: imageWidth,
+          height: imageHeight,
+          alt: imageAlt || fullTitle,
         },
       ],
     },
