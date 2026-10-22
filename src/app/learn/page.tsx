@@ -225,11 +225,11 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
       />
 
       <LearningHubClient
-        initialAuthorities={allAuthorities}
-        initialPodcastChannels={allPodcastChannels}
-        initialResources={allResources}
-        initialArticles={allPosts}
-        initialRoadmap={initialRoadmap}
+        initialAuthorities={JSON.parse(JSON.stringify(allAuthorities))}
+        initialPodcastChannels={JSON.parse(JSON.stringify(allPodcastChannels))}
+        initialResources={JSON.parse(JSON.stringify(allResources))}
+        initialArticles={JSON.parse(JSON.stringify(allPosts))}
+        initialRoadmap={JSON.parse(JSON.stringify(initialRoadmap))}
         edition={edition}
         initialSearch={searchQuery}
         initialTopic={activeCategory}

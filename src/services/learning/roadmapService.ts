@@ -183,6 +183,9 @@ export async function getRoadmap(
 
       return {
         ...baseResource,
+        _id: baseResource._id ? baseResource._id.toString() : '',
+        authorityId: baseResource.authorityId ? baseResource.authorityId.toString() : undefined,
+        podcastChannelId: baseResource.podcastChannelId ? baseResource.podcastChannelId.toString() : undefined,
         editionNote: note,
       };
     });
