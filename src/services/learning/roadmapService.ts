@@ -91,13 +91,23 @@ async function fetchRawRoadmapResources(
 ): Promise<Map<string, ILearningResource & { sponsored?: boolean }>> {
   await dbConnect();
 
-  const rawResources = await LearningResourceModel.find({
+  const query: any = LearningResourceModel.find({
     slug: { $in: Array.from(slugs) },
     status: 'published',
-  }).lean<Array<ILearningResource & { sponsored?: boolean }>>();
+  });
+
+  let rawResources: any[] = [];
+  if (typeof query.lean === 'function') {
+    rawResources = await query.lean();
+  } else if (typeof query.sort === 'function') {
+    const sorted = query.sort();
+    rawResources = typeof sorted.lean === 'function' ? await sorted.lean() : await sorted;
+  } else {
+    rawResources = await query;
+  }
 
   const resourceMap = new Map<string, ILearningResource & { sponsored?: boolean }>();
-  for (const resource of rawResources) {
+  for (const resource of (rawResources || [])) {
     resourceMap.set(resource.slug, resource);
   }
 

@@ -16,12 +16,16 @@ import {
 } from '@/lib/savedProtocolUtils';
 import { attachAffiliateTracking } from '@/analytics/trackers/affiliateTracker';
 import { handleAffiliateClick } from '@/analytics/handlers/handleAffiliateClick';
+import LearningRoadmapSection from '@/components/learning/LearningRoadmapSection';
+import { ResolvedRoadmapStep } from '@/services/learning/roadmapService';
 
 interface LearningHubClientProps {
   initialAuthorities: IAuthority[];
   initialPodcastChannels?: IPodcastChannel[];
   initialResources: ILearningResource[];
   initialArticles: IPost[];
+  initialRoadmap?: ResolvedRoadmapStep[];
+  edition?: 'global' | 'ph';
   initialSearch?: string;
   initialTopic?: string;
   initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study' | 'book' | 'saved';
@@ -35,6 +39,8 @@ export default function LearningHubClient({
   initialPodcastChannels = [],
   initialResources,
   initialArticles,
+  initialRoadmap = [],
+  edition = 'global',
   initialSearch = '',
   initialTopic = 'All',
   initialFormat = 'all',
@@ -72,6 +78,7 @@ export default function LearningHubClient({
   const [selectedTopic, setSelectedTopic] = useState<string>(initialTopic);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState<boolean>(false);
+  const [isCatalogExpandedOnMobile, setIsCatalogExpandedOnMobile] = useState<boolean>(false);
 
   // Modal & Drawer State
   const [playingResource, setPlayingResource] = useState<ILearningResource | null>(null);
@@ -391,8 +398,37 @@ export default function LearningHubClient({
         </p>
       </div>
 
+      {/* 5-Step Learning Roadmap Section (P2-02) */}
+      {initialRoadmap && initialRoadmap.length > 0 && (
+        <LearningRoadmapSection
+          steps={initialRoadmap}
+          edition={edition}
+          onPlayResource={(resource) => {
+            setPlayingResource(resource);
+            setIsPlayerOpen(true);
+          }}
+        />
+      )}
+
+      {/* Mobile Catalog Collapse / Expand Toggle (< 768px) */}
+      <div className="md:hidden">
+        <button
+          type="button"
+          onClick={() => setIsCatalogExpandedOnMobile(!isCatalogExpandedOnMobile)}
+          className="w-full py-3.5 px-4 rounded-2xl bg-white border border-slate-200 text-slate-800 font-extrabold text-sm flex items-center justify-between shadow-xs hover:bg-slate-50 transition-colors"
+        >
+          <span className="flex items-center gap-2">
+            <span>📚</span>
+            <span>Browse Full Resource Catalog ({allItems.length}+ Materials)</span>
+          </span>
+          <span className="text-purple-700 text-xs font-bold bg-purple-50 px-2.5 py-1 rounded-xl border border-purple-200">
+            {isCatalogExpandedOnMobile ? 'Collapse Catalog ▲' : 'Expand Catalog ▼'}
+          </span>
+        </button>
+      </div>
+
       {/* 2-Column App & Media Layout: Left Sidebar Filter Panel + Right Content Grid */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start relative">
+      <div className={`${isCatalogExpandedOnMobile ? 'flex' : 'hidden md:flex'} flex-col lg:flex-row gap-8 items-start relative`}>
         {/* Left Sidebar Filter Panel (Sticky on Desktop) */}
         <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 lg:sticky lg:top-20 self-start z-30">
           {/* Mobile Filter Toggle Button */}

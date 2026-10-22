@@ -118,7 +118,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 > - **Production Release**: Once all Phase 2 features are implemented, reviewed, tested, and polished, Epic PR #86 will be merged into `main` to deploy to production.
 
 - [x] **Item P2-01** [COMPLETED / MERGED] (PR #85, Closed #84): Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
-- [ ] **Item P2-02**: 5-Step Roadmap UI above Catalog on `/learn` (`src/app/learn/page.tsx`).
+- [x] **Item P2-02** [COMPLETED / PR OPEN] (PR #88, Closes #87): 5-Step Roadmap UI above Catalog on `/learn` (`src/app/learn/page.tsx`).
 - [ ] **Item P2-03**: Individual Shareable Step Pages (`src/app/learn/roadmap/[step]/page.tsx`).
 - [ ] **Item P2-04**: Catalog Hygiene & Sponsored Content Labelling (`LearningResourceModel`).
 
