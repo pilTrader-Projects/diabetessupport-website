@@ -186,4 +186,89 @@ export class BrevoService {
       return { success: false, error: err.message || 'Network error communicating with Brevo' };
     }
   }
+
+  /**
+   * Retrieves a contact's profile and custom attributes from Brevo for data subject access requests.
+   */
+  public static async getContact(email: string): Promise<{
+    success: boolean;
+    contact?: any;
+    error?: string;
+    sandbox?: boolean;
+  }> {
+    const apiKey = process.env.BREVO_API_KEY;
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!apiKey) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Brevo Sandbox]: BREVO_API_KEY missing. Returning sandbox contact lookup for ${cleanEmail}`);
+      }
+      return { success: true, sandbox: true, contact: null };
+    }
+
+    try {
+      const response = await fetch(`${this.BASE_URL}/contacts/${encodeURIComponent(cleanEmail)}`, {
+        method: 'GET',
+        headers: {
+          'api-key': apiKey,
+          Accept: 'application/json',
+        },
+      });
+
+      if (response.status === 404) {
+        return { success: true, contact: null };
+      }
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        return { success: false, error: data.message || `Brevo HTTP error ${response.status}` };
+      }
+
+      const data = await response.json();
+      return { success: true, contact: data };
+    } catch (err: any) {
+      console.error('Brevo getContact network error:', err);
+      return { success: false, error: err.message || 'Network error communicating with Brevo' };
+    }
+  }
+
+  /**
+   * Permanently deletes a contact from Brevo in accordance with data erasure rights.
+   */
+  public static async deleteContact(email: string): Promise<{
+    success: boolean;
+    deleted?: boolean;
+    error?: string;
+    sandbox?: boolean;
+  }> {
+    const apiKey = process.env.BREVO_API_KEY;
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!apiKey) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Brevo Sandbox]: BREVO_API_KEY missing. Returning sandbox deletion for ${cleanEmail}`);
+      }
+      return { success: true, sandbox: true, deleted: true };
+    }
+
+    try {
+      const response = await fetch(`${this.BASE_URL}/contacts/${encodeURIComponent(cleanEmail)}`, {
+        method: 'DELETE',
+        headers: {
+          'api-key': apiKey,
+          Accept: 'application/json',
+        },
+      });
+
+      if (response.status === 204 || response.status === 200 || response.status === 404) {
+        return { success: true, deleted: true };
+      }
+
+      const data = await response.json().catch(() => ({}));
+      return { success: false, error: data.message || `Brevo HTTP error ${response.status}` };
+    } catch (err: any) {
+      console.error('Brevo deleteContact network error:', err);
+      return { success: false, error: err.message || 'Network error communicating with Brevo' };
+    }
+  }
 }
