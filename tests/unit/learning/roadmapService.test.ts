@@ -1,5 +1,18 @@
-import { ROADMAP_STEPS, RoadmapStep } from '@/config/roadmap';
-import { getRoadmap, clearRoadmapCache, validateRoadmapIntegrity } from '@/services/learning/roadmapService';
+import {
+  ROADMAP_STEPS,
+  RoadmapStep,
+  ALL_ROADMAP_SLUGS,
+  TOTAL_ROADMAP_STEPS,
+  normalizeEdition,
+  getRoadmapStepConfig,
+} from '@/config/roadmap';
+import {
+  getRoadmap,
+  getRoadmapStepById,
+  clearRoadmapCache,
+  validateRoadmapIntegrity,
+  RoadmapIntegrityError,
+} from '@/services/learning/roadmapService';
 import { LearningResourceModel } from '@/models/LearningResource';
 import { dbConnect } from '@/lib/dbConnect';
 
@@ -103,9 +116,10 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
     clearRoadmapCache();
   });
 
-  describe('ROADMAP_STEPS Configuration Integrity', () => {
-    it('defines exactly 5 ordered learning roadmap steps', () => {
+  describe('ROADMAP_STEPS Configuration & Memoized Constants', () => {
+    it('defines exactly 5 ordered learning roadmap steps and matches TOTAL_ROADMAP_STEPS', () => {
       expect(ROADMAP_STEPS).toHaveLength(5);
+      expect(TOTAL_ROADMAP_STEPS).toBe(5);
       expect(ROADMAP_STEPS.map((s) => s.order)).toEqual([1, 2, 3, 4, 5]);
     });
 
@@ -127,6 +141,33 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
       expect(step5).toBeDefined();
       expect(step5?.safetyNote).toBeDefined();
       expect(step5?.safetyNote).toContain('consult your prescribing physician');
+    });
+
+    it('ALL_ROADMAP_SLUGS contains all 10 unique slugs and is immutable (frozen)', () => {
+      expect(ALL_ROADMAP_SLUGS).toHaveLength(10);
+      expect(Object.isFrozen(ALL_ROADMAP_SLUGS)).toBe(true);
+    });
+
+    it('normalizeEdition handles casing, whitespace, and falls back to global', () => {
+      expect(normalizeEdition('ph')).toBe('ph');
+      expect(normalizeEdition('PH')).toBe('ph');
+      expect(normalizeEdition('  ph  ')).toBe('ph');
+      expect(normalizeEdition('global')).toBe('global');
+      expect(normalizeEdition('GLOBAL')).toBe('global');
+      expect(normalizeEdition('invalid')).toBe('global');
+      expect(normalizeEdition(null)).toBe('global');
+      expect(normalizeEdition(undefined)).toBe('global');
+    });
+
+    it('getRoadmapStepConfig finds step by id or number', () => {
+      const byId = getRoadmapStepConfig('understand');
+      expect(byId?.order).toBe(1);
+
+      const byNum = getRoadmapStepConfig(5);
+      expect(byNum?.id).toBe('stay-safe');
+
+      const nonExistent = getRoadmapStepConfig('unknown-step');
+      expect(nonExistent).toBeUndefined();
     });
   });
 
@@ -154,8 +195,23 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
       await getRoadmap('global');
       await getRoadmap('global');
 
-      // Database should only be queried once due to memory/ISR caching
       expect(LearningResourceModel.find).toHaveBeenCalledTimes(1);
+    });
+
+    it('guarantees cache immutability (mutating returned value does not mutate cache)', async () => {
+      (LearningResourceModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockDbResources),
+      });
+
+      const firstCall = await getRoadmap('global');
+      // Mutate returned object
+      firstCall[0].step.title = 'MUTATED TITLE';
+      firstCall[0].resources[0].title = 'MUTATED RESOURCE TITLE';
+
+      // Subsequent call from cache should remain pristine
+      const secondCall = await getRoadmap('global');
+      expect(secondCall[0].step.title).toBe('Understand');
+      expect(secondCall[0].resources[0].title).toBe('What is Insulin?');
     });
 
     it('applies edition-specific notes when edition="ph"', async () => {
@@ -163,25 +219,30 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
         lean: jest.fn().mockResolvedValue(mockDbResources),
       });
 
-      const roadmapPh = await getRoadmap('ph');
+      const roadmapPh = await getRoadmap('PH');
       expect(roadmapPh).toBeDefined();
-      // Verify edition notes structure exists
       expect(roadmapPh[0].edition).toBe('ph');
+      expect(roadmapPh[0].resources[0].editionNote).toContain('Mahalagang panimula');
     });
 
-    it('MANDATORY FAIL-SAFE: throws an error if any configured roadmap slug is missing from database', async () => {
-      // Simulate database missing the last resource
+    it('MANDATORY FAIL-SAFE: throws RoadmapIntegrityError with code MISSING_RESOURCES when a slug is missing', async () => {
       const incompleteResources = mockDbResources.slice(0, 9);
       (LearningResourceModel.find as jest.Mock).mockReturnValue({
         lean: jest.fn().mockResolvedValue(incompleteResources),
       });
 
-      await expect(getRoadmap('global')).rejects.toThrow(
-        /Roadmap Integrity Error: Missing published resource for slug/i
-      );
+      try {
+        await getRoadmap('global');
+        fail('Should have thrown RoadmapIntegrityError');
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(RoadmapIntegrityError);
+        const integrityErr = err as RoadmapIntegrityError;
+        expect(integrityErr.code).toBe('MISSING_RESOURCES');
+        expect(integrityErr.missingSlugs).toContain('reversing-diabetes-the-roles-medication-and-diet-play-mwnygx');
+      }
     });
 
-    it('MANDATORY INTEGRITY: throws an error if any roadmap resource is marked sponsored', async () => {
+    it('MANDATORY INTEGRITY: throws RoadmapIntegrityError with code SPONSORED_RESOURCES when a resource is sponsored', async () => {
       const sponsoredResources = mockDbResources.map((r, idx) =>
         idx === 0 ? { ...r, sponsored: true } : r
       );
@@ -189,9 +250,60 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
         lean: jest.fn().mockResolvedValue(sponsoredResources),
       });
 
-      await expect(getRoadmap('global')).rejects.toThrow(
-        /Roadmap Integrity Error: Roadmap cannot contain sponsored resource/i
-      );
+      try {
+        await getRoadmap('global');
+        fail('Should have thrown RoadmapIntegrityError');
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(RoadmapIntegrityError);
+        const integrityErr = err as RoadmapIntegrityError;
+        expect(integrityErr.code).toBe('SPONSORED_RESOURCES');
+        expect(integrityErr.sponsoredSlugs).toContain('what-is-insulin-c4ruxp');
+      }
+    });
+
+    it('throws MULTIPLE_INTEGRITY_VIOLATIONS when both missing and sponsored resources exist simultaneously', async () => {
+      // 1 sponsored, 1 missing
+      const mixedResources = [
+        { ...mockDbResources[0], sponsored: true },
+        ...mockDbResources.slice(2), // mockDbResources[1] omitted
+      ];
+      (LearningResourceModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mixedResources),
+      });
+
+      try {
+        await getRoadmap('global');
+        fail('Should have thrown RoadmapIntegrityError');
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(RoadmapIntegrityError);
+        const integrityErr = err as RoadmapIntegrityError;
+        expect(integrityErr.code).toBe('MULTIPLE_INTEGRITY_VIOLATIONS');
+        expect(integrityErr.sponsoredSlugs).toContain('what-is-insulin-c4ruxp');
+        expect(integrityErr.missingSlugs).toContain('what-is-insulin-resistance-jason-fung-r0d5lj');
+      }
+    });
+  });
+
+  describe('getRoadmapStepById() Domain Method', () => {
+    it('returns the requested step when stepId is valid', async () => {
+      (LearningResourceModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockDbResources),
+      });
+
+      const step = await getRoadmapStepById('stay-safe', 'ph');
+      expect(step).not.toBeNull();
+      expect(step?.step.id).toBe('stay-safe');
+      expect(step?.edition).toBe('ph');
+      expect(step?.resources).toHaveLength(2);
+    });
+
+    it('returns null when stepId is not recognized', async () => {
+      (LearningResourceModel.find as jest.Mock).mockReturnValue({
+        lean: jest.fn().mockResolvedValue(mockDbResources),
+      });
+
+      const step = await getRoadmapStepById('non-existent-step');
+      expect(step).toBeNull();
     });
   });
 
@@ -205,6 +317,8 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
       expect(result.valid).toBe(true);
       expect(result.missingSlugs).toHaveLength(0);
       expect(result.sponsoredSlugs).toHaveLength(0);
+      expect(result.totalExpected).toBe(10);
+      expect(result.totalFound).toBe(10);
     });
 
     it('returns missing and sponsored slugs when integrity check fails', async () => {
@@ -222,3 +336,4 @@ describe('P2-01: Roadmap Definition & Integrity Service (roadmapService.ts)', ()
     });
   });
 });
+

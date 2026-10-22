@@ -5,14 +5,17 @@
  * References existing published MongoDB learning resource slugs without modifying the underlying model.
  */
 
+export type RoadmapEdition = 'global' | 'ph';
+export type StepId = 'understand' | 'spot-signs' | 'know-causes' | 'take-action' | 'stay-safe';
+
 export interface RoadmapStep {
-  id: string;
+  id: StepId;
   order: number;
   title: string;
   goal: string;
-  resourceSlugs: string[];
+  resourceSlugs: readonly string[];
   safetyNote?: string;
-  editionNotes?: Record<'global' | 'ph', Record<string, string>>;
+  editionNotes?: Record<RoadmapEdition, Record<string, string>>;
 }
 
 export const ROADMAP_STEPS: RoadmapStep[] = [
@@ -139,3 +142,37 @@ export const ROADMAP_STEPS: RoadmapStep[] = [
     },
   },
 ];
+
+/**
+ * Pre-computed, immutable array of all unique learning resource slugs across all 5 roadmap steps.
+ * Memoized at module level to eliminate redundant runtime flatMap/Set operations.
+ */
+export const ALL_ROADMAP_SLUGS: readonly string[] = Object.freeze(
+  Array.from(new Set(ROADMAP_STEPS.flatMap((step) => step.resourceSlugs)))
+);
+
+/**
+ * Total number of steps in the learning roadmap.
+ */
+export const TOTAL_ROADMAP_STEPS = ROADMAP_STEPS.length;
+
+/**
+ * Normalizes input edition string, defaulting safely to 'global' if unrecognized.
+ */
+export function normalizeEdition(rawEdition?: string | null): RoadmapEdition {
+  if (!rawEdition) return 'global';
+  const clean = rawEdition.trim().toLowerCase();
+  return clean === 'ph' ? 'ph' : 'global';
+}
+
+/**
+ * Retrieves the static step definition by step ID or order number.
+ */
+export function getRoadmapStepConfig(
+  identifier: StepId | number | string
+): RoadmapStep | undefined {
+  if (typeof identifier === 'number') {
+    return ROADMAP_STEPS.find((s) => s.order === identifier);
+  }
+  return ROADMAP_STEPS.find((s) => s.id === identifier);
+}

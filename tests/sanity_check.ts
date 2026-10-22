@@ -211,6 +211,7 @@ async function runSanityCheck() {
         'playwright.config.ts',
         'tests/e2e/regression/email_capture.spec.ts',
         'tests/e2e/regression/affiliate_links.spec.ts',
+        'tests/e2e/regression/roadmap_integrity.spec.ts',
         '.github/workflows/ci.yml'
     ];
 
