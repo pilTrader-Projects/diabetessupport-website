@@ -111,7 +111,7 @@ Migration of `diabetescareph.wordpress.com` to a modern custom Next.js + MongoDB
 - [ ] **Item P0-GATE**: Priority 0 Gate Checklist Sign-Off (DTI/BIR, DPO, Claims audit, merchant-of-record approved).
 
 ### Milestone 27: Site Revision - 5-Step Learning Roadmap Engine (Phase 2)
-- [ ] **Item P2-01** [IN PROGRESS] (Issue #84): Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
+- [ ] **Item P2-01** [IN PROGRESS] (PR #85, Closes #84): Roadmap Definition (`src/config/roadmap.ts`) & Service Integrity Check with MongoDB resource resolving.
 - [ ] **Item P2-02**: 5-Step Roadmap UI above Catalog on `/learn` (`src/app/learn/page.tsx`).
 - [ ] **Item P2-03**: Individual Shareable Step Pages (`src/app/learn/roadmap/[step]/page.tsx`).
 - [ ] **Item P2-04**: Catalog Hygiene & Sponsored Content Labelling (`LearningResourceModel`).
