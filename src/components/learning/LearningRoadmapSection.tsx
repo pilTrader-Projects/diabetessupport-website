@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ResolvedRoadmapStep, ResolvedResource } from '@/services/learning/roadmapService';
@@ -8,6 +8,7 @@ import { ILearningResource } from '@/types/learning';
 import EmailCapture from '@/components/common/EmailCapture';
 import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
 import { dispatchRoadmapStepClick } from '@/analytics';
+import { useRoadmapProgress } from '@/hooks/useRoadmapProgress';
 
 export interface LearningRoadmapSectionProps {
   steps: ResolvedRoadmapStep[];
@@ -16,69 +17,286 @@ export interface LearningRoadmapSectionProps {
   className?: string;
 }
 
-const STORAGE_KEY_COMPLETED = 'bts_completed_roadmap_resources';
+const ROADMAP_EMAIL_CAPTURE_CONFIG = {
+  title: 'Keep Your Roadmap Progress & Download Free Fasting Safety Guide',
+  subtitle:
+    'Save your completed curriculum trajectory and receive our dietitian-reviewed checklist on fasting glucose trajectories and insulin warning markers.',
+  buttonText: 'Send Me My Recovery Protocol',
+} as const;
 
+/**
+ * Individual Roadmap Resource Card Component
+ * Strictly decoupled Single Responsibility: handles visual presentation and interaction for one resource item.
+ */
+interface RoadmapResourceCardProps {
+  resource: ResolvedResource;
+  step: ResolvedRoadmapStep;
+  isCompleted: boolean;
+  onToggleCompleted: (slug: string) => void;
+  onPlay: (resource: ResolvedResource, step: ResolvedRoadmapStep) => void;
+}
+
+function RoadmapResourceCard({
+  resource,
+  step,
+  isCompleted,
+  onToggleCompleted,
+  onPlay,
+}: RoadmapResourceCardProps): React.JSX.Element {
+  const hasValidThumbnail = Boolean(resource.thumbnailUrl && resource.thumbnailUrl.trim().length > 0);
+
+  return (
+    <div
+      data-testid={`roadmap-resource-${resource.slug}`}
+      onClick={(e) => {
+        e.stopPropagation();
+        onPlay(resource, step);
+      }}
+      className={`group relative flex flex-col justify-between p-4 rounded-2xl border transition-all cursor-pointer ${
+        isCompleted
+          ? 'bg-emerald-50/30 border-emerald-200/80'
+          : 'bg-slate-50 hover:bg-purple-50/40 border-slate-200 hover:border-purple-200 shadow-xs'
+      }`}
+    >
+      <div>
+        {/* Thumbnail Container */}
+        <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-900 mb-3 shadow-xs">
+          {resource.thumbnailUrl && resource.thumbnailUrl.trim().length > 0 ? (
+            <Image
+              src={resource.thumbnailUrl}
+              alt={resource.title || 'Learning resource thumbnail'}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-purple-900/20 text-slate-400">
+              <span className="text-xs font-bold uppercase tracking-wider">▶ Video Lecture</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+            <span
+              className="w-10 h-10 rounded-full bg-purple-700/90 text-white flex items-center justify-center text-sm shadow-md group-hover:scale-110 transition-transform"
+              aria-hidden="true"
+            >
+              ▶
+            </span>
+          </div>
+          {resource.duration && (
+            <span className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+              {resource.duration}
+            </span>
+          )}
+        </div>
+
+        {/* Title & Authority Speaker */}
+        <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-purple-900 transition-colors line-clamp-2 leading-snug">
+          {resource.title}
+        </h4>
+        <p className="text-xs font-semibold text-slate-600 mt-1 flex items-center gap-1.5">
+          <span className="text-purple-600" aria-hidden="true">👤</span>
+          <span>{resource.authorityName || 'Independent Clinician'}</span>
+        </p>
+
+        {/* Localized Clinical / Edition Context Note */}
+        {resource.editionNote && (
+          <p className="text-xs text-slate-600 italic mt-2 bg-white/80 p-2 rounded-xl border border-purple-100/70 leading-relaxed">
+            💡 {resource.editionNote}
+          </p>
+        )}
+      </div>
+
+      {/* Card Actions: Interactive Progress Checkbox & Direct Watch CTA */}
+      <div className="pt-3 mt-3 border-t border-slate-200/60 flex items-center justify-between">
+        <label
+          onClick={(e) => e.stopPropagation()}
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none"
+        >
+          <input
+            type="checkbox"
+            checked={isCompleted}
+            onChange={(e) => {
+              e.stopPropagation();
+              onToggleCompleted(resource.slug);
+            }}
+            className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+            aria-label={`Mark "${resource.title}" as completed`}
+          />
+          <span className={isCompleted ? 'text-emerald-800 font-bold' : 'text-slate-600'}>
+            {isCompleted ? 'Completed' : 'Mark as done'}
+          </span>
+        </label>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onPlay(resource, step);
+          }}
+          className="text-xs font-bold text-purple-700 group-hover:text-purple-900 inline-flex items-center gap-1 transition-colors"
+        >
+          <span>Watch lecture</span>
+          <span aria-hidden="true">▶</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Individual Roadmap Step Card Component
+ * Manages presentation and keyboard navigation for a single step container.
+ */
+interface RoadmapStepCardProps {
+  stepItem: ResolvedRoadmapStep;
+  isActive: boolean;
+  completedSlugs: string[];
+  onSelectStep: (step: ResolvedRoadmapStep) => void;
+  onToggleCompleted: (slug: string) => void;
+  onPlayResource: (resource: ResolvedResource, step: ResolvedRoadmapStep) => void;
+}
+
+function RoadmapStepCard({
+  stepItem,
+  isActive,
+  completedSlugs,
+  onSelectStep,
+  onToggleCompleted,
+  onPlayResource,
+}: RoadmapStepCardProps): React.JSX.Element {
+  const { step, resources } = stepItem;
+  const stepCompletedCount = resources.filter((r) => completedSlugs.includes(r.slug)).length;
+  const isStepFullyDone = stepCompletedCount === resources.length && resources.length > 0;
+
+  return (
+    <article
+      tabIndex={0}
+      role="region"
+      aria-label={`Step ${step.order}: ${step.title}`}
+      onClick={() => onSelectStep(stepItem)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelectStep(stepItem);
+        }
+      }}
+      className={`transition-all rounded-3xl p-5 sm:p-6 border focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer ${
+        isActive
+          ? 'bg-white border-purple-300 shadow-md ring-1 ring-purple-200'
+          : 'bg-white/80 border-slate-200 hover:border-purple-200 hover:bg-white shadow-xs'
+      }`}
+    >
+      {/* Step Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          <span
+            className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm transition-colors ${
+              isStepFullyDone
+                ? 'bg-emerald-600 text-white'
+                : isActive
+                ? 'bg-purple-700 text-white'
+                : 'bg-slate-100 text-slate-700'
+            }`}
+          >
+            {isStepFullyDone ? '✓' : step.order}
+          </span>
+          <div>
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
+              Step {step.order}: {step.title}
+            </h3>
+            <p className="text-xs text-slate-500 font-medium">Goal: {step.goal}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          {isStepFullyDone ? (
+            <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 inline-flex items-center gap-1">
+              <span aria-hidden="true">✓</span> Step Completed
+            </span>
+          ) : (
+            <span className="text-[11px] font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
+              {stepCompletedCount} of {resources.length} completed
+            </span>
+          )}
+
+          <Link
+            href={`/learn/roadmap/${step.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="text-xs font-bold text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-xl transition-colors border border-purple-200/60 inline-flex items-center gap-1"
+          >
+            <span>Share Step</span>
+            <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Resource Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        {resources.map((resource) => (
+          <RoadmapResourceCard
+            key={resource.slug}
+            resource={resource}
+            step={stepItem}
+            isCompleted={completedSlugs.includes(resource.slug)}
+            onToggleCompleted={onToggleCompleted}
+            onPlay={onPlayResource}
+          />
+        ))}
+      </div>
+    </article>
+  );
+}
+
+/**
+ * Main 5-Step Guided Learning Roadmap Component
+ */
 export default function LearningRoadmapSection({
-  steps,
+  steps = [],
   edition = 'global',
   onPlayResource,
   className = '',
 }: LearningRoadmapSectionProps): React.JSX.Element {
-  const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
-  const [activeStepId, setActiveStepId] = useState<string>(steps[0]?.step.id || 'understand');
+  const [activeStepId, setActiveStepId] = useState<string>(steps[0]?.step?.id || 'understand');
 
-  // Load completed resources from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY_COMPLETED);
-      if (stored) {
-        setCompletedSlugs(JSON.parse(stored));
+  const {
+    completedSlugs,
+    toggleResourceCompleted,
+    totalResources,
+    totalCompleted,
+    progressPercentage,
+  } = useRoadmapProgress(steps);
+
+  const handleStepClick = useCallback(
+    (stepItem: ResolvedRoadmapStep) => {
+      setActiveStepId(stepItem.step.id);
+      dispatchRoadmapStepClick({
+        step_number: stepItem.step.order,
+        step_slug: stepItem.step.id,
+        edition: edition || 'global',
+      });
+    },
+    [edition]
+  );
+
+  const handleResourceCardClick = useCallback(
+    (resource: ResolvedResource, stepItem: ResolvedRoadmapStep) => {
+      dispatchRoadmapStepClick({
+        step_number: stepItem.step.order,
+        step_slug: stepItem.step.id,
+        edition: edition || 'global',
+      });
+      if (onPlayResource) {
+        onPlayResource(resource);
       }
-    } catch {
-      // localStorage may be disabled in private browsing or sandbox
-    }
-  }, []);
-
-  const toggleResourceCompleted = (slug: string, e: React.MouseEvent | React.ChangeEvent) => {
-    e.stopPropagation();
-    setCompletedSlugs((prev) => {
-      const next = prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug];
-      try {
-        localStorage.setItem(STORAGE_KEY_COMPLETED, JSON.stringify(next));
-      } catch {
-        // Handle storage quota or private mode
-      }
-      return next;
-    });
-  };
-
-  const handleStepClick = (step: ResolvedRoadmapStep) => {
-    setActiveStepId(step.step.id);
-    dispatchRoadmapStepClick({
-      step_number: step.step.order,
-      step_slug: step.step.id,
-      edition: edition || 'global',
-    });
-  };
-
-  const handleResourceCardClick = (resource: ResolvedResource, step: ResolvedRoadmapStep) => {
-    dispatchRoadmapStepClick({
-      step_number: step.step.order,
-      step_slug: step.step.id,
-      edition: edition || 'global',
-    });
-    if (onPlayResource) {
-      onPlayResource(resource);
-    }
-  };
-
-  const totalResources = steps.reduce((acc, curr) => acc + curr.resources.length, 0);
-  const totalCompleted = completedSlugs.filter((slug) =>
-    steps.some((s) => s.resources.some((r) => r.slug === slug))
-  ).length;
-  const progressPercentage = totalResources > 0 ? Math.round((totalCompleted / totalResources) * 100) : 0;
+    },
+    [edition, onPlayResource]
+  );
 
   const isStarterPackEnabled = process.env.NEXT_PUBLIC_FLAG_STARTER_PACK === 'true';
+
+  if (!steps || steps.length === 0) {
+    return <></>;
+  }
 
   return (
     <section
@@ -89,26 +307,33 @@ export default function LearningRoadmapSection({
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-purple-100/80">
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 text-purple-900 text-xs font-bold uppercase tracking-wider mb-2">
-            <span>🗺️</span> Start Here Curriculum
+            <span aria-hidden="true">🗺️</span> Start Here Curriculum
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             5 Steps to Understand &amp; Reverse Insulin Resistance
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-            A guided self-recovery sequence curated from independent clinical lectures. Complete the steps in order before exploring the deep archive.
+            A guided self-recovery sequence curated from independent clinical lectures. Complete the
+            steps in order before exploring the deep archive.
           </p>
         </div>
 
-        {/* Progress Badge */}
+        {/* Progress Summary Card */}
         <div className="bg-white px-4 py-3 rounded-2xl border border-purple-200/80 shadow-xs w-full md:w-auto flex-shrink-0">
           <div className="flex items-center justify-between gap-4 text-xs font-bold text-slate-700">
             <span>Roadmap Progress</span>
-            <span className="text-purple-700 font-extrabold">{totalCompleted} / {totalResources} Done</span>
+            <span className="text-purple-700 font-extrabold">
+              {totalCompleted} / {totalResources} Done
+            </span>
           </div>
           <div className="w-full md:w-48 bg-slate-100 h-2 rounded-full overflow-hidden mt-1.5 border border-slate-200">
             <div
               className="bg-gradient-to-r from-purple-600 to-indigo-600 h-full transition-all duration-500 rounded-full"
               style={{ width: `${progressPercentage}%` }}
+              role="progressbar"
+              aria-valuenow={progressPercentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
             />
           </div>
         </div>
@@ -116,177 +341,21 @@ export default function LearningRoadmapSection({
 
       {/* 5 Step Sequential Cards */}
       <div className="space-y-6">
-        {steps.map((stepItem, index) => {
-          const { step, resources } = stepItem;
+        {steps.map((stepItem) => {
+          const { step } = stepItem;
           const isStepActive = activeStepId === step.id;
-          const stepCompletedCount = resources.filter((r) => completedSlugs.includes(r.slug)).length;
-          const isStepFullyDone = stepCompletedCount === resources.length && resources.length > 0;
 
           return (
             <React.Fragment key={step.id}>
               {/* Step Card */}
-              <article
-                tabIndex={0}
-                role="region"
-                aria-label={`Step ${step.order}: ${step.title}`}
-                onClick={() => handleStepClick(stepItem)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleStepClick(stepItem);
-                  }
-                }}
-                className={`transition-all rounded-3xl p-5 sm:p-6 border focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer ${
-                  isStepActive
-                    ? 'bg-white border-purple-300 shadow-md ring-1 ring-purple-200'
-                    : 'bg-white/80 border-slate-200 hover:border-purple-200 hover:bg-white shadow-xs'
-                }`}
-              >
-                {/* Step Top Bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-sm transition-colors ${
-                        isStepFullyDone
-                          ? 'bg-emerald-600 text-white'
-                          : isStepActive
-                          ? 'bg-purple-700 text-white'
-                          : 'bg-slate-100 text-slate-700'
-                      }`}
-                    >
-                      {isStepFullyDone ? '✓' : step.order}
-                    </span>
-                    <div>
-                      <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
-                        Step {step.order}: {step.title}
-                      </h3>
-                      <p className="text-xs text-slate-500 font-medium">
-                        Goal: {step.goal}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 self-start sm:self-auto">
-                    {isStepFullyDone ? (
-                      <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 inline-flex items-center gap-1">
-                        <span>✓</span> Step Completed
-                      </span>
-                    ) : (
-                      <span className="text-[11px] font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
-                        {stepCompletedCount} of {resources.length} completed
-                      </span>
-                    )}
-
-                    <Link
-                      href={`/learn/roadmap/${step.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-xs font-bold text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-3 py-1 rounded-xl transition-colors border border-purple-200/60 inline-flex items-center gap-1"
-                    >
-                      <span>Share Step</span>
-                      <span>↗</span>
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Resource Cards Grid for this step */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  {resources.map((resource) => {
-                    const isDone = completedSlugs.includes(resource.slug);
-
-                    return (
-                      <div
-                        key={resource.slug}
-                        data-testid={`roadmap-resource-${resource.slug}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleResourceCardClick(resource, stepItem);
-                        }}
-                        className={`group relative flex flex-col justify-between p-4 rounded-2xl border transition-all cursor-pointer ${
-                          isDone
-                            ? 'bg-emerald-50/30 border-emerald-200/80'
-                            : 'bg-slate-50 hover:bg-purple-50/40 border-slate-200 hover:border-purple-200 shadow-xs'
-                        }`}
-                      >
-                        <div>
-                          {/* Thumbnail with Play Trigger */}
-                          <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-900 mb-3 shadow-xs">
-                            {resource.thumbnailUrl ? (
-                              <Image
-                                src={resource.thumbnailUrl}
-                                alt={resource.title}
-                                fill
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-purple-900/20 text-slate-400">
-                                <span>▶ Video</span>
-                              </div>
-                            )}
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                              <span className="w-10 h-10 rounded-full bg-purple-700/90 text-white flex items-center justify-center text-sm shadow-md group-hover:scale-110 transition-transform">
-                                ▶
-                              </span>
-                            </div>
-                            {resource.duration && (
-                              <span className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-                                {resource.duration}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Resource Title & Authority */}
-                          <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-purple-900 transition-colors line-clamp-2 leading-snug">
-                            {resource.title}
-                          </h4>
-                          <p className="text-xs font-semibold text-slate-600 mt-1 flex items-center gap-1.5">
-                            <span className="text-purple-600">👤</span>
-                            <span>{resource.authorityName || 'Independent Clinician'}</span>
-                          </p>
-
-                          {/* Edition Note */}
-                          {resource.editionNote && (
-                            <p className="text-xs text-slate-600 italic mt-2 bg-white/80 p-2 rounded-xl border border-purple-100/70 leading-relaxed">
-                              💡 {resource.editionNote}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Card Bottom: Checkbox */}
-                        <div className="pt-3 mt-3 border-t border-slate-200/60 flex items-center justify-between">
-                          <label
-                            onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isDone}
-                              onChange={(e) => toggleResourceCompleted(resource.slug, e)}
-                              className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
-                              aria-label={`Mark "${resource.title}" as completed`}
-                            />
-                            <span className={isDone ? 'text-emerald-800 font-bold' : 'text-slate-600'}>
-                              {isDone ? 'Completed' : 'Mark as done'}
-                            </span>
-                          </label>
-
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleResourceCardClick(resource, stepItem);
-                            }}
-                            className="text-xs font-bold text-purple-700 group-hover:text-purple-900 inline-flex items-center gap-1"
-                          >
-                            <span>Watch lecture</span>
-                            <span>▶</span>
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </article>
+              <RoadmapStepCard
+                stepItem={stepItem}
+                isActive={isStepActive}
+                completedSlugs={completedSlugs}
+                onSelectStep={handleStepClick}
+                onToggleCompleted={toggleResourceCompleted}
+                onPlayResource={handleResourceCardClick}
+              />
 
               {/* SPEC REQUIREMENT: Email capture immediately after Step 2 */}
               {step.order === 2 && (
@@ -294,9 +363,9 @@ export default function LearningRoadmapSection({
                   <EmailCapture
                     source="learn-roadmap"
                     edition={edition}
-                    title="Keep Your Roadmap Progress &amp; Download Free Fasting Safety Guide"
-                    subtitle="Save your completed curriculum trajectory and receive our dietitian-reviewed checklist on fasting glucose trajectories and insulin warning markers."
-                    buttonText="Send Me My Recovery Protocol"
+                    title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
+                    subtitle={ROADMAP_EMAIL_CAPTURE_CONFIG.subtitle}
+                    buttonText={ROADMAP_EMAIL_CAPTURE_CONFIG.buttonText}
                   />
                 </div>
               )}

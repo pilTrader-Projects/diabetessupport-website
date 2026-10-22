@@ -211,4 +211,67 @@ describe('P2-02: LearningRoadmapSection UI Component', () => {
     expect(html).toContain('href="/learn/roadmap/spot-signs"');
     expect(html).toContain('href="/learn/roadmap/stay-safe"');
   });
+
+  describe('Edge Cases & Defensive Boundaries', () => {
+    it('gracefully renders empty string when steps array is empty', () => {
+      const html = ReactDOMServer.renderToString(<LearningRoadmapSection steps={[]} />);
+      expect(html).toBe('');
+    });
+
+    it('renders fallback placeholder when resource thumbnail is null, undefined, or empty', () => {
+      const stepWithEmptyThumb = {
+        step: {
+          id: 'understand',
+          order: 1,
+          title: 'Understand',
+          goal: 'Insulin dynamics',
+          resourceSlugs: ['no-thumb-res'],
+        },
+        resources: [
+          {
+            _id: 'r_no_thumb',
+            title: 'No Thumb Lecture',
+            slug: 'no-thumb-res',
+            authorityName: 'Dr. Test',
+            status: 'published',
+            thumbnailUrl: '',
+          },
+        ],
+        edition: 'global',
+      } as unknown as ResolvedRoadmapStep;
+
+      const html = ReactDOMServer.renderToString(<LearningRoadmapSection steps={[stepWithEmptyThumb]} />);
+      expect(html).toContain('▶ Video Lecture');
+      expect(html).toContain('No Thumb Lecture');
+    });
+
+    it('handles steps with empty resources array without NaN or division-by-zero errors', () => {
+      const stepWithNoResources = {
+        step: {
+          id: 'understand',
+          order: 1,
+          title: 'Empty Step',
+          goal: 'No resources yet',
+          resourceSlugs: [],
+        },
+        resources: [],
+        edition: 'global',
+      } as unknown as ResolvedRoadmapStep;
+
+      const html = ReactDOMServer.renderToString(<LearningRoadmapSection steps={[stepWithNoResources]} />);
+      expect(html).toMatch(/0.*of.*0.*completed/);
+      expect(html).toMatch(/0.*\/.*0.*Done/);
+      expect(html).toContain('style="width:0%"');
+      expect(html).not.toContain('NaN');
+    });
+
+    it('propagates edition="ph" to EmailCapture and localized context', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningRoadmapSection steps={mockSteps as unknown as ResolvedRoadmapStep[]} edition="ph" />
+      );
+      expect(html).toContain('Keep Your Roadmap Progress');
+      expect(html).toContain('data-testid="learn-roadmap-email-capture"');
+    });
+  });
 });
+

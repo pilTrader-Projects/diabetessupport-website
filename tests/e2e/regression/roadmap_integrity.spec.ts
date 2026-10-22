@@ -110,6 +110,55 @@ test.describe('P2-01: Learning Hub & Roadmap Foundation Regression', () => {
     // Verify mobile catalog expander button
     const expandBtn = page.getByRole('button', { name: /Browse Full Resource Catalog/i });
     await expect(expandBtn).toBeVisible();
+    await expect(expandBtn).toContainText('Expand Catalog ▼');
+
+    // Toggle expand
+    await expandBtn.click();
+    await expect(expandBtn).toContainText('Collapse Catalog ▲');
+
+    // Toggle collapse
+    await expandBtn.click();
+    await expect(expandBtn).toContainText('Expand Catalog ▼');
+  });
+
+  test('REG-ROADMAP-07: Resilient to corrupted or malformed localStorage payloads', async ({
+    page,
+  }) => {
+    // Inject corrupt non-array JSON into localStorage before page initialization
+    await page.addInitScript(() => {
+      window.localStorage.setItem('bts_completed_roadmap_resources', '{"corrupted": true, "number": 42}');
+    });
+
+    await page.goto('/learn');
+
+    // Page must render smoothly without uncaught runtime error
+    const roadmapSection = page.locator('section[aria-label="Guided 5-Step Learning Roadmap"]');
+    await expect(roadmapSection).toBeVisible();
+
+    // Checkboxes should remain functional
+    const firstCheckbox = page.locator('section[aria-label="Guided 5-Step Learning Roadmap"] input[type="checkbox"]').first();
+    await expect(firstCheckbox).toBeVisible();
+    expect(await firstCheckbox.isChecked()).toBe(false);
+  });
+
+  test('REG-ROADMAP-08: Renders verified share links for each of the 5 curriculum steps', async ({
+    page,
+  }) => {
+    await page.goto('/learn');
+
+    const expectedHrefs = [
+      '/learn/roadmap/understand',
+      '/learn/roadmap/spot-signs',
+      '/learn/roadmap/know-causes',
+      '/learn/roadmap/take-action',
+      '/learn/roadmap/stay-safe',
+    ];
+
+    for (const href of expectedHrefs) {
+      const shareLink = page.locator(`a[href="${href}"]`);
+      await expect(shareLink).toBeVisible();
+    }
   });
 });
+
 
