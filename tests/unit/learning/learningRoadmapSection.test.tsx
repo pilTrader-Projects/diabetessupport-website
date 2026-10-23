@@ -171,7 +171,8 @@ describe('P2-02: LearningRoadmapSection UI Component', () => {
     const html = ReactDOMServer.renderToString(<LearningRoadmapSection steps={mockSteps as unknown as ResolvedRoadmapStep[]} />);
 
     expect(html).toContain('data-testid="learn-roadmap-email-capture"');
-    expect(html).toContain('Keep Your Roadmap Progress');
+    expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol');
+    expect(html).toContain('Send Me My Recovery Protocol');
   });
 
   it('renders Clinical Safety Notice immediately before Step 5', () => {
@@ -269,7 +270,7 @@ describe('P2-02: LearningRoadmapSection UI Component', () => {
       const html = ReactDOMServer.renderToString(
         <LearningRoadmapSection steps={mockSteps as unknown as ResolvedRoadmapStep[]} edition="ph" />
       );
-      expect(html).toContain('Keep Your Roadmap Progress');
+      expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol');
       expect(html).toContain('data-testid="learn-roadmap-email-capture"');
     });
   });
