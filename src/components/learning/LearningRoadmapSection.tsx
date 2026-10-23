@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ResolvedRoadmapStep, ResolvedResource } from '@/services/learning/roadmapService';
 import { ILearningResource } from '@/types/learning';
+import { ROADMAP_EMAIL_CAPTURE_CONFIG } from '@/config/roadmap';
 import EmailCapture from '@/components/common/EmailCapture';
 import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
 import { dispatchRoadmapStepClick } from '@/analytics';
@@ -16,13 +17,6 @@ export interface LearningRoadmapSectionProps {
   onPlayResource?: (resource: ILearningResource) => void;
   className?: string;
 }
-
-const ROADMAP_EMAIL_CAPTURE_CONFIG = {
-  title: 'Keep Your Roadmap Progress & Download Free Fasting Safety Guide',
-  subtitle:
-    'Save your completed curriculum trajectory and receive our dietitian-reviewed checklist on fasting glucose trajectories and insulin warning markers.',
-  buttonText: 'Send Me My Recovery Protocol',
-} as const;
 
 /**
  * Individual Roadmap Resource Card Component
@@ -394,7 +388,7 @@ export default function LearningRoadmapSection({
             Filipino Metabolic Starter Pack (₱299)
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
-            Practical 30-day Filipino meal plan, glucose logging templates, and dietitian-reviewed doctor question list.
+            Practical 30-day Filipino meal plan, glucose logging templates, and doctor-discussion question list.
           </p>
           <Link
             href="/ph/starter-pack"

@@ -98,7 +98,7 @@ describe('P2-03: Roadmap Step Detail Page & Client Component', () => {
       expect(html).toContain('5-Step Diabetes Recovery Roadmap');
       expect(html).toContain('Core Objective:');
       expect(html).toContain('Back to 5-Step Roadmap');
-      expect(html).toContain('Keep Step 1 Progress &amp; Download Free Checklist');
+      expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol');
       expect(html).toContain('Medical Disclaimer');
       expect(html).toContain('application/ld+json');
       expect(html).toContain('BreadcrumbList');

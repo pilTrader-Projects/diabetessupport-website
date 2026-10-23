@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import {
   ROADMAP_STEPS,
+  ROADMAP_EMAIL_CAPTURE_CONFIG,
   getRoadmapStepConfig,
   getAdjacentSteps,
   normalizeEdition,
@@ -172,9 +173,9 @@ export default async function RoadmapStepPage(props: RoadmapStepPageProps): Prom
         <section aria-labelledby="step-download-heading">
           <EmailCapture
             source={`learn-roadmap-${stepConfig.id}`}
-            title={`Keep Step ${stepConfig.order} Progress & Download Free Checklist`}
-            subtitle="Save your completed curriculum trajectory and receive our dietitian-reviewed checklist on fasting glucose trajectories and insulin warning markers."
-            buttonText="Send Me My Recovery Protocol"
+            title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
+            subtitle={ROADMAP_EMAIL_CAPTURE_CONFIG.subtitle}
+            buttonText={ROADMAP_EMAIL_CAPTURE_CONFIG.buttonText}
           />
         </section>
 

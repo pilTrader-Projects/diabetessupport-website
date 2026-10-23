@@ -403,7 +403,7 @@ export default function EmailCapture({
           </h3>
         )}
         {subtitle && (
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
             {subtitle}
           </p>
         )}
