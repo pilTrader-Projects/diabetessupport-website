@@ -87,6 +87,15 @@ export class CampaignService {
       return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.COMPANION_APP_USERS];
     }
 
+    if (
+      cleanCode === 'recovery_protocol' ||
+      cleanCode.startsWith('recovery_protocol') ||
+      cleanCode === 'learn-roadmap' ||
+      cleanCode.startsWith('learn-roadmap')
+    ) {
+      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.RECOVERY_PROTOCOL];
+    }
+
     // Default fallback to newsletter
     return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
   }

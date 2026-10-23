@@ -172,7 +172,7 @@ export default async function RoadmapStepPage(props: RoadmapStepPageProps): Prom
         {/* Lead Capture Form */}
         <section aria-labelledby="step-download-heading">
           <EmailCapture
-            source={`learn-roadmap-${stepConfig.id}`}
+            source={`recovery_protocol_${stepConfig.id}`}
             title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
             subtitle={
               <div className="space-y-2.5">

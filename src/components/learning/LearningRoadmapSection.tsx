@@ -355,7 +355,7 @@ export default function LearningRoadmapSection({
               {step.order === 2 && (
                 <div data-testid="learn-roadmap-email-capture" className="my-6">
                   <EmailCapture
-                    source="learn-roadmap"
+                    source="recovery_protocol"
                     edition={edition}
                     title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
                     subtitle={
