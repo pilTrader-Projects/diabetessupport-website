@@ -167,12 +167,16 @@ describe('P2-02: LearningRoadmapSection UI Component', () => {
     expect(html).toContain('Receptor downregulation mechanics.');
   });
 
-  it('renders <EmailCapture source="learn-roadmap" /> immediately after Step 2', () => {
+  it('renders <EmailCapture source="learn-roadmap" /> immediately after Step 2 with bold body and italic disclaimer', () => {
     const html = ReactDOMServer.renderToString(<LearningRoadmapSection steps={mockSteps as unknown as ResolvedRoadmapStep[]} />);
 
     expect(html).toContain('data-testid="learn-roadmap-email-capture"');
     expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol');
     expect(html).toContain('Send Me My Recovery Protocol');
+    expect(html).toContain('font-bold text-slate-100');
+    expect(html).toContain('Discover how to spot the early warning signs of insulin resistance');
+    expect(html).toContain('italic text-slate-400');
+    expect(html).toContain('⚠️ For educational and health literacy purposes only.');
   });
 
   it('renders Clinical Safety Notice immediately before Step 5', () => {
