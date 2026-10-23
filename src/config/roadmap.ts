@@ -200,8 +200,10 @@ export function getAdjacentSteps(
  */
 export const ROADMAP_EMAIL_CAPTURE_CONFIG = {
   title: 'Download the Free Insulin Sensitivity & Recovery Protocol',
-  subtitle:
-    'For educational and health literacy purposes only. 💡\nDiscover how to spot the early warning signs of insulin resistance, which essential lab markers to review with your doctor (like Fasting Insulin and HOMA-IR), and foundational lifestyle principles for metabolic health.\n⚠️ Always consult your physician or a registered dietitian before changing your diet, especially if you take medication or have an underlying medical condition.',
+  bodyText:
+    'Discover how to spot the early warning signs of insulin resistance, which essential lab markers to review with your doctor (like Fasting Insulin and HOMA-IR), and foundational lifestyle principles for metabolic health.',
+  disclaimerText:
+    '⚠️ For educational and health literacy purposes only. Always consult your physician or a registered dietitian before changing your diet, especially if you take medication or have an underlying medical condition.',
   buttonText: 'Send Me My Recovery Protocol →',
 } as const;
 

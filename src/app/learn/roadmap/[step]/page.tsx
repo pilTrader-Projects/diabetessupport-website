@@ -174,7 +174,16 @@ export default async function RoadmapStepPage(props: RoadmapStepPageProps): Prom
           <EmailCapture
             source={`learn-roadmap-${stepConfig.id}`}
             title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
-            subtitle={ROADMAP_EMAIL_CAPTURE_CONFIG.subtitle}
+            subtitle={
+              <div className="space-y-2.5">
+                <p className="font-bold text-slate-100 leading-relaxed">
+                  {ROADMAP_EMAIL_CAPTURE_CONFIG.bodyText}
+                </p>
+                <p className="italic text-slate-400 text-xs sm:text-xs leading-relaxed">
+                  {ROADMAP_EMAIL_CAPTURE_CONFIG.disclaimerText}
+                </p>
+              </div>
+            }
             buttonText={ROADMAP_EMAIL_CAPTURE_CONFIG.buttonText}
           />
         </section>

@@ -12,7 +12,7 @@ export interface EmailCaptureProps {
   edition?: string;
   layout?: 'card' | 'inline' | 'hero' | 'funnel';
   title?: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   buttonText?: string;
   placeholder?: string;
   className?: string;
@@ -288,9 +288,9 @@ export default function EmailCapture({
             </h3>
           )}
           {subtitle && (
-            <p className="text-xs sm:text-sm text-teal-100/80 leading-relaxed">
+            <div className="text-xs sm:text-sm text-teal-100/80 leading-relaxed whitespace-pre-line">
               {subtitle}
-            </p>
+            </div>
           )}
         </div>
 
@@ -403,9 +403,9 @@ export default function EmailCapture({
           </h3>
         )}
         {subtitle && (
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+          <div className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
             {subtitle}
-          </p>
+          </div>
         )}
       </div>
 
