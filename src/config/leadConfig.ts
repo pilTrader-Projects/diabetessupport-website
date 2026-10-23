@@ -29,6 +29,7 @@ export const CAMPAIGN_CODES = {
   NEWSLETTER: 'newsletter_funnel',
   INSULIN_RESET_FUNNEL: 'insulin_reset_funnel',
   COMPANION_APP_USERS: 'companion_app_users_funnel',
+  RECOVERY_PROTOCOL: 'recovery_protocol',
 } as const;
 
 export type CampaignCode = (typeof CAMPAIGN_CODES)[keyof typeof CAMPAIGN_CODES];
@@ -42,6 +43,7 @@ export const BREVO_LISTS = {
   SUBSCRIBED_CONTACTS: 'subscribed_contacts',
   INSULIN_RESET_FUNNEL: 'insulin_reset_funnel',
   COMPANION_APP_USERS: 'companion_app_users',
+  RECOVERY_PROTOCOL: 'recovery_protocol',
 } as const;
 
 export type BrevoList = (typeof BREVO_LISTS)[keyof typeof BREVO_LISTS];
@@ -117,6 +119,14 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     description: 'Direct response companion app onboarding and claim leads',
     isActive: true,
   },
+  [CAMPAIGN_CODES.RECOVERY_PROTOCOL]: {
+    referenceCode: CAMPAIGN_CODES.RECOVERY_PROTOCOL,
+    name: 'Insulin Sensitivity & Recovery Protocol',
+    brevoList: BREVO_LISTS.RECOVERY_PROTOCOL,
+    defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
+    description: 'Roadmap mid-funnel lead capture for Insulin Sensitivity & Recovery Protocol guide',
+    isActive: true,
+  },
 };
 
 export interface QualifyMetabolicStageParams {
@@ -150,6 +160,10 @@ export function qualifyMetabolicStage(params: QualifyMetabolicStageParams): stri
 
   if (campaignReferenceCode === CAMPAIGN_CODES.COMPANION_APP_USERS) {
     return METABOLIC_STAGES.COMPANION_APP_USER;
+  }
+
+  if (campaignReferenceCode === CAMPAIGN_CODES.RECOVERY_PROTOCOL) {
+    return METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA;
   }
 
   if (campaignReferenceCode === CAMPAIGN_CODES.INSULIN_RESET_FUNNEL || symptomsCount > 0) {

@@ -35,7 +35,7 @@ describe('Unified <EmailCapture /> Component (TDD Tests)', () => {
     expect(cardHtml).toBeDefined();
 
     const inlineHtml = ReactDOMServer.renderToString(
-      <EmailCapture source="learn-roadmap" layout="inline" />
+      <EmailCapture source="recovery_protocol" layout="inline" />
     );
     expect(inlineHtml).toBeDefined();
 

@@ -167,7 +167,7 @@ describe('P2-02: LearningRoadmapSection UI Component', () => {
     expect(html).toContain('Receptor downregulation mechanics.');
   });
 
-  it('renders <EmailCapture source="learn-roadmap" /> immediately after Step 2 with bold body and italic disclaimer', () => {
+  it('renders <EmailCapture source="recovery_protocol" /> immediately after Step 2 with bold body and italic disclaimer', () => {
     const html = ReactDOMServer.renderToString(<LearningRoadmapSection steps={mockSteps as unknown as ResolvedRoadmapStep[]} />);
 
     expect(html).toContain('data-testid="learn-roadmap-email-capture"');
