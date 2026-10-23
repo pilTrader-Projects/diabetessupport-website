@@ -58,7 +58,7 @@
 | **P2-01** | [x] | **Roadmap Definition & Integrity Service** | `84-roadmap-definition-service` | PR: #85 (Merged to Epic, Closed #84) | `src/config/roadmap.ts` defines the 5 steps referencing existing MongoDB resource slugs. `roadmapService.ts` resolves slugs and fails build/tests if any slug is missing. ISR caching applied. Jest tests pass. |
 | **P2-02** | [x] | **Roadmap UI on `/learn` Page** | `87-learn-roadmap-ui` | PR #88 (Closes #87) | 5-step cards rendered above existing catalog in `src/app/learn/page.tsx`. `<EmailCapture source="learn-roadmap" />` placed after Step 2. `ClinicalSafetyBox` placed before Step 5. `roadmap_step_click` events fire. Lazy-loaded video modal playback enabled. Mobile Lighthouse score >= 85. |
 | **P2-03** | [x] | **Individual Shareable Step Pages** | `89-roadmap-step-pages` | PR: #90 (Closes #89) | Dynamic routes created at `src/app/learn/roadmap/[step]/page.tsx` with static params, prev/next navigation, and `buildMetadata()` SEO tags. Playwright tests confirm all 5 step URLs render. |
-| **P2-04** | [ ] | **Catalog Hygiene & Sponsored Labelling** | `feature/catalog-hygiene-sponsored` | PR: #___ | Added `sponsored: boolean` to `LearningResourceModel` and Admin CMS. "Sponsored content" badge displayed in catalog and excluded from roadmap. Advanced fasting topics grouped under safety warning. |
+| **P2-04** | [x] | **Catalog Hygiene & Sponsored Labelling** | `91-catalog-hygiene-sponsored` | PR pending (Closes #91) | Added `sponsored: boolean` to `LearningResourceModel` and Admin CMS. "Sponsored content" badge displayed in catalog and excluded from roadmap. Advanced fasting topics grouped under safety warning. |
 
 ---
 

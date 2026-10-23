@@ -18,6 +18,8 @@ export interface ResourceFormData {
   keyTakeaways: string; // newline separated
   topics: string; // comma separated
   status: ResourceStatus;
+  sponsored?: boolean;
+  sponsorName?: string;
   recommendedBooks?: IAffiliateRecommendation[];
 }
 
@@ -42,6 +44,8 @@ const DEFAULT_FORM: ResourceFormData = {
   keyTakeaways: '',
   topics: 'Low Carb, Intermittent Fasting',
   status: 'published',
+  sponsored: false,
+  sponsorName: '',
 };
 
 export default function ResourceModal({
@@ -66,6 +70,8 @@ export default function ResourceModal({
       keyTakeaways: (initialData.keyTakeaways || []).join('\n'),
       topics: (initialData.topics || []).join(', '),
       status: initialData.status || 'published',
+      sponsored: Boolean(initialData.sponsored),
+      sponsorName: initialData.sponsorName || '',
     };
   });
 
@@ -88,6 +94,8 @@ export default function ResourceModal({
         keyTakeaways: (initialData.keyTakeaways || []).join('\n'),
         topics: (initialData.topics || []).join(', '),
         status: initialData.status || 'published',
+        sponsored: Boolean(initialData.sponsored),
+        sponsorName: initialData.sponsorName || '',
       });
       setBooks(initialData.recommendedBooks || []);
     } else {
@@ -435,6 +443,38 @@ export default function ResourceModal({
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+
+          {/* Commercial Partnership & Transparency Controls (Item P2-04) */}
+          <div className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-3">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={Boolean(formData.sponsored)}
+                onChange={(e) => setFormData({ ...formData, sponsored: e.target.checked })}
+                className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+              />
+              <span className="text-xs font-bold text-amber-300">
+                ⭐ Flag as Sponsored Content / Commercial Partner
+              </span>
+            </label>
+            <p className="text-[11px] text-slate-500">
+              When checked, this resource displays a clear &quot;Sponsored Content&quot; badge in the public catalog and is automatically excluded from the 5-step curriculum roadmap.
+            </p>
+            {formData.sponsored && (
+              <div className="pt-2">
+                <label className="block text-xs font-semibold text-slate-400 mb-1">
+                  Sponsor / Commercial Partner Name (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.sponsorName || ''}
+                  onChange={(e) => setFormData({ ...formData, sponsorName: e.target.value })}
+                  placeholder="e.g. GlycoSense, Abbott, Dexcom"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 text-xs"
+                />
               </div>
             )}
           </div>

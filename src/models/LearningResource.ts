@@ -168,6 +168,15 @@ const LearningResourceSchema = new Schema<ILearningResource>(
       default: Date.now,
       index: true,
     },
+    sponsored: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    sponsorName: {
+      type: String,
+      trim: true,
+    },
     recommendedBooks: {
       type: [
         new Schema(
@@ -195,11 +204,12 @@ const LearningResourceSchema = new Schema<ILearningResource>(
   }
 );
 
-// Hot-reload guard: if an older model was cached in-memory without the 'rejected' status enum or 'recommendedBooks', invalidate it
+// Hot-reload guard: if an older model was cached in-memory without the 'rejected' status enum, 'recommendedBooks', or 'sponsored', invalidate it
 if (
   mongoose.models.LearningResource &&
   (!(mongoose.models.LearningResource.schema.path('status') as any)?.enumValues?.includes('rejected') ||
-   !mongoose.models.LearningResource.schema.path('recommendedBooks'))
+   !mongoose.models.LearningResource.schema.path('recommendedBooks') ||
+   !mongoose.models.LearningResource.schema.path('sponsored'))
 ) {
   delete (mongoose.models as any).LearningResource;
 }

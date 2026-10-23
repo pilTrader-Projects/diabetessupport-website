@@ -9,6 +9,7 @@ export const GET = withAdminAuth(async (req) => {
     topic: searchParams.get('topic') || undefined,
     authorityId: searchParams.get('authorityId') || undefined,
     status: searchParams.get('status') || undefined,
+    sponsored: searchParams.has('sponsored') ? searchParams.get('sponsored') === 'true' : undefined,
     search: searchParams.get('search') || undefined,
     limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!, 10) : 50,
     skip: searchParams.get('skip') ? parseInt(searchParams.get('skip')!, 10) : 0,

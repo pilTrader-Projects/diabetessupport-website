@@ -9,6 +9,8 @@ import SavedResourcesDrawer from '@/components/learning/SavedResourcesDrawer';
 import ResourceShareModal from '@/components/learning/ResourceShareModal';
 import AdUnit from '@/components/ads/AdUnit';
 import { AffiliateLink } from '@/components/common/AffiliateLink';
+import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
+import SponsoredBadge from '@/components/learning/SponsoredBadge';
 import {
   getSavedProtocolIds,
   saveProtocolResource,
@@ -762,7 +764,9 @@ export default function LearningHubClient({
                           : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
-                      {topic}
+                      {topic.toLowerCase().includes('fasting') && topic !== 'All'
+                        ? `⚠️ ${topic} (Ask Doctor)`
+                        : topic}
                     </button>
                   );
                 })}
@@ -818,6 +822,16 @@ export default function LearningHubClient({
               </button>
             )}
           </div>
+
+      {/* Fasting Clinical Safety Notice (Item P2-04) */}
+      {selectedTopic !== 'All' && selectedTopic.toLowerCase().includes('fasting') && (
+        <div data-testid="fasting-safety-box" className="mb-4">
+          <ClinicalSafetyBox
+            variant="fasting"
+            className="border-amber-300 bg-amber-50/90 my-2"
+          />
+        </div>
+      )}
 
       {/* Materials Grid */}
       {filteredItems.length === 0 ? (
@@ -929,6 +943,9 @@ export default function LearningHubClient({
                                 {item.type === 'podcast' ? '🎙️ Podcast' : '🎬 Lecture'}
                               </span>
                             )}
+                            {item.sponsored && (
+                              <SponsoredBadge slug={item.slug} sponsorName={item.sponsorName} />
+                            )}
                           </div>
 
                           <div className="flex items-center gap-1.5 shrink-0">
@@ -1026,9 +1043,14 @@ export default function LearningHubClient({
                     <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col justify-between space-y-3">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md font-bold uppercase tracking-wider text-[10px]">
-                            🔬 Clinical Study
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md font-bold uppercase tracking-wider text-[10px]">
+                              🔬 Clinical Study
+                            </span>
+                            {item.sponsored && (
+                              <SponsoredBadge slug={item.slug} sponsorName={item.sponsorName} />
+                            )}
+                          </div>
                           <span className="text-slate-400 font-semibold">{item.authorityName}</span>
                         </div>
 
@@ -1115,9 +1137,14 @@ export default function LearningHubClient({
                     <div className="p-4 sm:p-5 flex-1 min-w-0 flex flex-col justify-between space-y-3">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[10px] inline-block">
-                            📖 Book &amp; Protocol
-                          </span>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider text-[10px] inline-block">
+                              📖 Book &amp; Protocol
+                            </span>
+                            {item.sponsored && (
+                              <SponsoredBadge slug={item.slug} sponsorName={item.sponsorName} />
+                            )}
+                          </div>
                           <p className="text-xs font-semibold text-slate-500">
                             By {item.authorityName}
                           </p>

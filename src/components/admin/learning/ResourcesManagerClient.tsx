@@ -18,6 +18,7 @@ export default function ResourcesManagerClient({
   const [resources, setResources] = useState<ILearningResource[]>(initialResources);
   const [filterType, setFilterType] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterSponsored, setFilterSponsored] = useState<'all' | 'sponsored' | 'organic'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<ILearningResource | null>(null);
@@ -153,17 +154,21 @@ export default function ResourcesManagerClient({
     }
   };
 
-  // Filter local resources based on type, status, and search
+  // Filter local resources based on type, status, sponsored status, and search
   const filtered = resources.filter((item) => {
     const matchesType = filterType === 'all' || item.type === filterType;
     const matchesStatus = filterStatus === 'all' || item.status === filterStatus;
+    const matchesSponsored =
+      filterSponsored === 'all' ||
+      (filterSponsored === 'sponsored' && Boolean(item.sponsored)) ||
+      (filterSponsored === 'organic' && !item.sponsored);
     const matchesSearch =
       !searchQuery ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.authorityName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.topics.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    return matchesType && matchesStatus && matchesSearch;
+    return matchesType && matchesStatus && matchesSponsored && matchesSearch;
   });
 
   return (
@@ -239,6 +244,16 @@ export default function ResourcesManagerClient({
             <option value="broken_link">🔴 Broken Link</option>
             <option value="archived">📁 Archived</option>
           </select>
+
+          <select
+            value={filterSponsored}
+            onChange={(e) => setFilterSponsored(e.target.value as 'all' | 'sponsored' | 'organic')}
+            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-teal-500"
+          >
+            <option value="all">All Sponsorship</option>
+            <option value="sponsored">⭐ Sponsored Only</option>
+            <option value="organic">🌿 Organic Only</option>
+          </select>
         </div>
       </div>
 
@@ -291,6 +306,11 @@ export default function ResourcesManagerClient({
                     <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-900/90 text-white backdrop-blur-md border border-white/20">
                       {item.type}
                     </span>
+                    {item.sponsored && (
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500/90 text-amber-950 font-bold border border-amber-300">
+                        {`★ ${item.sponsorName ? `Sponsored by ${item.sponsorName}` : 'Sponsored'}`}
+                      </span>
+                    )}
                     {item.validationStatus === 'broken' && (
                       <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-rose-900/90 text-rose-200 border border-rose-500">
                         Broken Link

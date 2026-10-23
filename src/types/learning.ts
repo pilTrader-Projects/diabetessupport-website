@@ -156,6 +156,10 @@ export interface ILearningResource {
   lastValidatedAt?: Date;
   validationStatus?: ValidationStatus;
 
+  // Commercial Sponsorship & Transparency (Item P2-04)
+  sponsored?: boolean;           // True if resource is sponsored / commercial partner
+  sponsorName?: string;          // Name of commercial partner or sponsor
+
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
