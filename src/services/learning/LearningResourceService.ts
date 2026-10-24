@@ -20,6 +20,7 @@ export class LearningResourceService {
     podcastChannelId?: string;
     isGuestAppearance?: boolean;
     status?: string;
+    sponsored?: boolean;
     search?: string;
     limit?: number;
     skip?: number;
@@ -28,6 +29,9 @@ export class LearningResourceService {
     const query: any = {};
 
     if (filter?.status) query.status = filter.status;
+    if (filter?.sponsored !== undefined) {
+      query.sponsored = filter.sponsored ? true : { $ne: true };
+    }
     if (filter?.type && filter.type !== 'all') query.type = filter.type;
     if (filter?.authorityId) query.authorityId = filter.authorityId;
     if (filter?.podcastChannelId) query.podcastChannelId = filter.podcastChannelId;

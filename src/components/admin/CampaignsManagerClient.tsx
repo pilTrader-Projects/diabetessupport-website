@@ -13,6 +13,8 @@ const DEFAULT_FORM_DATA: CampaignFormData = {
   assetFileName: '',
   description: '',
   isActive: true,
+  allowWaitlist: false,
+  waitlistBrevoList: '',
 };
 
 interface CampaignsManagerProps {
@@ -52,6 +54,8 @@ export default function CampaignsManagerClient({
       assetFileName: item.assetFileName || '',
       description: item.description || '',
       isActive: item.isActive,
+      allowWaitlist: item.allowWaitlist || false,
+      waitlistBrevoList: item.waitlistBrevoList || '',
     });
     setIsModalOpen(true);
   };
@@ -82,6 +86,8 @@ export default function CampaignsManagerClient({
           assetFileName: formData.assetFileName.trim() || undefined,
           description: formData.description.trim() || undefined,
           isActive: formData.isActive,
+          allowWaitlist: formData.allowWaitlist,
+          waitlistBrevoList: formData.waitlistBrevoList?.trim() || undefined,
         };
         const idx = prev.findIndex((c) => c.referenceCode === code);
         return idx >= 0 ? prev.map((c, i) => (i === idx ? updated : c)) : [updated, ...prev];
@@ -138,8 +144,16 @@ export default function CampaignsManagerClient({
                 <span className="font-mono text-xs font-bold text-amber-300 bg-amber-950/60 border border-amber-800/60 px-2.5 py-1 rounded-md">
                   {item.referenceCode}
                 </span>
-                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${item.isActive ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-rose-950 text-rose-300 border border-rose-800'}`}>
-                  {item.isActive ? 'Active' : 'Disabled'}
+                <span
+                  className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                    item.isActive
+                      ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                      : item.allowWaitlist
+                      ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                      : 'bg-rose-950 text-rose-300 border border-rose-800'
+                  }`}
+                >
+                  {item.isActive ? 'Active' : item.allowWaitlist ? 'Waitlist' : 'Disabled'}
                 </span>
               </div>
 

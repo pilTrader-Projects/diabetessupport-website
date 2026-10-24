@@ -11,14 +11,60 @@ export interface EmailCaptureProps {
   source: string;
   edition?: string;
   layout?: 'card' | 'inline' | 'hero' | 'funnel';
+  mode?: 'active' | 'waitlist' | 'closed';
   title?: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   buttonText?: string;
   placeholder?: string;
   className?: string;
   symptomsChecked?: string[];
   noticeVersion?: string;
   onSuccess?: (data: { email: string; downloadUrl?: string }) => void;
+}
+
+export const DEFAULT_WAITLIST_STATUS_SUFFIX = ' [Paused - Join Waitlist]';
+export const DEFAULT_WAITLIST_BUTTON_LABEL = 'Join the Waiting List';
+export const DEFAULT_WAITLIST_NOTICE_TEXT =
+  'This guide is currently paused and undergoing updates. Enter your details below to join the waiting list and be notified the moment it reopens.';
+export const DEFAULT_WAITLIST_BADGE_LABEL = 'Campaign Paused — Join Waiting List';
+
+/**
+ * Strips any trailing directional arrows or entity codes from button text to prevent duplicate arrow rendering.
+ */
+export function sanitizeTrailingArrows(rawText: string): string {
+  return rawText.replace(/(?:[\s\u00A0]*(?:→|&rarr;|->))+$/g, '').trim();
+}
+
+/**
+ * Accessible waitlist status indicator badge.
+ */
+export function WaitlistBadge(): React.JSX.Element {
+  return (
+    <div
+      data-testid="email-capture-waitlist-badge"
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40"
+    >
+      <span>⏸️</span>
+      <span>{DEFAULT_WAITLIST_BADGE_LABEL}</span>
+    </div>
+  );
+}
+
+/**
+ * Informative callout banner explaining the waitlist / paused status.
+ */
+export function WaitlistNoticeBox(): React.JSX.Element {
+  return (
+    <div
+      data-testid="email-capture-waitlist-notice"
+      className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-200/90 text-xs sm:text-xs leading-relaxed flex items-start gap-2"
+    >
+      <span className="shrink-0 text-sm">ℹ️</span>
+      <span>
+        <strong>Notice:</strong> {DEFAULT_WAITLIST_NOTICE_TEXT}
+      </span>
+    </div>
+  );
 }
 
 /**
@@ -34,15 +80,40 @@ export default function EmailCapture({
   source,
   edition = 'ph',
   layout = 'card',
+  mode = 'active',
   title = 'Get Our Free Diabetes Care & Insulin Sensitivity Guide',
   subtitle = 'Join Filipino family providers receiving evidence-based lifestyle tips, low-GI ancestral meal plans, and blood sugar tracking advice.',
-  buttonText = 'Claim Free Guide',
+  buttonText,
   placeholder = 'Enter your email address...',
   className = '',
   symptomsChecked = [],
   noticeVersion = '2026.1',
   onSuccess,
 }: EmailCaptureProps): React.JSX.Element {
+  const isWaitlist = mode === 'waitlist';
+
+  // 1. Title handling: Append status if waitlist and not already specified
+  const hasWaitlistInTitle =
+    title && /(?:waitlist|waiting\s*list|paused|inactive)/i.test(title);
+  const effectiveTitle = isWaitlist
+    ? hasWaitlistInTitle
+      ? title
+      : `${title}${DEFAULT_WAITLIST_STATUS_SUFFIX}`
+    : title;
+
+  // 2. Action button handling: Convey joining waitlist in waitlist mode
+  let rawButtonText: string = 'Claim Free Guide';
+  if (isWaitlist) {
+    const hasWaitlistInButton =
+      buttonText && /(?:waitlist|waiting\s*list)/i.test(buttonText);
+    rawButtonText = hasWaitlistInButton ? buttonText : DEFAULT_WAITLIST_BUTTON_LABEL;
+  } else if (buttonText) {
+    rawButtonText = buttonText;
+  }
+
+  // 3. Arrow sanitization: Strip trailing arrows to prevent double-arrow glitch
+  const effectiveButtonText = sanitizeTrailingArrows(rawButtonText);
+
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [honeypot, setHoneypot] = useState('');
@@ -55,6 +126,7 @@ export default function EmailCapture({
     appUrl?: string;
     appName?: string;
     ctaText?: string;
+    isWaitlist?: boolean;
   } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,11 +171,16 @@ export default function EmailCapture({
       }
 
       setSuccessData({
-        message: data.message || 'Thank you! Please check your inbox for confirmation.',
+        message:
+          data.message ||
+          (data.isWaitlist
+            ? "You've been added to the priority waitlist! We will notify you as soon as this guide is updated."
+            : 'Thank you! Please check your inbox for confirmation.'),
         downloadUrl: data.downloadUrl,
         appUrl: data.appUrl,
         appName: data.appName,
         ctaText: data.ctaText,
+        isWaitlist: Boolean(data.isWaitlist),
       });
 
       // Dispatch GA4 conversion event and custom browser event (P1-05)
@@ -126,6 +203,26 @@ export default function EmailCapture({
     }
   };
 
+  // Render Closed State
+  if (mode === 'closed') {
+    return (
+      <div
+        data-testid="email-capture-closed"
+        className={`p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 text-center space-y-3 shadow-xl backdrop-blur-md ${className}`}
+      >
+        <div className="w-10 h-10 bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto text-xl border border-slate-700">
+          🔒
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-base sm:text-lg font-bold text-white">Registrations Currently Closed</h3>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
+            This guide or registration is currently closed to new entries. Please check back later or explore our public learning resources.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Render Success State
   if (successData) {
     return (
@@ -137,7 +234,9 @@ export default function EmailCapture({
           ✓
         </div>
         <div className="space-y-1">
-          <h3 className="text-xl font-black text-white">Check Your Inbox!</h3>
+          <h3 className="text-xl font-black text-white">
+            {successData.isWaitlist ? "Priority Waitlist Confirmed! 🎉" : "Check Your Inbox!"}
+          </h3>
           <p className="text-sm text-teal-100/90 max-w-md mx-auto leading-relaxed">
             {successData.message}
           </p>
@@ -224,7 +323,7 @@ export default function EmailCapture({
             {loading ? (
               <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <span>{buttonText}</span>
+              <span>{effectiveButtonText}</span>
             )}
           </button>
         </div>
@@ -282,16 +381,18 @@ export default function EmailCapture({
         </div>
 
         <div className="space-y-2">
-          {title && (
+          {isWaitlist && <WaitlistBadge />}
+          {effectiveTitle && (
             <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">
-              {title}
+              {effectiveTitle}
             </h3>
           )}
           {subtitle && (
-            <p className="text-xs sm:text-sm text-teal-100/80 leading-relaxed">
+            <div className="text-xs sm:text-sm text-teal-100/80 leading-relaxed whitespace-pre-line">
               {subtitle}
-            </p>
+            </div>
           )}
+          {isWaitlist && <WaitlistNoticeBox />}
         </div>
 
         <div className="space-y-3.5">
@@ -364,7 +465,7 @@ export default function EmailCapture({
           {loading ? (
             <span className="inline-block w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
           ) : (
-            <span>{buttonText} &rarr;</span>
+            <span>{effectiveButtonText} &rarr;</span>
           )}
         </button>
 
@@ -397,16 +498,18 @@ export default function EmailCapture({
       </div>
 
       <div className="space-y-2">
-        {title && (
+        {isWaitlist && <WaitlistBadge />}
+        {effectiveTitle && (
           <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">
-            {title}
+            {effectiveTitle}
           </h3>
         )}
         {subtitle && (
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <div className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
             {subtitle}
-          </p>
+          </div>
         )}
+        {isWaitlist && <WaitlistNoticeBox />}
       </div>
 
       <div className="space-y-3.5">
@@ -474,12 +577,16 @@ export default function EmailCapture({
         type="submit"
         data-testid="email-capture-submit-btn"
         disabled={loading}
-        className="w-full py-4 px-6 bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+        className={`w-full py-4 px-6 font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer ${
+          isWaitlist
+            ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-amber-500/20'
+            : 'bg-teal-600 hover:bg-teal-500 text-white'
+        }`}
       >
         {loading ? (
-          <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
         ) : (
-          <span>{buttonText} &rarr;</span>
+          <span>{effectiveButtonText} &rarr;</span>
         )}
       </button>
 

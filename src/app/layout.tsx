@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import { SITE_CONFIG } from '@/config/constants';
 import { ExtensionGuard } from '@/components/ExtensionGuard';
@@ -100,8 +101,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google Consent Mode v2 Early Initialization (Default Denied) */}
-        <script
+        <Script
           id="google-consent-mode-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];

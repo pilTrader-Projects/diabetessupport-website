@@ -68,14 +68,27 @@ export async function GET(): Promise<NextResponse> {
     lastmod: post.updatedAt ? new Date(post.updatedAt).toISOString() : now,
   }));
 
-  const threadRoutes = threads.map((th) => ({
-    url: `${baseUrl}/community/${th.slug}`,
+  const threadRoutes = threads.map((thread) => ({
+    url: `${baseUrl}/community/${thread.slug}`,
     priority: '0.8',
-    changefreq: 'daily',
-    lastmod: th.updatedAt ? new Date(th.updatedAt).toISOString() : now,
+    changefreq: 'weekly',
+    lastmod: thread.updatedAt ? new Date(thread.updatedAt).toISOString() : now,
   }));
 
-  const allRoutes = [...staticRoutes, ...postRoutes, ...threadRoutes];
+  const roadmapRoutes = [
+    'understand',
+    'spot-signs',
+    'know-causes',
+    'take-action',
+    'stay-safe',
+  ].map((stepId) => ({
+    url: `${baseUrl}/learn/roadmap/${stepId}`,
+    priority: '0.85',
+    changefreq: 'weekly',
+    lastmod: now,
+  }));
+
+  const allRoutes = [...staticRoutes, ...roadmapRoutes, ...postRoutes, ...threadRoutes];
 
   const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
