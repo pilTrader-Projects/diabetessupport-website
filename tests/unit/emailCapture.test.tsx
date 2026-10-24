@@ -64,4 +64,23 @@ describe('Unified <EmailCapture /> Component (TDD Tests)', () => {
     expect(html).toContain('Custom metabolic subtitle');
     expect(html).toContain('Download Free Guide');
   });
+
+  it('renders closed state message when mode="closed"', () => {
+    const html = ReactDOMServer.renderToString(
+      <EmailCapture source="recovery_protocol" mode="closed" />
+    );
+
+    expect(html).toContain('data-testid="email-capture-closed"');
+    expect(html).toContain('Registrations Currently Closed');
+    expect(html).not.toContain('email-capture-input');
+  });
+
+  it('renders default priority waitlist button when mode="waitlist"', () => {
+    const html = ReactDOMServer.renderToString(
+      <EmailCapture source="recovery_protocol" mode="waitlist" />
+    );
+
+    expect(html).toContain('Join the Priority Waitlist');
+    expect(html).toContain('data-testid="email-capture-form"');
+  });
 });

@@ -12,6 +12,8 @@ export interface ICampaignConfigDocument extends Document {
   assetFileName?: string;
   description?: string;
   isActive: boolean;
+  allowWaitlist?: boolean;
+  waitlistBrevoList?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -55,6 +57,14 @@ const CampaignConfigSchema: Schema = new Schema<ICampaignConfigDocument>(
       type: Boolean,
       default: true,
       index: true,
+    },
+    allowWaitlist: {
+      type: Boolean,
+      default: false,
+    },
+    waitlistBrevoList: {
+      type: String,
+      trim: true,
     },
   },
   {

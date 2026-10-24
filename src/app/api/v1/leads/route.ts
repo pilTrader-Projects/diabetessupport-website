@@ -4,7 +4,7 @@ import { LeadModel } from '@/models/Lead';
 import { BrevoService } from '@/services/brevoService';
 import { CampaignService } from '@/services/campaignService';
 import { AssetStorageService } from '@/services/assetStorageService';
-import { qualifyMetabolicStage, CAMPAIGN_CODES } from '@/config/leadConfig';
+import { qualifyMetabolicStage, CAMPAIGN_CODES, BREVO_LISTS } from '@/config/leadConfig';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,6 +60,63 @@ export async function POST(req: Request): Promise<NextResponse> {
   // Resolve dynamic campaign mapping from MongoDB
   const campaign = await CampaignService.resolveCampaign(leadSource);
   console.log(`[Lead Capture]: Resolved campaign "${campaign.referenceCode}" from MongoDB -> Asset: "${campaign.assetFileName || 'None'}", Brevo List: "${campaign.brevoList}"`);
+
+  // Enforce Inactive Campaign Rejection & Waitlist Handling
+  if (!campaign.isActive) {
+    if (!campaign.allowWaitlist) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'This guide or registration is currently closed. Submissions are not being accepted at this time.',
+        },
+        { status: 422 }
+      );
+    }
+
+    // Waitlist Mode: Persist lead as waitlist and sync to Brevo waitlist without issuing download token
+    try {
+      await LeadModel.findOneAndUpdate(
+        { email: cleanEmail },
+        {
+          $set: {
+            email: cleanEmail,
+            firstName: cleanFirstName,
+            source: `${campaign.referenceCode}_waitlist`,
+            metabolicStage: 'WAITLIST',
+            status: 'waitlist',
+          },
+          $addToSet: {
+            symptomsChecked: { $each: cleanSymptoms },
+          },
+        },
+        { upsert: true, returnDocument: 'after', runValidators: true }
+      );
+    } catch (dbErr: any) {
+      console.error('Database error saving waitlist lead:', dbErr);
+    }
+
+    const waitlistList = campaign.waitlistBrevoList || BREVO_LISTS.WAITLIST || 'waitlist';
+    try {
+      await BrevoService.syncContact({
+        email: cleanEmail,
+        firstName: cleanFirstName,
+        source: `${campaign.referenceCode}_waitlist`,
+        symptomsChecked: cleanSymptoms,
+        metabolicStage: 'WAITLIST',
+        downloadUrl: undefined,
+        listIds: [waitlistList],
+      });
+    } catch (brevoErr) {
+      console.error('Brevo waitlist sync error:', brevoErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      isWaitlist: true,
+      message: "You've been added to the priority waitlist! We will notify you as soon as this guide is updated.",
+    });
+  }
 
   // Qualify lead's metabolic status awareness depending on campaign config, capture point, and symptoms
   const qualifiedMetabolicStage = qualifyMetabolicStage({

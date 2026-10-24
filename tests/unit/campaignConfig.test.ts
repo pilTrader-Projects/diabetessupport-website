@@ -109,6 +109,42 @@ describe('CampaignConfig & CampaignService Unit Tests', () => {
       expect(campaign.referenceCode).toBe('custom_quiz_lead');
       expect(campaign.brevoList).toBe('quiz_leads_list');
       expect(campaign.defaultMetabolicStage).toBe('ASSESSED_PRE_DIABETIC');
+      expect(campaign.isActive).toBe(true);
+      expect(campaign.allowWaitlist).toBe(false);
+    });
+
+    it('should accurately resolve inactive campaign with allowWaitlist from MongoDB', async () => {
+      jest.spyOn(CampaignConfigModel, 'findOne').mockResolvedValueOnce({
+        referenceCode: 'recovery_protocol',
+        name: 'Insulin Sensitivity & Recovery Protocol',
+        brevoList: 'recovery_protocol',
+        defaultMetabolicStage: 'EARLY_STAGE_HYPERINSULINEMIA',
+        isActive: false,
+        allowWaitlist: true,
+        waitlistBrevoList: 'custom_waitlist',
+      } as any);
+
+      const campaign = await CampaignService.resolveCampaign('recovery_protocol');
+      expect(campaign.referenceCode).toBe('recovery_protocol');
+      expect(campaign.isActive).toBe(false);
+      expect(campaign.allowWaitlist).toBe(true);
+      expect(campaign.waitlistBrevoList).toBe('custom_waitlist');
+    });
+
+    it('should accurately resolve inactive campaign without waitlist as closed', async () => {
+      jest.spyOn(CampaignConfigModel, 'findOne').mockResolvedValueOnce({
+        referenceCode: 'recovery_protocol',
+        name: 'Insulin Sensitivity & Recovery Protocol',
+        brevoList: 'recovery_protocol',
+        defaultMetabolicStage: 'EARLY_STAGE_HYPERINSULINEMIA',
+        isActive: false,
+        allowWaitlist: false,
+      } as any);
+
+      const campaign = await CampaignService.resolveCampaign('recovery_protocol');
+      expect(campaign.referenceCode).toBe('recovery_protocol');
+      expect(campaign.isActive).toBe(false);
+      expect(campaign.allowWaitlist).toBe(false);
     });
 
     it('should fallback gracefully to default general awareness for unknown reference code', async () => {
