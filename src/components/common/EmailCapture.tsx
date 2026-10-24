@@ -11,6 +11,7 @@ export interface EmailCaptureProps {
   source: string;
   edition?: string;
   layout?: 'card' | 'inline' | 'hero' | 'funnel';
+  mode?: 'active' | 'waitlist' | 'closed';
   title?: string;
   subtitle?: React.ReactNode;
   buttonText?: string;
@@ -34,15 +35,18 @@ export default function EmailCapture({
   source,
   edition = 'ph',
   layout = 'card',
+  mode = 'active',
   title = 'Get Our Free Diabetes Care & Insulin Sensitivity Guide',
   subtitle = 'Join Filipino family providers receiving evidence-based lifestyle tips, low-GI ancestral meal plans, and blood sugar tracking advice.',
-  buttonText = 'Claim Free Guide',
+  buttonText,
   placeholder = 'Enter your email address...',
   className = '',
   symptomsChecked = [],
   noticeVersion = '2026.1',
   onSuccess,
 }: EmailCaptureProps): React.JSX.Element {
+  const effectiveButtonText =
+    buttonText || (mode === 'waitlist' ? 'Join the Priority Waitlist →' : 'Claim Free Guide');
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [honeypot, setHoneypot] = useState('');
@@ -55,6 +59,7 @@ export default function EmailCapture({
     appUrl?: string;
     appName?: string;
     ctaText?: string;
+    isWaitlist?: boolean;
   } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,11 +104,16 @@ export default function EmailCapture({
       }
 
       setSuccessData({
-        message: data.message || 'Thank you! Please check your inbox for confirmation.',
+        message:
+          data.message ||
+          (data.isWaitlist
+            ? "You've been added to the priority waitlist! We will notify you as soon as this guide is updated."
+            : 'Thank you! Please check your inbox for confirmation.'),
         downloadUrl: data.downloadUrl,
         appUrl: data.appUrl,
         appName: data.appName,
         ctaText: data.ctaText,
+        isWaitlist: Boolean(data.isWaitlist),
       });
 
       // Dispatch GA4 conversion event and custom browser event (P1-05)
@@ -126,6 +136,26 @@ export default function EmailCapture({
     }
   };
 
+  // Render Closed State
+  if (mode === 'closed') {
+    return (
+      <div
+        data-testid="email-capture-closed"
+        className={`p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 text-center space-y-3 shadow-xl backdrop-blur-md ${className}`}
+      >
+        <div className="w-10 h-10 bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto text-xl border border-slate-700">
+          🔒
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-base sm:text-lg font-bold text-white">Registrations Currently Closed</h3>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
+            This guide or registration is currently closed to new entries. Please check back later or explore our public learning resources.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Render Success State
   if (successData) {
     return (
@@ -137,7 +167,9 @@ export default function EmailCapture({
           ✓
         </div>
         <div className="space-y-1">
-          <h3 className="text-xl font-black text-white">Check Your Inbox!</h3>
+          <h3 className="text-xl font-black text-white">
+            {successData.isWaitlist ? "Priority Waitlist Confirmed! 🎉" : "Check Your Inbox!"}
+          </h3>
           <p className="text-sm text-teal-100/90 max-w-md mx-auto leading-relaxed">
             {successData.message}
           </p>
@@ -224,7 +256,7 @@ export default function EmailCapture({
             {loading ? (
               <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <span>{buttonText}</span>
+              <span>{effectiveButtonText}</span>
             )}
           </button>
         </div>
@@ -364,7 +396,7 @@ export default function EmailCapture({
           {loading ? (
             <span className="inline-block w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
           ) : (
-            <span>{buttonText} &rarr;</span>
+            <span>{effectiveButtonText} &rarr;</span>
           )}
         </button>
 
@@ -479,7 +511,7 @@ export default function EmailCapture({
         {loading ? (
           <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
         ) : (
-          <span>{buttonText} &rarr;</span>
+          <span>{effectiveButtonText} &rarr;</span>
         )}
       </button>
 

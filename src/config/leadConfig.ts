@@ -44,6 +44,7 @@ export const BREVO_LISTS = {
   INSULIN_RESET_FUNNEL: 'insulin_reset_funnel',
   COMPANION_APP_USERS: 'companion_app_users',
   RECOVERY_PROTOCOL: 'recovery_protocol',
+  WAITLIST: 'waitlist',
 } as const;
 
 export type BrevoList = (typeof BREVO_LISTS)[keyof typeof BREVO_LISTS];
@@ -87,6 +88,8 @@ export interface CampaignConfig {
   assetFileName?: string;
   description?: string;
   isActive: boolean;
+  allowWaitlist?: boolean;
+  waitlistBrevoList?: string;
 }
 
 /**
@@ -102,6 +105,7 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     defaultMetabolicStage: METABOLIC_STAGES.GENERAL_AWARENESS,
     description: 'General newsletter opt-ins and educational health updates',
     isActive: true,
+    allowWaitlist: false,
   },
   [CAMPAIGN_CODES.INSULIN_RESET_FUNNEL]: {
     referenceCode: CAMPAIGN_CODES.INSULIN_RESET_FUNNEL,
@@ -110,6 +114,7 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
     description: 'Low-awareness metabolic symptom checklist & 8-page educational guide funnel',
     isActive: true,
+    allowWaitlist: false,
   },
   [CAMPAIGN_CODES.COMPANION_APP_USERS]: {
     referenceCode: CAMPAIGN_CODES.COMPANION_APP_USERS,
@@ -118,6 +123,7 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     defaultMetabolicStage: METABOLIC_STAGES.COMPANION_APP_USER,
     description: 'Direct response companion app onboarding and claim leads',
     isActive: true,
+    allowWaitlist: false,
   },
   [CAMPAIGN_CODES.RECOVERY_PROTOCOL]: {
     referenceCode: CAMPAIGN_CODES.RECOVERY_PROTOCOL,
@@ -126,6 +132,7 @@ export const DEFAULT_CAMPAIGNS: Record<string, CampaignConfig> = {
     defaultMetabolicStage: METABOLIC_STAGES.EARLY_STAGE_HYPERINSULINEMIA,
     description: 'Roadmap mid-funnel lead capture for Insulin Sensitivity & Recovery Protocol guide',
     isActive: true,
+    allowWaitlist: false,
   },
 };
 

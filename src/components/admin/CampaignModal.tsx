@@ -11,6 +11,8 @@ export interface CampaignFormData {
   assetFileName: string;
   description: string;
   isActive: boolean;
+  allowWaitlist?: boolean;
+  waitlistBrevoList?: string;
 }
 
 interface CampaignModalProps {
@@ -169,6 +171,40 @@ export default function CampaignModal({
               Active (Receiving Leads)
             </label>
           </div>
+
+          {!formData.isActive && (
+            <div className="p-4 bg-slate-950/80 border border-amber-900/60 rounded-xl space-y-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="waitlistToggle"
+                  checked={formData.allowWaitlist || false}
+                  onChange={(e) => onChange({ ...formData, allowWaitlist: e.target.checked })}
+                  className="w-4 h-4 rounded text-amber-500 bg-slate-900 border-slate-700"
+                />
+                <label htmlFor="waitlistToggle" className="text-amber-200 font-bold text-sm">
+                  Enable Waitlist Mode (Alternate UI)
+                </label>
+              </div>
+              <p className="text-xs text-slate-400">
+                When enabled, subscribers will join the waitlist and be tagged with <code className="text-amber-400">WAITLIST</code> in Brevo. No asset download tokens or automated sequences are issued. If disabled, new registrations are rejected with a closed notice.
+              </p>
+              {formData.allowWaitlist && (
+                <div>
+                  <label className="block text-slate-300 text-xs font-bold mb-1 uppercase tracking-wider">
+                    Waitlist Brevo List ID / Name (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="waitlist"
+                    value={formData.waitlistBrevoList || ''}
+                    onChange={(e) => onChange({ ...formData, waitlistBrevoList: e.target.value })}
+                    className="w-full p-2.5 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm"
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="pt-4 flex justify-end gap-3 border-t border-slate-800">
             <button

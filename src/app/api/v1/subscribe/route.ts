@@ -109,6 +109,44 @@ export async function POST(req: Request): Promise<NextResponse> {
   // 7. Resolve dynamic campaign mapping (preserves existing Brevo lists & attributes)
   const campaign = await CampaignService.resolveCampaign(source);
 
+  // 7a. Enforce Inactive Campaign Rejection & Waitlist Handling
+  if (!campaign.isActive) {
+    if (!campaign.allowWaitlist) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'This guide or registration is currently closed. Submissions are not being accepted at this time.',
+        },
+        { status: 422 }
+      );
+    }
+
+    // Waitlist Mode: Sync lead to dedicated Waitlist Brevo list & attributes without issuing asset token
+    const waitlistList = campaign.waitlistBrevoList || BREVO_LISTS.WAITLIST || 'waitlist';
+    let waitlistSyncResult: any = null;
+    try {
+      waitlistSyncResult = await BrevoService.syncContact({
+        email,
+        firstName,
+        source: `${campaign.referenceCode}_waitlist`,
+        metabolicStage: 'WAITLIST',
+        downloadUrl: undefined,
+        listIds: [waitlistList],
+      });
+    } catch (brevoErr) {
+      console.error('Brevo waitlist sync error:', brevoErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      isWaitlist: true,
+      message:
+        "You've been added to the priority waitlist! We will notify you as soon as this guide is updated.",
+      data: waitlistSyncResult,
+    });
+  }
+
   // 8. Generate personalized, expiring digital asset token if campaign delivers an asset
   let downloadUrl: string | undefined = undefined;
   if (campaign.assetFileName) {

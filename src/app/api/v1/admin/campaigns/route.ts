@@ -68,6 +68,8 @@ export async function POST(req: Request): Promise<NextResponse> {
     assetFileName,
     description,
     isActive,
+    allowWaitlist,
+    waitlistBrevoList,
   } = body || {};
 
   if (!referenceCode || typeof referenceCode !== 'string' || !referenceCode.trim()) {
@@ -96,6 +98,8 @@ export async function POST(req: Request): Promise<NextResponse> {
   const cleanList = brevoList.trim();
   const cleanStage = (defaultMetabolicStage || METABOLIC_STAGES.GENERAL_AWARENESS).trim().toUpperCase();
   const cleanAsset = typeof assetFileName === 'string' && assetFileName.trim() ? assetFileName.trim() : '';
+  const cleanWaitlistList =
+    typeof waitlistBrevoList === 'string' && waitlistBrevoList.trim() ? waitlistBrevoList.trim() : undefined;
 
   try {
     await dbConnect();
@@ -110,6 +114,8 @@ export async function POST(req: Request): Promise<NextResponse> {
           assetFileName: cleanAsset,
           description: description?.trim() || undefined,
           isActive: isActive !== false,
+          allowWaitlist: Boolean(allowWaitlist),
+          waitlistBrevoList: cleanWaitlistList,
         },
       },
       { upsert: true, returnDocument: 'after', runValidators: true }

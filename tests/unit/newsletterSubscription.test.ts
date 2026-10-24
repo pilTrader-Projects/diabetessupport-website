@@ -214,4 +214,82 @@ describe('Newsletter & Lead Subscription API (/api/v1/subscribe)', () => {
       })
     );
   });
+
+  it('should reject subscription with 422 when campaign is inactive and allowWaitlist is false', async () => {
+    jest.spyOn(require('../../src/services/campaignService').CampaignService, 'resolveCampaign')
+      .mockResolvedValueOnce({
+        referenceCode: 'closed_promo',
+        name: 'Closed Promotion',
+        brevoList: 'closed_list',
+        defaultMetabolicStage: 'GENERAL_AWARENESS',
+        isActive: false,
+        allowWaitlist: false,
+      });
+
+    const req = new Request('http://localhost:3000/api/v1/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'latecomer@example.com',
+        source: 'closed_promo',
+        consent: true,
+      }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(422);
+    expect(body.success).toBe(false);
+    expect(body.error).toContain('closed');
+  });
+
+  it('should accept subscription in waitlist mode, sync to waitlist Brevo list, and not issue downloadUrl', async () => {
+    const syncSpy = jest.spyOn(require('../../src/services/brevoService').BrevoService, 'syncContact')
+      .mockResolvedValueOnce({ success: true, contactId: 555 });
+
+    jest.spyOn(require('../../src/services/campaignService').CampaignService, 'resolveCampaign')
+      .mockResolvedValueOnce({
+        referenceCode: 'recovery_protocol',
+        name: 'Recovery Protocol',
+        brevoList: 'recovery_protocol',
+        defaultMetabolicStage: 'EARLY_STAGE_HYPERINSULINEMIA',
+        assetFileName: 'protocol.pdf',
+        isActive: false,
+        allowWaitlist: true,
+        waitlistBrevoList: 'waitlist_custom',
+      });
+
+    const req = new Request('http://localhost:3000/api/v1/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'waitlister@example.com',
+        firstName: 'Alex',
+        source: 'recovery_protocol',
+        consent: true,
+      }),
+    });
+
+    const res = await POST(req);
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.isWaitlist).toBe(true);
+    expect(body.message).toContain('priority waitlist');
+    expect(body.downloadUrl).toBeUndefined();
+
+    // Verify Brevo sync called with waitlist list and metadata
+    expect(syncSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'waitlister@example.com',
+        firstName: 'Alex',
+        source: 'recovery_protocol_waitlist',
+        metabolicStage: 'WAITLIST',
+        downloadUrl: undefined,
+        listIds: ['waitlist_custom'],
+      })
+    );
+  });
 });

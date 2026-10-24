@@ -27,13 +27,26 @@ export class CampaignService {
   public static async resolveCampaign(rawCode?: string): Promise<CampaignResolvedConfig> {
     const cleanCode = (rawCode || '').trim().toLowerCase();
 
-    // 1. Check MongoDB for custom active campaign configuration
+    // Map sub-sources / step variants to canonical parent campaign reference code
+    let lookupCode = cleanCode;
+    if (
+      cleanCode.startsWith('recovery_protocol_') ||
+      cleanCode.startsWith('recovery_protocol-') ||
+      cleanCode.startsWith('learn-roadmap')
+    ) {
+      lookupCode = CAMPAIGN_CODES.RECOVERY_PROTOCOL;
+    } else if (cleanCode.startsWith('insulin_reset_') || cleanCode === 'insulin_reset') {
+      lookupCode = CAMPAIGN_CODES.INSULIN_RESET_FUNNEL;
+    } else if (cleanCode.startsWith('companion_app_') || cleanCode === 'companion_app_users') {
+      lookupCode = CAMPAIGN_CODES.COMPANION_APP_USERS;
+    }
+
+    // 1. Check MongoDB for custom campaign configuration (matching specific code or canonical parent code)
     try {
       await dbConnect();
       if (mongoose.connection && mongoose.connection.readyState === 1) {
         const query = CampaignConfigModel.findOne({
-          referenceCode: cleanCode,
-          isActive: true,
+          referenceCode: { $in: [cleanCode, lookupCode] },
         });
         const customConfig =
           query && typeof (query as any).lean === 'function'
@@ -48,7 +61,9 @@ export class CampaignService {
             defaultMetabolicStage: customConfig.defaultMetabolicStage,
             assetFileName: customConfig.assetFileName?.trim() || undefined,
             description: customConfig.description,
-            isActive: customConfig.isActive,
+            isActive: customConfig.isActive !== false,
+            allowWaitlist: customConfig.allowWaitlist === true,
+            waitlistBrevoList: customConfig.waitlistBrevoList?.trim() || undefined,
           };
         }
       }
@@ -58,7 +73,11 @@ export class CampaignService {
 
     // 2. Built-in alias & default campaign mapping
     if (DEFAULT_CAMPAIGNS[cleanCode]) {
-      return DEFAULT_CAMPAIGNS[cleanCode];
+      return { ...DEFAULT_CAMPAIGNS[cleanCode] };
+    }
+
+    if (DEFAULT_CAMPAIGNS[lookupCode]) {
+      return { ...DEFAULT_CAMPAIGNS[lookupCode] };
     }
 
     if (
@@ -68,7 +87,7 @@ export class CampaignService {
       cleanCode.startsWith('article_') ||
       cleanCode.includes('subscribe')
     ) {
-      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
+      return { ...DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER] };
     }
 
     if (
@@ -76,7 +95,7 @@ export class CampaignService {
       cleanCode === 'insulin_reset' ||
       cleanCode.startsWith('insulin_reset_')
     ) {
-      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.INSULIN_RESET_FUNNEL];
+      return { ...DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.INSULIN_RESET_FUNNEL] };
     }
 
     if (
@@ -84,7 +103,7 @@ export class CampaignService {
       cleanCode === 'companion_app_users_funnel' ||
       cleanCode.startsWith('companion_app_')
     ) {
-      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.COMPANION_APP_USERS];
+      return { ...DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.COMPANION_APP_USERS] };
     }
 
     if (
@@ -93,11 +112,11 @@ export class CampaignService {
       cleanCode === 'learn-roadmap' ||
       cleanCode.startsWith('learn-roadmap')
     ) {
-      return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.RECOVERY_PROTOCOL];
+      return { ...DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.RECOVERY_PROTOCOL] };
     }
 
     // Default fallback to newsletter
-    return DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER];
+    return { ...DEFAULT_CAMPAIGNS[CAMPAIGN_CODES.NEWSLETTER] };
   }
 
   /**
@@ -143,6 +162,8 @@ export class CampaignService {
                   : existing.assetFileName,
               description: doc.description !== undefined ? doc.description : existing.description,
               isActive: doc.isActive !== undefined ? doc.isActive : existing.isActive,
+              allowWaitlist: doc.allowWaitlist !== undefined ? doc.allowWaitlist : existing.allowWaitlist,
+              waitlistBrevoList: doc.waitlistBrevoList?.trim() || existing.waitlistBrevoList,
             });
           } else {
             campaignsMap.set(code, {
@@ -153,6 +174,8 @@ export class CampaignService {
               assetFileName: doc.assetFileName?.trim() || undefined,
               description: doc.description,
               isActive: doc.isActive !== false,
+              allowWaitlist: doc.allowWaitlist === true,
+              waitlistBrevoList: doc.waitlistBrevoList?.trim() || undefined,
             });
           }
         }
