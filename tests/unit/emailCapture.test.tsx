@@ -80,7 +80,58 @@ describe('Unified <EmailCapture /> Component (TDD Tests)', () => {
       <EmailCapture source="recovery_protocol" mode="waitlist" />
     );
 
-    expect(html).toContain('Join the Priority Waitlist');
+    expect(html).toContain('Join the Waiting List');
     expect(html).toContain('data-testid="email-capture-form"');
+  });
+
+  it('appends paused status to title in waitlist mode and renders waitlist badge/notice', () => {
+    const html = ReactDOMServer.renderToString(
+      <EmailCapture
+        source="recovery_protocol"
+        mode="waitlist"
+        title="Download the Free Insulin Sensitivity & Recovery Protocol"
+        buttonText="Send Me My Recovery Protocol →"
+      />
+    );
+
+    // Title explicitly appends status
+    expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol [Paused - Join Waitlist]');
+
+    // Action button conveys joining the waiting list instead of old download CTA
+    expect(html).toContain('Join the Waiting List');
+    expect(html).not.toContain('Send Me My Recovery Protocol');
+
+    // Explicit status indicator
+    expect(html).toContain('data-testid="email-capture-waitlist-badge"');
+    expect(html).toContain('Campaign Paused — Join Waiting List');
+  });
+
+  it('does not duplicate status suffix if title already contains waitlist or paused', () => {
+    const html = ReactDOMServer.renderToString(
+      <EmailCapture
+        source="recovery_protocol"
+        mode="waitlist"
+        title="Insulin Sensitivity Protocol (Waitlist)"
+      />
+    );
+
+    expect(html).toContain('Insulin Sensitivity Protocol (Waitlist)');
+    expect(html).not.toContain('Insulin Sensitivity Protocol (Waitlist) [Paused - Join Waitlist]');
+  });
+
+  it('normalizes button text and prevents double arrows (→ →)', () => {
+    const activeHtml = ReactDOMServer.renderToString(
+      <EmailCapture
+        source="recovery_protocol"
+        mode="active"
+        buttonText="Send Me My Recovery Protocol →"
+      />
+    );
+
+    // Should only have one arrow, not double arrows
+    expect(activeHtml).toContain('Send Me My Recovery Protocol');
+    expect(activeHtml).not.toMatch(/→\s*→/);
+    expect(activeHtml).not.toMatch(/&rarr;\s*&rarr;/);
+    expect(activeHtml).not.toMatch(/→\s*&rarr;/);
   });
 });

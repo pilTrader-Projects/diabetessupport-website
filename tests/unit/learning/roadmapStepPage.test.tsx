@@ -50,6 +50,19 @@ jest.mock('@/services/learning/roadmapService', () => {
   };
 });
 
+jest.mock('@/services/campaignService', () => ({
+  CampaignService: {
+    resolveCampaign: jest.fn(async () => ({
+      referenceCode: 'recovery_protocol',
+      name: 'Recovery Protocol',
+      brevoList: 'recovery_protocol',
+      defaultMetabolicStage: 'AWARENESS',
+      isActive: true,
+      allowWaitlist: false,
+    })),
+  },
+}));
+
 describe('P2-03: Roadmap Step Detail Page & Client Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -137,6 +150,28 @@ describe('P2-03: Roadmap Step Detail Page & Client Component', () => {
       ).rejects.toThrow('NEXT_NOT_FOUND');
 
       expect(notFound).toHaveBeenCalled();
+    });
+
+    it('renders waitlist UI on roadmap step page when campaign is inactive and allowWaitlist is true', async () => {
+      const { CampaignService } = require('@/services/campaignService');
+      (CampaignService.resolveCampaign as jest.Mock).mockResolvedValueOnce({
+        referenceCode: 'recovery_protocol',
+        name: 'Recovery Protocol',
+        brevoList: 'recovery_protocol',
+        defaultMetabolicStage: 'AWARENESS',
+        isActive: false,
+        allowWaitlist: true,
+      });
+
+      const pageJsx = await RoadmapStepPage({
+        params: Promise.resolve({ step: 'understand' }),
+      });
+
+      const html = ReactDOMServer.renderToString(pageJsx);
+
+      expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol [Paused - Join Waitlist]');
+      expect(html).toContain('Join the Waiting List');
+      expect(html).toContain('Campaign Paused — Join Waiting List');
     });
   });
 

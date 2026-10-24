@@ -277,6 +277,29 @@ describe('P2-02: LearningRoadmapSection UI Component', () => {
       expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol');
       expect(html).toContain('data-testid="learn-roadmap-email-capture"');
     });
+
+    it('renders waitlist status and CTA in roadmap email capture when campaignMode="waitlist"', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningRoadmapSection
+          steps={mockSteps as unknown as ResolvedRoadmapStep[]}
+          campaignMode="waitlist"
+        />
+      );
+      expect(html).toContain('Download the Free Insulin Sensitivity &amp; Recovery Protocol [Paused - Join Waitlist]');
+      expect(html).toContain('Join the Waiting List');
+      expect(html).toContain('Campaign Paused — Join Waiting List');
+    });
+
+    it('renders closed state in roadmap email capture when campaignMode="closed"', () => {
+      const html = ReactDOMServer.renderToString(
+        <LearningRoadmapSection
+          steps={mockSteps as unknown as ResolvedRoadmapStep[]}
+          campaignMode="closed"
+        />
+      );
+      expect(html).toContain('data-testid="email-capture-closed"');
+      expect(html).toContain('Registrations Currently Closed');
+    });
   });
 });
 

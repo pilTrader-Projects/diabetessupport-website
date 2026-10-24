@@ -45,8 +45,32 @@ export default function EmailCapture({
   noticeVersion = '2026.1',
   onSuccess,
 }: EmailCaptureProps): React.JSX.Element {
-  const effectiveButtonText =
-    buttonText || (mode === 'waitlist' ? 'Join the Priority Waitlist →' : 'Claim Free Guide');
+  const isWaitlist = mode === 'waitlist';
+
+  // 1. Title handling: Append status if waitlist and not already specified
+  const hasWaitlistInTitle =
+    title && /(?:waitlist|waiting\s*list|paused|inactive)/i.test(title);
+  const effectiveTitle = isWaitlist
+    ? hasWaitlistInTitle
+      ? title
+      : `${title} [Paused - Join Waitlist]`
+    : title;
+
+  // 2. Action button handling: Convey joining waitlist in waitlist mode
+  let rawButtonText: string = 'Claim Free Guide';
+  if (isWaitlist) {
+    const hasWaitlistInButton =
+      buttonText && /(?:waitlist|waiting\s*list)/i.test(buttonText);
+    rawButtonText = hasWaitlistInButton ? buttonText : 'Join the Waiting List';
+  } else if (buttonText) {
+    rawButtonText = buttonText;
+  }
+
+  // 3. Arrow sanitization: Strip trailing arrows to prevent double-arrow glitch
+  const effectiveButtonText = rawButtonText
+    .replace(/[\s\u00A0]*(?:→|&rarr;|->)+[\s\u00A0]*$/g, '')
+    .trim();
+
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [honeypot, setHoneypot] = useState('');
@@ -314,14 +338,34 @@ export default function EmailCapture({
         </div>
 
         <div className="space-y-2">
-          {title && (
+          {isWaitlist && (
+            <div
+              data-testid="email-capture-waitlist-badge"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40"
+            >
+              <span>⏸️</span>
+              <span>Campaign Paused — Join Waiting List</span>
+            </div>
+          )}
+          {effectiveTitle && (
             <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">
-              {title}
+              {effectiveTitle}
             </h3>
           )}
           {subtitle && (
             <div className="text-xs sm:text-sm text-teal-100/80 leading-relaxed whitespace-pre-line">
               {subtitle}
+            </div>
+          )}
+          {isWaitlist && (
+            <div
+              data-testid="email-capture-waitlist-notice"
+              className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-200/90 text-xs sm:text-xs leading-relaxed flex items-start gap-2"
+            >
+              <span className="shrink-0 text-sm">ℹ️</span>
+              <span>
+                <strong>Notice:</strong> This guide is currently paused and undergoing updates. Enter your details below to join the waiting list and be notified the moment it reopens.
+              </span>
             </div>
           )}
         </div>
@@ -429,14 +473,34 @@ export default function EmailCapture({
       </div>
 
       <div className="space-y-2">
-        {title && (
+        {isWaitlist && (
+          <div
+            data-testid="email-capture-waitlist-badge"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40"
+          >
+            <span>⏸️</span>
+            <span>Campaign Paused — Join Waiting List</span>
+          </div>
+        )}
+        {effectiveTitle && (
           <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">
-            {title}
+            {effectiveTitle}
           </h3>
         )}
         {subtitle && (
           <div className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
             {subtitle}
+          </div>
+        )}
+        {isWaitlist && (
+          <div
+            data-testid="email-capture-waitlist-notice"
+            className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-200/90 text-xs sm:text-xs leading-relaxed flex items-start gap-2"
+          >
+            <span className="shrink-0 text-sm">ℹ️</span>
+            <span>
+              <strong>Notice:</strong> This guide is currently paused and undergoing updates. Enter your details below to join the waiting list and be notified the moment it reopens.
+            </span>
           </div>
         )}
       </div>
@@ -506,10 +570,14 @@ export default function EmailCapture({
         type="submit"
         data-testid="email-capture-submit-btn"
         disabled={loading}
-        className="w-full py-4 px-6 bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+        className={`w-full py-4 px-6 font-extrabold text-sm uppercase tracking-wider rounded-xl shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer ${
+          isWaitlist
+            ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-amber-500/20'
+            : 'bg-teal-600 hover:bg-teal-500 text-white'
+        }`}
       >
         {loading ? (
-          <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
         ) : (
           <span>{effectiveButtonText} &rarr;</span>
         )}
