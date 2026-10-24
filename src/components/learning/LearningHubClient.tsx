@@ -28,6 +28,7 @@ interface LearningHubClientProps {
   initialArticles: IPost[];
   initialRoadmap?: ResolvedRoadmapStep[];
   edition?: 'global' | 'ph';
+  campaignMode?: 'active' | 'waitlist' | 'closed';
   initialSearch?: string;
   initialTopic?: string;
   initialFormat?: 'all' | 'video' | 'podcast' | 'article' | 'study' | 'book' | 'saved';
@@ -43,6 +44,7 @@ export default function LearningHubClient({
   initialArticles,
   initialRoadmap = [],
   edition = 'global',
+  campaignMode = 'active',
   initialSearch = '',
   initialTopic = 'All',
   initialFormat = 'all',
@@ -405,6 +407,7 @@ export default function LearningHubClient({
         <LearningRoadmapSection
           steps={initialRoadmap}
           edition={edition}
+          campaignMode={campaignMode}
           onPlayResource={(resource) => {
             setPlayingResource(resource);
             setIsPlayerOpen(true);

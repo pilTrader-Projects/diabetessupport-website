@@ -14,6 +14,7 @@ import { useRoadmapProgress } from '@/hooks/useRoadmapProgress';
 export interface LearningRoadmapSectionProps {
   steps: ResolvedRoadmapStep[];
   edition?: 'global' | 'ph';
+  campaignMode?: 'active' | 'waitlist' | 'closed';
   onPlayResource?: (resource: ILearningResource) => void;
   className?: string;
 }
@@ -247,6 +248,7 @@ function RoadmapStepCard({
 export default function LearningRoadmapSection({
   steps = [],
   edition = 'global',
+  campaignMode = 'active',
   onPlayResource,
   className = '',
 }: LearningRoadmapSectionProps): React.JSX.Element {
@@ -357,6 +359,7 @@ export default function LearningRoadmapSection({
                   <EmailCapture
                     source="recovery_protocol"
                     edition={edition}
+                    mode={campaignMode}
                     title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
                     subtitle={
                       <div className="space-y-2.5">

@@ -16,6 +16,8 @@ import { buildLearningHubMedicalSchema } from '@/lib/learningSchema';
 import { buildMetadata } from '@/lib/seo';
 import { getRoadmap, ResolvedRoadmapStep } from '@/services/learning/roadmapService';
 import { normalizeEdition } from '@/config/roadmap';
+import { CampaignService } from '@/services/campaignService';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 export const revalidate = 60; // Revalidate static cache every 60 seconds
 
@@ -129,6 +131,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
   let rawResources: any[] = [];
   let initialRoadmap: ResolvedRoadmapStep[] = [];
   let categoryMap: Map<string, string> = new Map();
+  let campaignMode: 'active' | 'waitlist' | 'closed' = 'active';
 
   try {
     await dbConnect();
@@ -139,6 +142,17 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
     } catch (roadmapErr) {
       if (process.env.NODE_ENV !== 'production') {
         console.warn('Roadmap could not be loaded for /learn page:', roadmapErr);
+      }
+    }
+
+    try {
+      const campaign = await CampaignService.resolveCampaign(CAMPAIGN_CODES.RECOVERY_PROTOCOL);
+      if (!campaign.isActive) {
+        campaignMode = campaign.allowWaitlist ? 'waitlist' : 'closed';
+      }
+    } catch (campaignErr) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('Campaign status could not be resolved for /learn page:', campaignErr);
       }
     }
 
@@ -231,6 +245,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
         initialArticles={JSON.parse(JSON.stringify(allPosts))}
         initialRoadmap={JSON.parse(JSON.stringify(initialRoadmap))}
         edition={edition}
+        campaignMode={campaignMode}
         initialSearch={searchQuery}
         initialTopic={activeCategory}
         initialFormat={['all', 'video', 'podcast', 'article', 'study', 'book'].includes(formatQuery) ? (formatQuery as any) : 'all'}

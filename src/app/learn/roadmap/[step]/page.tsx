@@ -15,6 +15,8 @@ import { buildMetadata } from '@/lib/seo';
 import StepDetailClient from '@/components/learning/StepDetailClient';
 import ClinicalSafetyBox from '@/components/common/ClinicalSafetyBox';
 import EmailCapture from '@/components/common/EmailCapture';
+import { CampaignService } from '@/services/campaignService';
+import { CAMPAIGN_CODES } from '@/config/leadConfig';
 
 export const dynamic = 'force-static';
 export const revalidate = 3600; // Revalidate every hour (ISR)
@@ -83,6 +85,18 @@ export default async function RoadmapStepPage(props: RoadmapStepPageProps): Prom
   }
 
   const { prev, next } = getAdjacentSteps(stepConfig.id);
+
+  let campaignMode: 'active' | 'waitlist' | 'closed' = 'active';
+  try {
+    const campaign = await CampaignService.resolveCampaign(CAMPAIGN_CODES.RECOVERY_PROTOCOL);
+    if (!campaign.isActive) {
+      campaignMode = campaign.allowWaitlist ? 'waitlist' : 'closed';
+    }
+  } catch (campaignErr) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('Campaign status could not be resolved for roadmap step page:', campaignErr);
+    }
+  }
 
   // Ensure plain JSON serialization across RSC boundary
   const sanitizedStepItem = JSON.parse(JSON.stringify(resolvedStep));
@@ -173,6 +187,7 @@ export default async function RoadmapStepPage(props: RoadmapStepPageProps): Prom
         <section aria-labelledby="step-download-heading">
           <EmailCapture
             source={`recovery_protocol_${stepConfig.id}`}
+            mode={campaignMode}
             title={ROADMAP_EMAIL_CAPTURE_CONFIG.title}
             subtitle={
               <div className="space-y-2.5">
