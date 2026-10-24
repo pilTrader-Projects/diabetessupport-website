@@ -50,18 +50,38 @@ jest.mock('@/services/learning/roadmapService', () => {
   };
 });
 
-jest.mock('@/services/campaignService', () => ({
-  CampaignService: {
-    resolveCampaign: jest.fn(async () => ({
-      referenceCode: 'recovery_protocol',
-      name: 'Recovery Protocol',
-      brevoList: 'recovery_protocol',
-      defaultMetabolicStage: 'AWARENESS',
-      isActive: true,
-      allowWaitlist: false,
-    })),
-  },
-}));
+jest.mock('@/services/campaignService', () => {
+  const mockResolveCampaign = jest.fn(async (_code?: string) => ({
+    referenceCode: 'recovery_protocol',
+    name: 'Recovery Protocol',
+    brevoList: 'recovery_protocol',
+    defaultMetabolicStage: 'AWARENESS',
+    isActive: true,
+    allowWaitlist: false,
+  }));
+
+  const mockResolveModeFromConfig = jest.fn(
+    (config?: { isActive?: boolean; allowWaitlist?: boolean } | null) => {
+      if (!config || config.isActive === false) {
+        return config?.allowWaitlist ? 'waitlist' : 'closed';
+      }
+      return 'active';
+    }
+  );
+
+  const mockResolveCampaignMode = jest.fn(async (code?: string) => {
+    const campaign = await mockResolveCampaign(code);
+    return mockResolveModeFromConfig(campaign);
+  });
+
+  return {
+    CampaignService: {
+      resolveCampaign: mockResolveCampaign,
+      resolveModeFromConfig: mockResolveModeFromConfig,
+      resolveCampaignMode: mockResolveCampaignMode,
+    },
+  };
+});
 
 describe('P2-03: Roadmap Step Detail Page & Client Component', () => {
   beforeEach(() => {

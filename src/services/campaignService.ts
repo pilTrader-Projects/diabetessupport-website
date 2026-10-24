@@ -9,6 +9,7 @@ import {
   CampaignConfig as CampaignResolvedConfig,
 } from '@/config/leadConfig';
 
+export type CampaignOperationalMode = 'active' | 'waitlist' | 'closed';
 export type { CampaignResolvedConfig };
 export { DEFAULT_CAMPAIGNS };
 
@@ -16,6 +17,36 @@ export { DEFAULT_CAMPAIGNS };
  * Service managing dynamic lead campaign routing, Brevo list mappings, and admin customization.
  */
 export class CampaignService {
+  /**
+   * Derives high-level operational state ('active' | 'waitlist' | 'closed') from campaign config properties.
+   */
+  public static resolveModeFromConfig(
+    config?: { isActive?: boolean; allowWaitlist?: boolean } | null
+  ): CampaignOperationalMode {
+    if (!config || config.isActive === false) {
+      return config?.allowWaitlist ? 'waitlist' : 'closed';
+    }
+    return 'active';
+  }
+
+  /**
+   * Resolves a campaign reference code and returns its current operational mode directly.
+   *
+   * @param {string} [rawCode] Campaign reference code or lead capture source tag.
+   * @returns {Promise<CampaignOperationalMode>} Operational mode for the campaign.
+   */
+  public static async resolveCampaignMode(rawCode?: string): Promise<CampaignOperationalMode> {
+    try {
+      const campaign = await this.resolveCampaign(rawCode);
+      return this.resolveModeFromConfig(campaign);
+    } catch (err) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('CampaignService.resolveCampaignMode fallback to active:', err);
+      }
+      return 'active';
+    }
+  }
+
   /**
    * Resolves a campaign reference code to its target Brevo list and metabolic stage.
    *

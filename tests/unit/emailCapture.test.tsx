@@ -134,4 +134,29 @@ describe('Unified <EmailCapture /> Component (TDD Tests)', () => {
     expect(activeHtml).not.toMatch(/&rarr;\s*&rarr;/);
     expect(activeHtml).not.toMatch(/→\s*&rarr;/);
   });
+
+  describe('Subcomponents & Sanitization Utilities', () => {
+    it('strips all trailing arrow varieties cleanly with sanitizeTrailingArrows', () => {
+      const { sanitizeTrailingArrows } = require('@/components/common/EmailCapture');
+
+      expect(sanitizeTrailingArrows('Send Me My Protocol →')).toBe('Send Me My Protocol');
+      expect(sanitizeTrailingArrows('Send Me My Protocol &rarr;')).toBe('Send Me My Protocol');
+      expect(sanitizeTrailingArrows('Send Me My Protocol ->')).toBe('Send Me My Protocol');
+      expect(sanitizeTrailingArrows('Join Waiting List → →')).toBe('Join Waiting List');
+      expect(sanitizeTrailingArrows('Claim Guide')).toBe('Claim Guide');
+    });
+
+    it('renders standalone WaitlistBadge and WaitlistNoticeBox cleanly', () => {
+      const { WaitlistBadge, WaitlistNoticeBox } = require('@/components/common/EmailCapture');
+
+      const badgeHtml = ReactDOMServer.renderToString(<WaitlistBadge />);
+      expect(badgeHtml).toContain('data-testid="email-capture-waitlist-badge"');
+      expect(badgeHtml).toContain('Campaign Paused — Join Waiting List');
+
+      const noticeHtml = ReactDOMServer.renderToString(<WaitlistNoticeBox />);
+      expect(noticeHtml).toContain('data-testid="email-capture-waitlist-notice"');
+      expect(noticeHtml).toContain('Notice:');
+      expect(noticeHtml).toContain('currently paused and undergoing updates');
+    });
+  });
 });

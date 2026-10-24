@@ -145,16 +145,7 @@ export default async function BlogFeedPage({ searchParams }: BlogFeedPageProps) 
       }
     }
 
-    try {
-      const campaign = await CampaignService.resolveCampaign(CAMPAIGN_CODES.RECOVERY_PROTOCOL);
-      if (!campaign.isActive) {
-        campaignMode = campaign.allowWaitlist ? 'waitlist' : 'closed';
-      }
-    } catch (campaignErr) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn('Campaign status could not be resolved for /learn page:', campaignErr);
-      }
-    }
+    campaignMode = await CampaignService.resolveCampaignMode(CAMPAIGN_CODES.RECOVERY_PROTOCOL);
 
     // Legacy self-authored blog posts have been migrated to /community as peer discussions.
     // /learn serves strictly curated evidence-based lectures, podcasts, and authority materials.

@@ -163,5 +163,56 @@ test.describe('P1-04 Unified EmailCapture & Consent Architecture', () => {
     const successCard = page.locator('h5:has-text("Free Account Access Ready!")');
     await expect(successCard).toBeVisible({ timeout: 10000 });
   });
+
+  test('TC-07: Waitlist subscription response displays priority waitlist confirmation with zero asset download URL', async ({
+    page,
+  }) => {
+    await page.route('**/api/v1/subscribe', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          success: true,
+          isWaitlist: true,
+          message:
+            "You've been added to the priority waitlist! We will notify you as soon as this guide is updated.",
+        }),
+      });
+    });
+
+    await page.goto('/subscribe');
+    const form = page.locator('[data-testid="email-capture-form"]');
+    await expect(form).toBeVisible();
+
+    await page.locator('[data-testid="firstname-capture-input"]').fill('Waitlist Learner');
+    await page.locator('[data-testid="email-capture-input"]').fill('waitlist.e2e@example.com');
+    await page.locator('[data-testid="email-capture-consent-checkbox"]').check();
+
+    await page.locator('[data-testid="email-capture-submit-btn"]').click();
+
+    const successCard = page.locator('[data-testid="email-capture-success"]');
+    await expect(successCard).toBeVisible({ timeout: 10000 });
+    await expect(successCard).toContainText(/Priority Waitlist Confirmed!/i);
+    await expect(successCard).toContainText(/added to the priority waitlist/i);
+    await expect(page.locator('text=Download Your Guide Now')).toHaveCount(0);
+  });
+
+  test('TC-08: /learn roadmap email capture renders clean single arrow and un-checked consent', async ({
+    page,
+  }) => {
+    await page.goto('/learn');
+
+    const roadmapLeadCapture = page.locator('[data-testid="learn-roadmap-email-capture"]');
+    await expect(roadmapLeadCapture).toBeVisible();
+
+    const submitBtn = roadmapLeadCapture.locator('[data-testid="email-capture-submit-btn"]');
+    await expect(submitBtn).toBeVisible();
+    const btnText = await submitBtn.innerText();
+    expect(btnText).not.toMatch(/→\s*→/);
+
+    const consent = roadmapLeadCapture.locator('[data-testid="email-capture-consent-checkbox"]');
+    await expect(consent).toBeVisible();
+    await expect(consent).not.toBeChecked();
+  });
 });
 
