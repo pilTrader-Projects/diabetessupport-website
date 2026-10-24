@@ -275,5 +275,22 @@ describe('Lead Capture Funnel - Backend Unit Tests', () => {
         })
       );
     });
+
+    it('should derive operational modes cleanly via CampaignService.resolveModeFromConfig', () => {
+      const { CampaignService } = require('../../src/services/campaignService');
+
+      expect(CampaignService.resolveModeFromConfig({ isActive: true, allowWaitlist: false })).toBe('active');
+      expect(CampaignService.resolveModeFromConfig({ isActive: true, allowWaitlist: true })).toBe('active');
+      expect(CampaignService.resolveModeFromConfig({ isActive: false, allowWaitlist: true })).toBe('waitlist');
+      expect(CampaignService.resolveModeFromConfig({ isActive: false, allowWaitlist: false })).toBe('closed');
+      expect(CampaignService.resolveModeFromConfig(null)).toBe('closed');
+      expect(CampaignService.resolveModeFromConfig(undefined)).toBe('closed');
+    });
+
+    it('should resolve operational mode directly via CampaignService.resolveCampaignMode', async () => {
+      const { CampaignService } = require('../../src/services/campaignService');
+      const mode = await CampaignService.resolveCampaignMode('recovery_protocol');
+      expect(['active', 'waitlist', 'closed']).toContain(mode);
+    });
   });
 });

@@ -86,17 +86,9 @@ export default async function RoadmapStepPage(props: RoadmapStepPageProps): Prom
 
   const { prev, next } = getAdjacentSteps(stepConfig.id);
 
-  let campaignMode: 'active' | 'waitlist' | 'closed' = 'active';
-  try {
-    const campaign = await CampaignService.resolveCampaign(CAMPAIGN_CODES.RECOVERY_PROTOCOL);
-    if (!campaign.isActive) {
-      campaignMode = campaign.allowWaitlist ? 'waitlist' : 'closed';
-    }
-  } catch (campaignErr) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn('Campaign status could not be resolved for roadmap step page:', campaignErr);
-    }
-  }
+  const campaignMode = await CampaignService.resolveCampaignMode(
+    CAMPAIGN_CODES.RECOVERY_PROTOCOL
+  );
 
   // Ensure plain JSON serialization across RSC boundary
   const sanitizedStepItem = JSON.parse(JSON.stringify(resolvedStep));
